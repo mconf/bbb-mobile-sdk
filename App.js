@@ -1,20 +1,26 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+import LoginScreen from './src/screens/LoginScreen';
+import LoadingScreen from './src/screens/LoadingScreen';
+import EmailLoginScreen from './src/screens/LoginScreen/EmailLoginScreen';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+const Stack = createNativeStackNavigator();
+
+const App = () => (
+  <>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="LoginScreen" component={LoginScreen} />
+        <Stack.Screen name="EmailLoginScreen" component={EmailLoginScreen} />
+        {/* Acesso federado
+          Google login
+          Facebook login */}
+      </Stack.Navigator>
+    </NavigationContainer>
+    <StatusBar style="auto" />
+  </>
+);
+
+export default App;
