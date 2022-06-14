@@ -37,7 +37,7 @@ const ButtonText = styled.Text`
   ${({ variant }) =>
     variant === 'secondary' &&
     `
-    color: ${Colors.orange};
+    color: ${Colors.blue};
   `}
 `;
 
