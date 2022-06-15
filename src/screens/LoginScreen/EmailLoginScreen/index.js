@@ -2,7 +2,8 @@ import TextInput from '../../../components/TextInput';
 import Button from '../../../components/Button';
 import Styled from './styles';
 
-const LoginScreen = () => {
+const LoginScreen = (props) => {
+  const { navigation } = props;
   return (
     <Styled.Container>
       <Styled.InputView>
@@ -10,6 +11,7 @@ const LoginScreen = () => {
           placeholder="Email"
           keyboardType="email-address"
           autoCorrect={false}
+          autoCapitalize="none"
         />
       </Styled.InputView>
       <Styled.InputView>
@@ -18,7 +20,12 @@ const LoginScreen = () => {
 
       <Styled.ForgotPassword>Esqueceu a senha?</Styled.ForgotPassword>
 
-      <Button variant="tertiary">Entrar</Button>
+      <Button
+        variant="tertiary"
+        onPress={() => navigation.navigate('ConferenciaWebHomeScreen')}
+      >
+        Entrar
+      </Button>
     </Styled.Container>
   );
 };
