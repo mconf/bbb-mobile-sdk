@@ -1,5 +1,6 @@
 import styled from 'styled-components/native';
 import Colors from '../../constants/colors';
+import { Switch as SwitchPaper } from 'react-native-paper';
 
 const ContainerScreen = styled.SafeAreaView`
   flex: 1;
@@ -19,8 +20,13 @@ const InputView = styled.View`
   margin: 8px;
 `;
 
-const Switch = styled.Switch`
+const Switch = styled(SwitchPaper)`
   align-self: flex-start;
+`;
+
+const SwitchContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
 `;
 
 export default {
@@ -28,4 +34,5 @@ export default {
   Container,
   InputView,
   Switch,
+  SwitchContainer,
 };

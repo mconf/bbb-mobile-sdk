@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { TextInput as TIPaper } from 'react-native-paper';
+import { Text, View } from 'react-native';
 import TextInput from '../../components/TextInput';
 import Button from '../../components/Button';
 import Styled from './styles';
@@ -17,18 +19,22 @@ const ConferenciaWebHomeScreen = (props) => {
       <Styled.Container>
         <Styled.InputView>
           <TextInput
-            placeholder="Link"
+            label="Link"
             autoCorrect={false}
             autoCapitalize="none"
+            right={<TIPaper.Icon name="export-variant" onPress={() => {}} />}
           />
         </Styled.InputView>
         <Styled.InputView>
-          <TextInput placeholder="Nome da Sala" />
+          <TextInput label="Nome da Sala" />
         </Styled.InputView>
-        <Styled.Switch
-          value={privateSession}
-          onValueChange={handleSwitchChange}
-        />
+        <Styled.SwitchContainer>
+          <Styled.Switch
+            value={privateSession}
+            onValueChange={handleSwitchChange}
+          />
+          <Text>Privada</Text>
+        </Styled.SwitchContainer>
       </Styled.Container>
 
       <Button

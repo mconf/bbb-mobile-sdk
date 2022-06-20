@@ -1,15 +1,10 @@
 import Styled from './styles';
 
 const TextInputComponent = (props) => {
-  const { placeholder, keyboardType, onChange } = props;
+  const { label, onChangeText } = props;
 
   return (
-    <Styled.TextInput
-      placeholder={placeholder}
-      keyboardType={keyboardType}
-      onChange={onChange}
-      {...props}
-    />
+    <Styled.TextInput label={label} onChangeText={onChangeText} {...props} />
   );
 };
 

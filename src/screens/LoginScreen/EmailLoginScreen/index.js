@@ -1,3 +1,4 @@
+import { TextInput as TIPaper } from 'react-native-paper';
 import TextInput from '../../../components/TextInput';
 import Button from '../../../components/Button';
 import Styled from './styles';
@@ -8,14 +9,19 @@ const LoginScreen = (props) => {
     <Styled.Container>
       <Styled.InputView>
         <TextInput
-          placeholder="Email"
+          label="Email"
           keyboardType="email-address"
           autoCorrect={false}
           autoCapitalize="none"
         />
       </Styled.InputView>
       <Styled.InputView>
-        <TextInput placeholder="Senha" secureTextEntry autoCorrect={false} />
+        <TextInput
+          label="Senha"
+          secureTextEntry
+          autoCorrect={false}
+          right={<TIPaper.Icon name="eye" onPress={() => {}} />}
+        />
       </Styled.InputView>
 
       <Styled.ForgotPassword>Esqueceu a senha?</Styled.ForgotPassword>
