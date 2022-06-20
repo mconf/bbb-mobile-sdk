@@ -7,6 +7,7 @@ import LoadingScreen from './src/screens/LoadingScreen';
 import EmailLoginScreen from './src/screens/LoginScreen/EmailLoginScreen';
 import ConferenciaWebHomeScreen from './src/screens/ConferenciaWebHomeScreen';
 import InsideConferenceScreen from './src/screens/InsideConferenceScreen';
+import IconButton from './src/components/IconButton';
 
 import Colors from './src/constants/colors';
 
@@ -43,6 +44,17 @@ const App = () => (
           component={ConferenciaWebHomeScreen}
           options={{
             title: 'ConferênciaWeb',
+            // disabled until define the correct navigation order
+            /* headerLeft: () => (
+              <IconButton icon="menu" color="#FFFFFF" onPress={() => {}} />
+            ), */
+            headerRight: () => (
+              <IconButton
+                icon="account-circle-outline"
+                color="#FFFFFF"
+                onPress={() => {}}
+              />
+            ),
           }}
         />
         <Stack.Screen
@@ -50,6 +62,13 @@ const App = () => (
           component={InsideConferenceScreen}
           options={{
             title: 'Sala de Aula',
+            headerRight: () => (
+              <IconButton
+                icon="cog-outline"
+                color="#FFFFFF"
+                onPress={() => {}}
+              />
+            ),
           }}
         />
         {/* Acesso federado

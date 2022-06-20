@@ -38,5 +38,6 @@ module.exports = {
     'no-use-before-define': 'off',
     'global-require': 'off',
     'react/style-prop-object': 'off',
+    'react/no-unstable-nested-components': 'off',
   },
 };
