@@ -37,7 +37,7 @@ const LoginScreen = (props) => {
 
       <Button
         variant="tertiary"
-        onPress={() => navigation.navigate('ConferenciaWebHomeScreen')}
+        onPress={() => navigation.navigate('DrawerNavigator')}
       >
         Entrar
       </Button>

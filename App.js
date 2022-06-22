@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import LoginScreen from './src/screens/LoginScreen';
 import LoadingScreen from './src/screens/LoadingScreen';
@@ -12,6 +13,35 @@ import IconButton from './src/components/IconButton';
 import Colors from './src/constants/colors';
 
 const Stack = createNativeStackNavigator();
+const Drawer = createDrawerNavigator();
+
+const DrawerNavigator = () => {
+  return (
+    <Drawer.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: Colors.blue },
+        headerTintColor: Colors.white,
+        contentStyle: { backgroundColor: Colors.white },
+        headerTitleAlign: 'center',
+      }}
+    >
+      <Drawer.Screen
+        name="ConferenciaHomeScreen"
+        component={ConferenciaWebHomeScreen}
+        options={{
+          title: 'ConferênciaWeb',
+          headerRight: () => (
+            <IconButton
+              icon="account-circle-outline"
+              color="#FFFFFF"
+              onPress={() => {}}
+            />
+          ),
+        }}
+      />
+    </Drawer.Navigator>
+  );
+};
 
 const App = () => (
   <>
@@ -40,21 +70,10 @@ const App = () => (
           }}
         />
         <Stack.Screen
-          name="ConferenciaWebHomeScreen"
-          component={ConferenciaWebHomeScreen}
+          name="DrawerNavigator"
+          component={DrawerNavigator}
           options={{
-            title: 'ConferênciaWeb',
-            // disabled until define the correct navigation order
-            /* headerLeft: () => (
-              <IconButton icon="menu" color="#FFFFFF" onPress={() => {}} />
-            ), */
-            headerRight: () => (
-              <IconButton
-                icon="account-circle-outline"
-                color="#FFFFFF"
-                onPress={() => {}}
-              />
-            ),
+            headerShown: false,
           }}
         />
         <Stack.Screen
