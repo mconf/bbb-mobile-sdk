@@ -1,14 +1,17 @@
 import { StatusBar } from 'expo-status-bar';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import LoginScreen from './src/screens/LoginScreen';
-import LoadingScreen from './src/screens/LoadingScreen';
 import EmailLoginScreen from './src/screens/LoginScreen/EmailLoginScreen';
 import ConferenciaWebHomeScreen from './src/screens/ConferenciaWebHomeScreen';
 import InsideConferenceScreen from './src/screens/InsideConferenceScreen';
 import IconButton from './src/components/IconButton';
+
+// TODO screens
+import LoadingScreen from './src/screens/LoadingScreen';
+import ProfileScreen from './src/screens/ProfileScreen';
 
 import Colors from './src/constants/colors';
 
@@ -16,6 +19,7 @@ const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
 const DrawerNavigator = () => {
+  const navigation = useNavigation();
   return (
     <Drawer.Navigator
       screenOptions={{
@@ -34,9 +38,19 @@ const DrawerNavigator = () => {
             <IconButton
               icon="account-circle-outline"
               color="#FFFFFF"
-              onPress={() => {}}
+              onPress={() => {
+                navigation.navigate('ProfileScreen');
+              }}
             />
           ),
+        }}
+      />
+
+      <Drawer.Screen
+        name="ProfileScreen"
+        component={ProfileScreen}
+        options={{
+          title: 'Meu Perfil',
         }}
       />
     </Drawer.Navigator>
