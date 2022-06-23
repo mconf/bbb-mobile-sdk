@@ -1,7 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import {
+  createDrawerNavigator,
+  DrawerContentScrollView,
+  DrawerItem,
+  DrawerItemList,
+} from '@react-navigation/drawer';
 
 import LoginScreen from './src/screens/LoginScreen';
 import EmailLoginScreen from './src/screens/LoginScreen/EmailLoginScreen';
@@ -22,6 +27,17 @@ const DrawerNavigator = () => {
   const navigation = useNavigation();
   return (
     <Drawer.Navigator
+      drawerContent={(props) => {
+        return (
+          <DrawerContentScrollView {...props}>
+            <DrawerItemList {...props} />
+            <DrawerItem
+              label="Logout"
+              onPress={() => navigation.navigate('LoginScreen')}
+            />
+          </DrawerContentScrollView>
+        );
+      }}
       screenOptions={{
         headerStyle: { backgroundColor: Colors.blue },
         headerTintColor: Colors.white,
