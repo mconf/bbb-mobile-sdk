@@ -39,5 +39,6 @@ module.exports = {
     'global-require': 'off',
     'react/style-prop-object': 'off',
     'react/no-unstable-nested-components': 'off',
+    'react/jsx-no-bind': 'off',
   },
 };
