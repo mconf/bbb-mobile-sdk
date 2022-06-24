@@ -6,7 +6,22 @@ import Styled from './styles';
 
 const LoginScreen = (props) => {
   const { navigation } = props;
+
   const [showPassword, setShowPassword] = useState(false);
+  const [inputValues, setInputValues] = useState({
+    email: '',
+    password: '',
+  });
+
+  const onChangeInputHandler = (inputIdentifier, value) => {
+    setInputValues((prevState) => {
+      return {
+        ...prevState,
+        [inputIdentifier]: value,
+      };
+    });
+  };
+
   return (
     <Styled.Container>
       <Styled.InputView>
@@ -15,6 +30,8 @@ const LoginScreen = (props) => {
           keyboardType="email-address"
           autoCorrect={false}
           autoCapitalize="none"
+          value={inputValues.email}
+          onChangeText={onChangeInputHandler.bind(this, 'email')}
         />
       </Styled.InputView>
       <Styled.InputView>
@@ -22,6 +39,8 @@ const LoginScreen = (props) => {
           label="Senha"
           secureTextEntry={!showPassword}
           autoCorrect={false}
+          value={inputValues.password}
+          onChangeText={onChangeInputHandler.bind(this, 'password')}
           right={
             <TIPaper.Icon
               name={!showPassword ? 'eye' : 'eye-off'}
