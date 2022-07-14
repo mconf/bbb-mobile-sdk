@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import Styled from './styles';
 import IconButtonComponent from '../../components/IconButton';
 
-const ActionsBar = () => {
+const ActionsBar = (props) => {
+  const { style } = props;
   const [isChatActive, setIsChatActive] = useState(false);
   const [isMicrophoneActive, setIsMicrophoneActive] = useState(false);
   const [isAudioActive, setIsAudioActive] = useState(false);
@@ -11,7 +12,7 @@ const ActionsBar = () => {
   const [isHandActive, setIsHandActive] = useState(false);
 
   return (
-    <Styled.ContainerView>
+    <Styled.ContainerView style={style}>
       <IconButtonComponent
         icon={isChatActive ? 'message' : 'message-off'}
         iconColor={isChatActive ? '#FFFFFF' : '#667080'}
