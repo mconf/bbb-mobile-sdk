@@ -8,6 +8,7 @@ import {
 import { NavigationContainer } from '@react-navigation/native';
 import TestComponentsScreen from './src/screens/TestComponents';
 import ClassroomMainScreen from './src/screens/ClassroomMain';
+import UserParticipantsScreen from './src/screens/UserParticipants';
 
 const App = () => {
   const Drawer = createDrawerNavigator();
@@ -59,6 +60,14 @@ const App = () => {
             component={TestComponentsScreen}
             options={{
               title: 'Teste',
+            }}
+          />
+
+          <Drawer.Screen
+            name="UserParticipantsScreen"
+            component={UserParticipantsScreen}
+            options={{
+              title: 'Lista de participantes',
             }}
           />
         </Drawer.Navigator>
