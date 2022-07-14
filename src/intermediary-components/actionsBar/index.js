@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import { useContext, useState } from 'react';
 
 import Styled from './styles';
 import IconButtonComponent from '../../components/IconButton';
+import { ActionsBarContext } from '../../store/context/actions-bar-context';
 
 const ActionsBar = (props) => {
   const { style } = props;
-  const [isChatActive, setIsChatActive] = useState(false);
+  const actionsBarCtx = useContext(ActionsBarContext);
+
   const [isMicrophoneActive, setIsMicrophoneActive] = useState(false);
   const [isAudioActive, setIsAudioActive] = useState(false);
   const [isVideoActive, setIsVideoActive] = useState(false);
@@ -14,11 +16,11 @@ const ActionsBar = (props) => {
   return (
     <Styled.ContainerView style={style}>
       <IconButtonComponent
-        icon={isChatActive ? 'message' : 'message-off'}
-        iconColor={isChatActive ? '#FFFFFF' : '#667080'}
-        containerColor={isChatActive ? '#003399' : '#EEF1F4'}
+        icon={actionsBarCtx.isChatActive ? 'message' : 'message-off'}
+        iconColor={actionsBarCtx.isChatActive ? '#FFFFFF' : '#667080'}
+        containerColor={actionsBarCtx.isChatActive ? '#003399' : '#EEF1F4'}
         animated
-        onPress={() => setIsChatActive((prevState) => !prevState)}
+        onPress={() => actionsBarCtx.triggerChat((prevState) => !prevState)}
       />
       <IconButtonComponent
         icon={isMicrophoneActive ? 'microphone' : 'microphone-off'}

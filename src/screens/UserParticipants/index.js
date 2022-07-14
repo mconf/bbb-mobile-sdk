@@ -2,10 +2,9 @@ import React from 'react';
 import { SafeAreaView, Text } from 'react-native';
 
 import Styled from './styles';
-import ActionsBar from '../../intermediary-components/actionsBar';
 
 const UserParticipantsScreen = () => {
-  const userListNames = ['Huguinho', 'Zezinho', 'Luisinho'];
+  const userListNames = ['Patolino', 'Gaguinho', 'Pernalonga'];
 
   return (
     <SafeAreaView>

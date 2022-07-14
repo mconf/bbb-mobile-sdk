@@ -2,27 +2,18 @@ import React from 'react';
 import Styled from './styles';
 
 const VideoList = (props) => {
-  const { style } = props;
+  const { style, videoUsers } = props;
+
   return (
     <Styled.VideoList style={style}>
-      <Styled.VideoAvatar
-        source={{
-          uri: 'https://c.tenor.com/IRBxTXExddMAAAAM/cat-watching-cat-fun.gif',
-        }}
-        userName="Catinho"
-      />
-      <Styled.VideoAvatar
-        source={{
-          uri: 'http://25.media.tumblr.com/tumblr_ltp7zjkDUG1qzgfaio1_400.gif',
-        }}
-        userName="Scarytinho"
-      />
-      <Styled.VideoAvatar
-        source={{
-          uri: 'https://media3.giphy.com/media/cmxRB9CecJjv7PLGs3/200.gif',
-        }}
-        userName="Batinho"
-      />
+      {videoUsers.map((videoUser) => (
+        <Styled.VideoAvatar
+          source={{
+            uri: videoUser.videoSource,
+          }}
+          userName={videoUser.userName}
+        />
+      ))}
     </Styled.VideoList>
   );
 };
