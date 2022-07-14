@@ -2,10 +2,10 @@ import React from 'react';
 import Styled from './styles';
 
 const VideoAvatarItem = (props) => {
-  const { source, userName } = props;
+  const { source, userName, style } = props;
 
   return (
-    <Styled.ContainerView>
+    <Styled.ContainerView style={style}>
       <Styled.UserAvatar source={source} />
       <Styled.NameLabelContainer>
         <Styled.NameLabel>{userName}</Styled.NameLabel>

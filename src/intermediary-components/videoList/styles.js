@@ -8,6 +8,9 @@ const VideoList = styled.View`
   flex-direction: row;
 `;
 
-const VideoAvatar = styled(VideoAvatarItem)``;
+const VideoAvatar = styled(VideoAvatarItem)`
+  width: 115px;
+  height: 115px;
+`;
 
 export default { VideoList, VideoAvatar };
