@@ -38,6 +38,7 @@ const ClassroomMainScreen = () => {
   ];
 
   const actionsBarCtx = useContext(ActionsBarContext);
+  const { actionsBarStatus } = actionsBarCtx;
 
   return (
     <SafeAreaView>
@@ -55,7 +56,7 @@ const ClassroomMainScreen = () => {
         </Styled.PresentationContainer>
 
         <Styled.ChatContainer>
-          {actionsBarCtx.isChatActive && <Styled.Chat messages={messages} />}
+          {actionsBarStatus.isChatActive && <Styled.Chat messages={messages} />}
         </Styled.ChatContainer>
         <Styled.ActionsBarContainer>
           <Styled.ActionsBar />

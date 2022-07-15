@@ -1,20 +1,36 @@
 import { createContext, useState } from 'react';
 
 export const ActionsBarContext = createContext({
-  isChatActive: false,
-  triggerChat: () => {},
+  actionsBarStatus: {
+    isChatActive: false,
+    isMicrophoneActive: false,
+    isAudioActive: false,
+    isVideoActive: false,
+    isHandActive: false,
+  },
+  // eslint-disable-next-line no-unused-vars
+  triggerButton: (button) => {},
 });
 
 const ActionsBarContextProvider = ({ children }) => {
-  const [isChatActive, setIsChatActive] = useState(false);
+  const [actionsBarStatus, setActionsBarStatus] = useState({
+    isChatActive: false,
+    isMicrophoneActive: false,
+    isAudioActive: false,
+    isVideoActive: false,
+    isHandActive: false,
+  });
 
-  const triggerChat = () => {
-    setIsChatActive((prevState) => !prevState);
+  const triggerButton = (button) => {
+    setActionsBarStatus((prevState) => ({
+      ...prevState,
+      [button]: !prevState[button],
+    }));
   };
 
   const value = {
-    isChatActive,
-    triggerChat,
+    actionsBarStatus,
+    triggerButton,
   };
 
   return (
