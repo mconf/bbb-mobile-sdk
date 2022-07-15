@@ -18,6 +18,14 @@ const ClassroomMainScreen = () => {
       author: 'Pernalonga',
       message: '...',
     },
+    {
+      author: 'Patolino',
+      message: 'O MAGO É IMPLACÁVEL',
+    },
+    {
+      author: 'Pernalonga',
+      message: '...',
+    },
   ];
 
   const videoUsers = [

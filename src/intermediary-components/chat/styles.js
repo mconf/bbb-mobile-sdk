@@ -7,6 +7,10 @@ const Card = styled.View`
   margin: 8px;
 `;
 
+const FlatList = styled.FlatList`
+  width: 100%;
+`;
+
 const MessageAuthor = styled.Text`
   color: white;
 `;
@@ -17,6 +21,7 @@ const MessageContent = styled.Text`
 
 export default {
   Card,
+  FlatList,
   MessageAuthor,
   MessageContent,
 };

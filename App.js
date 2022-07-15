@@ -48,12 +48,6 @@ const App = () => {
               component={ClassroomMainScreen}
               options={{
                 title: 'Sala de aula',
-                contentOptions: {
-                  style: {
-                    backgroundColor: 'black',
-                    flex: 1,
-                  },
-                },
               }}
             />
 
