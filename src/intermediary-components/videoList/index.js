@@ -1,21 +1,25 @@
 import React from 'react';
+import { FlatList } from 'react-native';
 import Styled from './styles';
 
-const VideoList = (props) => {
-  const { style, videoUsers } = props;
-
+const Item = (props) => {
+  const { videoUser } = props;
   return (
-    <Styled.VideoList style={style}>
-      {videoUsers.map((videoUser) => (
-        <Styled.VideoAvatar
-          source={{
-            uri: videoUser.videoSource,
-          }}
-          userName={videoUser.userName}
-        />
-      ))}
-    </Styled.VideoList>
+    <Styled.VideoAvatar
+      source={{
+        uri: videoUser.item.videoSource,
+      }}
+      userName={videoUser.item.userName}
+    />
   );
+};
+
+const VideoList = (props) => {
+  const { videoUsers } = props;
+
+  const renderItem = (item) => <Item videoUser={item} />;
+
+  return <FlatList horizontal data={videoUsers} renderItem={renderItem} />;
 };
 
 export default VideoList;

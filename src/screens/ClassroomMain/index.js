@@ -43,6 +43,14 @@ const ClassroomMainScreen = () => {
       videoSource:
         'https://2.bp.blogspot.com/-1DhhXLUW1nM/WcgNH0jd1WI/AAAAAAAAcaI/NIAmRXsT4NA9dBkHKchEfbKEnUuwzsWOACLcBGAs/s1600/pernalonga%2Bfumando%2Brwf.gif',
     },
+    {
+      userName: 'Taz',
+      videoSource: 'https://i.gifer.com/EomP.gif',
+    },
+    {
+      userName: 'Lola',
+      videoSource: 'https://c.tenor.com/iNVJLgItcD8AAAAM/lola-bunny-love.gif',
+    },
   ];
 
   const actionsBarCtx = useContext(ActionsBarContext);

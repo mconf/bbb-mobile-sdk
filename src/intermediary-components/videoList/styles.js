@@ -11,6 +11,7 @@ const VideoList = styled.View`
 const VideoAvatar = styled(VideoAvatarItem)`
   width: 115px;
   height: 115px;
+  margin: 4px;
 `;
 
 export default { VideoList, VideoAvatar };
