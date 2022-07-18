@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlatList } from 'react-native';
+import { Pressable } from 'react-native';
 import Styled from './styles';
 
 const Item = (props) => {
@@ -17,9 +17,13 @@ const Item = (props) => {
 };
 
 const Chat = (props) => {
-  const { messages } = props;
+  const { messages, onPressItem } = props;
 
-  const renderItem = (item) => <Item messageObject={item} />;
+  const renderItem = (item) => (
+    <Pressable onPress={onPressItem}>
+      <Item messageObject={item} />
+    </Pressable>
+  );
 
   return <Styled.FlatList data={messages} renderItem={renderItem} />;
 };

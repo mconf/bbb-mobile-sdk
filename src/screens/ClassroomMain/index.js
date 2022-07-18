@@ -1,8 +1,9 @@
-import React, { useContext } from 'react';
+import React, { useCallback, useContext, useMemo, useRef } from 'react';
 import { SafeAreaView } from 'react-native';
 import Styled from './styles';
 
 import { ActionsBarContext } from '../../store/context/actions-bar-context';
+import BottomSheetChat from '../../intermediary-components/chat/bottom-sheet-chat';
 
 const ClassroomMainScreen = () => {
   const messages = [
@@ -21,6 +22,58 @@ const ClassroomMainScreen = () => {
     {
       author: 'Patolino',
       message: 'O MAGO É IMPLACÁVEL',
+    },
+    {
+      author: 'Pernalonga',
+      message: '...',
+    },
+    {
+      author: 'Pernalonga',
+      message: '...',
+    },
+    {
+      author: 'Pernalonga',
+      message: '...',
+    },
+    {
+      author: 'Pernalonga',
+      message: '...',
+    },
+    {
+      author: 'Pernalonga',
+      message: '...',
+    },
+    {
+      author: 'Pernalonga',
+      message: '...',
+    },
+    {
+      author: 'Pernalonga',
+      message: '...',
+    },
+    {
+      author: 'Pernalonga',
+      message: '...',
+    },
+    {
+      author: 'Pernalonga',
+      message: '...',
+    },
+    {
+      author: 'Pernalonga',
+      message: '...',
+    },
+    {
+      author: 'Pernalonga',
+      message: '...',
+    },
+    {
+      author: 'Pernalonga',
+      message: '...',
+    },
+    {
+      author: 'Pernalonga',
+      message: '...',
     },
     {
       author: 'Pernalonga',
@@ -72,12 +125,22 @@ const ClassroomMainScreen = () => {
         </Styled.PresentationContainer>
 
         <Styled.ChatContainer>
-          {actionsBarStatus.isChatActive && <Styled.Chat messages={messages} />}
+          {actionsBarStatus.isChatActive && (
+            <Styled.Chat
+              messages={messages}
+              onPressItem={() =>
+                actionsBarCtx.triggerButton('chatBottomSheet', true)
+              }
+            />
+          )}
         </Styled.ChatContainer>
         <Styled.ActionsBarContainer>
           <Styled.ActionsBar />
         </Styled.ActionsBarContainer>
       </Styled.ContainerView>
+      {actionsBarStatus.chatBottomSheet && (
+        <BottomSheetChat messages={messages} />
+      )}
     </SafeAreaView>
   );
 };

@@ -6,7 +6,9 @@ const TextInput = styled(TIComponent).attrs({
   mode: 'outlined',
   outlineColor: `${Colors.lightGray300}`,
   activeOutlineColor: `${Colors.lightGray300}`,
-})``;
+})`
+  min-width: 50%;
+`;
 
 export default {
   TextInput,

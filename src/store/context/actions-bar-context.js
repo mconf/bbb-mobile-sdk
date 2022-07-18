@@ -7,24 +7,28 @@ export const ActionsBarContext = createContext({
     isAudioActive: false,
     isVideoActive: false,
     isHandActive: false,
+    chatBottomSheet: false,
   },
-  // eslint-disable-next-line no-unused-vars
+  /* eslint-disable no-unused-vars */
   triggerButton: (button) => {},
+  showChatBottomSheet: (value) => {},
+  /* eslint-enable no-unused-vars */
 });
 
 const ActionsBarContextProvider = ({ children }) => {
   const [actionsBarStatus, setActionsBarStatus] = useState({
-    isChatActive: false,
+    isChatActive: true,
     isMicrophoneActive: false,
     isAudioActive: false,
     isVideoActive: false,
     isHandActive: false,
+    chatBottomSheet: false,
   });
 
-  const triggerButton = (button) => {
+  const triggerButton = (button, value = null) => {
     setActionsBarStatus((prevState) => ({
       ...prevState,
-      [button]: !prevState[button],
+      [button]: value || !prevState[button],
     }));
   };
 

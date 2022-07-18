@@ -3,6 +3,7 @@ import presentation from '../../intermediary-components/presentation';
 import videoList from '../../intermediary-components/videoList';
 import actionsBar from '../../intermediary-components/actionsBar';
 import chat from '../../intermediary-components/chat';
+import chatBottomSheet from '../../intermediary-components/chat/bottom-sheet-chat';
 
 const ContainerView = styled.SafeAreaView`
   width: 100%;
@@ -42,9 +43,14 @@ const PresentationContainer = styled.View`
   align-items: flex-start;
 `;
 
+const ChatBottomSheetContainer = styled.View`
+  padding: 24px;
+`;
+
 const ActionsBar = styled(actionsBar)``;
 const VideoList = styled(videoList)``;
 const Chat = styled(chat)``;
+const ChatBottomSheet = styled(chatBottomSheet)``;
 const Presentation = styled(presentation)``;
 
 export default {
@@ -55,6 +61,8 @@ export default {
   VideoList,
   Chat,
   ChatContainer,
+  ChatBottomSheet,
+  ChatBottomSheetContainer,
   VideoListContainer,
   PresentationContainer,
 };
