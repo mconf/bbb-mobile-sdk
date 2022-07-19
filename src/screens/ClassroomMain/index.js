@@ -105,6 +105,10 @@ const ClassroomMainScreen = () => {
       userName: 'Lola',
       videoSource: 'https://c.tenor.com/iNVJLgItcD8AAAAM/lola-bunny-love.gif',
     },
+    {
+      userName: 'Frajola',
+      videoSource: 'https://c.tenor.com/T2svBtpx5-YAAAAC/frajola-coffee.gif',
+    },
   ];
 
   const actionsBarCtx = useContext(ActionsBarContext);
