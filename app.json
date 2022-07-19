@@ -3,7 +3,7 @@
     "name": "RNProjectTest",
     "slug": "RNProjectTest",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./src/assets/icon.png",
     "userInterfaceStyle": "dark",
     "backgroundColor": "#06172A",

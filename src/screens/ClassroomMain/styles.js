@@ -12,6 +12,13 @@ const ContainerView = styled.SafeAreaView`
   align-items: center;
   justify-content: space-around;
   padding: 10px;
+
+  ${({ landscape }) =>
+    landscape === 'LANDSCAPE' &&
+    `
+    flex-direction: row;
+    justify-content: center;
+  `}
 `;
 
 const ActionsBarContainer = styled.View`
@@ -20,6 +27,13 @@ const ActionsBarContainer = styled.View`
   display: flex;
   justify-content: center;
   align-items: center;
+
+  ${({ landscape }) =>
+    landscape === 'LANDSCAPE' &&
+    `
+      width: 10%;
+      height: 100%;
+  `}
 `;
 
 const ChatContainer = styled.View`
@@ -41,13 +55,27 @@ const PresentationContainer = styled.View`
   height: 30%;
   display: flex;
   align-items: flex-start;
+
+  ${({ landscape }) =>
+    landscape === 'LANDSCAPE' &&
+    `
+      width: 90%;
+      height: 100%;
+  `}
 `;
 
 const ChatBottomSheetContainer = styled.View`
   padding: 24px;
 `;
 
-const ActionsBar = styled(actionsBar)``;
+const ActionsBar = styled(actionsBar)`
+  ${({ landscape }) =>
+    landscape === 'LANDSCAPE' &&
+    `
+      flex-direction: column;
+      display: flex;
+  `}
+`;
 const VideoList = styled(videoList)``;
 const Chat = styled(chat)``;
 const ChatBottomSheet = styled(chatBottomSheet)``;

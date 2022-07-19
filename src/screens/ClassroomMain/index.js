@@ -5,8 +5,10 @@ import Styled from './styles';
 import { ActionsBarContext } from '../../store/context/actions-bar-context';
 import BottomSheetChat from '../../intermediary-components/chat/bottom-sheet-chat';
 import { BottomSheetContext } from '../../store/context/bottom-sheet-context';
+import { useOrientation } from '../../hooks/use-orientation';
 
 const ClassroomMainScreen = () => {
+  // mock data
   const messages = [
     {
       author: 'Gaguinho',
@@ -111,43 +113,83 @@ const ClassroomMainScreen = () => {
     },
   ];
 
+  // variables
   const actionsBarCtx = useContext(ActionsBarContext);
   const bottomSheetCtx = useContext(BottomSheetContext);
   const { actionsBarStatus } = actionsBarCtx;
   const { bottomSheet } = bottomSheetCtx;
+  const orientation = useOrientation();
 
-  return (
-    <SafeAreaView>
-      <Styled.ContainerView>
-        <Styled.VideoListContainer>
-          <Styled.VideoList videoUsers={videoUsers} />
-        </Styled.VideoListContainer>
+  // view components
+  const renderPortraitOrientation = () => {
+    return (
+      <SafeAreaView>
+        <Styled.ContainerView>
+          <Styled.VideoListContainer>
+            <Styled.VideoList videoUsers={videoUsers} />
+          </Styled.VideoListContainer>
 
-        <Styled.PresentationContainer>
-          <Styled.Presentation
-            source={{
-              uri: 'https://fraguru.com/mdimg/dizajneri/o.2101.jpg',
-            }}
-          />
-        </Styled.PresentationContainer>
-
-        <Styled.ChatContainer>
-          {actionsBarStatus.isChatActive && (
-            <Styled.Chat
-              messages={messages}
-              onPressItem={() =>
-                bottomSheetCtx.triggerButton('chatBottomSheet', true)
-              }
+          <Styled.PresentationContainer>
+            <Styled.Presentation
+              source={{
+                uri: 'https://fraguru.com/mdimg/dizajneri/o.2101.jpg',
+              }}
             />
-          )}
-        </Styled.ChatContainer>
-        <Styled.ActionsBarContainer>
-          <Styled.ActionsBar />
-        </Styled.ActionsBarContainer>
-      </Styled.ContainerView>
-      {bottomSheet.chatBottomSheet && <BottomSheetChat messages={messages} />}
-    </SafeAreaView>
-  );
+          </Styled.PresentationContainer>
+
+          <Styled.ChatContainer>
+            {actionsBarStatus.isChatActive && (
+              <Styled.Chat
+                messages={messages}
+                onPressItem={() =>
+                  bottomSheetCtx.triggerButton('chatBottomSheet', true)
+                }
+              />
+            )}
+          </Styled.ChatContainer>
+
+          <Styled.ActionsBarContainer>
+            <Styled.ActionsBar />
+          </Styled.ActionsBarContainer>
+        </Styled.ContainerView>
+        {bottomSheet.chatBottomSheet && <BottomSheetChat messages={messages} />}
+      </SafeAreaView>
+    );
+  };
+
+  const renderLandscapeOrientation = () => {
+    return (
+      <SafeAreaView>
+        <Styled.ContainerView landscape={orientation}>
+          <Styled.PresentationContainer landscape={orientation}>
+            {actionsBarStatus.isChatActive && (
+              <Styled.Chat
+                messages={messages}
+                onPressItem={() =>
+                  bottomSheetCtx.triggerButton('chatBottomSheet', true)
+                }
+              />
+            )}
+            {!actionsBarStatus.isChatActive && (
+              <Styled.Presentation
+                source={{
+                  uri: 'https://fraguru.com/mdimg/dizajneri/o.2101.jpg',
+                }}
+              />
+            )}
+          </Styled.PresentationContainer>
+          <Styled.ActionsBarContainer landscape={orientation}>
+            <Styled.ActionsBar landscape={orientation} />
+          </Styled.ActionsBarContainer>
+        </Styled.ContainerView>
+        {bottomSheet.chatBottomSheet && <BottomSheetChat messages={messages} />}
+      </SafeAreaView>
+    );
+  };
+
+  // return
+  if (orientation === 'PORTRAIT') return renderPortraitOrientation();
+  return renderLandscapeOrientation();
 };
 
 export default ClassroomMainScreen;
