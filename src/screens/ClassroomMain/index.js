@@ -1,9 +1,10 @@
-import React, { useCallback, useContext, useMemo, useRef } from 'react';
+import React, { useContext } from 'react';
 import { SafeAreaView } from 'react-native';
 import Styled from './styles';
 
 import { ActionsBarContext } from '../../store/context/actions-bar-context';
 import BottomSheetChat from '../../intermediary-components/chat/bottom-sheet-chat';
+import { BottomSheetContext } from '../../store/context/bottom-sheet-context';
 
 const ClassroomMainScreen = () => {
   const messages = [
@@ -107,7 +108,9 @@ const ClassroomMainScreen = () => {
   ];
 
   const actionsBarCtx = useContext(ActionsBarContext);
+  const bottomSheetCtx = useContext(BottomSheetContext);
   const { actionsBarStatus } = actionsBarCtx;
+  const { bottomSheet } = bottomSheetCtx;
 
   return (
     <SafeAreaView>
@@ -129,7 +132,7 @@ const ClassroomMainScreen = () => {
             <Styled.Chat
               messages={messages}
               onPressItem={() =>
-                actionsBarCtx.triggerButton('chatBottomSheet', true)
+                bottomSheetCtx.triggerButton('chatBottomSheet', true)
               }
             />
           )}
@@ -138,9 +141,7 @@ const ClassroomMainScreen = () => {
           <Styled.ActionsBar />
         </Styled.ActionsBarContainer>
       </Styled.ContainerView>
-      {actionsBarStatus.chatBottomSheet && (
-        <BottomSheetChat messages={messages} />
-      )}
+      {bottomSheet.chatBottomSheet && <BottomSheetChat messages={messages} />}
     </SafeAreaView>
   );
 };

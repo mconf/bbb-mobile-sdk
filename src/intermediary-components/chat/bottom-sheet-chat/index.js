@@ -1,30 +1,24 @@
 import React, { useCallback, useRef, useMemo, useContext } from 'react';
-import { StyleSheet, View } from 'react-native';
 import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
-import { ActionsBarContext } from '../../../store/context/actions-bar-context';
 import Styled from './styles';
 import UserAvatar from '../../../components/UserAvatar';
-import TextInput from '../../../components/TextInput';
 import IconButtonComponent from '../../../components/IconButton';
+import { BottomSheetContext } from '../../../store/context/bottom-sheet-context';
 
 const BottomSheetChat = (props) => {
   const { messages } = props;
 
-  // hooks
   const sheetRef = useRef(null);
-  const actionsBarCtx = useContext(ActionsBarContext);
+  const bottomSheetCtx = useContext(BottomSheetContext);
 
-  // variables
-  const snapPoints = useMemo(() => ['25%', '60%', '95%'], []);
+  const snapPoints = useMemo(() => ['25%', '95%'], []);
 
-  // callbacks
   const handleSheetChanges = useCallback((index) => {
     if (index === -1) {
-      actionsBarCtx.triggerButton('chatBottomSheet', false);
+      bottomSheetCtx.triggerButton('chatBottomSheet', false);
     }
   }, []);
 
-  // render
   const renderItem = ({ item }) => {
     return (
       <Styled.ContainerItem>

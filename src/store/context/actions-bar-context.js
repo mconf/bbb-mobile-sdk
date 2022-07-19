@@ -7,12 +7,9 @@ export const ActionsBarContext = createContext({
     isAudioActive: false,
     isVideoActive: false,
     isHandActive: false,
-    chatBottomSheet: false,
   },
-  /* eslint-disable no-unused-vars */
+  // eslint-disable-next-line no-unused-vars
   triggerButton: (button) => {},
-  showChatBottomSheet: (value) => {},
-  /* eslint-enable no-unused-vars */
 });
 
 const ActionsBarContextProvider = ({ children }) => {
@@ -22,7 +19,6 @@ const ActionsBarContextProvider = ({ children }) => {
     isAudioActive: false,
     isVideoActive: false,
     isHandActive: false,
-    chatBottomSheet: false,
   });
 
   const triggerButton = (button, value = null) => {
