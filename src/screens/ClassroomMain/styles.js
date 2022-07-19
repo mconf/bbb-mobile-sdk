@@ -4,6 +4,7 @@ import videoList from '../../intermediary-components/videoList';
 import actionsBar from '../../intermediary-components/actionsBar';
 import chat from '../../intermediary-components/chat';
 import chatBottomSheet from '../../intermediary-components/chat/bottom-sheet-chat';
+import iconButton from '../../components/IconButton';
 
 const ContainerView = styled.SafeAreaView`
   width: 100%;
@@ -48,6 +49,12 @@ const VideoListContainer = styled.View`
   height: 20%;
   display: flex;
   align-items: flex-start;
+  ${({ landscape }) =>
+    landscape === 'LANDSCAPE' &&
+    `
+      width: 90%;
+      height: 100%;
+  `}
 `;
 
 const PresentationContainer = styled.View`
@@ -80,6 +87,10 @@ const VideoList = styled(videoList)``;
 const Chat = styled(chat)``;
 const ChatBottomSheet = styled(chatBottomSheet)``;
 const Presentation = styled(presentation)``;
+const SwitchLayoutButton = styled(iconButton)`
+  position: absolute;
+  opacity: 0.7;
+`;
 
 export default {
   ContainerView,
@@ -93,4 +104,5 @@ export default {
   ChatBottomSheetContainer,
   VideoListContainer,
   PresentationContainer,
+  SwitchLayoutButton,
 };

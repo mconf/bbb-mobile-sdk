@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { SafeAreaView } from 'react-native';
 import Styled from './styles';
 
@@ -116,6 +116,7 @@ const ClassroomMainScreen = () => {
   // variables
   const actionsBarCtx = useContext(ActionsBarContext);
   const bottomSheetCtx = useContext(BottomSheetContext);
+  const [switchLandscapeLayout, setSwitchLandscapeLayout] = useState(false);
   const { actionsBarStatus } = actionsBarCtx;
   const { bottomSheet } = bottomSheetCtx;
   const orientation = useOrientation();
@@ -171,11 +172,29 @@ const ClassroomMainScreen = () => {
               />
             )}
             {!actionsBarStatus.isChatActive && (
-              <Styled.Presentation
-                source={{
-                  uri: 'https://fraguru.com/mdimg/dizajneri/o.2101.jpg',
-                }}
-              />
+              <>
+                {switchLandscapeLayout && (
+                  <Styled.Presentation
+                    source={{
+                      uri: 'https://fraguru.com/mdimg/dizajneri/o.2101.jpg',
+                    }}
+                  />
+                )}
+                {!switchLandscapeLayout && (
+                  <Styled.VideoListContainer landscape={orientation}>
+                    <Styled.VideoList videoUsers={videoUsers} />
+                  </Styled.VideoListContainer>
+                )}
+                <Styled.SwitchLayoutButton
+                  icon="animation-play-outline"
+                  iconColor="#667080"
+                  containerColor="#EEF1F4"
+                  animated
+                  onPress={() =>
+                    setSwitchLandscapeLayout((prevState) => !prevState)
+                  }
+                />
+              </>
             )}
           </Styled.PresentationContainer>
           <Styled.ActionsBarContainer landscape={orientation}>
