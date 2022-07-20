@@ -12,6 +12,7 @@ const ActionsBar = (props) => {
   return (
     <Styled.ContainerView style={style}>
       <IconButtonComponent
+        size={32}
         icon={actionsBarStatus.isChatActive ? 'message' : 'message-off'}
         iconColor={actionsBarStatus.isChatActive ? '#FFFFFF' : '#667080'}
         containerColor={actionsBarStatus.isChatActive ? '#003399' : '#EEF1F4'}
@@ -19,6 +20,7 @@ const ActionsBar = (props) => {
         onPress={() => triggerButton('isChatActive')}
       />
       <IconButtonComponent
+        size={32}
         icon={
           actionsBarStatus.isMicrophoneActive ? 'microphone' : 'microphone-off'
         }
@@ -30,6 +32,7 @@ const ActionsBar = (props) => {
         onPress={() => triggerButton('isMicrophoneActive')}
       />
       <IconButtonComponent
+        size={32}
         icon={actionsBarStatus.isAudioActive ? 'headphones' : 'headphones-off'}
         iconColor={actionsBarStatus.isAudioActive ? '#FFFFFF' : '#667080'}
         containerColor={actionsBarStatus.isAudioActive ? '#003399' : '#EEF1F4'}
@@ -37,6 +40,7 @@ const ActionsBar = (props) => {
         onPress={() => triggerButton('isAudioActive')}
       />
       <IconButtonComponent
+        size={32}
         icon={actionsBarStatus.isVideoActive ? 'video' : 'video-off'}
         iconColor={actionsBarStatus.isVideoActive ? '#FFFFFF' : '#667080'}
         containerColor={actionsBarStatus.isVideoActive ? '#003399' : '#EEF1F4'}
@@ -44,6 +48,7 @@ const ActionsBar = (props) => {
         onPress={() => triggerButton('isVideoActive')}
       />
       <IconButtonComponent
+        size={32}
         icon={
           actionsBarStatus.isHandActive
             ? 'hand-back-left-outline'
