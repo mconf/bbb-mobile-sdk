@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native';
 import Styled from './styles';
 
@@ -114,12 +114,18 @@ const ClassroomMainScreen = () => {
   ];
 
   // variables
+  const [switchLandscapeLayout, setSwitchLandscapeLayout] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const actionsBarCtx = useContext(ActionsBarContext);
   const bottomSheetCtx = useContext(BottomSheetContext);
-  const [switchLandscapeLayout, setSwitchLandscapeLayout] = useState(false);
   const { actionsBarStatus } = actionsBarCtx;
   const { bottomSheet } = bottomSheetCtx;
   const orientation = useOrientation();
+
+  // lifecycle methods
+  useEffect(() => {
+    setTimeout(() => setIsLoading(false), 500);
+  }, []);
 
   // view components
   const renderPortraitOrientation = () => {
@@ -210,6 +216,7 @@ const ClassroomMainScreen = () => {
   };
 
   // return
+  if (isLoading) return Styled.renderSkeletonLoading();
   if (orientation === 'PORTRAIT') return renderPortraitOrientation();
   return renderLandscapeOrientation();
 };

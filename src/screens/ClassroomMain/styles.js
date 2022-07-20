@@ -1,4 +1,6 @@
 import styled from 'styled-components/native';
+import ContentLoader, { Rect, Circle } from 'react-content-loader/native';
+import { SafeAreaView } from 'react-native';
 import presentation from '../../intermediary-components/presentation';
 import videoList from '../../intermediary-components/videoList';
 import actionsBar from '../../intermediary-components/actionsBar';
@@ -100,6 +102,94 @@ const SwitchLayoutButton = styled(iconButton)`
   opacity: 0.7;
 `;
 
+// skeleton loading animations
+const renderSkeletonLoading = () => {
+  return (
+    <SafeAreaView>
+      <ContainerView>
+        <VideoListContainer>
+          <VideoListLoading />
+        </VideoListContainer>
+
+        <PresentationContainer>
+          <PresentationLoading />
+        </PresentationContainer>
+
+        <ChatContainer>
+          <ChatLoading />
+        </ChatContainer>
+
+        <ActionsBarContainer>
+          <ActionsBarLoading />
+        </ActionsBarContainer>
+      </ContainerView>
+    </SafeAreaView>
+  );
+};
+
+const ActionsBarLoading = () => (
+  <ContentLoader
+    speed={1}
+    width="100%"
+    height="100%"
+    viewBox="0 0 530 100"
+    backgroundColor="#e6e6e6"
+    foregroundColor="#828282"
+  >
+    <Circle cx="55" cy="53" r="40" />
+    <Circle cx="155" cy="53" r="40" />
+    <Circle cx="255" cy="53" r="40" />
+    <Circle cx="355" cy="53" r="40" />
+    <Circle cx="455" cy="53" r="40" />
+  </ContentLoader>
+);
+
+const VideoListLoading = () => (
+  <ContentLoader
+    speed={1}
+    width="100%"
+    height="100%"
+    viewBox="0 0 310 100"
+    backgroundColor="#e6e6e6"
+    foregroundColor="#828282"
+  >
+    <Rect x="10" y="5" rx="0" ry="0" width="90" height="90" />
+    <Rect x="110" y="5" rx="0" ry="0" width="90" height="90" />
+    <Rect x="210" y="5" rx="0" ry="0" width="90" height="90" />
+  </ContentLoader>
+);
+
+const PresentationLoading = () => (
+  <ContentLoader
+    speed={1}
+    width="100%"
+    height="100%"
+    viewBox="0 0 160 90"
+    backgroundColor="#e6e6e6"
+    foregroundColor="#828282"
+  >
+    <Rect x="0" y="0" rx="0" ry="0" width="160" height="90" />
+  </ContentLoader>
+);
+
+const ChatLoading = () => (
+  <ContentLoader
+    speed={1}
+    width="100%"
+    height="100%"
+    viewBox="0 0 350 160"
+    backgroundColor="#e6e6e6"
+    foregroundColor="#828282"
+  >
+    <Rect x="10" y="10" rx="3" ry="3" width="52" height="5" />
+    <Rect x="10" y="20" rx="3" ry="3" width="238" height="30" />
+    <Rect x="10" y="60" rx="3" ry="3" width="150" height="5" />
+    <Rect x="11" y="70" rx="3" ry="3" width="321" height="30" />
+    <Rect x="10" y="110" rx="3" ry="3" width="100" height="5" />
+    <Rect x="10" y="120" rx="3" ry="3" width="150" height="30" />
+  </ContentLoader>
+);
+
 export default {
   ContainerView,
   Presentation,
@@ -113,4 +203,10 @@ export default {
   VideoListContainer,
   PresentationContainer,
   SwitchLayoutButton,
+  // skeleton loading
+  renderSkeletonLoading,
+  VideoListLoading,
+  PresentationLoading,
+  ChatLoading,
+  ActionsBarLoading,
 };
