@@ -182,7 +182,10 @@ const ClassroomMainScreen = () => {
                 )}
                 {!switchLandscapeLayout && (
                   <Styled.VideoListContainer landscape={orientation}>
-                    <Styled.VideoList videoUsers={videoUsers} />
+                    <Styled.VideoList
+                      videoUsers={videoUsers}
+                      landscape={orientation}
+                    />
                   </Styled.VideoListContainer>
                 )}
                 <Styled.SwitchLayoutButton

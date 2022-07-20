@@ -52,7 +52,7 @@ const VideoListContainer = styled.View`
   ${({ landscape }) =>
     landscape === 'LANDSCAPE' &&
     `
-      width: 90%;
+      width: 100%;
       height: 100%;
   `}
 `;
@@ -83,7 +83,15 @@ const ActionsBar = styled(actionsBar)`
       display: flex;
   `}
 `;
-const VideoList = styled(videoList)``;
+const VideoList = styled(videoList)`
+  ${({ landscape }) =>
+    landscape === 'LANDSCAPE' &&
+    `
+      height: 100%;
+      display: flex;
+      align-items: center;
+  `}
+`;
 const Chat = styled(chat)``;
 const ChatBottomSheet = styled(chatBottomSheet)``;
 const Presentation = styled(presentation)``;
