@@ -3,22 +3,24 @@ import { FlatList } from 'react-native';
 import Styled from './styles';
 
 const Item = (props) => {
-  const { videoUser, landscape } = props;
+  const { videoUser, orientation } = props;
   return (
     <Styled.VideoAvatar
       source={{
         uri: videoUser.item.videoSource,
       }}
       userName={videoUser.item.userName}
-      landscape={landscape}
+      orientation={orientation}
     />
   );
 };
 
 const VideoList = (props) => {
-  const { videoUsers, style, landscape } = props;
+  const { videoUsers, style, orientation } = props;
 
-  const renderItem = (item) => <Item videoUser={item} landscape={landscape} />;
+  const renderItem = (item) => (
+    <Item videoUser={item} orientation={orientation} />
+  );
 
   return (
     <FlatList

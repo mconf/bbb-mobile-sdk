@@ -167,8 +167,8 @@ const ClassroomMainScreen = () => {
   const renderLandscapeOrientation = () => {
     return (
       <SafeAreaView>
-        <Styled.ContainerView landscape={orientation}>
-          <Styled.PresentationContainer landscape={orientation}>
+        <Styled.ContainerView orientation={orientation}>
+          <Styled.PresentationContainer orientation={orientation}>
             {actionsBarStatus.isChatActive && (
               <Styled.Chat
                 messages={messages}
@@ -187,10 +187,10 @@ const ClassroomMainScreen = () => {
                   />
                 )}
                 {!switchLandscapeLayout && (
-                  <Styled.VideoListContainer landscape={orientation}>
+                  <Styled.VideoListContainer orientation={orientation}>
                     <Styled.VideoList
                       videoUsers={videoUsers}
-                      landscape={orientation}
+                      orientation={orientation}
                     />
                   </Styled.VideoListContainer>
                 )}
@@ -206,8 +206,8 @@ const ClassroomMainScreen = () => {
               </>
             )}
           </Styled.PresentationContainer>
-          <Styled.ActionsBarContainer landscape={orientation}>
-            <Styled.ActionsBar landscape={orientation} />
+          <Styled.ActionsBarContainer orientation={orientation}>
+            <Styled.ActionsBar orientation={orientation} />
           </Styled.ActionsBarContainer>
         </Styled.ContainerView>
         {bottomSheet.chatBottomSheet && <BottomSheetChat messages={messages} />}

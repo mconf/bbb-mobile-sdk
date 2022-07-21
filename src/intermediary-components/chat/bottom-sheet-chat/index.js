@@ -41,7 +41,7 @@ const BottomSheetChat = (props) => {
       >
         <BottomSheetFlatList data={messages} renderItem={renderItem} />
         <Styled.SendMessageContainer>
-          <Styled.TextInput />
+          <Styled.TextInput label="Send a message!" />
           <IconButtonComponent
             icon="send"
             iconColor="#FFFFFF"

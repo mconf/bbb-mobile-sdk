@@ -14,8 +14,8 @@ const VideoAvatar = styled(VideoAvatarItem)`
   width: 115px;
   height: 115px;
   margin: 4px;
-  ${({ landscape }) =>
-    landscape === 'LANDSCAPE' &&
+  ${({ orientation }) =>
+    orientation === 'LANDSCAPE' &&
     `
       width: 200px;
       height: 200px;

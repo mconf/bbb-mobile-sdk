@@ -16,8 +16,8 @@ const ContainerView = styled.SafeAreaView`
   justify-content: space-around;
   padding: 10px;
 
-  ${({ landscape }) =>
-    landscape === 'LANDSCAPE' &&
+  ${({ orientation }) =>
+    orientation === 'LANDSCAPE' &&
     `
     flex-direction: row;
     justify-content: center;
@@ -31,8 +31,8 @@ const ActionsBarContainer = styled.View`
   justify-content: center;
   align-items: center;
 
-  ${({ landscape }) =>
-    landscape === 'LANDSCAPE' &&
+  ${({ orientation }) =>
+    orientation === 'LANDSCAPE' &&
     `
       width: 10%;
       height: 100%;
@@ -51,8 +51,8 @@ const VideoListContainer = styled.View`
   height: 20%;
   display: flex;
   align-items: flex-start;
-  ${({ landscape }) =>
-    landscape === 'LANDSCAPE' &&
+  ${({ orientation }) =>
+    orientation === 'LANDSCAPE' &&
     `
       width: 100%;
       height: 100%;
@@ -65,8 +65,8 @@ const PresentationContainer = styled.View`
   display: flex;
   align-items: flex-start;
 
-  ${({ landscape }) =>
-    landscape === 'LANDSCAPE' &&
+  ${({ orientation }) =>
+    orientation === 'LANDSCAPE' &&
     `
       width: 90%;
       height: 100%;
@@ -78,16 +78,16 @@ const ChatBottomSheetContainer = styled.View`
 `;
 
 const ActionsBar = styled(actionsBar)`
-  ${({ landscape }) =>
-    landscape === 'LANDSCAPE' &&
+  ${({ orientation }) =>
+    orientation === 'LANDSCAPE' &&
     `
       flex-direction: column;
       display: flex;
   `}
 `;
 const VideoList = styled(videoList)`
-  ${({ landscape }) =>
-    landscape === 'LANDSCAPE' &&
+  ${({ orientation }) =>
+    orientation === 'LANDSCAPE' &&
     `
       height: 100%;
       display: flex;
