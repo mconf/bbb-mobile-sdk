@@ -101,7 +101,8 @@ const ClassroomMainScreen = () => {
     },
     {
       userName: 'Taz',
-      videoSource: 'https://i.gifer.com/EomP.gif',
+      videoSource:
+        'https://i.pinimg.com/originals/17/48/c1/1748c119990d3b965b138220582b6830.gif',
     },
     {
       userName: 'Lola',
