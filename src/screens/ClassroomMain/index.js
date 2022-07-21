@@ -80,7 +80,7 @@ const ClassroomMainScreen = () => {
     },
     {
       author: 'Pernalonga',
-      message: '...',
+      message: 'Last message',
     },
   ];
 
@@ -148,7 +148,7 @@ const ClassroomMainScreen = () => {
           <Styled.ChatContainer>
             {actionsBarStatus.isChatActive && (
               <Styled.Chat
-                messages={messages}
+                messages={messages.splice(messages.length - 3, messages.length)}
                 onPressItem={() =>
                   bottomSheetCtx.triggerButton('chatBottomSheet', true)
                 }

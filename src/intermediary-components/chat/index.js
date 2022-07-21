@@ -18,6 +18,8 @@ const Item = (props) => {
 
 const Chat = (props) => {
   const { messages, onPressItem } = props;
+  // TODO review this after we get session chat
+  const messagesInverted = messages.reverse();
 
   const renderItem = (item) => (
     <Pressable onPress={onPressItem}>
@@ -25,7 +27,7 @@ const Chat = (props) => {
     </Pressable>
   );
 
-  return <Styled.FlatList data={messages} renderItem={renderItem} />;
+  return <Styled.FlatList data={messagesInverted} renderItem={renderItem} />;
 };
 
 export default Chat;
