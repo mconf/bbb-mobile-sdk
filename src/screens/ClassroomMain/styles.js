@@ -133,8 +133,8 @@ const ActionsBarLoading = () => (
     width="100%"
     height="100%"
     viewBox="0 0 530 100"
-    backgroundColor="#e6e6e6"
-    foregroundColor="#828282"
+    backgroundColor="#6e6e6e"
+    foregroundColor="#505050"
   >
     <Circle cx="55" cy="53" r="40" />
     <Circle cx="155" cy="53" r="40" />
@@ -150,12 +150,12 @@ const VideoListLoading = () => (
     width="100%"
     height="100%"
     viewBox="0 0 310 100"
-    backgroundColor="#e6e6e6"
-    foregroundColor="#828282"
+    backgroundColor="#6e6e6e"
+    foregroundColor="#505050"
   >
-    <Rect x="10" y="5" rx="0" ry="0" width="90" height="90" />
-    <Rect x="110" y="5" rx="0" ry="0" width="90" height="90" />
-    <Rect x="210" y="5" rx="0" ry="0" width="90" height="90" />
+    <Rect x="10" y="5" rx="3" ry="3" width="90" height="90" />
+    <Rect x="110" y="5" rx="3" ry="3" width="90" height="90" />
+    <Rect x="210" y="5" rx="3" ry="3" width="90" height="90" />
   </ContentLoader>
 );
 
@@ -165,10 +165,10 @@ const PresentationLoading = () => (
     width="100%"
     height="100%"
     viewBox="0 0 160 90"
-    backgroundColor="#e6e6e6"
-    foregroundColor="#828282"
+    backgroundColor="#6e6e6e"
+    foregroundColor="#505050"
   >
-    <Rect x="0" y="0" rx="0" ry="0" width="160" height="90" />
+    <Rect x="0" y="0" rx="3" ry="3" width="160" height="90" />
   </ContentLoader>
 );
 
@@ -178,8 +178,8 @@ const ChatLoading = () => (
     width="100%"
     height="100%"
     viewBox="0 0 350 160"
-    backgroundColor="#e6e6e6"
-    foregroundColor="#828282"
+    backgroundColor="#6e6e6e"
+    foregroundColor="#505050"
   >
     <Rect x="10" y="10" rx="3" ry="3" width="52" height="5" />
     <Rect x="10" y="20" rx="3" ry="3" width="238" height="30" />
