@@ -148,7 +148,7 @@ const ClassroomMainScreen = () => {
           <Styled.ChatContainer>
             {actionsBarStatus.isChatActive && (
               <Styled.Chat
-                messages={messages.splice(messages.length - 3, messages.length)}
+                messages={messages.slice(messages.length - 3, messages.length)}
                 onPressItem={() =>
                   bottomSheetCtx.triggerButton('chatBottomSheet', true)
                 }
