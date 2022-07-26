@@ -6,6 +6,7 @@ const ContainerView = styled.SafeAreaView`
   display: flex;
   align-items: center;
   justify-content: center;
+  color: white;
 `;
 
 export default {
