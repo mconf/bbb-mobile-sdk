@@ -10,6 +10,7 @@ import CustomDrawer from './src/components/CustomDrawer';
 import IconButton from './src/components/IconButton';
 import PollScreen from './src/screens/PollScreen';
 import UserNotesScreen from './src/screens/UserNotes';
+import WhiteboardScreen from './src/screens/WhiteboardScreen';
 
 const App = () => {
   const Drawer = createDrawerNavigator();
@@ -105,6 +106,21 @@ const App = () => {
                   drawerIcon: (config) => (
                     <IconButton
                       icon="account-multiple"
+                      size={18}
+                      iconColor={config.color}
+                    />
+                  ),
+                }}
+              />
+
+              <Drawer.Screen
+                name="WhiteboardScreen"
+                component={WhiteboardScreen}
+                options={{
+                  title: 'Quadro Branco',
+                  drawerIcon: (config) => (
+                    <IconButton
+                      icon="brush"
                       size={18}
                       iconColor={config.color}
                     />
