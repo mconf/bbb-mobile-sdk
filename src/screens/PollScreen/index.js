@@ -10,7 +10,8 @@ const PollScreen = () => {
   const orientation = useOrientation();
 
   const createPollView = () => {
-    const [answerType, setAnswerType] = useState([true, false, false, false]);
+    // 'trueOrFalse', 'letters', 'yesOrNo', 'freeText'
+    const [answerTypeSelected, setAnswerTypeSelected] = useState('trueOrFalse');
 
     return (
       <>
@@ -23,33 +24,33 @@ const PollScreen = () => {
         <Styled.AnswerTitle>Tipos de Resposta</Styled.AnswerTitle>
         <Styled.ButtonsContainer>
           <Styled.OptionsButton
-            selected={answerType[0]}
+            selected={answerTypeSelected === 'trueOrFalse'}
             onPress={() => {
-              setAnswerType([true, false, false, false]);
+              setAnswerTypeSelected('trueOrFalse');
             }}
           >
             Verdadeiro / Falso
           </Styled.OptionsButton>
           <Styled.OptionsButton
-            selected={answerType[1]}
+            selected={answerTypeSelected === 'letters'}
             onPress={() => {
-              setAnswerType([false, true, false, false]);
+              setAnswerTypeSelected('letters');
             }}
           >
             A / B / C / D
           </Styled.OptionsButton>
           <Styled.OptionsButton
-            selected={answerType[2]}
+            selected={answerTypeSelected === 'yesOrNo'}
             onPress={() => {
-              setAnswerType([false, false, true, false]);
+              setAnswerTypeSelected('yesOrNo');
             }}
           >
             Sim / Não / Abstenção
           </Styled.OptionsButton>
           <Styled.OptionsButton
-            selected={answerType[3]}
+            selected={answerTypeSelected === 'freeText'}
             onPress={() => {
-              setAnswerType([false, false, false, true]);
+              setAnswerTypeSelected('freeText');
             }}
           >
             Respostas do usuário
@@ -64,44 +65,39 @@ const PollScreen = () => {
   };
 
   const answerPollView = () => {
-    const [selectedAnswer, setSelectedAnswer] = useState([
-      false,
-      false,
-      false,
-      false,
-    ]);
+    const [selectedAnswer, setSelectedAnswer] = useState(0);
     return (
       <>
         <Styled.Title>Você gosta de mamão?</Styled.Title>
         <Styled.ButtonsContainer>
           <Styled.OptionsButton
-            selected={selectedAnswer[0]}
+            selected={selectedAnswer === 0}
             onPress={() => {
-              setSelectedAnswer([true, false, false, false]);
+              setSelectedAnswer(0);
             }}
           >
             Sim
           </Styled.OptionsButton>
           <Styled.OptionsButton
-            selected={selectedAnswer[1]}
+            selected={selectedAnswer === 1}
             onPress={() => {
-              setSelectedAnswer([false, true, false, false]);
+              setSelectedAnswer(1);
             }}
           >
             Se é o que tem pra janta...
           </Styled.OptionsButton>
           <Styled.OptionsButton
-            selected={selectedAnswer[2]}
+            selected={selectedAnswer === 2}
             onPress={() => {
-              setSelectedAnswer([false, false, true, false]);
+              setSelectedAnswer(2);
             }}
           >
             Não
           </Styled.OptionsButton>
           <Styled.OptionsButton
-            selected={selectedAnswer[3]}
+            selected={selectedAnswer === 3}
             onPress={() => {
-              setSelectedAnswer([false, false, false, true]);
+              setSelectedAnswer(3);
             }}
           >
             Odeio
