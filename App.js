@@ -9,6 +9,7 @@ import BottomSheetContextProvider from './src/store/context/bottom-sheet-context
 import CustomDrawer from './src/components/CustomDrawer';
 import IconButton from './src/components/IconButton';
 import PollScreen from './src/screens/PollScreen';
+import UserNotesScreen from './src/screens/UserNotes';
 
 const App = () => {
   const Drawer = createDrawerNavigator();
@@ -53,7 +54,7 @@ const App = () => {
 
               <Drawer.Screen
                 name="SharedNoteScreen"
-                component={TestComponentsScreen}
+                component={UserNotesScreen}
                 options={{
                   title: 'Nota compartilhada',
                   drawerIcon: (config) => (
