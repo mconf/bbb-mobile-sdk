@@ -1,23 +1,31 @@
 import styled from 'styled-components/native';
+import userAvatar from '../../components/UserAvatar';
 
-const ContainerView = styled.SafeAreaView`
+const CardPressable = styled.Pressable`
+  background-color: white;
   width: 100%;
-  height: 100%;
-  display: flex;
+  min-height: 20px;
+  border-radius: 12px;
+  padding: 12px;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
+  margin-bottom: 12px;
 `;
 
-const Card = styled.View`
-  background-color: #ffffff;
-  border-radius: 20px;
+const UserName = styled.Text`
+  color: black;
+  padding-left: 20px;
+  font-size: 16px;
+`;
+
+const UserAvatar = styled(userAvatar)``;
+const FlatList = styled.FlatList`
   padding: 12px;
-  margin: 12px;
-  width: 80%;
-  border: solid 2px blue;
 `;
 
 export default {
-  ContainerView,
-  Card,
+  UserAvatar,
+  UserName,
+  CardPressable,
+  FlatList,
 };
