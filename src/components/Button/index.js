@@ -9,7 +9,7 @@ const PrimaryButton = (props) => {
         onPress={onPress}
         variant={variant}
         // handle "pressed" styled here until styled-components api should let us use inside styles.js
-        style={[({ pressed }) => (pressed ? { opacity: 0.75 } : null), style]}
+        style={({ pressed }) => [pressed ? { opacity: 0.75 } : null]}
       >
         <Styled.ButtonText style={style}>{children}</Styled.ButtonText>
       </Styled.ButtonInnerContainer>

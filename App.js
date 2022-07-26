@@ -8,6 +8,7 @@ import ActionsBarContextProvider from './src/store/context/actions-bar-context';
 import BottomSheetContextProvider from './src/store/context/bottom-sheet-context';
 import CustomDrawer from './src/components/CustomDrawer';
 import IconButton from './src/components/IconButton';
+import PollScreen from './src/screens/PollScreen';
 
 const App = () => {
   const Drawer = createDrawerNavigator();
@@ -82,7 +83,7 @@ const App = () => {
 
               <Drawer.Screen
                 name="PollScreen"
-                component={TestComponentsScreen}
+                component={PollScreen}
                 options={{
                   title: 'Enquete',
                   drawerIcon: (config) => (

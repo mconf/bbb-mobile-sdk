@@ -7,7 +7,6 @@ const ButtonOuterContainer = styled.View`
 `;
 
 const ButtonInnerContainer = styled.Pressable`
-  background-color: ${Colors.blue};
   justify-content: center;
   display: flex;
   border-radius: 12px;
