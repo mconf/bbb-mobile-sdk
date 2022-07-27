@@ -5,7 +5,7 @@ import { WebView } from 'react-native-webview';
 const UserNotesScreen = () => {
   return (
     <View style={{ flex: 1 }}>
-      <WebView source={{ uri: 'https://dark.etherpad.com/' }} />
+      <WebView source={{ uri: 'https://rich.etherpad.com/' }} />
     </View>
   );
 };
