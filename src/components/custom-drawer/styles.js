@@ -1,5 +1,6 @@
 import styled from 'styled-components/native';
 import userAvatar from '../user-avatar';
+import Colors from '../../constants/colors';
 
 const ViewContainer = styled.View`
   flex: 1;
@@ -19,14 +20,14 @@ const UserAvatar = styled(userAvatar)`
 `;
 
 const NameUserAvatar = styled.Text`
-  color: #ffffff;
+  color: ${Colors.white};
   font-size: 18px;
   padding-left: 20px;
 `;
 
 const ContainerDrawerItemList = styled.View`
   flex: 1;
-  background-color: #ffffff;
+  background-color: ${Colors.white};
   padding-top: 10px;
 `;
 
@@ -39,7 +40,7 @@ const ViewLeaveContainer = styled.View`
   align-items: center;
   justify-content: center;
   padding: 12px;
-  background-color: #eef1f4;
+  background-color: ${Colors.lightGray100};
   border-radius: 4px;
 `;
 

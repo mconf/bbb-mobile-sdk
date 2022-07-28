@@ -3,6 +3,7 @@ import { useContext } from 'react';
 import { ActionsBarContext } from '../../store/context/actions-bar-context';
 import IconButtonComponent from '../icon-button';
 import Styled from './styles';
+import Colors from '../../constants/colors';
 
 const ActionsBar = (props) => {
   const { style, orientation } = props;
@@ -15,8 +16,12 @@ const ActionsBar = (props) => {
       <IconButtonComponent
         size={isLandscape ? 24 : 32}
         icon={actionsBarStatus.isChatActive ? 'message' : 'message-off'}
-        iconColor={actionsBarStatus.isChatActive ? '#FFFFFF' : '#667080'}
-        containerColor={actionsBarStatus.isChatActive ? '#003399' : '#EEF1F4'}
+        iconColor={
+          actionsBarStatus.isChatActive ? Colors.white : Colors.lightGray300
+        }
+        containerColor={
+          actionsBarStatus.isChatActive ? Colors.blue : Colors.lightGray100
+        }
         animated
         onPress={() => triggerButton('isChatActive')}
       />
@@ -25,9 +30,15 @@ const ActionsBar = (props) => {
         icon={
           actionsBarStatus.isMicrophoneActive ? 'microphone' : 'microphone-off'
         }
-        iconColor={actionsBarStatus.isMicrophoneActive ? '#FFFFFF' : '#667080'}
+        iconColor={
+          actionsBarStatus.isMicrophoneActive
+            ? Colors.white
+            : Colors.lightGray300
+        }
         containerColor={
-          actionsBarStatus.isMicrophoneActive ? '#003399' : '#EEF1F4'
+          actionsBarStatus.isMicrophoneActive
+            ? Colors.blue
+            : Colors.lightGray100
         }
         animated
         onPress={() => triggerButton('isMicrophoneActive')}
@@ -35,16 +46,24 @@ const ActionsBar = (props) => {
       <IconButtonComponent
         size={isLandscape ? 24 : 32}
         icon={actionsBarStatus.isAudioActive ? 'headphones' : 'headphones-off'}
-        iconColor={actionsBarStatus.isAudioActive ? '#FFFFFF' : '#667080'}
-        containerColor={actionsBarStatus.isAudioActive ? '#003399' : '#EEF1F4'}
+        iconColor={
+          actionsBarStatus.isAudioActive ? Colors.white : Colors.lightGray300
+        }
+        containerColor={
+          actionsBarStatus.isAudioActive ? Colors.blue : Colors.lightGray100
+        }
         animated
         onPress={() => triggerButton('isAudioActive')}
       />
       <IconButtonComponent
         size={isLandscape ? 24 : 32}
         icon={actionsBarStatus.isVideoActive ? 'video' : 'video-off'}
-        iconColor={actionsBarStatus.isVideoActive ? '#FFFFFF' : '#667080'}
-        containerColor={actionsBarStatus.isVideoActive ? '#003399' : '#EEF1F4'}
+        iconColor={
+          actionsBarStatus.isVideoActive ? Colors.white : Colors.lightGray300
+        }
+        containerColor={
+          actionsBarStatus.isVideoActive ? Colors.blue : Colors.lightGray100
+        }
         animated
         onPress={() => triggerButton('isVideoActive')}
       />
@@ -55,8 +74,12 @@ const ActionsBar = (props) => {
             ? 'hand-back-left-outline'
             : 'hand-back-left-off-outline'
         }
-        iconColor={actionsBarStatus.isHandActive ? '#FFFFFF' : '#667080'}
-        containerColor={actionsBarStatus.isHandActive ? '#003399' : '#EEF1F4'}
+        iconColor={
+          actionsBarStatus.isHandActive ? Colors.white : Colors.lightGray300
+        }
+        containerColor={
+          actionsBarStatus.isHandActive ? Colors.blue : Colors.lightGray100
+        }
         animated
         onPress={() => triggerButton('isHandActive')}
       />

@@ -2,6 +2,7 @@ import styled from 'styled-components/native';
 import actionsBar from '../../components/actions-bar';
 import button from '../../components/button';
 import textInput from '../../components/text-input';
+import Colors from '../../constants/colors';
 
 const ContainerView = styled.SafeAreaView`
   width: 100%;
@@ -34,7 +35,7 @@ const ActionsBarContainer = styled.View`
 `;
 
 const ContainerPollCard = styled.ScrollView`
-  background-color: #ffffff;
+  background-color: ${Colors.white};
   width: 100%;
   max-height: 85%;
   border-radius: 12px;
@@ -45,8 +46,8 @@ const ContainerPollCard = styled.ScrollView`
 const ButtonsContainer = styled.View``;
 
 const OptionsButton = styled(button)`
-  background-color: #d4dde4;
-  color: #28282d;
+  background-color: ${Colors.lightGray200}
+  color: ${Colors.lightGray400};
   font-size: 16px;
   font-weight: 400;
   padding: 12px;
@@ -56,12 +57,12 @@ const OptionsButton = styled(button)`
     selected &&
     `
       background-color: #003399;
-      color: #FFFFFF;
+      color: ${Colors.white};
   `}
 `;
 
 const ConfirmButton = styled(button)`
-  background-color: #f18700;
+  background-color: ${Colors.orange};
   color: white;
   font-size: 16px;
   font-weight: 400;

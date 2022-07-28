@@ -1,11 +1,12 @@
 import styled from 'styled-components/native';
+import Colors from '../../constants/colors';
 
 const Background = styled.View`
   width: 52px;
   height: 52px;
   border: white solid 2px;
   border-radius: 50px;
-  background-color: #f18700;
+  background-color: ${Colors.orange};
   display: flex;
   justify-content: center;
   align-items: center;

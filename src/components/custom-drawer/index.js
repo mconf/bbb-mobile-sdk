@@ -3,12 +3,13 @@ import {
   DrawerItemList,
 } from '@react-navigation/drawer';
 import Styled from './styles';
+import Colors from '../../constants/colors';
 
 const CustomDrawer = (props) => (
   <Styled.ViewContainer>
     <DrawerContentScrollView
       {...props}
-      contentContainerStyle={{ backgroundColor: '#003399CC' }}
+      contentContainerStyle={{ backgroundColor: Colors.blue }}
     >
       <Styled.CustomDrawerContainer>
         <Styled.UserAvatar userName="Patolino" />

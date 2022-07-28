@@ -1,6 +1,7 @@
 import styled from 'styled-components/native';
 import userAvatar from '../../user-avatar';
 import textInput from '../../text-input';
+import Colors from '../../../constants/colors';
 
 const Card = styled.View`
   padding: 8px;
@@ -11,14 +12,14 @@ const FlatList = styled.FlatList`
 `;
 
 const MessageAuthor = styled.Text`
-  color: #28282d;
+  color: ${Colors.lightGray400};
   font-weight: 500;
 `;
 
 const UserAvatar = styled(userAvatar)``;
 
 const MessageContent = styled.Text`
-  color: #667080;
+  color: ${Colors.lightGray300};
 `;
 
 const ContainerItem = styled.View`

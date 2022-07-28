@@ -4,6 +4,7 @@ import Styled from './styles';
 import UserAvatar from '../../user-avatar';
 import IconButtonComponent from '../../icon-button';
 import { BottomSheetContext } from '../../../store/context/bottom-sheet-context';
+import Colors from '../../../constants/colors';
 
 const BottomSheetChat = (props) => {
   const { messages } = props;
@@ -44,8 +45,8 @@ const BottomSheetChat = (props) => {
           <Styled.TextInput label="Send a message!" />
           <IconButtonComponent
             icon="send"
-            iconColor="#FFFFFF"
-            containerColor="#003399"
+            iconColor={Colors.white}
+            containerColor={Colors.blue}
             animated
             onPress={() => {}}
           />

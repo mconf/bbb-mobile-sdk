@@ -6,6 +6,7 @@ import { ActionsBarContext } from '../../store/context/actions-bar-context';
 import BottomSheetChat from '../../components/chat/bottom-sheet-chat';
 import { BottomSheetContext } from '../../store/context/bottom-sheet-context';
 import { useOrientation } from '../../hooks/use-orientation';
+import Colors from '../../constants/colors';
 
 const ClassroomMainScreen = () => {
   // mock data
@@ -197,8 +198,8 @@ const ClassroomMainScreen = () => {
                 )}
                 <Styled.SwitchLayoutButton
                   icon="animation-play-outline"
-                  iconColor="#667080"
-                  containerColor="#EEF1F4"
+                  iconColor={Colors.lightGray300}
+                  containerColor={Colors.lightGray100}
                   animated
                   onPress={() =>
                     setSwitchLandscapeLayout((prevState) => !prevState)

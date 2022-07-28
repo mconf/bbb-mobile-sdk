@@ -1,4 +1,5 @@
 import styled from 'styled-components/native';
+import Colors from '../../../constants/colors';
 
 const ContainerView = styled.View`
   height: 120px;
@@ -21,7 +22,7 @@ const NameLabelContainer = styled.View`
   border-radius: 4px;
 `;
 const NameLabel = styled.Text`
-  color: #ffffff;
+  color: ${Colors.white};
 `;
 
 export default { ContainerView, UserAvatar, NameLabel, NameLabelContainer };
