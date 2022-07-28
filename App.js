@@ -1,16 +1,19 @@
 import { StatusBar } from 'expo-status-bar';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
-import TestComponentsScreen from './src/screens/TestComponents';
-import ClassroomMainScreen from './src/screens/ClassroomMain';
-import UserParticipantsScreen from './src/screens/UserParticipants';
+// providers
 import ActionsBarContextProvider from './src/store/context/actions-bar-context';
 import BottomSheetContextProvider from './src/store/context/bottom-sheet-context';
-import CustomDrawer from './src/components/CustomDrawer';
-import IconButton from './src/components/IconButton';
-import PollScreen from './src/screens/PollScreen';
-import UserNotesScreen from './src/screens/UserNotes';
-import WhiteboardScreen from './src/screens/WhiteboardScreen';
+// components
+import CustomDrawer from './src/components/custom-drawer';
+import IconButton from './src/components/icon-button';
+// screens
+import PollScreen from './src/screens/poll-screen';
+import ClassroomMainScreen from './src/screens/classroom-main-screen';
+import UserParticipantsScreen from './src/screens/user-participants-screen';
+import TestComponentsScreen from './src/screens/test-components-screen';
+import UserNotesScreen from './src/screens/user-notes-screen';
+import WhiteboardScreen from './src/screens/whiteboard-screen';
 
 const App = () => {
   const Drawer = createDrawerNavigator();
