@@ -14,6 +14,7 @@ import UserParticipantsScreen from './src/screens/user-participants-screen';
 import TestComponentsScreen from './src/screens/test-components-screen';
 import UserNotesScreen from './src/screens/user-notes-screen';
 import WhiteboardScreen from './src/screens/whiteboard-screen';
+import ManagePresentationScreen from './src/screens/manage-presentation-screen';
 
 const App = () => {
   const Drawer = createDrawerNavigator();
@@ -73,7 +74,7 @@ const App = () => {
 
               <Drawer.Screen
                 name="ConfigPresentationScreen"
-                component={TestComponentsScreen}
+                component={ManagePresentationScreen}
                 options={{
                   title: 'Gerenciar Apresentação',
                   drawerIcon: (config) => (
