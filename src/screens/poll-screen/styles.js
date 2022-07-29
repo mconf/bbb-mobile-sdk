@@ -63,7 +63,7 @@ const OptionsButton = styled(button)`
 
 const ConfirmButton = styled(button)`
   background-color: ${Colors.orange};
-  color: white;
+  color: ${Colors.white};
   font-size: 16px;
   font-weight: 400;
   padding: 12px;

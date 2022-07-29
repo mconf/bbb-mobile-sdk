@@ -1,4 +1,5 @@
 import styled from 'styled-components/native';
+import Colors from '../../constants/colors';
 
 const Card = styled.View`
   background-color: #ffffff4d;
@@ -12,11 +13,11 @@ const FlatList = styled.FlatList`
 `;
 
 const MessageAuthor = styled.Text`
-  color: white;
+  color: ${Colors.white};
 `;
 
 const MessageContent = styled.Text`
-  color: white;
+  color: ${Colors.white};
 `;
 
 export default {

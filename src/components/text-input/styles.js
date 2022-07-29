@@ -8,7 +8,7 @@ const TextInput = styled(TIComponent).attrs({
   activeOutlineColor: Colors.blue,
 })`
   min-width: 50%;
-  background-color: white;
+  background-color: ${Colors.white};
 `;
 
 export default {

@@ -1,8 +1,9 @@
 import styled from 'styled-components/native';
 import userAvatar from '../../components/user-avatar';
+import Colors from '../../constants/colors';
 
 const CardPressable = styled.Pressable`
-  background-color: white;
+  background-color: ${Colors.white};
   width: 100%;
   min-height: 20px;
   border-radius: 12px;
