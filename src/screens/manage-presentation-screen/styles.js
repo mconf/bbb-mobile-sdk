@@ -33,13 +33,13 @@ const ActionsBarContainer = styled.View`
   `}
 `;
 
-const ContainerPresentationCard = styled.ScrollView`
+const ContainerPresentationCard = styled.View`
   background-color: ${Colors.white};
   width: 100%;
-  max-height: 85%;
   border-radius: 12px;
   padding: 12px;
   display: flex;
+  height: 85%;
 `;
 
 const ConfirmButton = styled(button)`
