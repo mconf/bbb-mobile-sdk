@@ -7,6 +7,9 @@ import Styled from './styles';
 
 const ManagePresentationScreen = () => {
   const orientation = useOrientation();
+  const [activePresentation, setActivePresentation] = useState(
+    'http://www.africau.edu/images/default/sample.pdf'
+  );
   const [documents, setDocuments] = useState([
     {
       mimeType: 'application/pdf',
@@ -17,17 +20,21 @@ const ManagePresentationScreen = () => {
     },
   ]);
 
-  const pickDocument = async () => {
+  const handlePickDocument = async () => {
     const result = await DocumentPicker.getDocumentAsync({});
     if (result.type === 'cancel') return;
 
     setDocuments((oldArray) => [...oldArray, result]);
   };
 
-  const removeDocument = (item) => {
+  const handleRemoveDocument = (item) => {
     setDocuments((oldArray) =>
       oldArray.filter((document) => document.uri !== item.uri)
     );
+  };
+
+  const handleSetActiveDocument = (item) => {
+    setActivePresentation(item.uri);
   };
 
   const renderItem = ({ item }) => (
@@ -37,17 +44,22 @@ const ManagePresentationScreen = () => {
         <Styled.FileNameText>{item.name}</Styled.FileNameText>
       </Styled.ContainerFileView>
       <Styled.ContainerButtonView>
-        <IconButton icon="download" size={16} onPress={() => {}} />
         <IconButton
-          icon="check"
+          icon={
+            item.uri === activePresentation
+              ? 'check'
+              : 'checkbox-blank-circle-outline'
+          }
           size={16}
-          iconColor="green"
-          onPress={() => {}}
+          iconColor={item.uri === activePresentation ? 'green' : 'gray'}
+          onPress={() => handleSetActiveDocument(item)}
+          animated
         />
+        <IconButton icon="download" size={16} onPress={() => {}} />
         <IconButton
           icon="delete"
           size={16}
-          onPress={() => removeDocument(item)}
+          onPress={() => handleRemoveDocument(item)}
         />
       </Styled.ContainerButtonView>
     </Styled.ContainerPresentationList>
@@ -59,7 +71,7 @@ const ManagePresentationScreen = () => {
         <Styled.ContainerPresentationCard>
           <Styled.Title>Apresentações disponíveis</Styled.Title>
           <FlatList data={documents} renderItem={renderItem} />
-          <Styled.ConfirmButton onPress={pickDocument}>
+          <Styled.ConfirmButton onPress={handlePickDocument}>
             Adicionar arquivo
           </Styled.ConfirmButton>
         </Styled.ContainerPresentationCard>
