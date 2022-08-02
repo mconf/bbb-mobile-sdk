@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FlatList, SafeAreaView } from 'react-native';
+import { FlatList, SafeAreaView, Alert } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import { useOrientation } from '../../hooks/use-orientation';
 import IconButton from '../../components/icon-button';
@@ -55,7 +55,16 @@ const ManagePresentationScreen = () => {
           onPress={() => handleSetActiveDocument(item)}
           animated
         />
-        <IconButton icon="download" size={16} onPress={() => {}} />
+        <IconButton
+          icon="download"
+          size={16}
+          onPress={() =>
+            Alert.alert(
+              'Currently under development',
+              'This feature will be addressed soon, please check out our github page'
+            )
+          }
+        />
         <IconButton
           icon="delete"
           size={16}
