@@ -1,7 +1,9 @@
 import styled from 'styled-components/native';
+import { css } from 'styled-components';
 import Colors from '../../../constants/colors';
+import Pressable from '../../pressable';
 
-const ContainerView = styled.View`
+const ContainerPressable = styled.Pressable`
   height: 120px;
   width: 120px;
 `;
@@ -25,4 +27,25 @@ const NameLabel = styled.Text`
   color: ${Colors.white};
 `;
 
-export default { ContainerView, UserAvatar, NameLabel, NameLabelContainer };
+const PressableButton = styled(Pressable).attrs(() => ({
+  pressStyle: {
+    opacity: 0.8,
+  },
+}))`
+  ${() => css`
+    flex-direction: row;
+    background-color: #28282d99;
+    border-radius: 4px;
+    position: absolute;
+    margin: 8px;
+    align-items: center;
+  `}
+`;
+
+export default {
+  ContainerPressable,
+  UserAvatar,
+  NameLabel,
+  NameLabelContainer,
+  PressableButton,
+};
