@@ -7,7 +7,7 @@ const VideoAvatarItem = (props) => {
     <Styled.ContainerView style={style}>
       <Styled.UserAvatar source={source} />
       <Styled.NameLabelContainer>
-        <Styled.NameLabel>{userName}</Styled.NameLabel>
+        <Styled.NameLabel numberOfLines={1}>{userName}</Styled.NameLabel>
       </Styled.NameLabelContainer>
     </Styled.ContainerView>
   );

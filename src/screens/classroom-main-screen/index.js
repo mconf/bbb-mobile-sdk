@@ -87,7 +87,7 @@ const ClassroomMainScreen = () => {
 
   const videoUsers = [
     {
-      userName: 'Gaguinho',
+      userName: 'Gaguinho da Silva Sauro',
       videoSource: 'https://c.tenor.com/j1vcQTkMQroAAAAM/annoyed-porky-pig.gif',
     },
     {
