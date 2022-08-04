@@ -1,6 +1,8 @@
 import styled from 'styled-components/native';
+import { css } from 'styled-components';
 import userAvatar from '../user-avatar';
 import Colors from '../../constants/colors';
+import Pressable from '../pressable';
 
 const ViewContainer = styled.View`
   flex: 1;
@@ -32,8 +34,15 @@ const ContainerDrawerItemList = styled.View`
 `;
 
 const ContainerCustomButtons = styled.View``;
-const ButtonLeaveContainer = styled.TouchableOpacity`
-  padding: 16px;
+
+const ButtonLeaveContainer = styled(Pressable).attrs(() => ({
+  pressStyle: {
+    opacity: 0.8,
+  },
+}))`
+  ${() => css`
+    padding: 16px;
+  `}
 `;
 
 const ViewLeaveContainer = styled.View`
