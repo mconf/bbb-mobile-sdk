@@ -42,10 +42,11 @@ const PressableButton = styled(Pressable).attrs(() => ({
 }))`
   ${() => css`
     flex-direction: row;
+    width: 100%;
+    border: 6px solid #ffffff00;
     background-color: #28282d99;
-    border-radius: 4px;
+    border-radius: 8px;
     position: absolute;
-    margin: 8px;
     align-items: center;
   `}
 `;
