@@ -1,4 +1,3 @@
-import { Pressable } from 'react-native';
 import Styled from './styles';
 
 const Item = (props) => {
@@ -21,9 +20,9 @@ const Chat = (props) => {
   const messagesInverted = messages.reverse();
 
   const renderItem = (item) => (
-    <Pressable onPress={onPressItem}>
+    <Styled.ChatContainerPressable onPress={onPressItem}>
       <Item messageObject={item} />
-    </Pressable>
+    </Styled.ChatContainerPressable>
   );
 
   return <Styled.FlatList data={messagesInverted} renderItem={renderItem} />;

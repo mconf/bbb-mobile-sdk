@@ -1,5 +1,7 @@
 import styled from 'styled-components/native';
+import { css } from 'styled-components';
 import Colors from '../../constants/colors';
+import Pressable from '../pressable';
 
 const Card = styled.View`
   background-color: #ffffff4d;
@@ -20,9 +22,18 @@ const MessageContent = styled.Text`
   color: ${Colors.white};
 `;
 
+const ChatContainerPressable = styled(Pressable).attrs(() => ({
+  pressStyle: {
+    opacity: 0.8,
+  },
+}))`
+  ${() => css``}
+`;
+
 export default {
   Card,
   FlatList,
   MessageAuthor,
   MessageContent,
+  ChatContainerPressable,
 };
