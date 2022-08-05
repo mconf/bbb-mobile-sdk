@@ -3,9 +3,17 @@ import { css } from 'styled-components';
 import Colors from '../../../constants/colors';
 import Pressable from '../../pressable';
 
-const ContainerPressable = styled.Pressable`
-  height: 120px;
-  width: 120px;
+const ContainerPressable = styled(Pressable).attrs(() => ({
+  pressStyle: {
+    opacity: 0.8,
+    borderColor: '#FFFFFF00',
+    borderWidth: 1,
+  },
+}))`
+  ${() => css`
+    height: 120px;
+    width: 120px;
+  `}
 `;
 
 const UserAvatar = styled.Image`
