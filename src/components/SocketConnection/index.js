@@ -1,68 +1,78 @@
-import React, { useEffect, useState } from 'react';
-import { Text, View } from 'react-native';
-import TextInput from '../TextInput';
-
+import {
+  getRandomDigits,
+  getRandomHex,
+  getRandomAlphanumericWithCaps,
+  getRandomAlphanumeric,
+  decodeMessage
+} from './utils';
 import 'react-native-url-polyfill/auto';
 
-import tough from 'tough-cookie';
+import { UserModule } from './modules/user';
+import { MeetingModule } from './modules/meeting';
+import { ChatModule } from './modules/chat';
 
-export const cookiejar = new tough.CookieJar();
+import React, { useEffect, useState } from 'react';
+import { Text, View, StyleSheet } from 'react-native';
+import TextInput from '../TextInput';
 
-async function customFetch(url, opts = {}) {
-  const cookies = await new Promise((rs, rj) => {
-    cookiejar.getCookies(url, (err, cookies) => {
-      if (err) {
-        rj(err);
-        return;
-      }
+const sendMessage = (ws, msgObj) => {
+  const msg = JSON.stringify(msgObj).replace(/"/g, '\\"');
 
-      rs(cookies || []);
-    });
-  });
-
-  const response = await fetch(url, {
-    ...opts,
-    headers: {
-      ...opts.headers,
-      cookies,
-    },
-  });
-
-  if (response.headers['set-cookie']) {
-    await new Promise((rs, rj) => {
-      cookiejar.setCookie(
-        response.headers['set-cookie'],
-        url,
-        (e, s) => {
-          if (e) {
-            rj(e);
-            return;
-          }
-
-          rs(s);
-        }
-      );
-    });
-  }
-
-  return response;
-}
-
-const sendMessage = (ws, msgObject) => {
-  const msg = JSON.stringify([msgObject]);
-  ws.send(msg);
-}
-
-const sendConnectMsg = (ws) => {
-  sendMessage({msg: 'connect', version: '1', support: ["1", "pre2", "pre1"]});
+  ws.send('[\"' + msg + '\"]');
 };
 
-const sendValidationMsg = (ws) => {
+const sendConnectMsg = (ws) => {
+  sendMessage(ws, {msg: 'connect', version: '1', support: ["1", "pre2", "pre1"]});
+};
 
-}
+const reAuthenticateUser = (ws) => {
+  sendMessage(ws, {
+    "msg": "sub",
+    "id": getRandomAlphanumericWithCaps(17),
+    "name": "current-user",
+    "params": [],
+  });
+};
 
-const processMessages = (ws) => {
+const sendValidationMsg = (ws, meetingData) => {
+  const { meetingID, internalUserID, authToken } = meetingData;
+  const msg = {
+    msg: 'method',
+    method: 'validateAuthToken',
+    id: getRandomAlphanumeric(32),
+    params: [ meetingID, internalUserID, authToken ],
+  };
 
+  sendMessage(ws, msg);
+};
+
+const Sender = (ws) => {
+  return {
+    subscribeMsg: (collection) => {
+      const id = getRandomAlphanumeric(17);
+      sendMessage(ws, {
+        msg: "sub",
+        id,
+        name: collection,
+        params: []
+      });
+      return id;
+    },
+    unsubscribeMsg: (collection, id) => {
+      sendMessage(ws, {
+        msg: "unsub",
+        id,
+      });
+    },
+    sendMessage,
+  };
+};
+
+const makeWS = (joinUrl) => {
+  const url = new URL(joinUrl);
+  const wsUrl = `wss://${url.host}/html5client/sockjs/${getRandomDigits(3)}/${getRandomAlphanumeric(8)}/websocket`;
+
+  return new WebSocket(wsUrl);
 };
 
 const makeEnterUrl = (joinUrl) => {
@@ -72,43 +82,170 @@ const makeEnterUrl = (joinUrl) => {
   return `${url.protocol}//${url.host}/bigbluebutton/api/enter?sessionToken=${params.get('sessionToken')}`;
 };
 
-const makeWS = (joinUrl) => {
-  const wsUrl = `wss://${url.host}/html5client/sockjs/123/abcdefgh/websocket`;
-
-  const ws = new WebSocket(wsUrl);
-};
-
 const getMeetingData = async (joinUrl) => {
-  const joinResp = await customFetch(joinUrl, {
+  const joinResp = await fetch(joinUrl, {
     method: 'GET',
-    credentials: 'include',
-    withCredentials: true,
   });
-
-  console.log('----====', joinResp.url);
-  console.log(joinResp.headers);
-  console.log('---=====');
-  console.log(Object.keys(joinResp));
 
   const html5join = joinResp.url;
-  // should be here, but it's not
-  const cookie = joinResp.headers['set-cookie']?.SESSIONID;
+  const enterUrl = makeEnterUrl(html5join);
+  const enterResp = await fetch(enterUrl).then((r) => r.json());
 
-  const enterResp = await fetch(makeEnterUrl(html5join), {
-    headers: {
-      cookies: `SESSIONID=${cookie}`,
-    }
-  });
-
-  console.log(enterResp);
-
-  return enterResp.body;
+  return enterResp.response;
 };
 
+const processMessage = (ws, msgObj, meetingData, modules, setModules) => {
+  console.log(msgObj);
+  switch (msgObj.msg) {
+    case "connected": {
+      sendValidationMsg(ws, meetingData);
+      break;
+    }
+
+    case "ping": {
+      sendMessage(ws, {msg: 'pong'});
+      break;
+    }
+
+    case "result": {
+      setModules(setupModules(ws));
+      break;
+    }
+
+    case "added": {
+      const currentModule = modules[msgObj.collection];
+      if (currentModule) {
+        currentModule.add(msgObj.fields);
+      }
+
+      break;
+    }
+
+    case "removed": {
+      const currentModule = modules[msgObj.collection];
+      if (currentModule) {
+        currentModule.remove(msgObj.id);
+      }
+
+      break;
+    }
+
+    case "changed": {
+      const currentModule = modules[msgObj.collection];
+      if (currentModule) {
+        currentModule.update(msgObj.id, msgObj.fields);
+      }
+
+      break;
+    }
+
+    case "updated": {
+      console.log("what to do with update");
+      break;
+    }
+  }
+}
+
+/// Set up the web socket modules.
+const setupModules = (ws) => {
+  const messageSender = new Sender(ws);
+
+  const chatModule = new ChatModule(messageSender);
+
+  const modules = {
+    users: new UserModule(messageSender),
+    meetings: new MeetingModule(messageSender),
+    // "ping": PingModule(messageSender),
+    // "video": VideoModule(messageSender, _meetingInfo, userModule),
+    // "user": userModule,
+    "group-chat": chatModule,
+    "group-chat-msg": chatModule,
+    "users-typing": chatModule,
+    // "presentation": PresentationModule(messageSender, _meetingInfo),
+    // "poll": PollModule(messageSender),
+    // "call": CallModule(messageSender, _meetingInfo, _provider),
+    // "voiceUsers":
+    //     VoiceUsersModule(messageSender, _meetingInfo, userModule, _provider),
+    // "voiceCallState": VoiceCallStatesModule(messageSender, _provider),
+  };
+
+  for (var moduleName in modules) {
+    if (modules.hasOwnProperty(moduleName)) {
+      modules[moduleName].onConnected();
+    }
+  }
+
+  return modules;
+}
+
+const tearDownModules = (ws) => {
+  for (var moduleName in modules) {
+    if (modules.hasOwnProperty(moduleName)) {
+      modules[moduleName].onDisconnected();
+    }
+  }
+};
+
+const logout = (ws, meetingData, modules) => {
+  if (ws) {
+    sendMessage(ws, {
+      msg: "method",
+      method: "userLeftMeeting",
+      params: [],
+    });
+
+    for (var moduleName in modules) {
+      if (modules.hasOwnProperty(moduleName)) {
+        modules[moduleName].onDisconnectedBeforeWebsocketClose();
+      }
+    }
+
+    ws.close(0);
+  }
+
+  if (Object.keys(meetingData).length) {
+    fetch(meetingData.logoutUrl);
+  }
+}
 
 const SocketConnectionComponent = (props) => {
   const [joinUrl, setJoinUrl] = useState('');
   const [meetingData, setMeetingData] = useState({});
+  const [websocket, setWebsocket] = useState(null);
+  const [modules, setModules] = useState({});
+
+  const onOpen = () => {};
+  const onClose = (reason) => {
+    console.log(`Main websocket connection closed.`);
+
+    tearDownModules(websocket, modules);
+  };
+
+  const onMessage = (ws, event) => {
+    let msg = event.data;
+
+    if (msg == "o") {
+      sendConnectMsg(ws);
+    } else {
+      if (msg.startsWith("a")) {
+        msg = msg.substring(1, msg.length);
+      }
+      const msgObj = decodeMessage(msg);
+
+      if (Object.keys(msgObj).length) {
+        processMessage(ws, msgObj, meetingData, modules, setModules);
+      }
+    }
+
+  };
+
+  useEffect(() => {
+    console.log("Component Will Mount");
+    return () => {
+      console.log("Component Will Unmount")
+      logout(websocket, meetingData);
+    }
+  }, [])
 
   useEffect(() => {
     async function getData() {
@@ -116,51 +253,43 @@ const SocketConnectionComponent = (props) => {
         return;
       }
 
-      console.log("get data");
-      // const resp = await getMeetingData(joinUrl);
-      // console.log(resp);
-
-      console.log(joinUrl);
-      getMeetingData(joinUrl);
-      // setMeetingData(resp);
+      const resp = await getMeetingData(joinUrl);
+      setMeetingData(resp);
     };
     getData();
   }, [joinUrl]);
 
-  // const meetingData = await getMeetingData(joinUrl)
+  useEffect(() => {
+    if (meetingData && Object.keys(meetingData).length) {
+      const ws = makeWS(joinUrl);
 
-  // const { meetingID, internalUserID, authToken } = meetingData;
+      ws.onopen = onOpen;
+      ws.onclose = onClose;
+      ws.onmessage = (msg) => onMessage(ws, msg);
 
-  // const ws = makeWS(joinUrl);
-
-  // conectar ao socket
-  // sendConnectMsg(ws);
-  // echo.'["{.\"msg\":.\"connect\",.\"version\":.\"1\",.\"support\":.[\"1\",.\"pre2\",.\"pre1\"].}"]'
-  //
-  // responder aos pong
-  // echo.'["{.\"msg\":.\"pong\".}"]'
-  //
-  // Conectar no socket da meeting
-  // echo.'["{\"msg\":.\"method\",.\"method\":.\"validateAuthToken\",.\"id\":.\"0123456789abcdef0123456789abcdef\",
-  // \"params\":.[\"'$MEETING_ID'\",.\"'$USER_ID'\",.\"'$AUTH_TOKEN'\".].}"]'
-  //
-  // subscribe na coleção de users
-  // echo.'["{\"msg\":.\"sub\",.\"id\":.\"0123456789abcdefg\",.\"name\":.\"users\",.\"params\":.[].}"]'
-  //
-
+      setWebsocket(ws);
+    }
+  }, [joinUrl, meetingData]);
 
   return (
-    <>
-      <TextInput
-      placeholder="Join URL"
-      onChangeText={join => setJoinUrl(join)}
-      defaultValue={joinUrl}
-     />
-      <Text>
+    <View>
+      <Text style={styles.data}>
         {JSON.stringify(meetingData)}
       </Text>
-    </>
+      {}
+      <TextInput
+        placeholder="Join URL"
+        onChangeText={join => setJoinUrl(join)}
+        defaultValue={joinUrl}
+     />
+    </View>
   )
 };
+
+const styles = StyleSheet.create({
+  data : {
+    color: 'white',
+  },
+});
 
 export default SocketConnectionComponent;
