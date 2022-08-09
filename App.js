@@ -1,16 +1,20 @@
 import { StatusBar } from 'expo-status-bar';
-import {
-  createDrawerNavigator,
-  DrawerContentScrollView,
-  DrawerItem,
-  DrawerItemList,
-} from '@react-navigation/drawer';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
-import TestComponentsScreen from './src/screens/TestComponents';
-import ClassroomMainScreen from './src/screens/ClassroomMain';
-import UserParticipantsScreen from './src/screens/UserParticipants';
+// providers
 import ActionsBarContextProvider from './src/store/context/actions-bar-context';
 import BottomSheetContextProvider from './src/store/context/bottom-sheet-context';
+// components
+import CustomDrawer from './src/components/custom-drawer';
+import IconButton from './src/components/icon-button';
+// screens
+import PollScreen from './src/screens/poll-screen';
+import ClassroomMainScreen from './src/screens/classroom-main-screen';
+import UserParticipantsScreen from './src/screens/user-participants-screen';
+import TestComponentsScreen from './src/screens/test-components-screen';
+import UserNotesScreen from './src/screens/user-notes-screen';
+import WhiteboardScreen from './src/screens/whiteboard-screen';
+import ManagePresentationScreen from './src/screens/manage-presentation-screen';
 
 const App = () => {
   const Drawer = createDrawerNavigator();
@@ -20,14 +24,7 @@ const App = () => {
         <BottomSheetContextProvider>
           <NavigationContainer>
             <Drawer.Navigator
-              drawerContent={(props) => {
-                return (
-                  <DrawerContentScrollView {...props}>
-                    <DrawerItemList {...props} />
-                    <DrawerItem label="Logout" onPress={() => {}} />
-                  </DrawerContentScrollView>
-                );
-              }}
+              drawerContent={(props) => <CustomDrawer {...props} />}
               screenOptions={{
                 contentOptions: {
                   style: {
@@ -50,14 +47,58 @@ const App = () => {
                 component={ClassroomMainScreen}
                 options={{
                   title: 'Sala de aula',
+                  drawerIcon: (config) => (
+                    <IconButton
+                      icon="home"
+                      size={18}
+                      iconColor={config.color}
+                    />
+                  ),
                 }}
               />
 
               <Drawer.Screen
-                name="ProfileScreen"
-                component={TestComponentsScreen}
+                name="SharedNoteScreen"
+                component={UserNotesScreen}
                 options={{
-                  title: 'Teste',
+                  title: 'Nota compartilhada',
+                  drawerIcon: (config) => (
+                    <IconButton
+                      icon="file-document"
+                      size={18}
+                      iconColor={config.color}
+                    />
+                  ),
+                }}
+              />
+
+              <Drawer.Screen
+                name="ConfigPresentationScreen"
+                component={ManagePresentationScreen}
+                options={{
+                  title: 'Gerenciar Apresentação',
+                  drawerIcon: (config) => (
+                    <IconButton
+                      icon="presentation"
+                      size={18}
+                      iconColor={config.color}
+                    />
+                  ),
+                }}
+              />
+
+              <Drawer.Screen
+                name="PollScreen"
+                component={PollScreen}
+                options={{
+                  title: 'Enquete',
+                  drawerIcon: (config) => (
+                    <IconButton
+                      icon="chart-box"
+                      size={18}
+                      iconColor={config.color}
+                    />
+                  ),
                 }}
               />
 
@@ -66,6 +107,28 @@ const App = () => {
                 component={UserParticipantsScreen}
                 options={{
                   title: 'Lista de participantes',
+                  drawerIcon: (config) => (
+                    <IconButton
+                      icon="account-multiple"
+                      size={18}
+                      iconColor={config.color}
+                    />
+                  ),
+                }}
+              />
+
+              <Drawer.Screen
+                name="WhiteboardScreen"
+                component={WhiteboardScreen}
+                options={{
+                  title: 'Quadro Branco',
+                  drawerIcon: (config) => (
+                    <IconButton
+                      icon="brush"
+                      size={18}
+                      iconColor={config.color}
+                    />
+                  ),
                 }}
               />
             </Drawer.Navigator>

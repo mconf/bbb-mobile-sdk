@@ -1,7 +1,8 @@
 {
   "expo": {
-    "name": "RNProjectTest",
-    "slug": "RNProjectTest",
+    "name": "bbbmobile",
+    "slug": "bbbmobile",
+    "owner": "maxfranke",
     "version": "1.0.0",
     "orientation": "default",
     "icon": "./src/assets/icon.png",
@@ -19,13 +20,17 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "usesIcloudStorage": true,
+      "bundleIdentifier": "com.bbb.bbbmobile"
     },
+    "plugins": ["expo-document-picker"],
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.maxfranke.bbbmobile"
     },
     "web": {
       "favicon": "./src/assets/favicon.png"
