@@ -1,19 +1,18 @@
+import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { Text, View, StyleSheet } from 'react-native';
+import { UserModule } from './modules/user';
+import { ChatModule } from './modules/chat';
+import { MeetingModule } from './modules/meeting';
 import {
   getRandomDigits,
-  getRandomHex,
   getRandomAlphanumericWithCaps,
   getRandomAlphanumeric,
-  decodeMessage
+  decodeMessage,
 } from './utils';
 import 'react-native-url-polyfill/auto';
-
-import { UserModule } from './modules/user';
-import { MeetingModule } from './modules/meeting';
-import { ChatModule } from './modules/chat';
-
-import React, { useEffect, useState } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
-import TextInput from '../TextInput';
+import TextInput from '../text-input';
+import { addUser, removeUser } from '../../store/redux/users';
 
 const sendMessage = (ws, msgObj) => {
   const msg = JSON.stringify(msgObj).replace(/"/g, '\\"');
@@ -94,7 +93,14 @@ const getMeetingData = async (joinUrl) => {
   return enterResp.response;
 };
 
-const processMessage = (ws, msgObj, meetingData, modules, setModules) => {
+const processMessage = (
+  ws,
+  msgObj,
+  meetingData,
+  modules,
+  setModules,
+  dispatch
+) => {
   console.log(msgObj);
   switch (msgObj.msg) {
     case "connected": {
@@ -112,7 +118,15 @@ const processMessage = (ws, msgObj, meetingData, modules, setModules) => {
       break;
     }
 
-    case "added": {
+    // something added
+    case 'added': {
+      if (msgObj.collection === 'users') {
+        dispatch(
+          addUser({
+            userObject: msgObj,
+          })
+        );
+      }
       const currentModule = modules[msgObj.collection];
       if (currentModule) {
         currentModule.add(msgObj.fields);
@@ -121,12 +135,18 @@ const processMessage = (ws, msgObj, meetingData, modules, setModules) => {
       break;
     }
 
-    case "removed": {
+    case 'removed': {
+      if (msgObj.collection === 'users') {
+        dispatch(
+          removeUser({
+            userObject: msgObj,
+          })
+        );
+      }
       const currentModule = modules[msgObj.collection];
       if (currentModule) {
         currentModule.remove(msgObj.id);
       }
-
       break;
     }
 
@@ -143,8 +163,12 @@ const processMessage = (ws, msgObj, meetingData, modules, setModules) => {
       console.log("what to do with update");
       break;
     }
+
+    default: {
+      console.log('default case');
+    }
   }
-}
+};
 
 /// Set up the web socket modules.
 const setupModules = (ws) => {
@@ -214,6 +238,8 @@ const SocketConnectionComponent = (props) => {
   const [websocket, setWebsocket] = useState(null);
   const [modules, setModules] = useState({});
 
+  const dispatch = useDispatch();
+
   const onOpen = () => {};
   const onClose = (reason) => {
     console.log(`Main websocket connection closed.`);
@@ -233,10 +259,9 @@ const SocketConnectionComponent = (props) => {
       const msgObj = decodeMessage(msg);
 
       if (Object.keys(msgObj).length) {
-        processMessage(ws, msgObj, meetingData, modules, setModules);
+        processMessage(ws, msgObj, meetingData, modules, setModules, dispatch);
       }
     }
-
   };
 
   useEffect(() => {
@@ -273,21 +298,21 @@ const SocketConnectionComponent = (props) => {
 
   return (
     <View>
-      <Text style={styles.data}>
-        {JSON.stringify(meetingData)}
-      </Text>
+      <Text style={styles.data}>{JSON.stringify(meetingData)}</Text>
       {}
-      <TextInput
-        placeholder="Join URL"
-        onChangeText={join => setJoinUrl(join)}
-        defaultValue={joinUrl}
-     />
+      <View style={{ height: '20%' }}>
+        <TextInput
+          placeholder="Join URL"
+          onChangeText={(join) => setJoinUrl(join)}
+          defaultValue={joinUrl}
+        />
+      </View>
     </View>
-  )
+  );
 };
 
 const styles = StyleSheet.create({
-  data : {
+  data: {
     color: 'white',
   },
 });

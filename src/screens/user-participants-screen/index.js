@@ -1,26 +1,33 @@
 import { Alert } from 'react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Menu, Provider } from 'react-native-paper';
 import { useOrientation } from '../../hooks/use-orientation';
 import Styled from './styles';
 
 const UserParticipantsScreen = () => {
-  const userListNames = [
-    'Patolino',
-    'Gaguinho',
-    'Pernalonga',
-    'Taz',
-    'Lola',
-    'Frajola',
-    'Gaguinho',
-    'Pernalonga',
-    'Taz',
-    'Lola',
-    'Frajola',
-  ];
+  const [userListNames, setUserListNames] = useState([]);
 
+  const usersCollection = useSelector((state) => state.usersCollection);
   const [showMenu, setShowMenu] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState({ x: 0, y: 0 });
+
+  // TODO auxiliary function, move to /utils/ folder
+  const objectMap = (obj, callback) =>
+    Object.fromEntries(
+      Object.entries(obj).map(([key, value], idx) => [
+        key,
+        callback(value, key, idx),
+      ])
+    );
+
+  useEffect(() => {
+    setUserListNames(
+      Object.values(
+        objectMap(usersCollection.usersCollection, (v) => v.fields.userId)
+      )
+    );
+  }, [usersCollection]);
 
   const orientation = useOrientation();
 

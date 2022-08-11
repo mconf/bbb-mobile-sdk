@@ -1,14 +1,15 @@
+import React from 'react';
 import { SafeAreaView } from 'react-native';
 
 import Styled from './styles';
-import ActionsBar from '../../components/actions-bar';
-import VideoAvatarItem from '../../components/video/video-avatar-item';
-import VideoList from '../../components/video/video-list';
-import Presentation from '../../components/presentation';
+
+import SocketConnection from '../../components/SocketConnection';
 
 const TestComponentsScreen = () => (
   <SafeAreaView>
-    <Styled.ContainerView></Styled.ContainerView>
+    <Styled.ContainerView>
+      <SocketConnection />
+    </Styled.ContainerView>
   </SafeAreaView>
 );
 
