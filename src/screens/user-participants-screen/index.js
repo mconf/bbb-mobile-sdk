@@ -1,14 +1,12 @@
 import { Alert } from 'react-native';
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Menu, Provider } from 'react-native-paper';
 import { useOrientation } from '../../hooks/use-orientation';
 import Styled from './styles';
 
 const UserParticipantsScreen = () => {
-  const [userListNames, setUserListNames] = useState([]);
-
-  const usersCollection = useSelector((state) => state.usersCollection);
+  const usersStore = useSelector((state) => state.usersCollection);
   const [showMenu, setShowMenu] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState({ x: 0, y: 0 });
 
@@ -21,13 +19,13 @@ const UserParticipantsScreen = () => {
       ])
     );
 
-  useEffect(() => {
-    setUserListNames(
+  const handleUsersName = useCallback(
+    () =>
       Object.values(
-        objectMap(usersCollection.usersCollection, (v) => v.fields.userId)
-      )
-    );
-  }, [usersCollection]);
+        objectMap(usersStore.usersCollection, (v) => v.fields.userId)
+      ),
+    [usersStore]
+  );
 
   const orientation = useOrientation();
 
@@ -54,7 +52,7 @@ const UserParticipantsScreen = () => {
   return (
     <Provider>
       <Styled.ContainerView orientation={orientation}>
-        <Styled.FlatList data={userListNames} renderItem={renderItem} />
+        <Styled.FlatList data={handleUsersName()} renderItem={renderItem} />
         <Menu
           visible={showMenu}
           onDismiss={() => setShowMenu(false)}
