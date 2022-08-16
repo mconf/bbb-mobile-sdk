@@ -6,7 +6,7 @@ const Background = styled.View`
   height: 52px;
   border: ${Colors.white} solid 2px;
   border-radius: 50px;
-  background-color: ${Colors.orange};
+  background-color: ${({ userColor }) => userColor};
   display: flex;
   justify-content: center;
   align-items: center;

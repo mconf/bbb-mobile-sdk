@@ -16,6 +16,7 @@ const UserParticipantsScreen = () => {
         return {
           name: user.userId,
           role: user.role,
+          color: user.color,
           // ...other properties
         };
       }),
@@ -38,7 +39,11 @@ const UserParticipantsScreen = () => {
   const renderItem = ({ item }) => {
     return (
       <Styled.CardPressable onPress={onIconPress}>
-        <Styled.UserAvatar userName={item.name} userRole={item.role} />
+        <Styled.UserAvatar
+          userName={item.name}
+          userRole={item.role}
+          userColor={item.color}
+        />
         <Styled.UserName>{item.name}</Styled.UserName>
       </Styled.CardPressable>
     );
