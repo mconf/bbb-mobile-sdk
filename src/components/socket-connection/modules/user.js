@@ -1,4 +1,4 @@
-import { addUser, removeUser } from '../../../store/redux/users';
+import { addUser, removeUser, editUser } from '../../../store/redux/users';
 import { store } from '../../../store/redux/store';
 
 const userTopic = 'users';
@@ -41,8 +41,12 @@ export class UserModule {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  update() {
-    // TODO
+  update(msgObj) {
+    return store.dispatch(
+      editUser({
+        userObject: msgObj,
+      })
+    );
   }
 
   // eslint-disable-next-line class-methods-use-this

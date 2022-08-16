@@ -251,7 +251,7 @@ const SocketConnectionComponent = () => {
       case 'changed': {
         const currentModule = modules.current[msgObj.collection];
         if (currentModule) {
-          currentModule.update(msgObj.id, msgObj.fields);
+          currentModule.update(msgObj);
         }
 
         break;
