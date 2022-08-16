@@ -1,26 +1,28 @@
 import { addUser, removeUser } from '../../../store/redux/users';
 import { store } from '../../../store/redux/store';
 
-const _userTopic = 'users';
-const users = {};
+const userTopic = 'users';
 
 export class UserModule {
   constructor(messageSender) {
-    _sender = messageSender;
+    this.messageSender = messageSender;
+    this.subId = null;
   }
 
   onConnected() {
-    _subId = _sender.subscribeMsg(_userTopic);
+    this.subId = this.messageSender.subscribeMsg(userTopic);
   }
 
   onDisconnected() {
-    _sender.unsubscribeMsg(_userTopic, _subId);
+    this.messageSender.unsubscribeMsg(userTopic, this.subId);
   }
 
+  // eslint-disable-next-line class-methods-use-this
   onDisconnectedBeforeWebsocketClose() {
     // TODO
   }
 
+  // eslint-disable-next-line class-methods-use-this
   add(msgObj) {
     return store.dispatch(
       addUser({
@@ -29,6 +31,7 @@ export class UserModule {
     );
   }
 
+  // eslint-disable-next-line class-methods-use-this
   remove(msgObj) {
     return store.dispatch(
       removeUser({
@@ -37,11 +40,13 @@ export class UserModule {
     );
   }
 
-  update(id, fields) {
+  // eslint-disable-next-line class-methods-use-this
+  update() {
     // TODO
   }
 
-  processMessage(msg) {
-    return;
+  // eslint-disable-next-line class-methods-use-this
+  processMessage() {
+    // TODO
   }
 }
