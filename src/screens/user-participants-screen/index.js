@@ -10,17 +10,15 @@ const UserParticipantsScreen = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState({ x: 0, y: 0 });
 
-  // TODO auxiliary function, move to /utils/ folder
-  const objectMap = (obj, callback) =>
-    Object.fromEntries(
-      Object.entries(obj).map(([key, value], idx) => [
-        key,
-        callback(value, key, idx),
-      ])
-    );
-
   const handleUsersName = useCallback(
-    () => Object.values(objectMap(usersStore.usersCollection, (v) => v.id)),
+    () =>
+      Object.values(usersStore.usersCollection).map((user) => {
+        return {
+          name: user.userId,
+          role: user.role,
+          // ...other properties
+        };
+      }),
     [usersStore]
   );
 
@@ -40,8 +38,8 @@ const UserParticipantsScreen = () => {
   const renderItem = ({ item }) => {
     return (
       <Styled.CardPressable onPress={onIconPress}>
-        <Styled.UserAvatar userName={item} />
-        <Styled.UserName>{item}</Styled.UserName>
+        <Styled.UserAvatar userName={item.name} userRole={item.role} />
+        <Styled.UserName>{item.name}</Styled.UserName>
       </Styled.CardPressable>
     );
   };
