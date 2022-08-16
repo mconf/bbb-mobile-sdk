@@ -2,7 +2,13 @@ module.exports = {
   env: {
     es2021: true,
   },
-  extends: ['plugin:react/recommended', 'airbnb', 'prettier'],
+  extends: [
+    'plugin:react/recommended',
+    'airbnb',
+    'prettier',
+    'plugin:flowtype/recommended',
+  ],
+  parser: '@babel/eslint-parser',
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
@@ -10,7 +16,7 @@ module.exports = {
     ecmaVersion: 'latest',
     sourceType: 'module',
   },
-  plugins: ['react', 'prettier'],
+  plugins: ['react', 'prettier', '@babel', 'flowtype'],
   rules: {
     'prettier/prettier': 'error',
     'react/jsx-filename-extension': [
