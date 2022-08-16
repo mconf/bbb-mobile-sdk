@@ -1,10 +1,10 @@
 import Styled from './styles';
 
 const UserAvatar = (props) => {
-  const { userName } = props;
+  const { userName, userRole } = props;
 
   return (
-    <Styled.Background>
+    <Styled.Background userRole={userRole}>
       <Styled.UserName>{userName.substring(0, 2)}</Styled.UserName>
     </Styled.Background>
   );

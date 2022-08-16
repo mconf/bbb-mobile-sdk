@@ -10,7 +10,14 @@ const Background = styled.View`
   display: flex;
   justify-content: center;
   align-items: center;
+
+  ${({ userRole }) =>
+    userRole === 'MODERATOR' &&
+    `
+     border-radius: 12px;
+  `}
 `;
+
 const UserName = styled.Text`
   color: ${Colors.white};
   font-size: 18px;
