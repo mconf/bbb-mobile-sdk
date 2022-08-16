@@ -190,9 +190,9 @@ const SocketConnectionComponent = () => {
   };
 
   useEffect(() => {
-    console.log('Component Will Mount');
+    // console.log('Component Will Mount');
     return () => {
-      console.log('Component Will Unmount');
+      // console.log('Component Will Unmount');
       logout(websocket, meetingData);
     };
   }, []);
@@ -238,26 +238,25 @@ const SocketConnectionComponent = () => {
         break;
       }
 
-      // something added
       case 'added': {
-        const currentModule = modules[msgObj.collection];
+        const currentModule = modules.current[msgObj.collection];
         if (currentModule) {
-          currentModule.add(msgObj.fields);
+          currentModule.add(msgObj);
         }
 
         break;
       }
 
       case 'removed': {
-        const currentModule = modules[msgObj.collection];
+        const currentModule = modules.current[msgObj.collection];
         if (currentModule) {
-          currentModule.remove(msgObj.id);
+          currentModule.remove(msgObj);
         }
         break;
       }
 
       case 'changed': {
-        const currentModule = modules[msgObj.collection];
+        const currentModule = modules.current[msgObj.collection];
         if (currentModule) {
           currentModule.update(msgObj.id, msgObj.fields);
         }
@@ -266,12 +265,12 @@ const SocketConnectionComponent = () => {
       }
 
       case 'updated': {
-        console.log('what to do with update');
+        // console.log('what to do with update');
         break;
       }
 
       default: {
-        console.log('default case');
+        // console.log('default case');
       }
     }
   };
