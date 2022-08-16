@@ -3,7 +3,7 @@ import { SafeAreaView } from 'react-native';
 
 import Styled from './styles';
 
-import SocketConnection from '../../components/SocketConnection';
+import SocketConnection from '../../components/socket-connection';
 
 const TestComponentsScreen = () => (
   <SafeAreaView>

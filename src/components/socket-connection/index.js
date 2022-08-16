@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { Text, View, StyleSheet } from 'react-native';
 import { UserModule } from './modules/user';
 import { ChatModule } from './modules/chat';
@@ -122,15 +121,13 @@ const setupModules = (ws) => {
     // "poll": PollModule(messageSender),
     // "call": CallModule(messageSender, _meetingInfo, _provider),
     // "voiceUsers":
-    //     VoiceUsersModule(messageSender, _meetingInfo, userModule, _provider),
+    //  VoiceUsersModule(messageSender, _meetingInfo, userModule, _provider),
     // "voiceCallState": VoiceCallStatesModule(messageSender, _provider),
   };
 
-  for (var moduleName in modules) {
-    if (modules.hasOwnProperty(moduleName)) {
-      modules[moduleName].onConnected();
-    }
-  }
+  Object.keys(modules).forEach((module) => {
+    modules[module].onConnected();
+  });
 
   return modules;
 };
@@ -143,11 +140,9 @@ const logout = (ws, meetingData, modules) => {
       params: [],
     });
 
-    for (var moduleName in modules) {
-      if (modules.hasOwnProperty(moduleName)) {
-        modules[moduleName].onDisconnectedBeforeWebsocketClose();
-      }
-    }
+    Object.keys(modules).forEach((module) => {
+      modules[module].onDisconnectedBeforeWebsocketClose();
+    });
 
     ws.close(0);
   }
@@ -162,8 +157,6 @@ const SocketConnectionComponent = () => {
   const [meetingData, setMeetingData] = useState({});
   const [websocket, setWebsocket] = useState(null);
   const modules = useRef({});
-
-  const dispatch = useDispatch();
 
   const onOpen = () => {};
   const onClose = () => {
@@ -184,7 +177,7 @@ const SocketConnectionComponent = () => {
       const msgObj = decodeMessage(msg);
 
       if (Object.keys(msgObj).length) {
-        processMessage(ws, msgObj, meetingData, modules.current, dispatch);
+        processMessage(ws, msgObj, meetingData, modules.current);
       }
     }
   };
@@ -276,11 +269,9 @@ const SocketConnectionComponent = () => {
   };
 
   const tearDownModules = () => {
-    for (const moduleName in modules.current) {
-      if (modules.hasOwnProperty(moduleName)) {
-        modules[moduleName].onDisconnected();
-      }
-    }
+    Object.keys(modules).forEach((module) => {
+      modules[module].onDisconnected();
+    });
   };
 
   return (

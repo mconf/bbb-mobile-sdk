@@ -20,10 +20,7 @@ const UserParticipantsScreen = () => {
     );
 
   const handleUsersName = useCallback(
-    () =>
-      Object.values(
-        objectMap(usersStore.usersCollection, (v) => v.fields.userId)
-      ),
+    () => Object.values(objectMap(usersStore.usersCollection, (v) => v.id)),
     [usersStore]
   );
 
