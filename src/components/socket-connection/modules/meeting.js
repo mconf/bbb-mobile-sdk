@@ -1,38 +1,60 @@
-const _meetingTopic = 'meetings';
-const meetings = {};
+import {
+  addMeeting,
+  removeMeeting,
+  editMeeting,
+} from '../../../store/redux/meeting';
+import { store } from '../../../store/redux/store';
+
+const meetingTopic = 'meetings';
 
 export class MeetingModule {
-
   constructor(messageSender) {
-    _sender = messageSender;
+    this.messageSender = messageSender;
+    this.subId = null;
   }
 
   onConnected() {
-    _subId = _sender.subscribeMsg(_meetingTopic);
+    this.subId = this.messageSender.subscribeMsg(meetingTopic);
   }
 
   onDisconnected() {
-    _sender.unsubscribeMsg(_meetingTopic, _subId);
+    this.messageSender.unsubscribeMsg(meetingTopic, this.subId);
   }
 
+  // eslint-disable-next-line class-methods-use-this
   onDisconnectedBeforeWebsocketClose() {
     // TODO
   }
 
-  add(fields) {
-    meetings[fields.id] = fields;
+  // eslint-disable-next-line class-methods-use-this
+  add(msgObj) {
+    return store.dispatch(
+      addMeeting({
+        meetingObject: msgObj,
+      })
+    );
   }
 
-  remove(id) {
-    delete meetings[id];
+  // eslint-disable-next-line class-methods-use-this
+  remove(msgObj) {
+    return store.dispatch(
+      removeMeeting({
+        meetingObject: msgObj,
+      })
+    );
   }
 
-  update(id, fields) {
+  // eslint-disable-next-line class-methods-use-this
+  update(msgObj) {
+    return store.dispatch(
+      editMeeting({
+        meetingObject: msgObj,
+      })
+    );
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  processMessage() {
     // TODO
   }
-
-  processMessage(msg) {
-    return;
-  }
-
 }
