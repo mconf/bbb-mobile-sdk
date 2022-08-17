@@ -3,6 +3,7 @@ import { Text, View, StyleSheet } from 'react-native';
 import { UserModule } from './modules/user';
 import { ChatModule } from './modules/chat';
 import { MeetingModule } from './modules/meeting';
+import { VoiceUsersModule } from './modules/voice-users';
 import {
   getRandomDigits,
   getRandomAlphanumericWithCaps,
@@ -111,18 +112,50 @@ const setupModules = (ws) => {
   const modules = {
     users: new UserModule(messageSender),
     meetings: new MeetingModule(messageSender),
-    // "ping": PingModule(messageSender),
-    // "video": VideoModule(messageSender, _meetingInfo, userModule),
-    // "user": userModule,
+    voiceUsers: new VoiceUsersModule(messageSender),
     'group-chat': chatModule,
     'group-chat-msg': chatModule,
     'users-typing': chatModule,
-    // "presentation": PresentationModule(messageSender, _meetingInfo),
-    // "poll": PollModule(messageSender),
-    // "call": CallModule(messageSender, _meetingInfo, _provider),
-    // "voiceUsers":
-    //  VoiceUsersModule(messageSender, _meetingInfo, userModule, _provider),
-    // "voiceCallState": VoiceCallStatesModule(messageSender, _provider),
+
+    // ** meteor Collections **//
+    // Screenreader-alert:
+    // annotations:
+    // audio-captions:
+    // auth-token-validation:
+    // breakouts:
+    // breakouts-history:
+    // captions:
+    // connection-status:
+    // current-poll:
+    // current-user:
+    // external-video-meetings:
+    // group-chat:
+    // group-chat-msg:
+    // guestUsers:
+    // layout-meetings:
+    // meeting-time-remaining:
+    // meetings:
+    // notifications:
+    // pads:
+    // pads-sessions:
+    // pads-updates:
+    // polls:
+    // presentation-pods:
+    // presentation-upload-token:
+    // presentations:
+    // record-meetings:
+    // screenshare:
+    // slide-positions:
+    // slides:
+    // users:
+    // users-infos:
+    // users-persistent-data:
+    // users-settings:
+    // users-typing:
+    // video-streams:
+    // voiceCallStates:
+    // voiceUsers:
+    // whiteboard-multi-user:
   };
 
   Object.keys(modules).forEach((module) => {
