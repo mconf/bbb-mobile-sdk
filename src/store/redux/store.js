@@ -4,6 +4,7 @@ import meetingReducer from './meeting';
 import voiceUsersReducer from './voice-users';
 import pollsReducer from './polls';
 import currentPollReducer from './current-poll';
+import currentUserReducer from './current-user';
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     voiceUsersCollection: voiceUsersReducer,
     pollsCollection: pollsReducer,
     currentPollCollection: currentPollReducer,
+    currentUserCollection: currentUserReducer,
     // ...other collections
   },
 });
