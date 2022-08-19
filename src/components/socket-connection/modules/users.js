@@ -1,20 +1,20 @@
 import { addUser, removeUser, editUser } from '../../../store/redux/users';
 import { store } from '../../../store/redux/store';
 
-const userTopic = 'users';
+const usersTopic = 'users';
 
-export class UserModule {
+export class UsersModule {
   constructor(messageSender) {
     this.messageSender = messageSender;
     this.subId = null;
   }
 
   onConnected() {
-    this.subId = this.messageSender.subscribeMsg(userTopic);
+    this.subId = this.messageSender.subscribeMsg(usersTopic);
   }
 
   onDisconnected() {
-    this.messageSender.unsubscribeMsg(userTopic, this.subId);
+    this.messageSender.unsubscribeMsg(usersTopic, this.subId);
   }
 
   // eslint-disable-next-line class-methods-use-this

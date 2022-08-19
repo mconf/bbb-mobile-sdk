@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
-import { UserModule } from './modules/user';
+import { UsersModule } from './modules/users';
 import { ChatModule } from './modules/chat';
 import { MeetingModule } from './modules/meeting';
 import { VoiceUsersModule } from './modules/voice-users';
@@ -113,7 +113,7 @@ const setupModules = (ws) => {
   const chatModule = new ChatModule(messageSender);
 
   const modules = {
-    users: new UserModule(messageSender),
+    users: new UsersModule(messageSender),
     meetings: new MeetingModule(messageSender),
     voiceUsers: new VoiceUsersModule(messageSender),
     polls: new PollsModule(messageSender),
