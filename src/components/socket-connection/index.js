@@ -7,6 +7,7 @@ import { VoiceUsersModule } from './modules/voice-users';
 import { PollsModule } from './modules/polls';
 import { CurrentPollModule } from './modules/current-poll';
 import { CurrentUserModule } from './modules/current-user';
+import { ExternalVideoMeetingsModule } from './modules/external-video-meetings';
 import {
   getRandomDigits,
   getRandomAlphanumericWithCaps,
@@ -119,6 +120,7 @@ const setupModules = (ws) => {
     polls: new PollsModule(messageSender),
     'current-poll': new CurrentPollModule(messageSender),
     'current-user': new CurrentUserModule(messageSender),
+    'external-video-meetings': new ExternalVideoMeetingsModule(messageSender),
     'group-chat': chatModule,
     'group-chat-msg': chatModule,
     'users-typing': chatModule,
@@ -133,8 +135,6 @@ const setupModules = (ws) => {
     // captions:
     // connection-status:
     // current-poll:
-    // current-user:
-    // external-video-meetings:
     // group-chat:
     // group-chat-msg:
     // guestUsers:

@@ -5,6 +5,7 @@ import voiceUsersReducer from './voice-users';
 import pollsReducer from './polls';
 import currentPollReducer from './current-poll';
 import currentUserReducer from './current-user';
+import externalVideoMeetingsReducer from './external-video-meetings';
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     pollsCollection: pollsReducer,
     currentPollCollection: currentPollReducer,
     currentUserCollection: currentUserReducer,
+    externalVideoMeetingsCollection: externalVideoMeetingsReducer,
     // ...other collections
   },
 });
