@@ -10,6 +10,7 @@ import { CurrentPollModule } from './modules/current-poll';
 import { CurrentUserModule } from './modules/current-user';
 import { ExternalVideoMeetingsModule } from './modules/external-video-meetings';
 import { PresentationsModule } from './modules/presentations';
+import { SlidesModule } from './modules/slides';
 import {
   getRandomDigits,
   getRandomAlphanumericWithCaps,
@@ -122,6 +123,7 @@ const setupModules = (ws) => {
     polls: new PollsModule(messageSender),
     pads: new PadsModule(messageSender),
     presentations: new PresentationsModule(messageSender),
+    slides: new SlidesModule(messageSender),
     'current-poll': new CurrentPollModule(messageSender),
     'current-user': new CurrentUserModule(messageSender),
     'external-video-meetings': new ExternalVideoMeetingsModule(messageSender),

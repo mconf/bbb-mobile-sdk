@@ -7,6 +7,7 @@ import padsReducer from './pads';
 import currentPollReducer from './current-poll';
 import currentUserReducer from './current-user';
 import presentationsReducer from './presentations';
+import slidesReducer from './slides';
 import externalVideoMeetingsReducer from './external-video-meetings';
 
 export const store = configureStore({
@@ -17,6 +18,7 @@ export const store = configureStore({
     pollsCollection: pollsReducer,
     padsCollection: padsReducer,
     presentationsCollection: presentationsReducer,
+    slidesCollection: slidesReducer,
     currentPollCollection: currentPollReducer,
     currentUserCollection: currentUserReducer,
     externalVideoMeetingsCollection: externalVideoMeetingsReducer,
