@@ -5,6 +5,7 @@ import { ChatModule } from './modules/chat';
 import { MeetingModule } from './modules/meeting';
 import { VoiceUsersModule } from './modules/voice-users';
 import { PollsModule } from './modules/polls';
+import { PadsModule } from './modules/pads';
 import { CurrentPollModule } from './modules/current-poll';
 import { CurrentUserModule } from './modules/current-user';
 import { ExternalVideoMeetingsModule } from './modules/external-video-meetings';
@@ -118,6 +119,7 @@ const setupModules = (ws) => {
     meetings: new MeetingModule(messageSender),
     voiceUsers: new VoiceUsersModule(messageSender),
     polls: new PollsModule(messageSender),
+    pads: new PadsModule(messageSender),
     'current-poll': new CurrentPollModule(messageSender),
     'current-user': new CurrentUserModule(messageSender),
     'external-video-meetings': new ExternalVideoMeetingsModule(messageSender),

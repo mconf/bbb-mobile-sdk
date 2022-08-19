@@ -3,6 +3,7 @@ import usersReducer from './users';
 import meetingReducer from './meeting';
 import voiceUsersReducer from './voice-users';
 import pollsReducer from './polls';
+import padsReducer from './pads';
 import currentPollReducer from './current-poll';
 import currentUserReducer from './current-user';
 import externalVideoMeetingsReducer from './external-video-meetings';
@@ -13,6 +14,7 @@ export const store = configureStore({
     usersCollection: usersReducer,
     voiceUsersCollection: voiceUsersReducer,
     pollsCollection: pollsReducer,
+    padsCollection: padsReducer,
     currentPollCollection: currentPollReducer,
     currentUserCollection: currentUserReducer,
     externalVideoMeetingsCollection: externalVideoMeetingsReducer,
