@@ -9,6 +9,7 @@ import { PadsModule } from './modules/pads';
 import { CurrentPollModule } from './modules/current-poll';
 import { CurrentUserModule } from './modules/current-user';
 import { ExternalVideoMeetingsModule } from './modules/external-video-meetings';
+import { PresentationsModule } from './modules/presentations';
 import {
   getRandomDigits,
   getRandomAlphanumericWithCaps,
@@ -120,6 +121,7 @@ const setupModules = (ws) => {
     voiceUsers: new VoiceUsersModule(messageSender),
     polls: new PollsModule(messageSender),
     pads: new PadsModule(messageSender),
+    presentations: new PresentationsModule(messageSender),
     'current-poll': new CurrentPollModule(messageSender),
     'current-user': new CurrentUserModule(messageSender),
     'external-video-meetings': new ExternalVideoMeetingsModule(messageSender),
