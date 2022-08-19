@@ -5,6 +5,7 @@ import { ChatModule } from './modules/chat';
 import { MeetingModule } from './modules/meeting';
 import { VoiceUsersModule } from './modules/voice-users';
 import { PollsModule } from './modules/polls';
+import { CurrentPollModule } from './modules/current-poll';
 import {
   getRandomDigits,
   getRandomAlphanumericWithCaps,
@@ -115,6 +116,7 @@ const setupModules = (ws) => {
     meetings: new MeetingModule(messageSender),
     voiceUsers: new VoiceUsersModule(messageSender),
     polls: new PollsModule(messageSender),
+    'current-poll': new CurrentPollModule(messageSender),
     'group-chat': chatModule,
     'group-chat-msg': chatModule,
     'users-typing': chatModule,
