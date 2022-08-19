@@ -4,6 +4,7 @@ import { UserModule } from './modules/user';
 import { ChatModule } from './modules/chat';
 import { MeetingModule } from './modules/meeting';
 import { VoiceUsersModule } from './modules/voice-users';
+import { PollsModule } from './modules/polls';
 import {
   getRandomDigits,
   getRandomAlphanumericWithCaps,
@@ -113,6 +114,7 @@ const setupModules = (ws) => {
     users: new UserModule(messageSender),
     meetings: new MeetingModule(messageSender),
     voiceUsers: new VoiceUsersModule(messageSender),
+    polls: new PollsModule(messageSender),
     'group-chat': chatModule,
     'group-chat-msg': chatModule,
     'users-typing': chatModule,
@@ -134,12 +136,10 @@ const setupModules = (ws) => {
     // guestUsers:
     // layout-meetings:
     // meeting-time-remaining:
-    // meetings:
     // notifications:
     // pads:
     // pads-sessions:
     // pads-updates:
-    // polls:
     // presentation-pods:
     // presentation-upload-token:
     // presentations:
@@ -147,14 +147,12 @@ const setupModules = (ws) => {
     // screenshare:
     // slide-positions:
     // slides:
-    // users:
     // users-infos:
     // users-persistent-data:
     // users-settings:
     // users-typing:
     // video-streams:
     // voiceCallStates:
-    // voiceUsers:
     // whiteboard-multi-user:
   };
 
