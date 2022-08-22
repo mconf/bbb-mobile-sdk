@@ -46,5 +46,6 @@ module.exports = {
     'react/style-prop-object': 'off',
     'react/no-unstable-nested-components': 'off',
     'react/jsx-no-bind': 'off',
+    'no-nested-ternary': 'off',
   },
 };

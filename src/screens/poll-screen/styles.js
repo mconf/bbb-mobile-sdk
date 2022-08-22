@@ -95,6 +95,13 @@ const AnswerTitle = styled.Text`
   text-align: center;
 `;
 
+const SecretLabel = styled.Text`
+  font-weight: 500;
+  font-size: 12px;
+  text-align: center;
+  font-style: italic;
+`;
+
 const TextInput = styled(textInput)``;
 
 export default {
@@ -108,4 +115,5 @@ export default {
   ButtonsContainer,
   ConfirmButton,
   TextInput,
+  SecretLabel,
 };

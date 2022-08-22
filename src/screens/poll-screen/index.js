@@ -1,18 +1,89 @@
-import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, SafeAreaView } from 'react-native';
-
-import Styled from './styles';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+} from 'react-native';
 import { useOrientation } from '../../hooks/use-orientation';
+import Styled from './styles';
 
 const PollScreen = () => {
-  // eslint-disable-next-line no-unused-vars
-  const [isPollOwner, setIsPollOwner] = useState(true);
+  // Screen global variables
+  const [isPresenter, setIsPresenter] = useState(false);
+  const [hasPollActive, setHasPollActive] = useState(false);
+  const pollsStore = useSelector((state) => state.pollsCollection);
+  const activePollObject = Object.values(pollsStore.pollsCollection)[0];
   const orientation = useOrientation();
+  // Answer poll states
+  const [selectedSingleAnswer, setSelectedSingleAnswer] = useState(-1);
+  const [selectedAnswers, setSelectedAnswers] = useState([]);
+
+  // Create poll states
+  const [answerTypeSelected, setAnswerTypeSelected] = useState('trueOrFalse');
+
+  useEffect(() => {
+    setHasPollActive(Boolean(activePollObject));
+
+    // Reset to default values
+    setSelectedAnswers([]);
+    setSelectedSingleAnswer(-1);
+  }, [activePollObject]);
+
+  // TODO use with prevState
+  const handleCheckMultipleAnswers = (id) => {
+    let updatedList = [...selectedAnswers];
+    if (!updatedList.includes(id)) {
+      updatedList = [...selectedAnswers, id];
+    } else {
+      updatedList.splice(selectedAnswers.indexOf(id), 1);
+    }
+    setSelectedAnswers(updatedList);
+  };
+
+  const handleSecretPollLabel = () =>
+    activePollObject?.secretPoll ? (
+      <Styled.SecretLabel>
+        Enquete anônima - o apresentador não pode ver sua resposta
+      </Styled.SecretLabel>
+    ) : (
+      <Styled.SecretLabel>
+        Enquete normal - o apresentador pode ver sua resposta
+      </Styled.SecretLabel>
+    );
+
+  const handleIsMultipleResponseLabel = () =>
+    activePollObject?.isMultipleResponse ? (
+      <Styled.SecretLabel>Multipla escolha</Styled.SecretLabel>
+    ) : (
+      <Styled.SecretLabel>Apenas uma resposta</Styled.SecretLabel>
+    );
+
+  const handleTypeOfAnswer = () => {
+    // 'R-' === custom input
+    if (activePollObject?.pollType === 'R-') {
+      return <Styled.TextInput label="Sua resposta" />;
+    }
+    return activePollObject?.answers.map((question) => (
+      <Styled.OptionsButton
+        key={question.id}
+        selected={
+          selectedSingleAnswer === question.id ||
+          selectedAnswers.includes(question.id)
+        }
+        onPress={() => {
+          return activePollObject?.isMultipleResponse
+            ? handleCheckMultipleAnswers(question.id)
+            : setSelectedSingleAnswer(question.id);
+        }}
+      >
+        {question.key}
+      </Styled.OptionsButton>
+    ));
+  };
 
   const createPollView = () => {
-    // 'trueOrFalse', 'letters', 'yesOrNo', 'freeText'
-    const [answerTypeSelected, setAnswerTypeSelected] = useState('trueOrFalse');
-
     return (
       <>
         <Styled.Title>Criar uma enquete</Styled.Title>
@@ -65,51 +136,32 @@ const PollScreen = () => {
   };
 
   const answerPollView = () => {
-    const [selectedAnswer, setSelectedAnswer] = useState(0);
     return (
       <>
-        <Styled.Title>Você gosta de mamão?</Styled.Title>
+        <Styled.Title>{activePollObject?.question}</Styled.Title>
+        {handleSecretPollLabel()}
+        {handleIsMultipleResponseLabel()}
         <Styled.ButtonsContainer>
-          <Styled.OptionsButton
-            selected={selectedAnswer === 0}
-            onPress={() => {
-              setSelectedAnswer(0);
-            }}
-          >
-            Sim
-          </Styled.OptionsButton>
-          <Styled.OptionsButton
-            selected={selectedAnswer === 1}
-            onPress={() => {
-              setSelectedAnswer(1);
-            }}
-          >
-            Se é o que tem pra janta...
-          </Styled.OptionsButton>
-          <Styled.OptionsButton
-            selected={selectedAnswer === 2}
-            onPress={() => {
-              setSelectedAnswer(2);
-            }}
-          >
-            Não
-          </Styled.OptionsButton>
-          <Styled.OptionsButton
-            selected={selectedAnswer === 3}
-            onPress={() => {
-              setSelectedAnswer(3);
-            }}
-          >
-            Odeio
-          </Styled.OptionsButton>
+          {handleTypeOfAnswer()}
         </Styled.ButtonsContainer>
 
-        <Styled.ConfirmButton onPress={() => {}}>
+        <Styled.ConfirmButton
+          onPress={() => {
+            Alert.alert(
+              'Currently under development',
+              'This feature will be addressed soon, please check out our github page'
+            );
+          }}
+        >
           Enviar resposta
         </Styled.ConfirmButton>
       </>
     );
   };
+
+  const noPollView = () => (
+    <Styled.Title>No momento, nenhuma enquete está ativa</Styled.Title>
+  );
 
   return (
     <KeyboardAvoidingView
@@ -118,7 +170,13 @@ const PollScreen = () => {
       <SafeAreaView>
         <Styled.ContainerView orientation={orientation}>
           <Styled.ContainerPollCard>
-            {isPollOwner ? createPollView() : answerPollView()}
+            {isPresenter
+              ? hasPollActive
+                ? createPollView() // see results
+                : createPollView() // create new one
+              : hasPollActive
+              ? answerPollView()
+              : noPollView()}
           </Styled.ContainerPollCard>
 
           <Styled.ActionsBarContainer orientation={orientation}>
