@@ -3,7 +3,7 @@ import {
   addPresentation,
   removePresentation,
   editPresentation,
-} from '../../../store/redux/presentations';
+} from '../../../store/redux/slices/presentations';
 
 const presentationsTopic = 'presentations';
 

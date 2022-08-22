@@ -1,5 +1,9 @@
 import { store } from '../../../store/redux/store';
-import { addPoll, removePoll, editPoll } from '../../../store/redux/polls';
+import {
+  addPoll,
+  removePoll,
+  editPoll,
+} from '../../../store/redux/slices/polls';
 
 const pollsTopic = 'polls';
 

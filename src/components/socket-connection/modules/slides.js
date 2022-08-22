@@ -1,5 +1,9 @@
 import { store } from '../../../store/redux/store';
-import { addSlide, removeSlide, editSlide } from '../../../store/redux/slides';
+import {
+  addSlide,
+  removeSlide,
+  editSlide,
+} from '../../../store/redux/slices/slides';
 
 const slidesTopic = 'slides';
 

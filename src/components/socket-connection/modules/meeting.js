@@ -2,7 +2,7 @@ import {
   addMeeting,
   removeMeeting,
   editMeeting,
-} from '../../../store/redux/meeting';
+} from '../../../store/redux/slices/meeting';
 import { store } from '../../../store/redux/store';
 
 const meetingTopic = 'meetings';

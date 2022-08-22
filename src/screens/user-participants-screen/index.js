@@ -14,7 +14,7 @@ const UserParticipantsScreen = () => {
     () =>
       Object.values(usersStore.usersCollection).map((user) => {
         return {
-          name: user.userId,
+          name: user.name,
           role: user.role,
           color: user.color,
           // ...other properties

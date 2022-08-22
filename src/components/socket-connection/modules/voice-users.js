@@ -2,7 +2,7 @@ import {
   addVoiceUser,
   removeVoiceUser,
   editVoiceUser,
-} from '../../../store/redux/voice-users';
+} from '../../../store/redux/slices/voice-users';
 import { store } from '../../../store/redux/store';
 
 const voiceUsersTopic = 'voiceUsers';

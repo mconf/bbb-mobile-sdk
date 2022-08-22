@@ -1,14 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
-import usersReducer from './users';
-import meetingReducer from './meeting';
-import voiceUsersReducer from './voice-users';
-import pollsReducer from './polls';
-import padsReducer from './pads';
-import currentPollReducer from './current-poll';
-import currentUserReducer from './current-user';
-import presentationsReducer from './presentations';
-import slidesReducer from './slides';
-import externalVideoMeetingsReducer from './external-video-meetings';
+import usersReducer from './slices/users';
+import meetingReducer from './slices/meeting';
+import voiceUsersReducer from './slices/voice-users';
+import pollsReducer from './slices/polls';
+import padsReducer from './slices/pads';
+import currentPollReducer from './slices/current-poll';
+import currentUserReducer from './slices/current-user';
+import presentationsReducer from './slices/presentations';
+import slidesReducer from './slices/slides';
+import externalVideoMeetingsReducer from './slices/external-video-meetings';
 
 export const store = configureStore({
   reducer: {

@@ -1,4 +1,8 @@
-import { addUser, removeUser, editUser } from '../../../store/redux/users';
+import {
+  addUser,
+  removeUser,
+  editUser,
+} from '../../../store/redux/slices/users';
 import { store } from '../../../store/redux/store';
 
 const usersTopic = 'users';

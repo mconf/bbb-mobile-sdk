@@ -3,7 +3,7 @@ import {
   addCurrentUser,
   editCurrentUser,
   removeCurrentUser,
-} from '../../../store/redux/current-user';
+} from '../../../store/redux/slices/current-user';
 
 const currentUserTopic = 'current-user';
 

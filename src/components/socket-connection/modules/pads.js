@@ -1,5 +1,5 @@
 import { store } from '../../../store/redux/store';
-import { addPad, removePad, editPad } from '../../../store/redux/pads';
+import { addPad, removePad, editPad } from '../../../store/redux/slices/pads';
 
 const padsTopic = 'pads';
 

@@ -3,7 +3,7 @@ import {
   addCurrentPoll,
   editCurrentPoll,
   removeCurrentPoll,
-} from '../../../store/redux/current-poll';
+} from '../../../store/redux/slices/current-poll';
 
 const currentPollTopic = 'current-poll';
 

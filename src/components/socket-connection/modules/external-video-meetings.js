@@ -2,7 +2,7 @@ import {
   addExternalVideoMeeting,
   removeExternalVideoMeeting,
   editExternalVideoMeeting,
-} from '../../../store/redux/external-video-meetings';
+} from '../../../store/redux/slices/external-video-meetings';
 import { store } from '../../../store/redux/store';
 
 const externalVideoMeetingsTopic = 'external-video-meetings';
