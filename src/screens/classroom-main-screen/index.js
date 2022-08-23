@@ -1,12 +1,14 @@
 import { useContext, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { SafeAreaView } from 'react-native';
-import Styled from './styles';
+import { SvgUri } from 'react-native-svg';
 
 import { ActionsBarContext } from '../../store/context/actions-bar-context';
 import BottomSheetChat from '../../components/chat/bottom-sheet-chat';
 import { BottomSheetContext } from '../../store/context/bottom-sheet-context';
 import { useOrientation } from '../../hooks/use-orientation';
 import Colors from '../../constants/colors';
+import Styled from './styles';
 
 const ClassroomMainScreen = () => {
   // mock data
@@ -116,13 +118,33 @@ const ClassroomMainScreen = () => {
   ];
 
   // variables
+  const slidesStore = useSelector((state) => state.slidesCollection);
+  const presentationsStore = useSelector(
+    (state) => state.presentationsCollection
+  );
+  const orientation = useOrientation();
   const [switchLandscapeLayout, setSwitchLandscapeLayout] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const actionsBarCtx = useContext(ActionsBarContext);
   const bottomSheetCtx = useContext(BottomSheetContext);
   const { actionsBarStatus } = actionsBarCtx;
   const { bottomSheet } = bottomSheetCtx;
-  const orientation = useOrientation();
+
+  const handleSlideAndPresentationActive = () => {
+    // TODO Review this collection after update the 2.6 code
+    const currentSlideList = Object.values(slidesStore.slidesCollection).filter(
+      (obj) => {
+        return obj.current === true;
+      }
+    );
+    // eslint-disable-next-line no-unused-vars
+    const currentPresentation = Object.values(
+      presentationsStore.presentationsCollection
+    ).filter((obj) => {
+      return obj.current === true;
+    });
+    return currentSlideList[0]?.imageUri;
+  };
 
   // lifecycle methods
   useEffect(() => {
@@ -139,10 +161,10 @@ const ClassroomMainScreen = () => {
           </Styled.VideoListContainer>
 
           <Styled.PresentationContainer>
-            <Styled.Presentation
-              source={{
-                uri: 'https://fraguru.com/mdimg/dizajneri/o.2101.jpg',
-              }}
+            <SvgUri
+              width="100%"
+              height="100%"
+              uri={handleSlideAndPresentationActive()}
             />
           </Styled.PresentationContainer>
 
@@ -182,10 +204,10 @@ const ClassroomMainScreen = () => {
             {!actionsBarStatus.isChatActive && (
               <>
                 {switchLandscapeLayout && (
-                  <Styled.Presentation
-                    source={{
-                      uri: 'https://fraguru.com/mdimg/dizajneri/o.2101.jpg',
-                    }}
+                  <SvgUri
+                    width="100%"
+                    height="100%"
+                    uri={handleSlideAndPresentationActive()}
                   />
                 )}
                 {!switchLandscapeLayout && (
