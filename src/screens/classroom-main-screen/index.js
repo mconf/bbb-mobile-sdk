@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { SafeAreaView } from 'react-native';
 import { SvgUri } from 'react-native-svg';
@@ -17,104 +17,6 @@ const ClassroomMainScreen = () => {
       author: 'Gaguinho',
       message: 'Bom dd-d-d-ia P-p-pessual',
     },
-    {
-      author: 'Patolino',
-      message: 'O MAGO É IMPLACÁVEL',
-    },
-    {
-      author: 'Pernalonga',
-      message: '...',
-    },
-    {
-      author: 'Patolino',
-      message: 'O MAGO É IMPLACÁVEL',
-    },
-    {
-      author: 'Pernalonga',
-      message: '...',
-    },
-    {
-      author: 'Pernalonga',
-      message: '...',
-    },
-    {
-      author: 'Pernalonga',
-      message: '...',
-    },
-    {
-      author: 'Pernalonga',
-      message: '...',
-    },
-    {
-      author: 'Pernalonga',
-      message: '...',
-    },
-    {
-      author: 'Pernalonga',
-      message: '...',
-    },
-    {
-      author: 'Pernalonga',
-      message: '...',
-    },
-    {
-      author: 'Pernalonga',
-      message: '...',
-    },
-    {
-      author: 'Pernalonga',
-      message: '...',
-    },
-    {
-      author: 'Pernalonga',
-      message: '...',
-    },
-    {
-      author: 'Pernalonga',
-      message: '...',
-    },
-    {
-      author: 'Pernalonga',
-      message: '...',
-    },
-    {
-      author: 'Pernalonga',
-      message: '...',
-    },
-    {
-      author: 'Pernalonga',
-      message: 'Last message',
-    },
-  ];
-
-  const videoUsers = [
-    {
-      userName: 'Gaguinho da Silva Sauro',
-      videoSource: 'https://c.tenor.com/j1vcQTkMQroAAAAM/annoyed-porky-pig.gif',
-    },
-    {
-      userName: 'Patolino',
-      videoSource:
-        'https://c.tenor.com/L976YIbKDa4AAAAM/daffy-duck-waitingforananswer.gif',
-    },
-    {
-      userName: 'Pernalonga',
-      videoSource:
-        'https://2.bp.blogspot.com/-1DhhXLUW1nM/WcgNH0jd1WI/AAAAAAAAcaI/NIAmRXsT4NA9dBkHKchEfbKEnUuwzsWOACLcBGAs/s1600/pernalonga%2Bfumando%2Brwf.gif',
-    },
-    {
-      userName: 'Taz',
-      videoSource:
-        'https://i.pinimg.com/originals/17/48/c1/1748c119990d3b965b138220582b6830.gif',
-    },
-    {
-      userName: 'Lola',
-      videoSource: 'https://c.tenor.com/iNVJLgItcD8AAAAM/lola-bunny-love.gif',
-    },
-    {
-      userName: 'Frajola',
-      videoSource: 'https://c.tenor.com/T2svBtpx5-YAAAAC/frajola-coffee.gif',
-    },
   ];
 
   // variables
@@ -122,6 +24,7 @@ const ClassroomMainScreen = () => {
   const presentationsStore = useSelector(
     (state) => state.presentationsCollection
   );
+  const usersStore = useSelector((state) => state.usersCollection);
   const orientation = useOrientation();
   const [switchLandscapeLayout, setSwitchLandscapeLayout] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -129,6 +32,20 @@ const ClassroomMainScreen = () => {
   const bottomSheetCtx = useContext(BottomSheetContext);
   const { actionsBarStatus } = actionsBarCtx;
   const { bottomSheet } = bottomSheetCtx;
+
+  // handle redux store methods
+  const handleUsers = useCallback(
+    () =>
+      Object.values(usersStore.usersCollection).map((user) => {
+        return {
+          userName: user.name,
+          videoSource: user.avatar,
+          userColor: user.color,
+          // ...other properties
+        };
+      }),
+    [usersStore]
+  );
 
   const handleSlideAndPresentationActive = () => {
     // TODO Review this collection after update the 2.6 code
@@ -160,7 +77,7 @@ const ClassroomMainScreen = () => {
       <SafeAreaView>
         <Styled.ContainerView>
           <Styled.VideoListContainer>
-            <Styled.VideoList videoUsers={videoUsers} />
+            <Styled.VideoList videoUsers={handleUsers()} />
           </Styled.VideoListContainer>
 
           <Styled.PresentationContainer>
@@ -216,7 +133,7 @@ const ClassroomMainScreen = () => {
                 {!switchLandscapeLayout && (
                   <Styled.VideoListContainer orientation={orientation}>
                     <Styled.VideoList
-                      videoUsers={videoUsers}
+                      videoUsers={handleUsers()}
                       orientation={orientation}
                     />
                   </Styled.VideoListContainer>

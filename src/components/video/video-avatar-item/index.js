@@ -4,7 +4,7 @@ import Styled from './styles';
 import IconButtonComponent from '../../icon-button';
 
 const VideoAvatarItem = (props) => {
-  const { source, userName, style } = props;
+  const { source, userName, userColor, style } = props;
   const [showOptions, setShowOptions] = useState(false);
 
   return (
@@ -12,7 +12,11 @@ const VideoAvatarItem = (props) => {
       style={style}
       onPress={() => setShowOptions((prevState) => !prevState)}
     >
-      <Styled.UserAvatar source={source} />
+      {source.uri.length !== 0 ? (
+        <Styled.UserAvatar source={source} />
+      ) : (
+        <Styled.UserColor userColor={userColor} />
+      )}
       {!showOptions && (
         <Styled.NameLabelContainer>
           <Styled.NameLabel numberOfLines={1}>{userName}</Styled.NameLabel>

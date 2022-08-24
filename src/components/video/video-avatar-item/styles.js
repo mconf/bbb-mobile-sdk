@@ -22,6 +22,15 @@ const UserAvatar = styled.Image`
   overflow: hidden;
 `;
 
+const UserColor = styled.View`
+  width: 100%;
+  height: 100%;
+  border: ${Colors.white} solid 2px;
+  border-radius: 8px;
+  background-color: ${({ userColor }) => userColor};
+  overflow: hidden;
+`;
+
 const NameLabelContainer = styled.View`
   position: absolute;
   bottom: 0;
@@ -57,4 +66,5 @@ export default {
   NameLabel,
   NameLabelContainer,
   PressableButton,
+  UserColor,
 };

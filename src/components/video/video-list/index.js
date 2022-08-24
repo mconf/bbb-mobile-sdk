@@ -3,11 +3,13 @@ import Styled from './styles';
 
 const Item = (props) => {
   const { videoUser, orientation } = props;
+
   return (
     <Styled.VideoAvatar
       source={{
         uri: videoUser.item.videoSource,
       }}
+      userColor={videoUser.item.userColor}
       userName={videoUser.item.userName}
       orientation={orientation}
     />
