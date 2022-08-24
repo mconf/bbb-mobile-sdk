@@ -13,7 +13,7 @@ const PollScreen = () => {
   // Screen global variables
   const currentUserStore = useSelector((state) => state.currentUserCollection);
   const [isPresenter, setIsPresenter] = useState(
-    Object.values(currentUserStore.currentUserCollection)[0].presenter
+    Object.values(currentUserStore?.currentUserCollection)[0]?.presenter
   );
   const [hasPollActive, setHasPollActive] = useState(false);
   const pollsStore = useSelector((state) => state.pollsCollection);
@@ -33,7 +33,7 @@ const PollScreen = () => {
   // lifecycle methods
   useEffect(() => {
     setIsPresenter(
-      Object.values(currentUserStore.currentUserCollection)[0].presenter
+      Object.values(currentUserStore?.currentUserCollection)[0]?.presenter
     );
   }, [currentUserStore]);
 
