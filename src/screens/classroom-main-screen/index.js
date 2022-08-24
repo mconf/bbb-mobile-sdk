@@ -132,17 +132,20 @@ const ClassroomMainScreen = () => {
 
   const handleSlideAndPresentationActive = () => {
     // TODO Review this collection after update the 2.6 code
-    const currentSlideList = Object.values(slidesStore.slidesCollection).filter(
-      (obj) => {
-        return obj.current === true;
-      }
-    );
-    // eslint-disable-next-line no-unused-vars
     const currentPresentation = Object.values(
       presentationsStore.presentationsCollection
     ).filter((obj) => {
       return obj.current === true;
     });
+
+    const currentSlideList = Object.values(slidesStore.slidesCollection).filter(
+      (obj) => {
+        return (
+          obj.current === true &&
+          obj.presentationId === currentPresentation[0]?.id
+        );
+      }
+    );
     return currentSlideList[0]?.imageUri;
   };
 
