@@ -11,7 +11,10 @@ import Styled from './styles';
 
 const PollScreen = () => {
   // Screen global variables
-  const [isPresenter, setIsPresenter] = useState(false);
+  const currentUserStore = useSelector((state) => state.currentUserCollection);
+  const [isPresenter, setIsPresenter] = useState(
+    Object.values(currentUserStore.currentUserCollection)[0].presenter
+  );
   const [hasPollActive, setHasPollActive] = useState(false);
   const pollsStore = useSelector((state) => state.pollsCollection);
   const activePollObject = Object.values(pollsStore.pollsCollection)[0];
@@ -21,7 +24,18 @@ const PollScreen = () => {
   const [selectedAnswers, setSelectedAnswers] = useState([]);
 
   // Create poll states
-  const [answerTypeSelected, setAnswerTypeSelected] = useState('trueOrFalse');
+  const [answerTypeSelected, setAnswerTypeSelected] = useState('TF');
+  const [answersOptions, setAnswersOptions] = useState({
+    secretPoll: false,
+    isMultipleResponse: false,
+  });
+
+  // lifecycle methods
+  useEffect(() => {
+    setIsPresenter(
+      Object.values(currentUserStore.currentUserCollection)[0].presenter
+    );
+  }, [currentUserStore]);
 
   useEffect(() => {
     setHasPollActive(Boolean(activePollObject));
@@ -42,23 +56,21 @@ const PollScreen = () => {
     setSelectedAnswers(updatedList);
   };
 
-  const handleSecretPollLabel = () =>
-    activePollObject?.secretPoll ? (
-      <Styled.SecretLabel>
-        Enquete anônima - o apresentador não pode ver sua resposta
-      </Styled.SecretLabel>
-    ) : (
-      <Styled.SecretLabel>
-        Enquete normal - o apresentador pode ver sua resposta
-      </Styled.SecretLabel>
-    );
+  const handleSecretPollLabel = () => (
+    <Styled.SecretLabel>
+      {activePollObject?.secretPoll
+        ? 'Enquete anônima - o apresentador não pode ver sua resposta'
+        : 'Enquete normal - o apresentador pode ver sua resposta'}
+    </Styled.SecretLabel>
+  );
 
-  const handleIsMultipleResponseLabel = () =>
-    activePollObject?.isMultipleResponse ? (
-      <Styled.SecretLabel>Multipla escolha</Styled.SecretLabel>
-    ) : (
-      <Styled.SecretLabel>Apenas uma resposta</Styled.SecretLabel>
-    );
+  const handleIsMultipleResponseLabel = () => (
+    <Styled.SecretLabel>
+      {activePollObject?.isMultipleResponse
+        ? 'Multipla escolha'
+        : 'Apenas uma resposta'}
+    </Styled.SecretLabel>
+  );
 
   const handleTypeOfAnswer = () => {
     // 'R-' === custom input
@@ -95,40 +107,76 @@ const PollScreen = () => {
         <Styled.AnswerTitle>Tipos de Resposta</Styled.AnswerTitle>
         <Styled.ButtonsContainer>
           <Styled.OptionsButton
-            selected={answerTypeSelected === 'trueOrFalse'}
+            selected={answerTypeSelected === 'TF'}
             onPress={() => {
-              setAnswerTypeSelected('trueOrFalse');
+              setAnswerTypeSelected('TF');
             }}
           >
             Verdadeiro / Falso
           </Styled.OptionsButton>
           <Styled.OptionsButton
-            selected={answerTypeSelected === 'letters'}
+            selected={answerTypeSelected === 'A-4'}
             onPress={() => {
-              setAnswerTypeSelected('letters');
+              setAnswerTypeSelected('A-4');
             }}
           >
             A / B / C / D
           </Styled.OptionsButton>
           <Styled.OptionsButton
-            selected={answerTypeSelected === 'yesOrNo'}
+            selected={answerTypeSelected === 'YNA'}
             onPress={() => {
-              setAnswerTypeSelected('yesOrNo');
+              setAnswerTypeSelected('YNA');
             }}
           >
             Sim / Não / Abstenção
           </Styled.OptionsButton>
           <Styled.OptionsButton
-            selected={answerTypeSelected === 'freeText'}
+            selected={answerTypeSelected === 'R-'}
             onPress={() => {
-              setAnswerTypeSelected('freeText');
+              setAnswerTypeSelected('R-');
             }}
           >
             Respostas do usuário
           </Styled.OptionsButton>
         </Styled.ButtonsContainer>
+        <Styled.AnswerTitle>Opções de resposta</Styled.AnswerTitle>
+        <Styled.ButtonsContainer>
+          <Styled.OptionsButton
+            selected={answersOptions.isMultipleResponse}
+            onPress={() => {
+              setAnswersOptions((prevState) => {
+                return {
+                  isMultipleResponse: !prevState.isMultipleResponse,
+                  secretPoll: prevState.secretPoll,
+                };
+              });
+            }}
+          >
+            Permitir multiplas respostas por participante
+          </Styled.OptionsButton>
+          <Styled.OptionsButton
+            selected={answersOptions.secretPoll}
+            onPress={() => {
+              setAnswersOptions((prevState) => {
+                return {
+                  isMultipleResponse: prevState.isMultipleResponse,
+                  secretPoll: !prevState.secretPoll,
+                };
+              });
+            }}
+          >
+            Enquete anônima
+          </Styled.OptionsButton>
+        </Styled.ButtonsContainer>
 
-        <Styled.ConfirmButton onPress={() => {}}>
+        <Styled.ConfirmButton
+          onPress={() => {
+            Alert.alert(
+              'Currently under development',
+              'This feature will be addressed soon, please check out our github page'
+            );
+          }}
+        >
           Iniciar Enquete
         </Styled.ConfirmButton>
       </>
