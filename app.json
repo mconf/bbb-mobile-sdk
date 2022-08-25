@@ -24,7 +24,7 @@
       "usesIcloudStorage": true,
       "bundleIdentifier": "com.bbb.bbbmobile"
     },
-    "plugins": ["expo-document-picker"],
+    "plugins": ["expo-document-picker", "@config-plugins/react-native-webrtc"],
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/adaptive-icon.png",
