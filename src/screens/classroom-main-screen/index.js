@@ -1,7 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { SafeAreaView } from 'react-native';
-import { SvgUri } from 'react-native-svg';
 
 import { ActionsBarContext } from '../../store/context/actions-bar-context';
 import BottomSheetChat from '../../components/chat/bottom-sheet-chat';
@@ -47,7 +46,7 @@ const ClassroomMainScreen = () => {
     [usersStore]
   );
 
-  const handleSlideAndPresentationActive = () => {
+  const handleSlideAndPresentationActive = useCallback(() => {
     // TODO Review this collection after update the 2.6 code
     const currentPresentation = Object.values(
       presentationsStore.presentationsCollection
@@ -63,8 +62,9 @@ const ClassroomMainScreen = () => {
         );
       }
     );
-    return currentSlideList[0]?.imageUri;
-  };
+    const imageUri = currentSlideList[0]?.imageUri;
+    return imageUri?.replace('/svg/', '/png/');
+  }, [presentationsStore, slidesStore]);
 
   // lifecycle methods
   useEffect(() => {
@@ -81,10 +81,12 @@ const ClassroomMainScreen = () => {
           </Styled.VideoListContainer>
 
           <Styled.PresentationContainer>
-            <SvgUri
+            <Styled.Presentation
               width="100%"
               height="100%"
-              uri={handleSlideAndPresentationActive()}
+              source={{
+                uri: handleSlideAndPresentationActive(),
+              }}
             />
           </Styled.PresentationContainer>
 
@@ -124,10 +126,10 @@ const ClassroomMainScreen = () => {
             {!actionsBarStatus.isChatActive && (
               <>
                 {switchLandscapeLayout && (
-                  <SvgUri
+                  <Styled.Presentation
                     width="100%"
                     height="100%"
-                    uri={handleSlideAndPresentationActive()}
+                    source={{ uri: handleSlideAndPresentationActive() }}
                   />
                 )}
                 {!switchLandscapeLayout && (
