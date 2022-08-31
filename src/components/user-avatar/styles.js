@@ -6,7 +6,7 @@ const Background = styled.View`
   height: 52px;
   border: ${Colors.white} solid 2px;
   border-radius: 50px;
-  background-color: ${({ userColor }) => userColor};
+  background-color: ${Colors.orange};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -15,6 +15,12 @@ const Background = styled.View`
     userRole === 'MODERATOR' &&
     `
      border-radius: 12px;
+  `}
+
+  ${({ userColor }) =>
+    userColor &&
+    `
+     background-color: ${userColor};
   `}
 `;
 
