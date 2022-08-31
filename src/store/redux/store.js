@@ -6,6 +6,7 @@ import pollsReducer from './slices/polls';
 import padsReducer from './slices/pads';
 import currentPollReducer from './slices/current-poll';
 import groupChatReducer from './slices/group-chat';
+import groupChatMsgReducer from './slices/group-chat-msg';
 import currentUserReducer from './slices/current-user';
 import presentationsReducer from './slices/presentations';
 import slidesReducer from './slices/slides';
@@ -24,6 +25,7 @@ export const store = configureStore({
     currentUserCollection: currentUserReducer,
     externalVideoMeetingsCollection: externalVideoMeetingsReducer,
     groupChatCollection: groupChatReducer,
+    groupChatMsgCollection: groupChatMsgReducer,
     // ...other collections
   },
 });

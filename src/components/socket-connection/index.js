@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import { UsersModule } from './modules/users';
 import { GroupChatModule } from './modules/group-chat';
+import { GroupChatMsgModule } from './modules/group-chat-msg';
 import { MeetingModule } from './modules/meeting';
 import { VoiceUsersModule } from './modules/voice-users';
 import { PollsModule } from './modules/polls';
@@ -59,13 +60,13 @@ const sendValidationMsg = (ws, meetingData) => {
 
 const Sender = (ws) => {
   return {
-    subscribeMsg: (collection) => {
+    subscribeMsg: (collection, params = null) => {
       const id = getRandomAlphanumeric(17);
       sendMessage(ws, {
         msg: 'sub',
         id,
         name: collection,
-        params: [],
+        params: [params],
       });
       return id;
     },
@@ -126,6 +127,7 @@ const setupModules = (ws) => {
     'current-user': new CurrentUserModule(messageSender),
     'external-video-meetings': new ExternalVideoMeetingsModule(messageSender),
     'group-chat': new GroupChatModule(messageSender),
+    'group-chat-msg': new GroupChatMsgModule(messageSender),
     // ** meteor Collections **//
     // Screenreader-alert:
     // annotations:
