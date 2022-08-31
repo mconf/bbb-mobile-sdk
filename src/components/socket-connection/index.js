@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import { UsersModule } from './modules/users';
-import { ChatModule } from './modules/chat';
+import { GroupChatModule } from './modules/group-chat';
 import { MeetingModule } from './modules/meeting';
 import { VoiceUsersModule } from './modules/voice-users';
 import { PollsModule } from './modules/polls';
@@ -114,8 +114,6 @@ const getMeetingData = async (joinUrl) => {
 const setupModules = (ws) => {
   const messageSender = new Sender(ws);
 
-  const chatModule = new ChatModule(messageSender);
-
   const modules = {
     users: new UsersModule(messageSender),
     meetings: new MeetingModule(messageSender),
@@ -127,10 +125,7 @@ const setupModules = (ws) => {
     'current-poll': new CurrentPollModule(messageSender),
     'current-user': new CurrentUserModule(messageSender),
     'external-video-meetings': new ExternalVideoMeetingsModule(messageSender),
-    'group-chat': chatModule,
-    'group-chat-msg': chatModule,
-    'users-typing': chatModule,
-
+    'group-chat': new GroupChatModule(messageSender),
     // ** meteor Collections **//
     // Screenreader-alert:
     // annotations:
@@ -140,23 +135,17 @@ const setupModules = (ws) => {
     // breakouts-history:
     // captions:
     // connection-status:
-    // current-poll:
-    // group-chat:
-    // group-chat-msg:
     // guestUsers:
     // layout-meetings:
     // meeting-time-remaining:
     // notifications:
-    // pads:
     // pads-sessions:
     // pads-updates:
     // presentation-pods:
     // presentation-upload-token:
-    // presentations:
     // record-meetings:
     // screenshare:
     // slide-positions:
-    // slides:
     // users-infos:
     // users-persistent-data:
     // users-settings:
