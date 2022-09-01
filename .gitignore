@@ -10,6 +10,12 @@ npm-debug.*
 *.orig.*
 web-build/
 
+# vim
+*swn
+*swo
+*swp
+*~
+
 # macOS
 .DS_Store
 /.idea/
@@ -74,3 +80,4 @@ web-build/
 dist/
 
 # @end expo-cli
+
