@@ -1,15 +1,17 @@
-import { useCallback, useRef, useMemo, useContext } from 'react';
+import { useCallback, useRef, useMemo, useContext, useState } from 'react';
 import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
-import Styled from './styles';
+import { BottomSheetContext } from '../../../store/context/bottom-sheet-context';
 import UserAvatar from '../../user-avatar';
 import IconButtonComponent from '../../icon-button';
-import { BottomSheetContext } from '../../../store/context/bottom-sheet-context';
+import ChatService from '../service';
 import Colors from '../../../constants/colors';
+import Styled from './styles';
 
 const BottomSheetChat = (props) => {
   const { messages } = props;
 
   const sheetRef = useRef(null);
+  const [messageText, setMessageText] = useState('');
   const bottomSheetCtx = useContext(BottomSheetContext);
 
   const snapPoints = useMemo(() => ['25%', '95%'], []);
@@ -42,13 +44,20 @@ const BottomSheetChat = (props) => {
       >
         <BottomSheetFlatList data={messages} renderItem={renderItem} />
         <Styled.SendMessageContainer>
-          <Styled.TextInput label="Send a message!" />
+          <Styled.TextInput
+            label="Send a message!"
+            onChangeText={(newText) => setMessageText(newText)}
+            value={messageText}
+          />
           <IconButtonComponent
             icon="send"
             iconColor={Colors.white}
             containerColor={Colors.blue}
             animated
-            onPress={() => {}}
+            onPress={() => {
+              setMessageText('');
+              return ChatService.handleSendChatMsg(messageText);
+            }}
           />
         </Styled.SendMessageContainer>
       </BottomSheet>
