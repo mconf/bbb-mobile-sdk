@@ -78,7 +78,7 @@ const makeCall = (name, ...args) => {
   sendMessage(GLOBAL_WS, transaction.payload);
 
   return transaction.promise;
-}
+};
 
 const makeWS = (joinUrl) => {
   const url = new URL(joinUrl);
@@ -275,7 +275,7 @@ const SocketConnectionComponent = () => {
               currentModule.processMessage(msgObj);
             }
           } else {
-            Object.values(modules.current).forEach(module => {
+            Object.values(modules.current).forEach((module) => {
               module.processMessage(msgObj);
             });
           }

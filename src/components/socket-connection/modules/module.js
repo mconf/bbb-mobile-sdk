@@ -1,6 +1,4 @@
-import {
-  getRandomAlphanumeric,
-} from '../utils';
+import { getRandomAlphanumeric } from '../utils';
 import MethodTransactionManager from '../method-transaction-manager';
 import MethodTransaction from '../method-transaction';
 
@@ -9,7 +7,7 @@ export default class Module {
     this.messageSender = messageSender;
     // Array<String> | String
     if (typeof topics === 'string') {
-      this.topics = [ topics ];
+      this.topics = [topics];
     } else {
       this.topics = topics;
     }
@@ -33,10 +31,10 @@ export default class Module {
       this.subscriptions.set(topic, id);
 
       return id;
-    } else {
-      return this.subscriptions.get(topic);
     }
-  };
+
+    return this.subscriptions.get(topic);
+  }
 
   unsubscribeFromCollection(topic) {
     const id = this.subscriptions.get(topic);
@@ -49,16 +47,16 @@ export default class Module {
     });
 
     return this.subscriptions.delete(id);
-  };
+  }
 
   onConnected() {
-    this.topics.forEach(topic => {
+    this.topics.forEach((topic) => {
       this.subscribeToCollection(topic);
     });
   }
 
   onDisconnected() {
-    this.topics.forEach(topic => {
+    this.topics.forEach((topic) => {
       this.messageSender.unsubscribeFromCollection(topic);
     });
   }
@@ -70,7 +68,7 @@ export default class Module {
 
   // eslint-disable-next-line class-methods-use-this
   _processMessage() {
-    //console.debug('Needs to be implemented by inheritors');
+    // console.debug('Needs to be implemented by inheritors');
   }
 
   processMessage(msgObj) {
@@ -79,7 +77,10 @@ export default class Module {
         if (typeof msgObj.error === 'object') {
           this._pendingTransactions.rejectTransaction(msgObj.id, msgObj.error);
         } else {
-          this._pendingTransactions.resolveTransaction(msgObj.id, msgObj.result);
+          this._pendingTransactions.resolveTransaction(
+            msgObj.id,
+            msgObj.result
+          );
         }
         break;
       }
@@ -89,12 +90,11 @@ export default class Module {
       }
     }
 
-
     // _processMessage should be implemented by inheritors
     this._processMessage();
   }
 
-  makeCall (name, ...args) {
+  makeCall(name, ...args) {
     const transaction = new MethodTransaction(name, args);
 
     this._pendingTransactions.addTransaction(transaction);

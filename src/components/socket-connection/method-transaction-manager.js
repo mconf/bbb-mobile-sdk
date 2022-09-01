@@ -1,6 +1,6 @@
 export default class MethodTransactionManager {
   constructor() {
-    this.transactions = new Map(); 
+    this.transactions = new Map();
   }
 
   getTransaction(id) {
@@ -15,11 +15,11 @@ export default class MethodTransactionManager {
     return this.transactions.has(transactionId);
   }
 
-  deleteTransaction (transactionId) {
+  deleteTransaction(transactionId) {
     return this.transactions.delete(transactionId);
   }
 
-  resolveTransaction (id, response) {
+  resolveTransaction(id, response) {
     const transaction = this.getTransaction(id);
 
     if (transaction) {
@@ -28,7 +28,7 @@ export default class MethodTransactionManager {
     }
   }
 
-  rejectTransaction (id, response) {
+  rejectTransaction(id, response) {
     const transaction = this.getTransaction(id);
 
     if (transaction) {

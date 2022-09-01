@@ -25,9 +25,6 @@ const videoStreamsSlice = createSlice({
   },
 });
 
-export const { 
-  addVideoStream, 
-  removeVideoStream, 
-  editVideoStream,
-} = videoStreamsSlice.actions;
+export const { addVideoStream, removeVideoStream, editVideoStream } =
+  videoStreamsSlice.actions;
 export default videoStreamsSlice.reducer;
