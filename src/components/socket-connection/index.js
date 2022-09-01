@@ -12,6 +12,7 @@ import { CurrentUserModule } from './modules/current-user';
 import { ExternalVideoMeetingsModule } from './modules/external-video-meetings';
 import { PresentationsModule } from './modules/presentations';
 import { SlidesModule } from './modules/slides';
+import { VideoStreamsModule } from './modules/video-streams';
 import {
   getRandomDigits,
   getRandomAlphanumericWithCaps,
@@ -77,7 +78,7 @@ const makeCall = (name, ...args) => {
   sendMessage(GLOBAL_WS, transaction.payload);
 
   return transaction.promise;
-}
+};
 
 const makeWS = (joinUrl) => {
   const url = new URL(joinUrl);
@@ -127,6 +128,7 @@ const setupModules = (ws) => {
     'external-video-meetings': new ExternalVideoMeetingsModule(messageSender),
     'group-chat': new GroupChatModule(messageSender),
     'group-chat-msg': new GroupChatMsgModule(messageSender),
+    'video-streams': new VideoStreamsModule(messageSender),
     // ** meteor Collections **//
     // Screenreader-alert:
     // annotations:
@@ -151,7 +153,6 @@ const setupModules = (ws) => {
     // users-persistent-data:
     // users-settings:
     // users-typing:
-    // video-streams:
     // voiceCallStates:
     // whiteboard-multi-user:
   };
@@ -274,7 +275,7 @@ const SocketConnectionComponent = () => {
               currentModule.processMessage(msgObj);
             }
           } else {
-            Object.values(modules.current).forEach(module => {
+            Object.values(modules.current).forEach((module) => {
               module.processMessage(msgObj);
             });
           }

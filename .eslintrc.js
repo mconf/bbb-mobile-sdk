@@ -47,5 +47,6 @@ module.exports = {
     'react/no-unstable-nested-components': 'off',
     'react/jsx-no-bind': 'off',
     'no-nested-ternary': 'off',
+    'no-underscore-dangle': 'off',
   },
 };

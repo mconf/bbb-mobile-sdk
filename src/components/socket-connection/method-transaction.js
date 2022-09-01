@@ -1,9 +1,7 @@
-import {
-  getRandomAlphanumeric,
-} from './utils';
+import { getRandomAlphanumeric } from './utils';
 
 export default class MethodTransaction {
-  constructor (name, ...args) {
+  constructor(name, ...args) {
     this.msg = 'method';
     this.method = name;
     this.params = [...args];
@@ -13,18 +11,18 @@ export default class MethodTransaction {
     this.response = null;
     this.promise = new Promise((resolve, reject) => {
       let isResolved = false;
-      this.resolveResponse = response => {
+      this.resolveResponse = (response) => {
         if (!isResolved) {
           isResolved = true;
-          return resolve(response);
+          resolve(response);
         }
       };
-      this.rejectResponse = response => {
+      this.rejectResponse = (response) => {
         if (!isResolved) {
           isResolved = true;
-          return reject(response);
+          reject(response);
         }
-      }
+      };
     });
   }
 
@@ -37,11 +35,11 @@ export default class MethodTransaction {
     };
   }
 
-  resolve (response) {
-    return this.resolveResponse(response);
+  resolve(response) {
+    this.resolveResponse(response);
   }
 
-  reject (response) {
-    return this.rejectResponse(response);
+  reject(response) {
+    this.rejectResponse(response);
   }
 }
