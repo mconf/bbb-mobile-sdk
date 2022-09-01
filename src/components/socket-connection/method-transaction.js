@@ -1,10 +1,10 @@
 import { getRandomAlphanumeric } from './utils';
 
 export default class MethodTransaction {
-  constructor(name, ...args) {
+  constructor(name, args) {
     this.msg = 'method';
     this.method = name;
-    this.params = [...args];
+    this.params = args;
     this.transactionId = getRandomAlphanumeric(17);
     // A bit of a defer antipattern, I'll leave it to the highlanders
     // to improve - prlanzarin 31/08/22
