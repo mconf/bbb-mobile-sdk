@@ -19,7 +19,13 @@ import {
 } from './utils';
 import 'react-native-url-polyfill/auto';
 import TextInput from '../text-input';
+// TODO move this elsewhere - L22 (here) - L107 (getMeetingData) - prlanzarin
 import MessageSender from './message-sender';
+import MethodTransaction from './method-transaction';
+import MethodTransactionManager from './method-transaction-manager';
+
+let GLOBAL_WS = null;
+const GLOBAL_TRANSACTIONS = new MethodTransactionManager();
 
 const sendMessage = (ws, msgObj) => {
   const msg = JSON.stringify(msgObj).replace(/"/g, '\\"');
@@ -61,6 +67,16 @@ const sendValidationMsg = (ws, meetingData) => {
 
   return validateReqId;
 };
+
+const makeCall = (name, ...args) => {
+  if (GLOBAL_WS == null) throw new TypeError('Socket is not open');
+
+  const transaction = new MethodTransaction(name, args);
+  GLOBAL_TRANSACTIONS.addTransaction(transaction);
+  sendMessage(GLOBAL_WS, transaction.payload);
+
+  return transaction.promise;
+}
 
 const makeWS = (joinUrl) => {
   const url = new URL(joinUrl);
@@ -187,6 +203,8 @@ const SocketConnectionComponent = () => {
     console.log(`Main websocket connection closed.`);
 
     tearDownModules(websocket, modules.current);
+    setWebsocket(null);
+    GLOBAL_WS = null;
   };
 
   const onMessage = (ws, event) => {
@@ -235,6 +253,8 @@ const SocketConnectionComponent = () => {
       ws.onmessage = (msg) => onMessage(ws, msg);
 
       setWebsocket(ws);
+      // TODO move this elsewhere - prlanzarin
+      GLOBAL_WS = ws;
     }
   }, [joinUrl, meetingData]);
 
@@ -265,6 +285,13 @@ const SocketConnectionComponent = () => {
             Object.values(modules.current).forEach(module => {
               module.processMessage(msgObj);
             });
+          }
+
+          // Resolve/reject any higher level transactions called from /services/api/makeCall
+          if (typeof msgObj.error === 'object') {
+            GLOBAL_TRANSACTIONS.rejectTransaction(msgObj.id, msgObj.error);
+          } else {
+            GLOBAL_TRANSACTIONS.resolveTransaction(msgObj.id, msgObj.result);
           }
         }
         break;
@@ -334,4 +361,5 @@ const styles = StyleSheet.create({
   },
 });
 
+export { makeCall };
 export default SocketConnectionComponent;
