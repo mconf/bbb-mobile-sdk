@@ -1,3 +1,4 @@
+import Module from './module';
 import {
   addUser,
   removeUser,
@@ -5,25 +6,11 @@ import {
 } from '../../../store/redux/slices/users';
 import { store } from '../../../store/redux/store';
 
-const usersTopic = 'users';
+const USERS_TOPIC = 'users';
 
-export class UsersModule {
+export class UsersModule extends Module {
   constructor(messageSender) {
-    this.messageSender = messageSender;
-    this.subId = null;
-  }
-
-  onConnected() {
-    this.subId = this.messageSender.subscribeMsg(usersTopic);
-  }
-
-  onDisconnected() {
-    this.messageSender.unsubscribeMsg(usersTopic, this.subId);
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  onDisconnectedBeforeWebsocketClose() {
-    // TODO
+    super(USERS_TOPIC, messageSender);
   }
 
   // eslint-disable-next-line class-methods-use-this

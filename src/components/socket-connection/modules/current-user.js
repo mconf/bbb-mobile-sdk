@@ -1,3 +1,4 @@
+import Module from './module';
 import { store } from '../../../store/redux/store';
 import {
   addCurrentUser,
@@ -5,25 +6,11 @@ import {
   removeCurrentUser,
 } from '../../../store/redux/slices/current-user';
 
-const currentUserTopic = 'current-user';
+const CURRENT_USER_TOPIC = 'current-user';
 
-export class CurrentUserModule {
+export class CurrentUserModule extends Module {
   constructor(messageSender) {
-    this.messageSender = messageSender;
-    this.subId = null;
-  }
-
-  onConnected() {
-    this.subId = this.messageSender.subscribeMsg(currentUserTopic);
-  }
-
-  onDisconnected() {
-    this.messageSender.unsubscribeMsg(currentUserTopic, this.subId);
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  onDisconnectedBeforeWebsocketClose() {
-    // TODO
+    super(CURRENT_USER_TOPIC, messageSender);
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -51,10 +38,5 @@ export class CurrentUserModule {
         currentUserObject: msgObj,
       })
     );
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  processMessage() {
-    // TODO
   }
 }

@@ -1,3 +1,4 @@
+import Module from './module';
 import { store } from '../../../store/redux/store';
 import {
   addCurrentPoll,
@@ -5,25 +6,11 @@ import {
   removeCurrentPoll,
 } from '../../../store/redux/slices/current-poll';
 
-const currentPollTopic = 'current-poll';
+const CURRENT_POLL_TOPIC = 'current-poll';
 
-export class CurrentPollModule {
+export class CurrentPollModule extends Module {
   constructor(messageSender) {
-    this.messageSender = messageSender;
-    this.subId = null;
-  }
-
-  onConnected() {
-    this.subId = this.messageSender.subscribeMsg(currentPollTopic);
-  }
-
-  onDisconnected() {
-    this.messageSender.unsubscribeMsg(currentPollTopic, this.subId);
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  onDisconnectedBeforeWebsocketClose() {
-    // TODO
+    super(CURRENT_POLL_TOPIC, messageSender);
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -51,10 +38,5 @@ export class CurrentPollModule {
         currentPollObject: msgObj,
       })
     );
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  processMessage() {
-    // TODO
   }
 }
