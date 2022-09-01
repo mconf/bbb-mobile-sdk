@@ -12,6 +12,7 @@ import { CurrentUserModule } from './modules/current-user';
 import { ExternalVideoMeetingsModule } from './modules/external-video-meetings';
 import { PresentationsModule } from './modules/presentations';
 import { SlidesModule } from './modules/slides';
+import { VideoStreamsModule } from './modules/video-streams';
 import {
   getRandomDigits,
   getRandomAlphanumericWithCaps,
@@ -127,6 +128,7 @@ const setupModules = (ws) => {
     'external-video-meetings': new ExternalVideoMeetingsModule(messageSender),
     'group-chat': new GroupChatModule(messageSender),
     'group-chat-msg': new GroupChatMsgModule(messageSender),
+    'video-streams': new VideoStreamsModule(messageSender),
     // ** meteor Collections **//
     // Screenreader-alert:
     // annotations:
@@ -151,7 +153,6 @@ const setupModules = (ws) => {
     // users-persistent-data:
     // users-settings:
     // users-typing:
-    // video-streams:
     // voiceCallStates:
     // whiteboard-multi-user:
   };

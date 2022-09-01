@@ -11,6 +11,7 @@ import currentUserReducer from './slices/current-user';
 import presentationsReducer from './slices/presentations';
 import slidesReducer from './slices/slides';
 import externalVideoMeetingsReducer from './slices/external-video-meetings';
+import videoStreamsReducer from './slices/video-streams';
 
 export const store = configureStore({
   reducer: {
@@ -26,6 +27,7 @@ export const store = configureStore({
     externalVideoMeetingsCollection: externalVideoMeetingsReducer,
     groupChatCollection: groupChatReducer,
     groupChatMsgCollection: groupChatMsgReducer,
+    videoStreamsCollection: videoStreamsReducer,
     // ...other collections
   },
 });
