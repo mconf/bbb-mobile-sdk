@@ -1,3 +1,4 @@
+import Module from './module';
 import {
   addExternalVideoMeeting,
   removeExternalVideoMeeting,
@@ -5,25 +6,11 @@ import {
 } from '../../../store/redux/slices/external-video-meetings';
 import { store } from '../../../store/redux/store';
 
-const externalVideoMeetingsTopic = 'external-video-meetings';
+const EXTERNAL_VIDEO_TOPIC = 'external-video-meetings';
 
-export class ExternalVideoMeetingsModule {
+export class ExternalVideoMeetingsModule extends Module {
   constructor(messageSender) {
-    this.messageSender = messageSender;
-    this.subId = null;
-  }
-
-  onConnected() {
-    this.subId = this.messageSender.subscribeMsg(externalVideoMeetingsTopic);
-  }
-
-  onDisconnected() {
-    this.messageSender.unsubscribeMsg(externalVideoMeetingsTopic, this.subId);
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  onDisconnectedBeforeWebsocketClose() {
-    // TODO
+    super(EXTERNAL_VIDEO_TOPIC, messageSender);
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -51,10 +38,5 @@ export class ExternalVideoMeetingsModule {
         externalVideoMeetingObject: msgObj,
       })
     );
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  processMessage() {
-    // TODO
   }
 }

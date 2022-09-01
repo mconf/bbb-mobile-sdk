@@ -1,27 +1,17 @@
-const _groupChatMessageTopic = "group-chat-msg";
-const _groupChatTopic = "group-chat";
-const _usersTypingTopic = "users-typing";
+import Module from './module';
+
+const GROUP_CHAT_MSG_TOPIC = "group-chat-msg";
+const GROUP_CHAT_TOPIC = "group-chat";
+const USERS_TYPING_TOPIC = "users-typing";
 
 const chats = {};
 
-export class ChatModule {
-
+export class ChatModule extends Module {
   constructor(messageSender) {
-    _sender = messageSender;
-  }
-
-  onConnected() {
-    _groupChatSubId = _sender.subscribeMsg(_groupChatTopic);
-    _usersTypingSubId = _sender.subscribeMsg(_usersTypingTopic);
-  }
-
-  onDisconnected() {
-    _sender.unsubscribeMsg(_groupChatTopic, _groupChatSubId);
-    _sender.unsubscribeMsg(_usersTypingTopic, _usersTypingSubId);
-  }
-
-  onDisconnectedBeforeWebsocketClose() {
-    // TODO
+    super([
+      GROUP_CHAT_TOPIC,
+      USERS_TYPING_TOPIC,
+    ], messageSender);
   }
 
   add(fields) {
@@ -35,9 +25,4 @@ export class ChatModule {
   update(id, fields) {
     // TODO
   }
-
-  processMessage(msg) {
-    return;
-  }
-
 }
