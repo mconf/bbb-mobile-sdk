@@ -1,25 +1,12 @@
+import Module from './module';
 import { store } from '../../../store/redux/store';
 import { addPad, removePad, editPad } from '../../../store/redux/slices/pads';
 
-const padsTopic = 'pads';
+const PADS_TOPIC = 'pads';
 
-export class PadsModule {
+export class PadsModule extends Module {
   constructor(messageSender) {
-    this.messageSender = messageSender;
-    this.subId = null;
-  }
-
-  onConnected() {
-    this.subId = this.messageSender.subscribeMsg(padsTopic);
-  }
-
-  onDisconnected() {
-    this.messageSender.unsubscribeMsg(padsTopic, this.subId);
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  onDisconnectedBeforeWebsocketClose() {
-    // TODO
+    super(PADS_TOPIC, messageSender);
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -47,10 +34,5 @@ export class PadsModule {
         padObject: msgObj,
       })
     );
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  processMessage() {
-    // TODO
   }
 }

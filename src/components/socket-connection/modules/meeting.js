@@ -1,3 +1,4 @@
+import Module from './module';
 import {
   addMeeting,
   removeMeeting,
@@ -5,25 +6,11 @@ import {
 } from '../../../store/redux/slices/meeting';
 import { store } from '../../../store/redux/store';
 
-const meetingTopic = 'meetings';
+const MEETING_TOPIC = 'meetings';
 
-export class MeetingModule {
+export class MeetingModule extends Module{
   constructor(messageSender) {
-    this.messageSender = messageSender;
-    this.subId = null;
-  }
-
-  onConnected() {
-    this.subId = this.messageSender.subscribeMsg(meetingTopic);
-  }
-
-  onDisconnected() {
-    this.messageSender.unsubscribeMsg(meetingTopic, this.subId);
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  onDisconnectedBeforeWebsocketClose() {
-    // TODO
+    super(MEETING_TOPIC, messageSender);
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -51,10 +38,5 @@ export class MeetingModule {
         meetingObject: msgObj,
       })
     );
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  processMessage() {
-    // TODO
   }
 }

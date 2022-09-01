@@ -1,3 +1,4 @@
+import Module from './module';
 import {
   addVoiceUser,
   removeVoiceUser,
@@ -5,25 +6,11 @@ import {
 } from '../../../store/redux/slices/voice-users';
 import { store } from '../../../store/redux/store';
 
-const voiceUsersTopic = 'voiceUsers';
+const VOICE_USERS_TOPIC = 'voiceUsers';
 
-export class VoiceUsersModule {
+export class VoiceUsersModule extends Module {
   constructor(messageSender) {
-    this.messageSender = messageSender;
-    this.subId = null;
-  }
-
-  onConnected() {
-    this.subId = this.messageSender.subscribeMsg(voiceUsersTopic);
-  }
-
-  onDisconnected() {
-    this.messageSender.unsubscribeMsg(voiceUsersTopic, this.subId);
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  onDisconnectedBeforeWebsocketClose() {
-    // TODO
+    super(VOICE_USERS_TOPIC, messageSender);
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -51,10 +38,5 @@ export class VoiceUsersModule {
         voiceUserObject: msgObj,
       })
     );
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  processMessage() {
-    // TODO
   }
 }

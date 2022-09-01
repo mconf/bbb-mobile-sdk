@@ -1,3 +1,4 @@
+import Module from './module';
 import { store } from '../../../store/redux/store';
 import {
   addSlide,
@@ -5,25 +6,11 @@ import {
   editSlide,
 } from '../../../store/redux/slices/slides';
 
-const slidesTopic = 'slides';
+const SLIDES_TOPIC = 'slides';
 
-export class SlidesModule {
+export class SlidesModule extends Module{
   constructor(messageSender) {
-    this.messageSender = messageSender;
-    this.subId = null;
-  }
-
-  onConnected() {
-    this.subId = this.messageSender.subscribeMsg(slidesTopic);
-  }
-
-  onDisconnected() {
-    this.messageSender.unsubscribeMsg(slidesTopic, this.subId);
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  onDisconnectedBeforeWebsocketClose() {
-    // TODO
+    super(SLIDES_TOPIC, messageSender);
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -51,10 +38,5 @@ export class SlidesModule {
         slideObject: msgObj,
       })
     );
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  processMessage() {
-    // TODO
   }
 }

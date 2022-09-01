@@ -19,6 +19,7 @@ import {
 } from './utils';
 import 'react-native-url-polyfill/auto';
 import TextInput from '../text-input';
+import MessageSender from './message-sender';
 
 const sendMessage = (ws, msgObj) => {
   const msg = JSON.stringify(msgObj).replace(/"/g, '\\"');
@@ -47,36 +48,18 @@ const reAuthenticateUser = (ws) => {
 
 const sendValidationMsg = (ws, meetingData) => {
   const { meetingID, internalUserID, authToken } = meetingData;
+  const validateReqId = getRandomAlphanumeric(32);
+
   const msg = {
     msg: 'method',
     method: 'validateAuthToken',
-    id: getRandomAlphanumeric(32),
+    id: validateReqId,
     params: [meetingID, internalUserID, authToken],
   };
 
   sendMessage(ws, msg);
-};
 
-const Sender = (ws) => {
-  return {
-    subscribeMsg: (collection) => {
-      const id = getRandomAlphanumeric(17);
-      sendMessage(ws, {
-        msg: 'sub',
-        id,
-        name: collection,
-        params: [],
-      });
-      return id;
-    },
-    unsubscribeMsg: (collection, id) => {
-      sendMessage(ws, {
-        msg: 'unsub',
-        id,
-      });
-    },
-    sendMessage,
-  };
+  return validateReqId;
 };
 
 const makeWS = (joinUrl) => {
@@ -112,8 +95,7 @@ const getMeetingData = async (joinUrl) => {
 
 /// Set up the web socket modules.
 const setupModules = (ws) => {
-  const messageSender = new Sender(ws);
-
+  const messageSender = new MessageSender(ws);
   const chatModule = new ChatModule(messageSender);
 
   const modules = {
@@ -198,6 +180,7 @@ const SocketConnectionComponent = () => {
   const [meetingData, setMeetingData] = useState({});
   const [websocket, setWebsocket] = useState(null);
   const modules = useRef({});
+  const validateReqId = useRef(null);
 
   const onOpen = () => {};
   const onClose = () => {
@@ -258,7 +241,7 @@ const SocketConnectionComponent = () => {
   const processMessage = (ws, msgObj) => {
     switch (msgObj.msg) {
       case 'connected': {
-        sendValidationMsg(ws, meetingData);
+        validateReqId.current = sendValidationMsg(ws, meetingData);
         break;
       }
 
@@ -268,7 +251,22 @@ const SocketConnectionComponent = () => {
       }
 
       case 'result': {
-        modules.current = setupModules(ws);
+        // We're resolving a validateAuthToken request
+        if (msgObj.id === validateReqId.current) {
+          modules.current = setupModules(ws);
+        } else {
+          // Probably dealing with a module makeCall/method response
+          if (msgObj.collection) {
+            const currentModule = modules.current[msgObj.collection];
+            if (currentModule) {
+              currentModule.processMessage(msgObj);
+            }
+          } else {
+            Object.values(modules.current).forEach(module => {
+              module.processMessage(msgObj);
+            });
+          }
+        }
         break;
       }
 
