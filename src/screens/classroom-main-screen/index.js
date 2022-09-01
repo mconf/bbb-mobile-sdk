@@ -10,20 +10,15 @@ import Colors from '../../constants/colors';
 import Styled from './styles';
 
 const ClassroomMainScreen = () => {
-  // mock data
-  const messages = [
-    {
-      author: 'Gaguinho',
-      message: 'Bom dd-d-d-ia P-p-pessual',
-    },
-  ];
-
   // variables
   const slidesStore = useSelector((state) => state.slidesCollection);
   const presentationsStore = useSelector(
     (state) => state.presentationsCollection
   );
   const usersStore = useSelector((state) => state.usersCollection);
+  const groupChatMsgStore = useSelector(
+    (state) => state.groupChatMsgCollection
+  );
   const orientation = useOrientation();
   const [switchLandscapeLayout, setSwitchLandscapeLayout] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -44,6 +39,18 @@ const ClassroomMainScreen = () => {
         };
       }),
     [usersStore]
+  );
+
+  const handleMessages = useCallback(
+    () =>
+      Object.values(groupChatMsgStore.groupChatMsgCollection).map((message) => {
+        return {
+          author: message.sender,
+          message: message.message,
+          // ...other properties
+        };
+      }),
+    [groupChatMsgStore]
   );
 
   const handleSlideAndPresentationActive = useCallback(() => {
@@ -93,7 +100,7 @@ const ClassroomMainScreen = () => {
           <Styled.ChatContainer>
             {actionsBarStatus.isChatActive && (
               <Styled.Chat
-                messages={messages.slice(messages.length - 3, messages.length)}
+                messages={handleMessages()}
                 onPressItem={() =>
                   bottomSheetCtx.triggerButton('chatBottomSheet', true)
                 }
@@ -105,7 +112,9 @@ const ClassroomMainScreen = () => {
             <Styled.ActionsBar />
           </Styled.ActionsBarContainer>
         </Styled.ContainerView>
-        {bottomSheet.chatBottomSheet && <BottomSheetChat messages={messages} />}
+        {bottomSheet.chatBottomSheet && (
+          <BottomSheetChat messages={handleMessages()} />
+        )}
       </SafeAreaView>
     );
   };
@@ -117,7 +126,7 @@ const ClassroomMainScreen = () => {
           <Styled.PresentationContainer orientation={orientation}>
             {actionsBarStatus.isChatActive && (
               <Styled.Chat
-                messages={messages}
+                messages={handleMessages()}
                 onPressItem={() =>
                   bottomSheetCtx.triggerButton('chatBottomSheet', true)
                 }
@@ -156,7 +165,9 @@ const ClassroomMainScreen = () => {
             <Styled.ActionsBar orientation={orientation} />
           </Styled.ActionsBarContainer>
         </Styled.ContainerView>
-        {bottomSheet.chatBottomSheet && <BottomSheetChat messages={messages} />}
+        {bottomSheet.chatBottomSheet && (
+          <BottomSheetChat messages={handleMessages()} />
+        )}
       </SafeAreaView>
     );
   };
