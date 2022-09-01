@@ -1,29 +1,22 @@
 import { store } from '../../../store/redux/store';
+import Module from './module';
 import {
   addGroupChatMsg,
   editGroupChatMsg,
   removeGroupChatMsg,
 } from '../../../store/redux/slices/group-chat-msg';
 
-const groupChatMsgTopic = 'group-chat-msg';
+const GROUP_CHAT_MSG_TOPIC = 'group-chat-msg';
 
-export class GroupChatMsgModule {
+export class GroupChatMsgModule extends Module {
   constructor(messageSender) {
-    this.messageSender = messageSender;
-    this.subId = null;
+    super(GROUP_CHAT_MSG_TOPIC, messageSender);
   }
 
   onConnected() {
-    this.subId = this.messageSender.subscribeMsg(groupChatMsgTopic, 0);
-  }
-
-  onDisconnected() {
-    this.messageSender.unsubscribeMsg(groupChatMsgTopic, this.subId);
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  onDisconnectedBeforeWebsocketClose() {
-    // TODO
+    this.topics.forEach((topic) => {
+      this.subscribeToCollection(topic, 0);
+    });
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -51,10 +44,5 @@ export class GroupChatMsgModule {
         groupChatMsgObject: msgObj,
       })
     );
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  processMessage() {
-    // TODO
   }
 }

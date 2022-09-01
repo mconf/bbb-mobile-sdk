@@ -20,14 +20,14 @@ export default class Module {
     this._pendingTransactions = new MethodTransactionManager();
   }
 
-  subscribeToCollection(topic) {
+  subscribeToCollection(topic, ...args) {
     if (!this.subscriptions.has(topic)) {
       const id = getRandomAlphanumeric(17);
       this.messageSender.sendMessage({
         msg: 'sub',
         id,
         name: topic,
-        params: [],
+        params: [...args],
       });
       // FIXME wait for subscription to succeed
       this.subscriptions.set(topic, id);
