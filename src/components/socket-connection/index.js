@@ -13,6 +13,7 @@ import { ExternalVideoMeetingsModule } from './modules/external-video-meetings';
 import { PresentationsModule } from './modules/presentations';
 import { SlidesModule } from './modules/slides';
 import { VideoStreamsModule } from './modules/video-streams';
+import { ScreenshareModule } from './modules/screenshare';
 import {
   getRandomDigits,
   getRandomAlphanumericWithCaps,
@@ -57,7 +58,6 @@ const reAuthenticateUser = (ws) => {
 const sendValidationMsg = (ws, meetingData) => {
   const { meetingID, internalUserID, authToken } = meetingData;
   const validateReqId = getRandomAlphanumeric(32);
-
   const msg = {
     msg: 'method',
     method: 'validateAuthToken',
@@ -123,6 +123,7 @@ const setupModules = (ws) => {
     pads: new PadsModule(messageSender),
     presentations: new PresentationsModule(messageSender),
     slides: new SlidesModule(messageSender),
+    screenshare: new ScreenshareModule(messageSender),
     'current-poll': new CurrentPollModule(messageSender),
     'current-user': new CurrentUserModule(messageSender),
     'external-video-meetings': new ExternalVideoMeetingsModule(messageSender),
@@ -147,7 +148,6 @@ const setupModules = (ws) => {
     // presentation-pods:
     // presentation-upload-token:
     // record-meetings:
-    // screenshare:
     // slide-positions:
     // users-infos:
     // users-persistent-data:

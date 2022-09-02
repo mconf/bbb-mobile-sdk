@@ -12,6 +12,7 @@ import presentationsReducer from './slices/presentations';
 import slidesReducer from './slices/slides';
 import externalVideoMeetingsReducer from './slices/external-video-meetings';
 import videoStreamsReducer from './slices/video-streams';
+import screenshareReducer from './slices/screenshare';
 
 export const store = configureStore({
   reducer: {
@@ -28,6 +29,7 @@ export const store = configureStore({
     groupChatCollection: groupChatReducer,
     groupChatMsgCollection: groupChatMsgReducer,
     videoStreamsCollection: videoStreamsReducer,
+    screenshareCollection: screenshareReducer,
     // ...other collections
   },
 });
