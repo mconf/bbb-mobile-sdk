@@ -1,12 +1,13 @@
-import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import {
   Alert,
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
 } from 'react-native';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useOrientation } from '../../hooks/use-orientation';
+import PollService from './service';
 import Styled from './styles';
 
 const PollScreen = () => {
@@ -19,8 +20,8 @@ const PollScreen = () => {
   const pollsStore = useSelector((state) => state.pollsCollection);
   const activePollObject = Object.values(pollsStore.pollsCollection)[0];
   const orientation = useOrientation();
+
   // Answer poll states
-  const [selectedSingleAnswer, setSelectedSingleAnswer] = useState(-1);
   const [selectedAnswers, setSelectedAnswers] = useState([]);
 
   // Create poll states
@@ -42,18 +43,25 @@ const PollScreen = () => {
 
     // Reset to default values
     setSelectedAnswers([]);
-    setSelectedSingleAnswer(-1);
   }, [activePollObject]);
 
-  // TODO use with prevState
-  const handleCheckMultipleAnswers = (id) => {
-    let updatedList = [...selectedAnswers];
-    if (!updatedList.includes(id)) {
-      updatedList = [...selectedAnswers, id];
-    } else {
-      updatedList.splice(selectedAnswers.indexOf(id), 1);
+  const handleSelectAnswers = (id) => {
+    // If is custom input
+    if (activePollObject?.pollType === 'R-') {
+      return setSelectedAnswers([id.toString()]);
     }
-    setSelectedAnswers(updatedList);
+    // If is multiple response
+    if (activePollObject?.isMultipleResponse) {
+      let updatedList = [...selectedAnswers];
+      if (!updatedList.includes(id)) {
+        updatedList = [...selectedAnswers, id];
+      } else {
+        updatedList.splice(selectedAnswers.indexOf(id), 1);
+      }
+      return setSelectedAnswers(updatedList);
+    }
+    // If is single response
+    return setSelectedAnswers([id]);
   };
 
   const handleSecretPollLabel = () => (
@@ -75,19 +83,19 @@ const PollScreen = () => {
   const handleTypeOfAnswer = () => {
     // 'R-' === custom input
     if (activePollObject?.pollType === 'R-') {
-      return <Styled.TextInput label="Sua resposta" />;
+      return (
+        <Styled.TextInput
+          label="Sua resposta"
+          onChangeText={(text) => setSelectedAnswers(text)}
+        />
+      );
     }
     return activePollObject?.answers.map((question) => (
       <Styled.OptionsButton
         key={question.id}
-        selected={
-          selectedSingleAnswer === question.id ||
-          selectedAnswers.includes(question.id)
-        }
+        selected={selectedAnswers.includes(question.id)}
         onPress={() => {
-          return activePollObject?.isMultipleResponse
-            ? handleCheckMultipleAnswers(question.id)
-            : setSelectedSingleAnswer(question.id);
+          handleSelectAnswers(question.id);
         }}
       >
         {question.key}
@@ -194,12 +202,7 @@ const PollScreen = () => {
         </Styled.ButtonsContainer>
 
         <Styled.ConfirmButton
-          onPress={() => {
-            Alert.alert(
-              'Currently under development',
-              'This feature will be addressed soon, please check out our github page'
-            );
-          }}
+          onPress={() => PollService.handleAnswerPoll(selectedAnswers)}
         >
           Enviar resposta
         </Styled.ConfirmButton>
