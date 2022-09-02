@@ -18,6 +18,7 @@
     "@react-navigation/native-stack": "^6.6.2",
     "@reduxjs/toolkit": "^1.8.3",
     "axios": "^0.27.2",
+    "eventemitter2": "^6.4.7",
     "expo": "~45.0.0",
     "expo-document-picker": "~10.2.1",
     "expo-splash-screen": "~0.15.1",
