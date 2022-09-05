@@ -1,5 +1,5 @@
 import { store } from '../../store/redux/store';
-import { makeCall } from '../socket-connection';
+import makeCall from '../../services/api/makeCall';
 
 const handleSendChatMsg = async (text) => {
   const currentUserStore = store.getState().currentUserCollection;

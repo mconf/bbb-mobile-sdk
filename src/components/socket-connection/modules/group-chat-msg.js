@@ -6,6 +6,8 @@ import {
   removeGroupChatMsg,
 } from '../../../store/redux/slices/group-chat-msg';
 
+import { addPreviousPollPublished } from '../../../store/redux/slices/wide-app/previous-poll-published';
+
 const GROUP_CHAT_MSG_TOPIC = 'group-chat-msg';
 
 export class GroupChatMsgModule extends Module {
@@ -21,6 +23,13 @@ export class GroupChatMsgModule extends Module {
 
   // eslint-disable-next-line class-methods-use-this
   add(msgObj) {
+    if (msgObj.fields.id.toString().includes('POLL_RESULT')) {
+      store.dispatch(
+        addPreviousPollPublished({
+          previousPollPublishedObject: msgObj.fields.extra.pollResultData,
+        })
+      );
+    }
     return store.dispatch(
       addGroupChatMsg({
         groupChatMsgObject: msgObj,

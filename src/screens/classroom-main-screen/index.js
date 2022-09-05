@@ -1,6 +1,6 @@
+import { SafeAreaView } from 'react-native';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { SafeAreaView } from 'react-native';
 
 import { ActionsBarContext } from '../../store/context/actions-bar-context';
 import BottomSheetChat from '../../components/chat/bottom-sheet-chat';
@@ -44,6 +44,14 @@ const ClassroomMainScreen = () => {
   const handleMessages = useCallback(
     () =>
       Object.values(groupChatMsgStore.groupChatMsgCollection).map((message) => {
+        // if is a poll result message
+        if (message.id.toString().includes('PUBLIC_CHAT_POLL_RESULT')) {
+          return {
+            author: 'Enquete foi publicada',
+            message:
+              'Verifique a seção destinada a enquete para observar os resultados',
+          };
+        }
         return {
           author: message.sender,
           message: message.message,
