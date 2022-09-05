@@ -1,4 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
+// meteor collections
 import usersReducer from './slices/users';
 import meetingReducer from './slices/meeting';
 import voiceUsersReducer from './slices/voice-users';
@@ -13,8 +14,12 @@ import slidesReducer from './slices/slides';
 import externalVideoMeetingsReducer from './slices/external-video-meetings';
 import videoStreamsReducer from './slices/video-streams';
 
+// app exclusive wide state collections
+import previousPollPublishedReducer from './slices/wide-app/previous-poll-published';
+
 export const store = configureStore({
   reducer: {
+    // meteor collections
     meetingCollection: meetingReducer,
     usersCollection: usersReducer,
     voiceUsersCollection: voiceUsersReducer,
@@ -29,5 +34,8 @@ export const store = configureStore({
     groupChatMsgCollection: groupChatMsgReducer,
     videoStreamsCollection: videoStreamsReducer,
     // ...other collections
+
+    // app exclusive wide state collections
+    previousPollPublishedCollection: previousPollPublishedReducer,
   },
 });
