@@ -1,7 +1,5 @@
 import styled from 'styled-components/native';
 import actionsBar from '../../components/actions-bar';
-import button from '../../components/button';
-import textInput from '../../components/text-input';
 import Colors from '../../constants/colors';
 
 const ContainerView = styled.SafeAreaView`
@@ -18,6 +16,10 @@ const ContainerView = styled.SafeAreaView`
     flex-direction: row;
     justify-content: center;
   `}
+`;
+
+const ContainerViewPadding = styled.View`
+  padding: 12px;
 `;
 
 const ActionsBarContainer = styled.View`
@@ -39,37 +41,7 @@ const ContainerPollCard = styled.ScrollView`
   width: 100%;
   max-height: 85%;
   border-radius: 12px;
-  padding: 12px;
   display: flex;
-`;
-
-const ButtonsContainer = styled.View``;
-
-const OptionsButton = styled(button)`
-  background-color: ${Colors.lightGray200}
-  color: ${Colors.lightGray400};
-  font-size: 16px;
-  font-weight: 400;
-  padding: 12px;
-  border-radius: 12px;
-
-  ${({ selected }) =>
-    selected &&
-    `
-      background-color: #003399;
-      color: ${Colors.white};
-  `}
-`;
-
-const ConfirmButton = styled(button)`
-  background-color: ${Colors.orange};
-  color: ${Colors.white};
-  font-size: 16px;
-  font-weight: 400;
-  padding: 12px;
-  margin-bottom: 16px;
-  border-radius: 12px;
-  margin-top: 32px;
 `;
 
 const ActionsBar = styled(actionsBar)`
@@ -88,32 +60,20 @@ const Title = styled.Text`
   padding-bottom: 24px;
 `;
 
-const AnswerTitle = styled.Text`
-  font-weight: 500;
-  font-size: 18px;
-  padding: 24px 0;
-  text-align: center;
-`;
-
-const SecretLabel = styled.Text`
-  font-weight: 500;
-  font-size: 12px;
-  text-align: center;
+const NoPollText = styled.Text`
+  font-size: 16px;
+  font-weight: 600;
   font-style: italic;
+  text-align: center;
+  padding-bottom: 24px;
 `;
-
-const TextInput = styled(textInput)``;
 
 export default {
   ContainerView,
+  ContainerViewPadding,
   ActionsBarContainer,
   ActionsBar,
   ContainerPollCard,
   Title,
-  OptionsButton,
-  AnswerTitle,
-  ButtonsContainer,
-  ConfirmButton,
-  TextInput,
-  SecretLabel,
+  NoPollText,
 };

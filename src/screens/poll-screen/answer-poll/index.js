@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import Styled from '../styles';
+import Styled from './styles';
 import PollService from '../service';
 
 const AnswerPollView = () => {

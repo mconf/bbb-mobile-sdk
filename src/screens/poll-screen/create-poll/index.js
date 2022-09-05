@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Alert } from 'react-native';
-import Styled from '../styles';
+import Styled from './styles';
 
 const CreatePoll = () => {
   // Create poll states
