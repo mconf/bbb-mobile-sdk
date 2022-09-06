@@ -113,7 +113,7 @@ const getMeetingData = async (joinUrl) => {
 
 /// Set up the web socket modules.
 const setupModules = (ws) => {
-  const messageSender = new MessageSender(ws);
+  const messageSender = new MessageSender(ws, GLOBAL_TRANSACTIONS);
 
   const modules = {
     users: new UsersModule(messageSender),
