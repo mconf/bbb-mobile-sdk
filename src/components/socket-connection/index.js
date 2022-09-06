@@ -157,8 +157,8 @@ const setupModules = (ws) => {
     // whiteboard-multi-user:
   };
 
-  Object.keys(modules).forEach((module) => {
-    modules[module].onConnected();
+  Object.values(modules).forEach((module) => {
+    module.onConnected();
   });
 
   return modules;
@@ -172,8 +172,8 @@ const logout = (ws, meetingData, modules) => {
       params: [],
     });
 
-    Object.keys(modules).forEach((module) => {
-      modules[module].onDisconnectedBeforeWebsocketClose();
+    Object.values(modules).forEach((module) => {
+      module.onDisconnectedBeforeWebsocketClose();
     });
 
     ws.close(0);
@@ -221,7 +221,7 @@ const SocketConnectionComponent = () => {
     // console.log('Component Will Mount');
     return () => {
       // console.log('Component Will Unmount');
-      logout(websocket, meetingData);
+      logout(websocket, meetingData, modules.current);
     };
   }, []);
 
@@ -328,8 +328,8 @@ const SocketConnectionComponent = () => {
   };
 
   const tearDownModules = () => {
-    Object.keys(modules).forEach((module) => {
-      modules[module].onDisconnected();
+    Object.values(modules.current).forEach((module) => {
+      module.onDisconnected();
     });
   };
 
