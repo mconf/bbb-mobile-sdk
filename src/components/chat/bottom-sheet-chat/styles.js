@@ -26,6 +26,7 @@ const ContainerItem = styled.View`
   display: flex;
   flex-direction: row;
   align-items: center;
+  width: 90%;
   padding: 12px;
 `;
 
