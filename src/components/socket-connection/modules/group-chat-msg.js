@@ -3,8 +3,8 @@ import Module from './module';
 import {
   addGroupChatMsg,
   addGroupChatMsgBeforeJoin,
+  clearChatMessages,
   editGroupChatMsg,
-  removeGroupChatMsg,
 } from '../../../store/redux/slices/group-chat-msg';
 
 import { addPreviousPollPublished } from '../../../store/redux/slices/wide-app/previous-poll-published';
@@ -78,6 +78,14 @@ export class GroupChatMsgModule extends Module {
         })
       );
     }
+    if (msgObj.fields.id.toString().includes('PUBLIC_CHAT_CLEAR')) {
+      store.dispatch(clearChatMessages());
+      store.dispatch(
+        addGroupChatMsg({
+          groupChatMsgObject: msgObj,
+        })
+      );
+    }
     return store.dispatch(
       addGroupChatMsg({
         groupChatMsgObject: msgObj,
@@ -85,13 +93,9 @@ export class GroupChatMsgModule extends Module {
     );
   }
 
-  // eslint-disable-next-line class-methods-use-this
+  // eslint-disable-next-line class-methods-use-this,no-unused-vars
   remove(msgObj) {
-    return store.dispatch(
-      removeGroupChatMsg({
-        groupChatMsgObject: msgObj,
-      })
-    );
+    // Removing this to avoid the meteor calls when clear chat
   }
 
   // eslint-disable-next-line class-methods-use-this

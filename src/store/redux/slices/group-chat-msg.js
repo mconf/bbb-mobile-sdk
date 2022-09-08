@@ -11,6 +11,9 @@ const groupChatMsgSlice = createSlice({
       state.groupChatMsgCollection[groupChatMsgObject.id] =
         action.payload.groupChatMsgObject;
     },
+    clearChatMessages: (state) => {
+      state.groupChatMsgCollection = {};
+    },
     addGroupChatMsg: (state, action) => {
       const { groupChatMsgObject } = action.payload;
       state.groupChatMsgCollection[groupChatMsgObject.id] =
@@ -34,5 +37,6 @@ export const {
   addGroupChatMsg,
   removeGroupChatMsg,
   editGroupChatMsg,
+  clearChatMessages,
 } = groupChatMsgSlice.actions;
 export default groupChatMsgSlice.reducer;
