@@ -57,7 +57,7 @@ export default class Module {
 
   onDisconnected() {
     this.topics.forEach((topic) => {
-      this.messageSender.unsubscribeFromCollection(topic);
+      this.unsubscribeFromCollection(topic);
     });
   }
 
