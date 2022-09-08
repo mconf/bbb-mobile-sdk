@@ -2,9 +2,15 @@ import Styled from './styles';
 
 const Item = (props) => {
   const { messageObject } = props;
+  const timestamp = new Date(messageObject.item.timestamp);
   return (
     <>
-      <Styled.MessageAuthor>{messageObject.item.author}</Styled.MessageAuthor>
+      <Styled.MessageTopContainer>
+        <Styled.MessageAuthor>{messageObject.item.author}</Styled.MessageAuthor>
+        <Styled.MessageTimestamp>
+          {`${timestamp.getHours()}:${timestamp.getMinutes()}`}
+        </Styled.MessageTimestamp>
+      </Styled.MessageTopContainer>
       <Styled.Card>
         <Styled.MessageContent>
           {messageObject.item.message}

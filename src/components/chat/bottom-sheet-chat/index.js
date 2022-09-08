@@ -23,11 +23,15 @@ const BottomSheetChat = (props) => {
   }, []);
 
   const renderItem = ({ item }) => {
+    const timestamp = new Date(item.timestamp);
     return (
       <Styled.ContainerItem>
         <UserAvatar userName={item.author} />
         <Styled.Card>
-          <Styled.MessageAuthor>{item.author}</Styled.MessageAuthor>
+          <Styled.MessageTopContainer>
+            <Styled.MessageAuthor>{item.author}</Styled.MessageAuthor>
+            <Styled.MessageTimestamp>{`${timestamp.getHours()}:${timestamp.getMinutes()}`}</Styled.MessageTimestamp>
+          </Styled.MessageTopContainer>
           <Styled.MessageContent>{item.message}</Styled.MessageContent>
         </Styled.Card>
       </Styled.ContainerItem>

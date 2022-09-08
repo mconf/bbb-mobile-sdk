@@ -16,6 +16,17 @@ const MessageAuthor = styled.Text`
   font-weight: 500;
 `;
 
+const MessageTopContainer = styled.View`
+  display: flex;
+  flex-direction: row;
+`;
+
+const MessageTimestamp = styled.Text`
+  color: ${Colors.lightGray200};
+  padding-left: 8px;
+  font-style: italic;
+`;
+
 const UserAvatar = styled(userAvatar)``;
 
 const MessageContent = styled.Text`
@@ -60,4 +71,6 @@ export default {
   Container,
   SendMessageContainer,
   TextInput,
+  MessageTimestamp,
+  MessageTopContainer,
 };

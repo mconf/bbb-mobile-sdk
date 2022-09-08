@@ -10,6 +10,17 @@ const Card = styled.View`
   margin: 8px;
 `;
 
+const MessageTopContainer = styled.View`
+  display: flex;
+  flex-direction: row;
+`;
+
+const MessageTimestamp = styled.Text`
+  color: ${Colors.lightGray300};
+  padding-left: 8px;
+  font-style: italic;
+`;
+
 const FlatList = styled.FlatList`
   width: 100%;
 `;
@@ -36,4 +47,6 @@ export default {
   MessageAuthor,
   MessageContent,
   ChatContainerPressable,
+  MessageTimestamp,
+  MessageTopContainer,
 };

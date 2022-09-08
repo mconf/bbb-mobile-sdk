@@ -49,6 +49,7 @@ const ClassroomMainScreen = () => {
         if (message.id.toString().includes('PUBLIC_CHAT_POLL_RESULT')) {
           return {
             author: 'Sistema',
+            timestamp: message.timestamp,
             message:
               'Uma enquete foi publicada, verifique a seção destinada a enquete para observar os resultados',
           };
@@ -57,12 +58,14 @@ const ClassroomMainScreen = () => {
         if (message.id.toString().includes('PUBLIC_CHAT_CLEAR')) {
           return {
             author: 'Sistema',
+            timestamp: message.timestamp,
             message:
               'O histórico do bate-papo público foi apagado por um moderador',
           };
         }
         return {
           author: message.sender,
+          timestamp: message.timestamp,
           message: message.message,
           // ...other properties
         };
