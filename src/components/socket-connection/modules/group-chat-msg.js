@@ -44,6 +44,13 @@ export class GroupChatMsgModule extends Module {
 
       if (messagesFromPage.length) {
         messagesFromPage.map((msgObj) => {
+          if (msgObj.id.toString().includes('POLL_RESULT')) {
+            store.dispatch(
+              addPreviousPollPublished({
+                previousPollPublishedObject: msgObj,
+              })
+            );
+          }
           return store.dispatch(
             addGroupChatMsgBeforeJoin({
               groupChatMsgObject: msgObj,

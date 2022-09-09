@@ -8,8 +8,8 @@ const previousPollPublishedSlice = createSlice({
   reducers: {
     addPreviousPollPublished: (state, action) => {
       const { previousPollPublishedObject } = action.payload;
-      state.previousPollPublishedCollection[previousPollPublishedObject.id] =
-        action.payload.previousPollPublishedObject;
+      state.previousPollPublishedCollection[previousPollPublishedObject._id] =
+        action.payload.previousPollPublishedObject.extra.pollResultData;
     },
     editPreviousPollPublished: (state, action) => {
       const { previousPollPublishedObject } = action.payload;
