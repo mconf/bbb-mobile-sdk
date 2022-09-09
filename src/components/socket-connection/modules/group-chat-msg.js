@@ -81,7 +81,7 @@ export class GroupChatMsgModule extends Module {
     if (msgObj.fields.id.toString().includes('POLL_RESULT')) {
       store.dispatch(
         addPreviousPollPublished({
-          previousPollPublishedObject: msgObj.fields.extra.pollResultData,
+          previousPollPublishedObject: msgObj.fields,
         })
       );
     }
