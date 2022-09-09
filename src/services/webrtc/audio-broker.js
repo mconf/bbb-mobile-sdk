@@ -111,7 +111,6 @@ class AudioBroker extends BaseBroker {
             started: this.started,
           },
         }, 'Audio peer creation failed');
-        console.error(error);
         this.onerror(normalizedError);
         reject(normalizedError);
       }
@@ -207,7 +206,6 @@ class AudioBroker extends BaseBroker {
   }
 
   _handleOfferGenerationFailure(error) {
-    console.error(error);
     if (error) {
       logger.error({
         logCode: `${this.logCodePrefix}_offer_failure`,

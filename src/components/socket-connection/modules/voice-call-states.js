@@ -15,7 +15,6 @@ export class VoiceCallStatesModule extends Module {
 
   // eslint-disable-next-line class-methods-use-this
   add(msgObj) {
-    console.log("QUE... de la mancha", msgObj);
     return store.dispatch(
       addVoiceCallState({
         voiceCallStateObject: msgObj,

@@ -19,7 +19,7 @@ const audioSlice = createSlice({
       state.isConnecting = action.payload;
     },
     setIsConnected: (state, action) => {
-      state.isConnecting = action.payload;
+      state.isConnected = action.payload;
     },
     setIsHangingUp: (state, action) => {
       state.isHangingUp = action.payload;

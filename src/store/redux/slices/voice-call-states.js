@@ -7,7 +7,6 @@ const voiceCallStatesSlice = createSlice({
   },
   reducers: {
     addVoiceCallState: (state, action) => {
-      console.log("ADDERINO DELLO MANCHE", state, action);
       const { voiceCallStateObject } = action.payload;
       state.voiceCallStatesCollection[voiceCallStateObject.id] =
         action.payload.voiceCallStateObject.fields;
