@@ -5,6 +5,7 @@ import { GroupChatModule } from './modules/group-chat';
 import { GroupChatMsgModule } from './modules/group-chat-msg';
 import { MeetingModule } from './modules/meeting';
 import { VoiceUsersModule } from './modules/voice-users';
+import { VoiceCallStatesModule } from './modules/voice-call-states';
 import { PollsModule } from './modules/polls';
 import { PadsModule } from './modules/pads';
 import { CurrentPollModule } from './modules/current-poll';
@@ -130,6 +131,7 @@ const setupModules = (ws) => {
     'group-chat': new GroupChatModule(messageSender),
     'group-chat-msg': new GroupChatMsgModule(messageSender),
     'video-streams': new VideoStreamsModule(messageSender),
+    voiceCallStates: new VoiceCallStatesModule(messageSender),
     // ** meteor Collections **//
     // Screenreader-alert:
     // annotations:
@@ -153,7 +155,6 @@ const setupModules = (ws) => {
     // users-persistent-data:
     // users-settings:
     // users-typing:
-    // voiceCallStates:
     // whiteboard-multi-user:
   };
 
