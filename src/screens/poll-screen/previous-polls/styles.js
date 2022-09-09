@@ -16,6 +16,13 @@ const QuestionText = styled.Text`
   text-align: center;
 `;
 
+const TimestampText = styled.Text`
+  font-size: 14px;
+  font-weight: 500;
+  font-style: italic;
+  text-align: center;
+`;
+
 const Title = styled.Text`
   font-size: 24px;
   font-weight: 600;
@@ -39,6 +46,7 @@ const KeyText = styled.Text`
 
 export default {
   ContainerPollCard,
+  TimestampText,
   Title,
   QuestionText,
   AnswerContainer,
