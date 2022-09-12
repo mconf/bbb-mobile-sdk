@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  isMuted: false,
+  isMuted: true,
   isConnected: false,
   isConnecting: false,
   isHangingUp: false,

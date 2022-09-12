@@ -2,12 +2,10 @@ import {
   RTCPeerConnection,
   RTCIceCandidate,
   RTCSessionDescription,
-  MediaStream,
 } from 'react-native-webrtc';
 import { EventEmitter2 } from 'eventemitter2';
 import {
   stopStream,
-  stopTrack,
   silentConsole,
 } from './utils';
 

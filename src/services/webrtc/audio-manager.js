@@ -2,9 +2,14 @@ import { mediaDevices } from 'react-native-webrtc';
 import logger from '../logger';
 import AudioBroker from './audio-broker';
 import fetchIceServers from './fetch-ice-servers';
-import { setIsConnected, setAudioStream, setMutedState } from '../../store/redux/slices/wide-app/audio';
+import {
+  setIsConnecting,
+  setIsConnected,
+  setIsHangingUp,
+  setAudioStream,
+  setMutedState
+} from '../../store/redux/slices/wide-app/audio';
 import { store } from '../../store/redux/store';
-import makeCall from '../api/makeCall';
 
 class AudioManager {
   constructor() {
@@ -50,6 +55,19 @@ class AudioManager {
     return inputStream;
   }
 
+  _getSenderTrackEnabled() {
+    const peer = this.bridge?.webRtcPeer;
+    let localStream = this.inputStream;
+
+    if (peer) {
+      localStream = peer.getLocalStream() || this.inputStream;
+    }
+
+    if (localStream == null) return true;
+
+    return !localStream.getAudioTracks().some(track => !track.enabled);
+  }
+
   _setSenderTrackEnabled(shouldEnable) {
     // If the bridge is set to listen only mode, nothing to do here. This method
     // is solely for muting outbound tracks.
@@ -68,7 +86,7 @@ class AudioManager {
     });
 
     store.dispatch(setMutedState(!shouldEnable));
-    makeCall('toggleVoice', null, !shouldEnable);
+    this._makeCall('toggleVoice', null, !shouldEnable);
   }
 
   _getStunFetchURL() {
@@ -122,6 +140,7 @@ class AudioManager {
   async init({
     host,
     sessionToken,
+    makeCall
   }) {
     if (typeof host !== 'string'
       || typeof sessionToken !== 'string') {
@@ -130,6 +149,9 @@ class AudioManager {
 
     this._host = host;
     this._sessionToken = sessionToken;
+    // FIXME temporary - we need to refactor sockt-connection to use makeCall
+    // as a proper util method without creating circular dependencies
+    this._makeCall = makeCall;
     this.initialized = true;
     try {
       this.iceServers = await fetchIceServers(this._getStunFetchURL());
@@ -146,15 +168,15 @@ class AudioManager {
   }
 
   onAudioJoining() {
-    this.isConnecting = true;
-    this.isMuted = false;
+    store.dispatch(setIsConnecting(true));
+
     return Promise.resolve();
   }
 
   onAudioJoin() {
-    this.isConnecting = false;
-    this.isConnected = true;
-
+    store.dispatch(setIsConnected(true));
+    store.dispatch(setIsConnecting(false));
+    store.dispatch(setMutedState(!this._getSenderTrackEnabled()));
     logger.info({ logCode: 'audio_joined' }, 'Audio Joined');
   }
 
@@ -164,7 +186,6 @@ class AudioManager {
     this._initializeBridge(callOptions);
 
     return this.bridge.joinAudio().catch((error) => {
-      this.isConnecting = false;
       throw error;
     });
   }
@@ -179,19 +200,21 @@ class AudioManager {
 
   exitAudio() {
     if (!this.bridge) return;
+
+    store.dispatch(setIsHangingUp(true));
     this.bridge.stop();
   }
 
   onAudioExit() {
-    this.isConnected = false;
-    this.isConnecting = false;
-    this.isHangingUp = false;
+    store.dispatch(setIsConnected(false));
+    store.dispatch(setIsConnecting(false));
+    store.dispatch(setIsHangingUp(false));
+    store.dispatch(setMutedState(true));
 
     if (this.inputStream) {
       this.inputStream.getTracks().forEach((track) => track.stop());
       this.inputStream = null;
     }
-    store.dispatch(setIsConnected(false));
   }
 
   mute() {
@@ -200,6 +223,10 @@ class AudioManager {
 
   unmute() {
     this._setSenderTrackEnabled(true);
+  }
+
+  isLocalStreamMuted() {
+    return !this._getSenderTrackEnabled();
   }
 }
 
