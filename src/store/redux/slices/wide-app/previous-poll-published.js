@@ -8,8 +8,13 @@ const previousPollPublishedSlice = createSlice({
   reducers: {
     addPreviousPollPublished: (state, action) => {
       const { previousPollPublishedObject } = action.payload;
+      state.previousPollPublishedCollection[previousPollPublishedObject._id] =
+        action.payload.previousPollPublishedObject.extra.pollResultData;
+    },
+    addPreviousPollPublishedViaChat: (state, action) => {
+      const { previousPollPublishedObject } = action.payload;
       state.previousPollPublishedCollection[previousPollPublishedObject.id] =
-        action.payload.previousPollPublishedObject;
+        action.payload.previousPollPublishedObject.fields.extra.pollResultData;
     },
     editPreviousPollPublished: (state, action) => {
       const { previousPollPublishedObject } = action.payload;
@@ -22,6 +27,6 @@ const previousPollPublishedSlice = createSlice({
     },
   },
 });
-export const { addPreviousPollPublished, editPreviousPollPublished } =
+export const { addPreviousPollPublished, addPreviousPollPublishedViaChat } =
   previousPollPublishedSlice.actions;
 export default previousPollPublishedSlice.reducer;

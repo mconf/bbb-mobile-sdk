@@ -54,7 +54,7 @@ const AnswerPollView = () => {
         />
       );
     }
-    return activePollObject?.answers.map((question) => (
+    return activePollObject?.answers?.map((question) => (
       <Styled.OptionsButton
         key={question.id}
         selected={selectedAnswers.includes(question.id)}

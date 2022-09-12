@@ -3,11 +3,14 @@ import Module from './module';
 import {
   addGroupChatMsg,
   addGroupChatMsgBeforeJoin,
+  clearChatMessages,
   editGroupChatMsg,
-  removeGroupChatMsg,
 } from '../../../store/redux/slices/group-chat-msg';
 
-import { addPreviousPollPublished } from '../../../store/redux/slices/wide-app/previous-poll-published';
+import {
+  addPreviousPollPublished,
+  addPreviousPollPublishedViaChat,
+} from '../../../store/redux/slices/wide-app/previous-poll-published';
 
 const GROUP_CHAT_MSG_TOPIC = 'group-chat-msg';
 const TIME_BETWEEN_FETCHS = 1000;
@@ -44,6 +47,13 @@ export class GroupChatMsgModule extends Module {
 
       if (messagesFromPage.length) {
         messagesFromPage.map((msgObj) => {
+          if (msgObj.id.toString().includes('POLL_RESULT')) {
+            store.dispatch(
+              addPreviousPollPublished({
+                previousPollPublishedObject: msgObj,
+              })
+            );
+          }
           return store.dispatch(
             addGroupChatMsgBeforeJoin({
               groupChatMsgObject: msgObj,
@@ -73,8 +83,16 @@ export class GroupChatMsgModule extends Module {
   add(msgObj) {
     if (msgObj.fields.id.toString().includes('POLL_RESULT')) {
       store.dispatch(
-        addPreviousPollPublished({
-          previousPollPublishedObject: msgObj.fields.extra.pollResultData,
+        addPreviousPollPublishedViaChat({
+          previousPollPublishedObject: msgObj,
+        })
+      );
+    }
+    if (msgObj.fields.id.toString().includes('PUBLIC_CHAT_CLEAR')) {
+      store.dispatch(clearChatMessages());
+      store.dispatch(
+        addGroupChatMsg({
+          groupChatMsgObject: msgObj,
         })
       );
     }
@@ -85,13 +103,9 @@ export class GroupChatMsgModule extends Module {
     );
   }
 
-  // eslint-disable-next-line class-methods-use-this
+  // eslint-disable-next-line class-methods-use-this,no-unused-vars
   remove(msgObj) {
-    return store.dispatch(
-      removeGroupChatMsg({
-        groupChatMsgObject: msgObj,
-      })
-    );
+    // Removing this to avoid the meteor calls when clear chat
   }
 
   // eslint-disable-next-line class-methods-use-this
