@@ -42,6 +42,10 @@ class BaseBroker extends EventEmitter2 {
     return this._started;
   }
 
+  getPeerConnection() {
+    return this.webRtcPeer?.peerConnection;
+  }
+
   onbeforeunload () {
     return this.stop();
   }
@@ -159,7 +163,6 @@ class BaseBroker extends EventEmitter2 {
       this.webRtcPeer.processAnswer(sfuResponse.sdpAnswer)
         .then(this._processRemoteDescription.bind(this))
         .catch((error) => {
-          console.error(error);
           logger.error({
             logCode: `${this.logCodePrefix}_processanswer_error`,
             extraInfo: {

@@ -3,6 +3,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import usersReducer from './slices/users';
 import meetingReducer from './slices/meeting';
 import voiceUsersReducer from './slices/voice-users';
+import voiceCallStatesReducer from './slices/voice-call-states';
 import pollsReducer from './slices/polls';
 import padsReducer from './slices/pads';
 import currentPollReducer from './slices/current-poll';
@@ -17,6 +18,7 @@ import screenshareReducer from './slices/screenshare';
 
 // app exclusive wide state collections
 import previousPollPublishedReducer from './slices/wide-app/previous-poll-published';
+import audioReducer from './slices/wide-app/audio';
 
 export const store = configureStore({
   reducer: {
@@ -24,6 +26,7 @@ export const store = configureStore({
     meetingCollection: meetingReducer,
     usersCollection: usersReducer,
     voiceUsersCollection: voiceUsersReducer,
+    voiceCallStatesCollection: voiceCallStatesReducer,
     pollsCollection: pollsReducer,
     padsCollection: padsReducer,
     presentationsCollection: presentationsReducer,
@@ -39,5 +42,6 @@ export const store = configureStore({
 
     // app exclusive wide state collections
     previousPollPublishedCollection: previousPollPublishedReducer,
+    audio: audioReducer,
   },
 });

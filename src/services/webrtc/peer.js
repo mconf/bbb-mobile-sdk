@@ -2,12 +2,10 @@ import {
   RTCPeerConnection,
   RTCIceCandidate,
   RTCSessionDescription,
-  MediaStream,
 } from 'react-native-webrtc';
 import { EventEmitter2 } from 'eventemitter2';
 import {
   stopStream,
-  stopTrack,
   silentConsole,
 } from './utils';
 
@@ -156,18 +154,10 @@ export default class WebRtcPeer extends EventEmitter2 {
     }
 
     if (this.peerConnection) {
-      this.localStream = new MediaStream();
-      const senders = this.peerConnection.getSenders();
-      senders.forEach(({ track }) => {
-        if (track) {
-          this.localStream.addTrack(track);
-        }
-      });
-
-      return this.localStream;
+      this.localStream = this.peerConnection.getLocalStreams()[0];
     }
 
-    return null;
+    return this.localStream;
   }
 
   getRemoteStream() {
@@ -327,7 +317,6 @@ export default class WebRtcPeer extends EventEmitter2 {
 
     try {
       if (this.peerConnection) {
-        this.peerConnection.getSenders().forEach(({ track }) => stopTrack(track));
         if (!this.isPeerConnectionClosed()) this.peerConnection.close();
         this.peerConnection = null;
       }

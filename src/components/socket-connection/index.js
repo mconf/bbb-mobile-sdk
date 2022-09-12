@@ -5,6 +5,7 @@ import { GroupChatModule } from './modules/group-chat';
 import { GroupChatMsgModule } from './modules/group-chat-msg';
 import { MeetingModule } from './modules/meeting';
 import { VoiceUsersModule } from './modules/voice-users';
+import { VoiceCallStatesModule } from './modules/voice-call-states';
 import { PollsModule } from './modules/polls';
 import { PadsModule } from './modules/pads';
 import { CurrentPollModule } from './modules/current-poll';
@@ -26,6 +27,7 @@ import TextInput from '../text-input';
 import MessageSender from './message-sender';
 import MethodTransaction from './method-transaction';
 import MethodTransactionManager from './method-transaction-manager';
+import AudioManager from '../../services/webrtc/audio-manager';
 
 let GLOBAL_WS = null;
 const GLOBAL_TRANSACTIONS = new MethodTransactionManager();
@@ -80,6 +82,19 @@ const makeCall = (name, ...args) => {
   return transaction.promise;
 };
 
+const getHost = (_url) => {
+  const url = new URL(_url);
+
+  return url.host;
+}
+
+const getSessionToken = (_url) => {
+  const url = new URL(_url);
+  const params = new URLSearchParams(url.search);
+
+  return params.get('sessionToken');
+}
+
 const makeWS = (joinUrl) => {
   const url = new URL(joinUrl);
   const wsUrl = `wss://${url.host}/html5client/sockjs/${getRandomDigits(
@@ -108,7 +123,11 @@ const getMeetingData = async (joinUrl) => {
   const enterUrl = makeEnterUrl(html5join);
   const enterResp = await fetch(enterUrl).then((r) => r.json());
 
-  return enterResp.response;
+  return {
+    ...enterResp.response,
+    host: getHost(html5join),
+    sessionToken: getSessionToken(html5join)
+  };
 };
 
 /// Set up the web socket modules.
@@ -130,6 +149,7 @@ const setupModules = (ws) => {
     'group-chat': new GroupChatModule(messageSender),
     'group-chat-msg': new GroupChatMsgModule(messageSender),
     'video-streams': new VideoStreamsModule(messageSender),
+    voiceCallStates: new VoiceCallStatesModule(messageSender),
     // ** meteor Collections **//
     // Screenreader-alert:
     // annotations:
@@ -153,7 +173,6 @@ const setupModules = (ws) => {
     // users-persistent-data:
     // users-settings:
     // users-typing:
-    // voiceCallStates:
     // whiteboard-multi-user:
   };
 
@@ -267,6 +286,13 @@ const SocketConnectionComponent = () => {
         // We're resolving a validateAuthToken request
         if (msgObj.id === validateReqId.current) {
           modules.current = setupModules(ws);
+          // FIXME this is definitely not the place to do this. Remove when
+          // socket-connection is properly refactored - prlanzarin
+          AudioManager.init({
+            host: meetingData?.host,
+            sessionToken: meetingData?.sessionToken,
+            makeCall
+          });
         } else {
           // Probably dealing with a module makeCall/method response
           if (msgObj.collection) {
