@@ -7,7 +7,10 @@ import {
   editGroupChatMsg,
 } from '../../../store/redux/slices/group-chat-msg';
 
-import { addPreviousPollPublished } from '../../../store/redux/slices/wide-app/previous-poll-published';
+import {
+  addPreviousPollPublished,
+  addPreviousPollPublishedViaChat,
+} from '../../../store/redux/slices/wide-app/previous-poll-published';
 
 const GROUP_CHAT_MSG_TOPIC = 'group-chat-msg';
 const TIME_BETWEEN_FETCHS = 1000;
@@ -80,8 +83,8 @@ export class GroupChatMsgModule extends Module {
   add(msgObj) {
     if (msgObj.fields.id.toString().includes('POLL_RESULT')) {
       store.dispatch(
-        addPreviousPollPublished({
-          previousPollPublishedObject: msgObj.fields,
+        addPreviousPollPublishedViaChat({
+          previousPollPublishedObject: msgObj,
         })
       );
     }
