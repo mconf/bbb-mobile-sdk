@@ -131,7 +131,6 @@ class AudioManager {
     this.bridge.onstart = () => {
       this.isReconnecting = false;
       this.onAudioJoin();
-      store.dispatch(setIsConnected(true));
     };
 
     return this.bridge;
