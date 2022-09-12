@@ -3,8 +3,6 @@ import { createContext, useState } from 'react';
 export const ActionsBarContext = createContext({
   actionsBarStatus: {
     isChatActive: false,
-    isMicrophoneActive: false,
-    isAudioActive: false,
     isVideoActive: false,
     isHandActive: false,
   },
@@ -15,8 +13,6 @@ export const ActionsBarContext = createContext({
 const ActionsBarContextProvider = ({ children }) => {
   const [actionsBarStatus, setActionsBarStatus] = useState({
     isChatActive: true,
-    isMicrophoneActive: false,
-    isAudioActive: false,
     isVideoActive: false,
     isHandActive: false,
   });
