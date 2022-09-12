@@ -29,6 +29,8 @@ class BaseBroker extends EventEmitter2 {
     this.logCodePrefix = `${this.sfuComponent}_broker`;
     this.peerConfiguration = {};
 
+    this.onWSMessage = this.onWSMessage.bind(this);
+    this.onWSClosed = this.onWSClosed.bind(this);
     this.onbeforeunload = this.onbeforeunload.bind(this);
     // FIXME
     //window.addEventListener('beforeunload', this.onbeforeunload);
@@ -70,16 +72,21 @@ class BaseBroker extends EventEmitter2 {
     // To be implemented by inheritors
   }
 
+  onWSMessage(message) {
+    // To be implemented by inheritors
+  }
+
+  onWSClosed() {
+    // 1301: "WEBSOCKET_DISCONNECTED",
+    this.onerror(BaseBroker.assembleError(1301));
+  }
+
   openWSConnection () {
     return new Promise((resolve, reject) => {
       this.ws = new WebSocket(this.wsUrl);
 
-      this.ws.onmessage = this.onWSMessage.bind(this);
-
-      this.ws.onclose = () => {
-        // 1301: "WEBSOCKET_DISCONNECTED",
-        this.onerror(BaseBroker.assembleError(1301));
-      };
+      this.ws.addEventListener('message', this.onWSMessage);
+      this.ws.addEventListener('close', this.onWSClosed);
 
       this.ws.onerror = (error) => {
         logger.error({
@@ -271,7 +278,8 @@ class BaseBroker extends EventEmitter2 {
     }
 
     if (this.ws !== null) {
-      this.ws.onclose = function (){};
+      this.ws.removeEventListener('message', this.onWSMessage);
+      this.ws.removeEventListener('close', this.onWSClosed);
       this.ws.close();
     }
 

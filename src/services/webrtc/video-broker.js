@@ -18,7 +18,7 @@ class VideoBroker extends BaseBroker {
     this.offering = true;
 
     // Optional parameters are:
-    // clientSessionNumber
+    // cameraId
     // iceServers,
     // offering,
     // mediaServer,
@@ -117,12 +117,18 @@ class VideoBroker extends BaseBroker {
   }
 
   joinVideo() {
+    if (this.ws) {
+      return this._join.bind(this);
+    }
     return this.openWSConnection()
       .then(this._join.bind(this));
   }
 
   onWSMessage(message) {
     const parsedMessage = JSON.parse(message.data);
+
+    // Not for me. Skip.
+    if (parsedMessage.cameraId !== this.cameraId) return;
 
     switch (parsedMessage.id) {
       case 'startResponse':
