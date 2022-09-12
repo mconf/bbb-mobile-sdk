@@ -198,7 +198,11 @@ class AudioManager {
   }
 
   exitAudio() {
-    if (!this.bridge) return;
+    if (!this.bridge) {
+      // Bridge is nil => there's no audio anymore - guarantee local states reflect that
+      this.onAudioExit();
+      return;
+    }
 
     store.dispatch(setIsHangingUp(true));
     this.bridge.stop();
