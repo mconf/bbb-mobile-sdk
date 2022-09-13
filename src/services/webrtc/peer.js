@@ -169,7 +169,7 @@ export default class WebRtcPeer extends EventEmitter2 {
       this.remoteStream = this.peerConnection.getRemoteStreams()[0];
     }
 
-    return this.remoteStream;;
+    return this.remoteStream;
   }
 
   isPeerConnectionClosed() {

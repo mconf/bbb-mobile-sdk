@@ -5,7 +5,7 @@ const initialState = {
   isConnected: false,
   isHangingUp: false,
   signalingTransportOpen: false,
-  videoStream: null,
+  videoStreams: {},
 };
 
 const videoSlice = createSlice({
@@ -21,12 +21,17 @@ const videoSlice = createSlice({
     setIsHangingUp: (state, action) => {
       state.isHangingUp = action.payload;
     },
-    setVideoStream: (state, action) => {
-      state.inputStream = action.payload;
-    },
     setSignalingTransportOpen: (state, action) => {
       state.signalingTransportOpen = action.payload;
-    }
+    },
+    addVideoStream: (state, action) => {
+      const { cameraId, streamId } = action.payload;
+      state.videoStreams[cameraId] = streamId;
+    },
+    removeVideoStream: (state, action) => {
+      const { cameraId } = action.payload;
+      delete state.videoStreams[cameraId];
+    },
   },
 });
 
@@ -35,6 +40,7 @@ export const {
   setIsConnected,
   setIsHangingUp,
   setSignalingTransportOpen,
-  setVideoStream,
+  addVideoStream,
+  removeVideoStream,
 } = videoSlice.actions;
 export default videoSlice.reducer;

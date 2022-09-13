@@ -7,7 +7,8 @@ import {
   setIsConnected,
   setIsHangingUp,
   setSignalingTransportOpen,
-  setVideoStream,
+  addVideoStream,
+  removeVideoStream,
 } from '../../store/redux/slices/wide-app/video';
 import { store } from '../../store/redux/store';
 
@@ -16,10 +17,14 @@ const PING_INTERVAL_MS = 15000;
 class VideoManager {
   constructor() {
     this.initialized = false;
-    this.inputStream = null;
     this.bridge = null;
     this.iceServers = null;
     this.ws = null;
+
+    // Map<cameraId, VideoBroker>
+    this.brokers = new Map();
+    // Map<cameraId, MediaStream>
+    this.videoStreams = new Map();
 
     this._wsListenersSetup = false;
     this._pingInterval = null;
@@ -37,16 +42,32 @@ class VideoManager {
     return this._ws;
   }
 
-  set inputStream(stream) {
-    this._inputStream = stream;
+  storeBroker(cameraId, broker) {
+    this.brokers.set(cameraId, broker);
+  }
 
-    if (stream && stream.id !== this.inputStream.id) {
-      store.dispatch(setVideoStream(stream));
+  deleteBroker(cameraId) {
+    return this.brokers.delete(cameraId);
+  }
+
+  getBroker(cameraId) {
+    return this.brokers.get(cameraId);
+  }
+
+  storeMediaStream(cameraId, mediaStream) {
+    if (mediaStream) {
+      this.videoStreams.set(cameraId, mediaStream);
+      store.dispatch(addVideoStream({ cameraId, streamId: mediaStream.toURL() }));
     }
   }
 
-  get inputStream() {
-    return this._inputStream;
+  deleteMediaStream(cameraId) {
+    store.dispatch(removeVideoStream(cameraId));
+    return this.videoStreams.delete(cameraId)
+  }
+
+  getMediaStream(cameraId) {
+    return this.videoStreams.get(cameraId);
   }
 
   _getSFUAddr() {
@@ -135,51 +156,94 @@ class VideoManager {
   }
 
   async _mediaFactory(constraints = { video: true }) {
-    if (this.inputStream && this.inputStream.active) return this.inputStream;
-
-    const inputStream = await mediaDevices.getUserMedia(constraints);
-    this.inputStream = inputStream;
-
-    return inputStream;
+    return mediaDevices.getUserMedia(constraints);
   }
 
   _getStunFetchURL() {
     return `https://${this._host}/bigbluebutton/api/stuns?sessionToken=${this._sessionToken}`;
   }
 
-  _initializeBridge({ cameraId, inputStream, role }) {
+  _initializePublisherBridge({ cameraId, inputStream }) {
     const brokerOptions = {
       ws: this.ws,
       cameraId,
       iceServers: this.iceServers,
       stream: (inputStream && inputStream.active) ? inputStream : undefined,
-      offering: role === 'share',
+      offering: true,
       traceLogs: true,
     };
 
-    this.bridge = new VideoBroker(role, brokerOptions);
-    this.bridge.onended = () => {
+    const bridge = new VideoBroker('share', brokerOptions);
+    bridge.onended = () => {
       this.isReconnecting = false;
-      logger.info({ logCode: 'video_ended' }, 'Video ended without issue');
-      this.onVideoExit();
+      logger.info({
+        logCode: 'video_ended',
+        extraInfo: {
+          cameraId,
+          role: 'share',
+        },
+      }, 'Video ended without issue');
+      this.onVideoExit(cameraId);
     };
-    this.bridge.onerror = (error) => {
+    bridge.onerror = (error) => {
       this.isReconnecting = false;
       logger.error({
         logCode: 'video_failure',
         extraInfo: {
+          cameraId,
+          role: 'share',
           errorCode: error.code,
           errorMessage: error.message,
         },
       }, `Video error - errorCode=${error.code}, cause=${error.message}`);
     };
-    this.bridge.onstart = () => {
+    bridge.onstart = () => {
       this.isReconnecting = false;
       this.onVideoPublished(cameraId);
     };
+    this.storeBroker(cameraId, bridge);
 
-    return this.bridge;
+    return bridge;
   }
+
+  _initializeSubscriberBridge({ cameraId }) {
+    const brokerOptions = {
+      ws: this.ws,
+      cameraId,
+      iceServers: this.iceServers,
+      offering: false,
+      traceLogs: true,
+    };
+    const bridge = new VideoBroker('viewer', brokerOptions);
+
+    bridge.onended = () => {
+      logger.info({
+        logCode: 'video_ended',
+        extraInfo: {
+          cameraId,
+          role: 'viewer',
+        },
+      }, 'Video ended without issue');
+    };
+    bridge.onerror = (error) => {
+      logger.error({
+        logCode: 'video_failure',
+        extraInfo: {
+          cameraId,
+          role: 'viewer',
+          errorCode: error.code,
+          errorMessage: error.message,
+        },
+      }, `Video error - errorCode=${error.code}, cause=${error.message}`);
+    };
+    bridge.onstart = () => {
+      const remoteStream = bridge.getRemoteStream();
+      if (remoteStream) this.storeMediaStream(cameraId, remoteStream);
+    };
+
+    return bridge;
+  }
+
 
   async init({
     host,
@@ -236,60 +300,76 @@ class VideoManager {
     logger.info({ logCode: 'video_joined' }, 'Video Joined');
   }
 
-  publish(cameraId) {
+  async publish(cameraId) {
     if (!this.initialized) throw new TypeError('Video manager is not ready');
 
-    this.onVideoPublishing();
-
-    return this._mediaFactory()
-      .then((inputStream) => {
-        this._initializeBridge({
-          cameraId,
-          role: 'share',
-          inputStream,
-        });
-        return  this.bridge.joinVideo();
-      })
+    try {
+      this.onVideoPublishing(cameraId);
+      const inputStream = await this._mediaFactory();
+      this.storeMediaStream(cameraId, inputStream);
+      const bridge = this._initializePublisherBridge({ cameraId, inputStream });
+      await bridge.joinVideo();
+    } catch (error) {
+      // Rollback and re-throw
+      this.unpublish(cameraId);
+      throw error;
+    }
   }
 
-  // TODO
-  unpublish() {
-    this.stop();
-  }
+  unpublish(cameraId) {
+    const bridge = this.getBroker(cameraId);
 
-  // TODO
-  subscribe() {
-
-  }
-
-  // TODO
-  unsubscribe() {
-
-  }
-
-  // TODO
-  stop() {
-    if (!this.bridge) {
+    if (bridge) {
+      store.dispatch(setIsHangingUp(true));
+      bridge.stop();
+    } else {
+      // No bridge/broker. Trailing request, just guarantee everything is cleaned up.
       store.dispatch(setIsConnected(false));
-      return;
+      this.onVideoExit(cameraId);
+    }
+  }
+
+  async subscribe(cameraId) {
+    if (!this.initialized) throw new TypeError('Video manager is not ready');
+
+    try {
+      this.onVideoPublishing(cameraId);
+      const bridge = this._initializeSubscriberBridge({ cameraId });
+      await bridge.joinVideo();
+    } catch (error) {
+      // Rollback and re-throw
+      this.unsubscribe(cameraId);
+      throw error;
+    }
+  }
+
+  unsubscribe(cameraId) {
+    const bridge = this.getBroker(cameraId);
+
+    if (bridge) {
+      bridge.stop();
+      this.deleteBroker(cameraId);
     }
 
-    store.dispatch(setIsHangingUp(true));
-    this.bridge.stop();
+    this.deleteMediaStream(cameraId);
   }
 
-  onVideoExit() {
+  onVideoExit(cameraId) {
     store.dispatch(setIsConnected(false));
     store.dispatch(setIsConnecting(false));
     store.dispatch(setIsHangingUp(false));
 
-    if (this.inputStream) {
-      this.inputStream.getTracks().forEach((track) => track.stop());
-      this.inputStream = null;
+    this.deleteBroker(cameraId);
+    const mediaStream = this.getMediaStream(cameraId);
+
+    if (mediaStream) {
+      mediaStream.getTracks().forEach((track) => track.stop());
+      this.deleteMediaStream(cameraId);
     }
   }
 
   destroy() {
+    // TODO clean everything up.
     this._closeWS();
   }
 }
