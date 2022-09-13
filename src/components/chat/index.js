@@ -8,7 +8,9 @@ const Item = (props) => {
       <Styled.MessageTopContainer>
         <Styled.MessageAuthor>{messageObject.item.author}</Styled.MessageAuthor>
         <Styled.MessageTimestamp>
-          {`${timestamp.getHours()}:${timestamp.getMinutes()}`}
+          {`${String(timestamp.getHours()).padStart(2, '0')}:${String(
+            timestamp.getMinutes()
+          ).padStart(2, '0')}`}
         </Styled.MessageTimestamp>
       </Styled.MessageTopContainer>
       <Styled.Card>

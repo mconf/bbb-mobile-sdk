@@ -30,7 +30,11 @@ const BottomSheetChat = (props) => {
         <Styled.Card>
           <Styled.MessageTopContainer>
             <Styled.MessageAuthor>{item.author}</Styled.MessageAuthor>
-            <Styled.MessageTimestamp>{`${timestamp.getHours()}:${timestamp.getMinutes()}`}</Styled.MessageTimestamp>
+            <Styled.MessageTimestamp>
+              {`${String(timestamp.getHours()).padStart(2, '0')}:${String(
+                timestamp.getMinutes()
+              ).padStart(2, '0')}`}
+            </Styled.MessageTimestamp>
           </Styled.MessageTopContainer>
           <Styled.MessageContent>{item.message}</Styled.MessageContent>
         </Styled.Card>
