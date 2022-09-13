@@ -17,23 +17,41 @@ class BaseBroker extends EventEmitter2 {
     return error;
   }
 
-  constructor(sfuComponent, wsUrl) {
+  constructor(sfuComponent, {
+    // wsUrl: Provide a WS URL if a new socket has to be created
+    wsUrl,
+    // ws: Provide a previously set up socket that should be re-used. Ping-pong
+    // procedures et al must be previously set up.
+    ws,
+  }) {
     super({ newListener: true });
     this.wsUrl = wsUrl;
     this.sfuComponent = sfuComponent;
-    this.ws = null;
+    this.ws = ws;
     this.webRtcPeer = null;
     this.pingInterval = null;
     this.started = false;
     this.signallingTransportOpen = false;
     this.logCodePrefix = `${this.sfuComponent}_broker`;
     this.peerConfiguration = {};
+    this._wsListenersSetup = false;
+    this._preloadedWS = !!(ws && typeof ws === 'object');
 
     this.onWSMessage = this.onWSMessage.bind(this);
     this.onWSClosed = this.onWSClosed.bind(this);
+    this.onWSError = this.onWSError.bind(this);
     this.onbeforeunload = this.onbeforeunload.bind(this);
     // FIXME
     //window.addEventListener('beforeunload', this.onbeforeunload);
+  }
+
+  set ws (_ws) {
+    this._ws = _ws;
+    this._wsListenersSetup = false;
+  }
+
+  get ws () {
+    return this._ws;
   }
 
   set started (val) {
@@ -76,41 +94,73 @@ class BaseBroker extends EventEmitter2 {
     // To be implemented by inheritors
   }
 
+  onWSError(error) {
+    logger.error({
+      logCode: `${this.logCodePrefix}_websocket_error`,
+      extraInfo: {
+        errorMessage: error.name || error.message || 'Unknown error',
+        sfuComponent: this.sfuComponent,
+      }
+    }, 'WebSocket connection to SFU failed');
+
+    if (this.signallingTransportOpen) {
+      // 1301: "WEBSOCKET_DISCONNECTED", transport was already open
+      this.onerror(BaseBroker.assembleError(1301));
+    } else {
+      // 1302: "WEBSOCKET_CONNECTION_FAILED", transport errored before establishment
+      const normalized1302 = BaseBroker.assembleError(1302);
+      this.onerror(normalized1302);
+    }
+  }
+
   onWSClosed() {
     // 1301: "WEBSOCKET_DISCONNECTED",
     this.onerror(BaseBroker.assembleError(1301));
   }
 
-  openWSConnection () {
-    return new Promise((resolve, reject) => {
-      this.ws = new WebSocket(this.wsUrl);
-
+  _attachPreloadedWSListeners() {
+    if (!this._wsListenersSetup) {
       this.ws.addEventListener('message', this.onWSMessage);
       this.ws.addEventListener('close', this.onWSClosed);
+      this.ws.addEventListener('error', this.onWSError);
+      this.signallingTransportOpen = true;
+      this._wsListenersSetup = true;
+    }
+  }
 
-      this.ws.onerror = (error) => {
+  openWSConnection () {
+    return new Promise((resolve, reject) => {
+      if (this.ws && (this.ws.readyState === 1 || this.ws.readyState === 0)) {
+        this._attachPreloadedWSListeners();
+        resolve();
+        return;
+      }
+
+      const preloadErrorCatcher = (error) => {
         logger.error({
-          logCode: `${this.logCodePrefix}_websocket_error`,
+          logCode: `${this.logCodePrefix}_websocket_error_beforeopen`,
           extraInfo: {
             errorMessage: error.name || error.message || 'Unknown error',
             sfuComponent: this.sfuComponent,
           }
-        }, 'WebSocket connection to SFU failed');
+        }, 'WebSocket connection to SFU failed (beforeopen)');
 
-        if (this.signallingTransportOpen) {
-          // 1301: "WEBSOCKET_DISCONNECTED", transport was already open
-          this.onerror(BaseBroker.assembleError(1301));
-        } else {
-          // 1302: "WEBSOCKET_CONNECTION_FAILED", transport errored before establishment
-          const normalized1302 = BaseBroker.assembleError(1302);
-          this.onerror(normalized1302);
-          return reject(normalized1302);
-        }
-      };
+        // 1302: "WEBSOCKET_CONNECTION_FAILED", transport errored before establishment
+        const normalized1302 = BaseBroker.assembleError(1302);
+        this.onerror(normalized1302);
+        return reject(normalized1302);
+      }
 
+      this.ws = new WebSocket(this.wsUrl);
+      this.ws.addEventListener('message', this.onWSMessage);
+      this.ws.addEventListener('close', this.onWSClosed);
+      this.ws.addEventListener('error', preloadErrorCatcher);
       this.ws.onopen = () => {
         this.pingInterval = setInterval(this.ping.bind(this), PING_INTERVAL_MS);
         this.signallingTransportOpen = true;
+        this._wsListenersSetup = true;
+        this.ws.addEventListener('error', this.onWSError);
+        this.ws.removeEventListener('error', preloadErrorCatcher);
         return resolve();
       };
     });
@@ -267,6 +317,10 @@ class BaseBroker extends EventEmitter2 {
     }
   }
 
+  _stop() {
+    // Inheritors can build on stop by overriding this.
+  }
+
   stop () {
     this.onstart = function(){};
     this.onerror = function(){};
@@ -280,7 +334,8 @@ class BaseBroker extends EventEmitter2 {
     if (this.ws !== null) {
       this.ws.removeEventListener('message', this.onWSMessage);
       this.ws.removeEventListener('close', this.onWSClosed);
-      this.ws.close();
+      this.ws.removeEventListener('error', this.onWSError);
+      if (!this._preloadedWS) this.ws.close();
     }
 
     if (this.pingInterval) {
@@ -297,6 +352,7 @@ class BaseBroker extends EventEmitter2 {
 
     this.onended();
     this.onended = function(){};
+    this._stop();
   }
 }
 

@@ -12,7 +12,7 @@ class ScreenshareBroker extends BaseBroker {
     role,
     options = {},
   ) {
-    super(SFU_COMPONENT_NAME, wsUrl);
+    super(SFU_COMPONENT_NAME, { wsUrl });
     this.role = role;
     this.ws = null;
     this.webRtcPeer = null;

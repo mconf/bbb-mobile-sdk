@@ -4,16 +4,13 @@ import WebRtcPeer from './peer';
 
 const ON_ICE_CANDIDATE_MSG = 'onIceCandidate';
 const SUBSCRIBER_ANSWER = 'subscriberAnswer';
+const STOP = 'stop';
 
 const SFU_COMPONENT_NAME = 'video';
 
 class VideoBroker extends BaseBroker {
-  constructor(
-    wsUrl,
-    role,
-    options = {},
-  ) {
-    super(SFU_COMPONENT_NAME, wsUrl);
+  constructor(role, options = {}) {
+    super(SFU_COMPONENT_NAME, { wsUrl: options.wsUrl, ws: options.ws });
     this.role = role;
     this.offering = true;
 
@@ -117,9 +114,6 @@ class VideoBroker extends BaseBroker {
   }
 
   joinVideo() {
-    if (this.ws) {
-      return this._join.bind(this);
-    }
     return this.openWSConnection()
       .then(this._join.bind(this));
   }
@@ -236,6 +230,17 @@ class VideoBroker extends BaseBroker {
       type: this.sfuComponent,
       cameraId: this.cameraId,
       candidate,
+    };
+
+    this.sendMessage(message);
+  }
+
+  _stop() {
+    const message = {
+      id: STOP,
+      role: this.role,
+      type: this.sfuComponent,
+      cameraId: this.cameraId,
     };
 
     this.sendMessage(message);

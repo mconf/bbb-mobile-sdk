@@ -14,7 +14,7 @@ class AudioBroker extends BaseBroker {
     role,
     options = {},
   ) {
-    super(SFU_COMPONENT_NAME, wsUrl);
+    super(SFU_COMPONENT_NAME, { wsUrl });
     this.role = role;
     this.offering = true;
 
