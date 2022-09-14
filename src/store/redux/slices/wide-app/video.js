@@ -6,6 +6,7 @@ const initialState = {
   isHangingUp: false,
   signalingTransportOpen: false,
   videoStreams: {},
+  localCameraId: null,
 };
 
 const videoSlice = createSlice({
@@ -24,6 +25,9 @@ const videoSlice = createSlice({
     setSignalingTransportOpen: (state, action) => {
       state.signalingTransportOpen = action.payload;
     },
+    setLocalCameraId: (state, action) => {
+      state.localCameraId = action.payload;
+    },
     addVideoStream: (state, action) => {
       const { cameraId, streamId } = action.payload;
       state.videoStreams[cameraId] = streamId;
@@ -40,6 +44,7 @@ export const {
   setIsConnected,
   setIsHangingUp,
   setSignalingTransportOpen,
+  setLocalCameraId,
   addVideoStream,
   removeVideoStream,
 } = videoSlice.actions;

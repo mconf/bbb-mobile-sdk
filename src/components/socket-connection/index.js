@@ -28,6 +28,7 @@ import MessageSender from './message-sender';
 import MethodTransaction from './method-transaction';
 import MethodTransactionManager from './method-transaction-manager';
 import AudioManager from '../../services/webrtc/audio-manager';
+import VideoManager from '../../services/webrtc/video-manager';
 
 let GLOBAL_WS = null;
 const GLOBAL_TRANSACTIONS = new MethodTransactionManager();
@@ -201,6 +202,8 @@ const logout = (ws, meetingData, modules) => {
   if (Object.keys(meetingData).length) {
     fetch(meetingData.logoutUrl);
   }
+
+  VideoManager.destroy();
 };
 
 const SocketConnectionComponent = () => {
@@ -289,6 +292,13 @@ const SocketConnectionComponent = () => {
           // FIXME this is definitely not the place to do this. Remove when
           // socket-connection is properly refactored - prlanzarin
           AudioManager.init({
+            userId: meetingData?.internalUserID,
+            host: meetingData?.host,
+            sessionToken: meetingData?.sessionToken,
+            makeCall
+          });
+          VideoManager.init({
+            userId: meetingData?.internalUserID,
             host: meetingData?.host,
             sessionToken: meetingData?.sessionToken,
             makeCall

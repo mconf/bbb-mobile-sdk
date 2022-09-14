@@ -4,6 +4,7 @@ import IconButtonComponent from '../icon-button';
 import Styled from './styles';
 import Colors from '../../constants/colors';
 import AudioControls from '../audio/audio-controls';
+import VideoControls from '../video/video-controls';
 
 const ActionsBar = (props) => {
   const { style, orientation } = props;
@@ -26,18 +27,7 @@ const ActionsBar = (props) => {
         onPress={() => triggerButton('isChatActive')}
       />
       <AudioControls isLandscape />
-      <IconButtonComponent
-        size={isLandscape ? 24 : 32}
-        icon={actionsBarStatus.isVideoActive ? 'video' : 'video-off'}
-        iconColor={
-          actionsBarStatus.isVideoActive ? Colors.white : Colors.lightGray300
-        }
-        containerColor={
-          actionsBarStatus.isVideoActive ? Colors.blue : Colors.lightGray100
-        }
-        animated
-        onPress={() => triggerButton('isVideoActive')}
-      />
+      <VideoControls isLandscape />
       <IconButtonComponent
         size={isLandscape ? 24 : 32}
         icon={

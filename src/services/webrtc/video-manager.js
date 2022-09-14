@@ -7,10 +7,12 @@ import {
   setIsConnected,
   setIsHangingUp,
   setSignalingTransportOpen,
+  setLocalCameraId,
   addVideoStream,
   removeVideoStream,
 } from '../../store/redux/slices/wide-app/video';
 import { store } from '../../store/redux/store';
+import { getRandomAlphanumeric } from '../../components/socket-connection/utils';
 
 const PING_INTERVAL_MS = 15000;
 
@@ -246,6 +248,7 @@ class VideoManager {
 
 
   async init({
+    userId,
     host,
     sessionToken,
     makeCall
@@ -255,6 +258,7 @@ class VideoManager {
       throw new TypeError('Video manager: invalid init data');
     }
 
+    this._userId = userId;
     this._host = host;
     this._sessionToken = sessionToken;
     // FIXME temporary - we need to refactor sockt-connection to use makeCall
@@ -287,10 +291,9 @@ class VideoManager {
     }
   }
 
-  onVideoPublishing() {
+  onVideoPublishing(cameraId) {
     store.dispatch(setIsConnecting(true));
-
-    return Promise.resolve();
+    store.dispatch(setLocalCameraId(cameraId));
   }
 
   onVideoPublished(cameraId) {
@@ -300,8 +303,10 @@ class VideoManager {
     logger.info({ logCode: 'video_joined' }, 'Video Joined');
   }
 
-  async publish(cameraId) {
+  async publish() {
     if (!this.initialized) throw new TypeError('Video manager is not ready');
+
+    const cameraId = `${this._userId}_${getRandomAlphanumeric(10)}`;
 
     try {
       this.onVideoPublishing(cameraId);
@@ -309,6 +314,7 @@ class VideoManager {
       this.storeMediaStream(cameraId, inputStream);
       const bridge = this._initializePublisherBridge({ cameraId, inputStream });
       await bridge.joinVideo();
+      return cameraId;
     } catch (error) {
       // Rollback and re-throw
       this.unpublish(cameraId);
@@ -333,7 +339,6 @@ class VideoManager {
     if (!this.initialized) throw new TypeError('Video manager is not ready');
 
     try {
-      this.onVideoPublishing(cameraId);
       const bridge = this._initializeSubscriberBridge({ cameraId });
       await bridge.joinVideo();
     } catch (error) {

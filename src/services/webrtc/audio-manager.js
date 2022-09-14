@@ -137,6 +137,7 @@ class AudioManager {
   }
 
   async init({
+    userId,
     host,
     sessionToken,
     makeCall
@@ -146,6 +147,7 @@ class AudioManager {
       throw new TypeError('Audio manager: invalid init data');
     }
 
+    this._userId = userId;
     this._host = host;
     this._sessionToken = sessionToken;
     // FIXME temporary - we need to refactor sockt-connection to use makeCall
