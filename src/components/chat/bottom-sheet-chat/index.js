@@ -26,7 +26,7 @@ const BottomSheetChat = (props) => {
     const timestamp = new Date(item.timestamp);
     return (
       <Styled.ContainerItem>
-        <UserAvatar userName={item.author} />
+        <UserAvatar userName={item.author} userRole={item.role} />
         <Styled.Card>
           <Styled.MessageTopContainer>
             <Styled.MessageAuthor>{item.author}</Styled.MessageAuthor>

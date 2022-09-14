@@ -67,6 +67,7 @@ const ClassroomMainScreen = () => {
           author: message.senderName,
           timestamp: message.timestamp,
           message: message.message,
+          role: message.senderRole,
           // ...other properties
         };
       }),
