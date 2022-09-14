@@ -4,7 +4,7 @@ import Styled from './styles';
 import IconButtonComponent from '../../icon-button';
 
 const VideoAvatarItem = (props) => {
-  const { source, userName, userColor, style } = props;
+  const { mediaStreamId, userAvatar, userName, userColor, style } = props;
   const [showOptions, setShowOptions] = useState(false);
 
   return (
@@ -12,8 +12,10 @@ const VideoAvatarItem = (props) => {
       style={style}
       onPress={() => setShowOptions((prevState) => !prevState)}
     >
-      {source.uri.length !== 0 ? (
-        <Styled.UserAvatar source={source} />
+      {mediaStreamId ? (
+        <Styled.VideoStream streamURL={mediaStreamId} />
+      ) : userAvatar && userAvatar.length !== 0 ? (
+        <Styled.UserAvatar source={userAvatar} />
       ) : (
         <Styled.UserColor userColor={userColor} />
       )}

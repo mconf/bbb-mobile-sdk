@@ -1,16 +1,21 @@
 import { FlatList } from 'react-native';
+import { useSelector } from 'react-redux';
 import Styled from './styles';
 
 const Item = (props) => {
   const { videoUser, orientation } = props;
+  const { item: vuItem } = videoUser;
+  const { cameraId, userAvatar, userColor, userName } = vuItem;
+  const mediaStreamId = useSelector(
+    (state) => state.video.videoStreams[cameraId]
+  );
 
   return (
     <Styled.VideoAvatar
-      source={{
-        uri: videoUser.item.videoSource,
-      }}
-      userColor={videoUser.item.userColor}
-      userName={videoUser.item.userName}
+      mediaStreamId={mediaStreamId}
+      userAvatar={userAvatar}
+      userColor={userColor}
+      userName={userName}
       orientation={orientation}
     />
   );

@@ -19,6 +19,7 @@ const ClassroomMainScreen = () => {
   const groupChatMsgStore = useSelector(
     (state) => state.groupChatMsgCollection
   );
+  const videoStreamsStore = useSelector((state) => state.videoStreamsCollection);
   const orientation = useOrientation();
   const [switchLandscapeLayout, setSwitchLandscapeLayout] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -28,18 +29,21 @@ const ClassroomMainScreen = () => {
   const { bottomSheet } = bottomSheetCtx;
 
   // handle redux store methods
-  const handleUsers = useCallback(
-    () =>
-      Object.values(usersStore.usersCollection).map((user) => {
-        return {
-          userName: user.name,
-          videoSource: user.avatar,
-          userColor: user.color,
-          // ...other properties
-        };
-      }),
-    [usersStore]
-  );
+  const handleVideoUsers = useCallback(() => {
+    // TODO refactor. This is ugly, inefficient and sucks - prlanzarin
+    return Object.values(usersStore.usersCollection).map((user) => {
+      const cameraId = Object.values(
+        videoStreamsStore.videoStreamsCollection
+      ).find((stream) => stream.userId === user.intId)?.stream;
+      return {
+        userName: user.name,
+        cameraId,
+        userAvatar: user.avatar,
+        userColor: user.color,
+        // ...other properties
+      };
+    });
+  }, [usersStore, videoStreamsStore]);
 
   const handleMessages = useCallback(
     () =>
@@ -92,7 +96,7 @@ const ClassroomMainScreen = () => {
       <SafeAreaView>
         <Styled.ContainerView>
           <Styled.VideoListContainer>
-            <Styled.VideoList videoUsers={handleUsers()} />
+            <Styled.VideoList videoUsers={handleVideoUsers()} />
           </Styled.VideoListContainer>
 
           <Styled.PresentationContainer>
@@ -152,7 +156,7 @@ const ClassroomMainScreen = () => {
                 {!switchLandscapeLayout && (
                   <Styled.VideoListContainer orientation={orientation}>
                     <Styled.VideoList
-                      videoUsers={handleUsers()}
+                      videoUsers={handleVideoUsers()}
                       orientation={orientation}
                     />
                   </Styled.VideoListContainer>
