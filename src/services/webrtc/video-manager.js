@@ -177,7 +177,6 @@ class VideoManager {
 
     const bridge = new VideoBroker('share', brokerOptions);
     bridge.onended = () => {
-      this.isReconnecting = false;
       logger.info({
         logCode: 'video_ended',
         extraInfo: {
@@ -188,7 +187,6 @@ class VideoManager {
       this.onVideoExit(cameraId);
     };
     bridge.onerror = (error) => {
-      this.isReconnecting = false;
       logger.error({
         logCode: 'video_failure',
         extraInfo: {
@@ -200,7 +198,6 @@ class VideoManager {
       }, `Video error - errorCode=${error.code}, cause=${error.message}`);
     };
     bridge.onstart = () => {
-      this.isReconnecting = false;
       this.onVideoPublished(cameraId);
     };
     this.storeBroker(cameraId, bridge);

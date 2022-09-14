@@ -23,13 +23,16 @@ import {
 } from './utils';
 import 'react-native-url-polyfill/auto';
 import TextInput from '../text-input';
-// TODO move this elsewhere - L22 (here) - L107 (getMeetingData) - prlanzarin
+// TODO BAD - decouple, move elsewhere
 import MessageSender from './message-sender';
 import MethodTransaction from './method-transaction';
 import MethodTransactionManager from './method-transaction-manager';
+// TODO BAD - move elsewhere
 import AudioManager from '../../services/webrtc/audio-manager';
 import VideoManager from '../../services/webrtc/video-manager';
+import ScreenshareManager from '../../services/webrtc/screenshare-manager';
 
+// TODO BAD - decouple, move elsewhere - everything from here to getMeetingData
 let GLOBAL_WS = null;
 const GLOBAL_TRANSACTIONS = new MethodTransactionManager();
 
@@ -131,6 +134,18 @@ const getMeetingData = async (joinUrl) => {
   };
 };
 
+const initializeMediaManagers = ({ userId, host, sessionToken }) =>  {
+  AudioManager.init({ userId, host, sessionToken, makeCall });
+  VideoManager.init({ userId, host, sessionToken, makeCall });
+  ScreenshareManager.init({ userId, host, sessionToken, makeCall });
+};
+
+const destroyMediaManagers = () => {
+  AudioManager.destroy();
+  VideoManager.destroy();
+  ScreenshareManager.destroy();
+};
+
 /// Set up the web socket modules.
 const setupModules = (ws) => {
   const messageSender = new MessageSender(ws, GLOBAL_TRANSACTIONS);
@@ -203,7 +218,7 @@ const logout = (ws, meetingData, modules) => {
     fetch(meetingData.logoutUrl);
   }
 
-  VideoManager.destroy();
+  destroyMediaManagers();
 };
 
 const SocketConnectionComponent = () => {
@@ -291,18 +306,7 @@ const SocketConnectionComponent = () => {
           modules.current = setupModules(ws);
           // FIXME this is definitely not the place to do this. Remove when
           // socket-connection is properly refactored - prlanzarin
-          AudioManager.init({
-            userId: meetingData?.internalUserID,
-            host: meetingData?.host,
-            sessionToken: meetingData?.sessionToken,
-            makeCall
-          });
-          VideoManager.init({
-            userId: meetingData?.internalUserID,
-            host: meetingData?.host,
-            sessionToken: meetingData?.sessionToken,
-            makeCall
-          });
+          initializeMediaManagers(meetingData);
         } else {
           // Probably dealing with a module makeCall/method response
           if (msgObj.collection) {

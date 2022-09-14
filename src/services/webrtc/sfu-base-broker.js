@@ -66,6 +66,14 @@ class BaseBroker extends EventEmitter2 {
     return this.webRtcPeer?.peerConnection;
   }
 
+  getRemoteStream() {
+    if (this.webRtcPeer && typeof this.webRtcPeer.getRemoteStream === 'function') {
+      return this.webRtcPeer.getRemoteStream();
+    }
+
+    return null;
+  }
+
   onbeforeunload () {
     return this.stop();
   }

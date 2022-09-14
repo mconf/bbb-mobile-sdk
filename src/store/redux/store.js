@@ -20,6 +20,7 @@ import screenshareReducer from './slices/screenshare';
 import previousPollPublishedReducer from './slices/wide-app/previous-poll-published';
 import audioReducer from './slices/wide-app/audio';
 import videoReducer from './slices/wide-app/video';
+import localScreenshareReducer from './slices/wide-app/screenshare';
 
 export const store = configureStore({
   reducer: {
@@ -45,5 +46,6 @@ export const store = configureStore({
     previousPollPublishedCollection: previousPollPublishedReducer,
     audio: audioReducer,
     video: videoReducer,
+    screenshare: localScreenshareReducer,
   },
 });

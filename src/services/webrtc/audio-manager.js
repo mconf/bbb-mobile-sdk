@@ -233,6 +233,11 @@ class AudioManager {
   isLocalStreamMuted() {
     return !this._getSenderTrackEnabled();
   }
+
+  destroy() {
+    this.exitAudio()
+    // TODO clean everything up.
+  }
 }
 
 const audioManager = new AudioManager();

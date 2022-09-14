@@ -35,14 +35,6 @@ class VideoBroker extends BaseBroker {
     return null;
   }
 
-  getRemoteStream() {
-    if (this.webRtcPeer && typeof this.webRtcPeer.getRemoteStream === 'function') {
-      return this.webRtcPeer.getRemoteStream();
-    }
-
-    return null;
-  }
-
   setLocalStream(stream) {
     if (this.webRtcPeer == null || this.webRtcPeer.peerConnection == null) {
       throw new Error('Missing peer connection');
