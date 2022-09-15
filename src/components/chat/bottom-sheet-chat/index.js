@@ -53,7 +53,7 @@ const BottomSheetChat = (props) => {
         <BottomSheetFlatList data={messages} renderItem={renderItem} />
         <Styled.SendMessageContainer>
           <Styled.TextInput
-            label="Send a message!"
+            label="Escreva sua mensagem"
             onChangeText={(newText) => setMessageText(newText)}
             value={messageText}
           />
