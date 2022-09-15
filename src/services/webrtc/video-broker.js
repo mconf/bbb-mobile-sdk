@@ -4,21 +4,18 @@ import WebRtcPeer from './peer';
 
 const ON_ICE_CANDIDATE_MSG = 'onIceCandidate';
 const SUBSCRIBER_ANSWER = 'subscriberAnswer';
+const STOP = 'stop';
 
 const SFU_COMPONENT_NAME = 'video';
 
 class VideoBroker extends BaseBroker {
-  constructor(
-    wsUrl,
-    role,
-    options = {},
-  ) {
-    super(SFU_COMPONENT_NAME, wsUrl);
+  constructor(role, options = {}) {
+    super(SFU_COMPONENT_NAME, { wsUrl: options.wsUrl, ws: options.ws });
     this.role = role;
     this.offering = true;
 
     // Optional parameters are:
-    // clientSessionNumber
+    // cameraId
     // iceServers,
     // offering,
     // mediaServer,
@@ -123,6 +120,9 @@ class VideoBroker extends BaseBroker {
 
   onWSMessage(message) {
     const parsedMessage = JSON.parse(message.data);
+
+    // Not for me. Skip.
+    if (parsedMessage.cameraId !== this.cameraId) return;
 
     switch (parsedMessage.id) {
       case 'startResponse':
@@ -230,6 +230,17 @@ class VideoBroker extends BaseBroker {
       type: this.sfuComponent,
       cameraId: this.cameraId,
       candidate,
+    };
+
+    this.sendMessage(message);
+  }
+
+  _stop() {
+    const message = {
+      id: STOP,
+      role: this.role,
+      type: this.sfuComponent,
+      cameraId: this.cameraId,
     };
 
     this.sendMessage(message);

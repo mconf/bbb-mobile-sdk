@@ -131,13 +131,13 @@ class AudioManager {
     this.bridge.onstart = () => {
       this.isReconnecting = false;
       this.onAudioJoin();
-      store.dispatch(setIsConnected(true));
     };
 
     return this.bridge;
   }
 
   async init({
+    userId,
     host,
     sessionToken,
     makeCall
@@ -147,6 +147,7 @@ class AudioManager {
       throw new TypeError('Audio manager: invalid init data');
     }
 
+    this._userId = userId;
     this._host = host;
     this._sessionToken = sessionToken;
     // FIXME temporary - we need to refactor sockt-connection to use makeCall
@@ -199,7 +200,11 @@ class AudioManager {
   }
 
   exitAudio() {
-    if (!this.bridge) return;
+    if (!this.bridge) {
+      // Bridge is nil => there's no audio anymore - guarantee local states reflect that
+      this.onAudioExit();
+      return;
+    }
 
     store.dispatch(setIsHangingUp(true));
     this.bridge.stop();
@@ -227,6 +232,11 @@ class AudioManager {
 
   isLocalStreamMuted() {
     return !this._getSenderTrackEnabled();
+  }
+
+  destroy() {
+    this.exitAudio()
+    // TODO clean everything up.
   }
 }
 
