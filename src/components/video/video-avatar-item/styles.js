@@ -2,6 +2,7 @@ import styled from 'styled-components/native';
 import { css } from 'styled-components';
 import Colors from '../../../constants/colors';
 import Pressable from '../../pressable';
+import { RTCView } from 'react-native-webrtc';
 
 const ContainerPressable = styled(Pressable).attrs(() => ({
   pressStyle: {
@@ -17,6 +18,12 @@ const ContainerPressable = styled(Pressable).attrs(() => ({
 `;
 
 const UserAvatar = styled.Image`
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+`;
+
+const VideoStream = styled(RTCView)`
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -67,4 +74,5 @@ export default {
   NameLabelContainer,
   PressableButton,
   UserColor,
+  VideoStream,
 };
