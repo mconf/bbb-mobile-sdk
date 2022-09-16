@@ -17,17 +17,17 @@ class ScreenshareManager {
     this.iceServers = null;
 
     // <ScreenshareBroker>
-    this.broker = null;
+    this.bridge = null;
     // <MediaStream>
     this.screenshareStream = null;
   }
 
-  set broker(_broker) {
-    this._broker = _broker;
+  set bridge(_bridge) {
+    this._bridge = _bridge;
   }
 
-  get broker() {
-    return this.broker;
+  get bridge() {
+    return this._bridge;
   }
 
   storeMediaStream(mediaStream) {
@@ -139,7 +139,7 @@ class ScreenshareManager {
     store.dispatch(setIsConnected(false));
     store.dispatch(setIsConnecting(false));
     store.dispatch(setIsHangingUp(false));
-    this.broker = null;
+    this.bridge = null;
     const mediaStream = this.getMediaStream();
 
     if (mediaStream) {
@@ -162,11 +162,9 @@ class ScreenshareManager {
   }
 
   unsubscribe() {
-    const bridge = this.broker;
-
-    if (bridge) {
-      bridge.stop();
-      this.broker = null;
+    if (this.bridge) {
+      this.bridge.stop();
+      this.bridge = null;
     }
 
     this.deleteMediaStream();
