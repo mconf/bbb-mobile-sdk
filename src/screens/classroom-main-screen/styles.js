@@ -1,12 +1,12 @@
 import styled from 'styled-components/native';
 import ContentLoader, { Rect, Circle } from 'react-content-loader/native';
 import { SafeAreaView } from 'react-native';
-import presentation from '../../components/presentation';
 import videoList from '../../components/video/video-list';
 import actionsBar from '../../components/actions-bar';
 import chat from '../../components/chat';
 import chatBottomSheet from '../../components/chat/bottom-sheet-chat';
 import iconButton from '../../components/icon-button';
+import contentArea from '../../components/content-area';
 
 const ContainerView = styled.SafeAreaView`
   width: 100%;
@@ -59,7 +59,7 @@ const VideoListContainer = styled.View`
   `}
 `;
 
-const PresentationContainer = styled.View`
+const ContentAreaContainer = styled.View`
   width: 100%;
   height: 30%;
   display: flex;
@@ -96,7 +96,7 @@ const VideoList = styled(videoList)`
 `;
 const Chat = styled(chat)``;
 const ChatBottomSheet = styled(chatBottomSheet)``;
-const Presentation = styled(presentation)``;
+const ContentArea = styled(contentArea)``;
 const SwitchLayoutButton = styled(iconButton)`
   position: absolute;
   opacity: 0.7;
@@ -111,9 +111,9 @@ const renderSkeletonLoading = () => {
           <VideoListLoading />
         </VideoListContainer>
 
-        <PresentationContainer>
-          <PresentationLoading />
-        </PresentationContainer>
+        <ContentAreaContainer>
+          <ContentAreaLoading />
+        </ContentAreaContainer>
 
         <ChatContainer>
           <ChatLoading />
@@ -159,7 +159,7 @@ const VideoListLoading = () => (
   </ContentLoader>
 );
 
-const PresentationLoading = () => (
+const ContentAreaLoading = () => (
   <ContentLoader
     speed={1}
     width="100%"
@@ -192,7 +192,7 @@ const ChatLoading = () => (
 
 export default {
   ContainerView,
-  Presentation,
+  ContentArea,
   ActionsBar,
   ActionsBarContainer,
   VideoList,
@@ -201,12 +201,12 @@ export default {
   ChatBottomSheet,
   ChatBottomSheetContainer,
   VideoListContainer,
-  PresentationContainer,
+  ContentAreaContainer,
   SwitchLayoutButton,
   // skeleton loading
   renderSkeletonLoading,
   VideoListLoading,
-  PresentationLoading,
+  ContentAreaLoading,
   ChatLoading,
   ActionsBarLoading,
 };
