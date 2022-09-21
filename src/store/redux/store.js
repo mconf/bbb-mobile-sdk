@@ -21,6 +21,7 @@ import previousPollPublishedReducer from './slices/wide-app/previous-poll-publis
 import audioReducer from './slices/wide-app/audio';
 import videoReducer from './slices/wide-app/video';
 import localScreenshareReducer from './slices/wide-app/screenshare';
+import chatReducer from './slices/wide-app/chat';
 
 export const store = configureStore({
   reducer: {
@@ -47,5 +48,6 @@ export const store = configureStore({
     audio: audioReducer,
     video: videoReducer,
     screenshare: localScreenshareReducer,
+    chat: chatReducer,
   },
 });

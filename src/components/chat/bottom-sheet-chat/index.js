@@ -1,6 +1,7 @@
-import { useCallback, useRef, useMemo, useContext, useState } from 'react';
+import { useCallback, useRef, useMemo, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
-import { BottomSheetContext } from '../../../store/context/bottom-sheet-context';
+import { setBottomChatOpen } from '../../../store/redux/slices/wide-app/chat';
 import UserAvatar from '../../user-avatar';
 import IconButtonComponent from '../../icon-button';
 import ChatService from '../service';
@@ -12,13 +13,13 @@ const BottomSheetChat = (props) => {
 
   const sheetRef = useRef(null);
   const [messageText, setMessageText] = useState('');
-  const bottomSheetCtx = useContext(BottomSheetContext);
+  const dispatch = useDispatch();
 
   const snapPoints = useMemo(() => ['25%', '95%'], []);
 
   const handleSheetChanges = useCallback((index) => {
     if (index === -1) {
-      bottomSheetCtx.triggerButton('chatBottomSheet', false);
+      dispatch(setBottomChatOpen(false));
     }
   }, []);
 

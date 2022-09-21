@@ -24,134 +24,132 @@ const App = () => {
     <>
       <Provider store={store}>
         <ActionsBarContextProvider>
-          <BottomSheetContextProvider>
-            <NavigationContainer>
-              <Drawer.Navigator
-                drawerContent={(props) => <CustomDrawer {...props} />}
-                screenOptions={{
-                  contentOptions: {
-                    style: {
-                      backgroundColor: 'black',
-                      flex: 1,
-                    },
+          <NavigationContainer>
+            <Drawer.Navigator
+              drawerContent={(props) => <CustomDrawer {...props} />}
+              screenOptions={{
+                contentOptions: {
+                  style: {
+                    backgroundColor: 'black',
+                    flex: 1,
                   },
+                },
 
-                  sceneContainerStyle: { backgroundColor: '#06172A' },
-                  drawerActiveBackgroundColor: '#003399',
-                  drawerActiveTintColor: 'white',
-                  headerStyle: { backgroundColor: '#003399' },
-                  headerTintColor: 'white',
-                  drawerBackgroundColor: '#003399',
-                  headerTitleAlign: 'center',
+                sceneContainerStyle: { backgroundColor: '#06172A' },
+                drawerActiveBackgroundColor: '#003399',
+                drawerActiveTintColor: 'white',
+                headerStyle: { backgroundColor: '#003399' },
+                headerTintColor: 'white',
+                drawerBackgroundColor: '#003399',
+                headerTitleAlign: 'center',
+              }}
+            >
+              <Drawer.Screen
+                name="Main"
+                component={ClassroomMainScreen}
+                options={{
+                  title: 'Sala de aula',
+                  drawerIcon: (config) => (
+                    <IconButton
+                      icon="home"
+                      size={18}
+                      iconColor={config.color}
+                    />
+                  ),
                 }}
-              >
-                <Drawer.Screen
-                  name="Main"
-                  component={ClassroomMainScreen}
-                  options={{
-                    title: 'Sala de aula',
-                    drawerIcon: (config) => (
-                      <IconButton
-                        icon="home"
-                        size={18}
-                        iconColor={config.color}
-                      />
-                    ),
-                  }}
-                />
+              />
 
-                <Drawer.Screen
-                  name="SharedNoteScreen"
-                  component={UserNotesScreen}
-                  options={{
-                    title: 'Nota compartilhada',
-                    drawerIcon: (config) => (
-                      <IconButton
-                        icon="file-document"
-                        size={18}
-                        iconColor={config.color}
-                      />
-                    ),
-                  }}
-                />
+              <Drawer.Screen
+                name="SharedNoteScreen"
+                component={UserNotesScreen}
+                options={{
+                  title: 'Nota compartilhada',
+                  drawerIcon: (config) => (
+                    <IconButton
+                      icon="file-document"
+                      size={18}
+                      iconColor={config.color}
+                    />
+                  ),
+                }}
+              />
 
-                <Drawer.Screen
-                  name="ConfigPresentationScreen"
-                  component={ManagePresentationScreen}
-                  options={{
-                    title: 'Gerenciar Apresentação',
-                    drawerIcon: (config) => (
-                      <IconButton
-                        icon="presentation"
-                        size={18}
-                        iconColor={config.color}
-                      />
-                    ),
-                  }}
-                />
+              <Drawer.Screen
+                name="ConfigPresentationScreen"
+                component={ManagePresentationScreen}
+                options={{
+                  title: 'Gerenciar Apresentação',
+                  drawerIcon: (config) => (
+                    <IconButton
+                      icon="presentation"
+                      size={18}
+                      iconColor={config.color}
+                    />
+                  ),
+                }}
+              />
 
-                <Drawer.Screen
-                  name="PollScreen"
-                  component={PollScreen}
-                  options={{
-                    title: 'Enquete',
-                    drawerIcon: (config) => (
-                      <IconButton
-                        icon="chart-box"
-                        size={18}
-                        iconColor={config.color}
-                      />
-                    ),
-                  }}
-                />
+              <Drawer.Screen
+                name="PollScreen"
+                component={PollScreen}
+                options={{
+                  title: 'Enquete',
+                  drawerIcon: (config) => (
+                    <IconButton
+                      icon="chart-box"
+                      size={18}
+                      iconColor={config.color}
+                    />
+                  ),
+                }}
+              />
 
-                <Drawer.Screen
-                  name="UserParticipantsScreen"
-                  component={UserParticipantsScreen}
-                  options={{
-                    title: 'Lista de participantes',
-                    drawerIcon: (config) => (
-                      <IconButton
-                        icon="account-multiple"
-                        size={18}
-                        iconColor={config.color}
-                      />
-                    ),
-                  }}
-                />
+              <Drawer.Screen
+                name="UserParticipantsScreen"
+                component={UserParticipantsScreen}
+                options={{
+                  title: 'Lista de participantes',
+                  drawerIcon: (config) => (
+                    <IconButton
+                      icon="account-multiple"
+                      size={18}
+                      iconColor={config.color}
+                    />
+                  ),
+                }}
+              />
 
-                <Drawer.Screen
-                  name="WhiteboardScreen"
-                  component={WhiteboardScreen}
-                  options={{
-                    title: 'Quadro Branco',
-                    drawerIcon: (config) => (
-                      <IconButton
-                        icon="brush"
-                        size={18}
-                        iconColor={config.color}
-                      />
-                    ),
-                  }}
-                />
+              <Drawer.Screen
+                name="WhiteboardScreen"
+                component={WhiteboardScreen}
+                options={{
+                  title: 'Quadro Branco',
+                  drawerIcon: (config) => (
+                    <IconButton
+                      icon="brush"
+                      size={18}
+                      iconColor={config.color}
+                    />
+                  ),
+                }}
+              />
 
-                <Drawer.Screen
-                  name="TestComponent"
-                  component={TestComponentsScreen}
-                  options={{
-                    title: 'Test Component',
-                    drawerIcon: (config) => (
-                      <IconButton
-                        icon="brush"
-                        size={18}
-                        iconColor={config.color}
-                      />
-                    ),
-                  }}
-                />
-              </Drawer.Navigator>
-            </NavigationContainer>
-          </BottomSheetContextProvider>
+              <Drawer.Screen
+                name="TestComponent"
+                component={TestComponentsScreen}
+                options={{
+                  title: 'Test Component',
+                  drawerIcon: (config) => (
+                    <IconButton
+                      icon="brush"
+                      size={18}
+                      iconColor={config.color}
+                    />
+                  ),
+                }}
+              />
+            </Drawer.Navigator>
+          </NavigationContainer>
         </ActionsBarContextProvider>
       </Provider>
       <StatusBar style="auto" />

@@ -1,10 +1,9 @@
 import { SafeAreaView } from 'react-native';
-import { useCallback, useContext, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useCallback, useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { setBottomChatOpen } from '../../store/redux/slices/wide-app/chat';
 
-import { ActionsBarContext } from '../../store/context/actions-bar-context';
 import BottomSheetChat from '../../components/chat/bottom-sheet-chat';
-import { BottomSheetContext } from '../../store/context/bottom-sheet-context';
 import { useOrientation } from '../../hooks/use-orientation';
 import Colors from '../../constants/colors';
 import Styled from './styles';
@@ -12,17 +11,17 @@ import Styled from './styles';
 const ClassroomMainScreen = () => {
   // variables
   const usersStore = useSelector((state) => state.usersCollection);
+  const chatStore = useSelector((state) => state.chat);
   const groupChatMsgStore = useSelector(
     (state) => state.groupChatMsgCollection
   );
-  const videoStreamsStore = useSelector((state) => state.videoStreamsCollection);
+  const videoStreamsStore = useSelector(
+    (state) => state.videoStreamsCollection
+  );
   const orientation = useOrientation();
   const [switchLandscapeLayout, setSwitchLandscapeLayout] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const actionsBarCtx = useContext(ActionsBarContext);
-  const bottomSheetCtx = useContext(BottomSheetContext);
-  const { actionsBarStatus } = actionsBarCtx;
-  const { bottomSheet } = bottomSheetCtx;
+  const dispatch = useDispatch();
 
   // handle redux store methods
   const handleVideoUsers = useCallback(() => {
@@ -92,12 +91,10 @@ const ClassroomMainScreen = () => {
           </Styled.ContentAreaContainer>
 
           <Styled.ChatContainer>
-            {actionsBarStatus.isChatActive && (
+            {chatStore.isFastChatOpen && (
               <Styled.Chat
                 messages={handleMessages()}
-                onPressItem={() =>
-                  bottomSheetCtx.triggerButton('chatBottomSheet', true)
-                }
+                onPressItem={() => dispatch(setBottomChatOpen(true))}
               />
             )}
           </Styled.ChatContainer>
@@ -106,7 +103,7 @@ const ClassroomMainScreen = () => {
             <Styled.ActionsBar />
           </Styled.ActionsBarContainer>
         </Styled.ContainerView>
-        {bottomSheet.chatBottomSheet && (
+        {chatStore.isBottomChatOpen && (
           <BottomSheetChat messages={handleMessages()} />
         )}
       </SafeAreaView>
@@ -118,44 +115,34 @@ const ClassroomMainScreen = () => {
       <SafeAreaView>
         <Styled.ContainerView orientation={orientation}>
           <Styled.ContentAreaContainer orientation={orientation}>
-            {actionsBarStatus.isChatActive && (
-              <Styled.Chat
-                messages={handleMessages()}
-                onPressItem={() =>
-                  bottomSheetCtx.triggerButton('chatBottomSheet', true)
+            <>
+              {switchLandscapeLayout && (
+                <Styled.ContentArea width="100%" height="100%" />
+              )}
+              {!switchLandscapeLayout && (
+                <Styled.VideoListContainer orientation={orientation}>
+                  <Styled.VideoList
+                    videoUsers={handleVideoUsers()}
+                    orientation={orientation}
+                  />
+                </Styled.VideoListContainer>
+              )}
+              <Styled.SwitchLayoutButton
+                icon="animation-play-outline"
+                iconColor={Colors.lightGray300}
+                containerColor={Colors.lightGray100}
+                animated
+                onPress={() =>
+                  setSwitchLandscapeLayout((prevState) => !prevState)
                 }
               />
-            )}
-            {!actionsBarStatus.isChatActive && (
-              <>
-                {switchLandscapeLayout && (
-                  <Styled.ContentArea width="100%" height="100%" />
-                )}
-                {!switchLandscapeLayout && (
-                  <Styled.VideoListContainer orientation={orientation}>
-                    <Styled.VideoList
-                      videoUsers={handleVideoUsers()}
-                      orientation={orientation}
-                    />
-                  </Styled.VideoListContainer>
-                )}
-                <Styled.SwitchLayoutButton
-                  icon="animation-play-outline"
-                  iconColor={Colors.lightGray300}
-                  containerColor={Colors.lightGray100}
-                  animated
-                  onPress={() =>
-                    setSwitchLandscapeLayout((prevState) => !prevState)
-                  }
-                />
-              </>
-            )}
+            </>
           </Styled.ContentAreaContainer>
           <Styled.ActionsBarContainer orientation={orientation}>
             <Styled.ActionsBar orientation={orientation} />
           </Styled.ActionsBarContainer>
         </Styled.ContainerView>
-        {bottomSheet.chatBottomSheet && (
+        {chatStore.isBottomChatOpen && (
           <BottomSheetChat messages={handleMessages()} />
         )}
       </SafeAreaView>
