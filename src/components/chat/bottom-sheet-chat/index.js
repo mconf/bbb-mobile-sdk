@@ -26,11 +26,15 @@ const BottomSheetChat = (props) => {
     const timestamp = new Date(item.timestamp);
     return (
       <Styled.ContainerItem>
-        <UserAvatar userName={item.author} />
+        <UserAvatar userName={item.author} userRole={item.role} />
         <Styled.Card>
           <Styled.MessageTopContainer>
             <Styled.MessageAuthor>{item.author}</Styled.MessageAuthor>
-            <Styled.MessageTimestamp>{`${timestamp.getHours()}:${timestamp.getMinutes()}`}</Styled.MessageTimestamp>
+            <Styled.MessageTimestamp>
+              {`${String(timestamp.getHours()).padStart(2, '0')}:${String(
+                timestamp.getMinutes()
+              ).padStart(2, '0')}`}
+            </Styled.MessageTimestamp>
           </Styled.MessageTopContainer>
           <Styled.MessageContent>{item.message}</Styled.MessageContent>
         </Styled.Card>
@@ -49,7 +53,7 @@ const BottomSheetChat = (props) => {
         <BottomSheetFlatList data={messages} renderItem={renderItem} />
         <Styled.SendMessageContainer>
           <Styled.TextInput
-            label="Send a message!"
+            label="Escreva sua mensagem"
             onChangeText={(newText) => setMessageText(newText)}
             value={messageText}
           />
