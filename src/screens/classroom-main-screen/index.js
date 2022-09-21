@@ -12,9 +12,6 @@ const ClassroomMainScreen = () => {
   // variables
   const usersStore = useSelector((state) => state.usersCollection);
   const chatStore = useSelector((state) => state.chat);
-  const groupChatMsgStore = useSelector(
-    (state) => state.groupChatMsgCollection
-  );
   const videoStreamsStore = useSelector(
     (state) => state.videoStreamsCollection
   );
@@ -40,39 +37,6 @@ const ClassroomMainScreen = () => {
     });
   }, [usersStore, videoStreamsStore]);
 
-  const handleMessages = useCallback(
-    () =>
-      Object.values(groupChatMsgStore.groupChatMsgCollection).map((message) => {
-        // TODO this method will be huge, move this to another file
-        // if is a poll result message
-        if (message.id.toString().includes('PUBLIC_CHAT_POLL_RESULT')) {
-          return {
-            author: 'Sistema',
-            timestamp: message.timestamp,
-            message:
-              'Uma enquete foi publicada, verifique a seção destinada a enquete para observar os resultados',
-          };
-        }
-        // if is a clear chat message
-        if (message.id.toString().includes('PUBLIC_CHAT_CLEAR')) {
-          return {
-            author: 'Sistema',
-            timestamp: message.timestamp,
-            message:
-              'O histórico do bate-papo público foi apagado por um moderador',
-          };
-        }
-        return {
-          author: message.senderName,
-          timestamp: message.timestamp,
-          message: message.message,
-          role: message.senderRole,
-          // ...other properties
-        };
-      }),
-    [groupChatMsgStore]
-  );
-
   // lifecycle methods
   useEffect(() => {
     setTimeout(() => setIsLoading(false), 500);
@@ -94,7 +58,6 @@ const ClassroomMainScreen = () => {
           <Styled.ChatContainer>
             {chatStore.isFastChatOpen && (
               <Styled.Chat
-                messages={handleMessages()}
                 onPressItem={() => dispatch(setBottomChatOpen(true))}
               />
             )}
@@ -104,9 +67,7 @@ const ClassroomMainScreen = () => {
             <Styled.ActionsBar />
           </Styled.ActionsBarContainer>
         </Styled.ContainerView>
-        {chatStore.isBottomChatOpen && (
-          <BottomSheetChat messages={handleMessages()} />
-        )}
+        {chatStore.isBottomChatOpen && <BottomSheetChat />}
       </SafeAreaView>
     );
   };
@@ -143,9 +104,7 @@ const ClassroomMainScreen = () => {
             <Styled.ActionsBar orientation={orientation} />
           </Styled.ActionsBarContainer>
         </Styled.ContainerView>
-        {chatStore.isBottomChatOpen && (
-          <BottomSheetChat messages={handleMessages()} />
-        )}
+        {chatStore.isBottomChatOpen && <BottomSheetChat />}
       </SafeAreaView>
     );
   };
