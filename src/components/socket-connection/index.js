@@ -134,10 +134,15 @@ const getMeetingData = async (joinUrl) => {
   };
 };
 
-const initializeMediaManagers = ({ userId, host, sessionToken }) =>  {
-  AudioManager.init({ userId, host, sessionToken, makeCall });
-  VideoManager.init({ userId, host, sessionToken, makeCall });
-  ScreenshareManager.init({ userId, host, sessionToken, makeCall });
+const initializeMediaManagers = ({ internalUserID, host, sessionToken }) => {
+  AudioManager.init({ userId: internalUserID, host, sessionToken, makeCall });
+  VideoManager.init({ userId: internalUserID, host, sessionToken, makeCall });
+  ScreenshareManager.init({
+    userId: internalUserID,
+    host,
+    sessionToken,
+    makeCall
+  });
 };
 
 const destroyMediaManagers = () => {
