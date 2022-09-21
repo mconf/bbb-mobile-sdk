@@ -11,10 +11,6 @@ import Styled from './styles';
 
 const ClassroomMainScreen = () => {
   // variables
-  const slidesStore = useSelector((state) => state.slidesCollection);
-  const presentationsStore = useSelector(
-    (state) => state.presentationsCollection
-  );
   const usersStore = useSelector((state) => state.usersCollection);
   const groupChatMsgStore = useSelector(
     (state) => state.groupChatMsgCollection
@@ -77,26 +73,6 @@ const ClassroomMainScreen = () => {
     [groupChatMsgStore]
   );
 
-  const handleSlideAndPresentationActive = useCallback(() => {
-    // TODO Review this collection after update the 2.6 code
-    const currentPresentation = Object.values(
-      presentationsStore.presentationsCollection
-    ).filter((obj) => {
-      return obj.current === true;
-    });
-
-    const currentSlideList = Object.values(slidesStore.slidesCollection).filter(
-      (obj) => {
-        return (
-          obj.current === true &&
-          obj.presentationId === currentPresentation[0]?.id
-        );
-      }
-    );
-    const imageUri = currentSlideList[0]?.imageUri;
-    return imageUri?.replace('/svg/', '/png/');
-  }, [presentationsStore, slidesStore]);
-
   // lifecycle methods
   useEffect(() => {
     setTimeout(() => setIsLoading(false), 500);
@@ -111,15 +87,9 @@ const ClassroomMainScreen = () => {
             <Styled.VideoList videoUsers={handleVideoUsers()} />
           </Styled.VideoListContainer>
 
-          <Styled.PresentationContainer>
-            <Styled.Presentation
-              width="100%"
-              height="100%"
-              source={{
-                uri: handleSlideAndPresentationActive(),
-              }}
-            />
-          </Styled.PresentationContainer>
+          <Styled.ContentAreaContainer>
+            <Styled.ContentArea width="100%" height="100%" />
+          </Styled.ContentAreaContainer>
 
           <Styled.ChatContainer>
             {actionsBarStatus.isChatActive && (
@@ -147,7 +117,7 @@ const ClassroomMainScreen = () => {
     return (
       <SafeAreaView>
         <Styled.ContainerView orientation={orientation}>
-          <Styled.PresentationContainer orientation={orientation}>
+          <Styled.ContentAreaContainer orientation={orientation}>
             {actionsBarStatus.isChatActive && (
               <Styled.Chat
                 messages={handleMessages()}
@@ -159,11 +129,7 @@ const ClassroomMainScreen = () => {
             {!actionsBarStatus.isChatActive && (
               <>
                 {switchLandscapeLayout && (
-                  <Styled.Presentation
-                    width="100%"
-                    height="100%"
-                    source={{ uri: handleSlideAndPresentationActive() }}
-                  />
+                  <Styled.ContentArea width="100%" height="100%" />
                 )}
                 {!switchLandscapeLayout && (
                   <Styled.VideoListContainer orientation={orientation}>
@@ -184,7 +150,7 @@ const ClassroomMainScreen = () => {
                 />
               </>
             )}
-          </Styled.PresentationContainer>
+          </Styled.ContentAreaContainer>
           <Styled.ActionsBarContainer orientation={orientation}>
             <Styled.ActionsBar orientation={orientation} />
           </Styled.ActionsBarContainer>
