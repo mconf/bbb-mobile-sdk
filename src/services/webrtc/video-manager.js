@@ -64,8 +64,12 @@ class VideoManager {
   }
 
   deleteMediaStream(cameraId) {
-    store.dispatch(removeVideoStream(cameraId));
-    return this.videoStreams.delete(cameraId)
+    if (cameraId) {
+      store.dispatch(removeVideoStream({ cameraId }));
+      return this.videoStreams.delete(cameraId)
+    }
+
+    return false;
   }
 
   getMediaStream(cameraId) {
@@ -174,7 +178,6 @@ class VideoManager {
       offering: true,
       traceLogs: true,
     };
-
     const bridge = new VideoBroker('share', brokerOptions);
     bridge.onended = () => {
       logger.info({
@@ -184,7 +187,7 @@ class VideoManager {
           role: 'share',
         },
       }, 'Video ended without issue');
-      this.onVideoExit(cameraId);
+      this.onLocalVideoExit(cameraId);
     };
     bridge.onerror = (error) => {
       logger.error({
@@ -214,7 +217,6 @@ class VideoManager {
       traceLogs: true,
     };
     const bridge = new VideoBroker('viewer', brokerOptions);
-
     bridge.onended = () => {
       logger.info({
         logCode: 'video_ended',
@@ -223,6 +225,7 @@ class VideoManager {
           role: 'viewer',
         },
       }, 'Video ended without issue');
+      this.onRemoteVideoExit(cameraId);
     };
     bridge.onerror = (error) => {
       logger.error({
@@ -239,6 +242,7 @@ class VideoManager {
       const remoteStream = bridge.getRemoteStream();
       if (remoteStream) this.storeMediaStream(cameraId, remoteStream);
     };
+    this.storeBroker(cameraId, bridge);
 
     return bridge;
   }
@@ -328,7 +332,7 @@ class VideoManager {
     } else {
       // No bridge/broker. Trailing request, just guarantee everything is cleaned up.
       store.dispatch(setIsConnected(false));
-      this.onVideoExit(cameraId);
+      this.onLocalVideoExit(cameraId);
     }
   }
 
@@ -350,17 +354,28 @@ class VideoManager {
 
     if (bridge) {
       bridge.stop();
-      this.deleteBroker(cameraId);
+    } else {
+      // No bridge/broker. Trailing request, just guarantee everything is cleaned up.
+      store.dispatch(setIsConnected(false));
+      this.onRemoteVideoExit(cameraId);
     }
-
-    this.deleteMediaStream(cameraId);
   }
 
-  onVideoExit(cameraId) {
+  onLocalVideoExit(cameraId) {
     store.dispatch(setIsConnected(false));
     store.dispatch(setIsConnecting(false));
     store.dispatch(setIsHangingUp(false));
 
+    this.deleteBroker(cameraId);
+    const mediaStream = this.getMediaStream(cameraId);
+
+    if (mediaStream) {
+      mediaStream.getTracks().forEach((track) => track.stop());
+      this.deleteMediaStream(cameraId);
+    }
+  }
+
+  onRemoteVideoExit(cameraId) {
     this.deleteBroker(cameraId);
     const mediaStream = this.getMediaStream(cameraId);
 
