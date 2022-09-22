@@ -44,6 +44,13 @@ const BottomSheetChat = () => {
     );
   };
 
+  const renderEmptyChatHandler = () => {
+    if (messages.length !== 0) {
+      return null;
+    }
+    return <Styled.NoMessageText>O chat está vazio</Styled.NoMessageText>;
+  };
+
   return (
     <Styled.Container>
       <BottomSheet
@@ -52,6 +59,7 @@ const BottomSheetChat = () => {
         onChange={handleSheetChanges}
         enablePanDownToClose
       >
+        {renderEmptyChatHandler()}
         <BottomSheetFlatList data={messages} renderItem={renderItem} />
         <Styled.SendMessageContainer>
           <Styled.TextInput
