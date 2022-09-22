@@ -1,5 +1,5 @@
 import { useCallback, useRef, useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import { setBottomChatOpen } from '../../../store/redux/slices/wide-app/chat';
 import UserAvatar from '../../user-avatar';
@@ -15,6 +15,7 @@ const BottomSheetChat = () => {
   const sheetRef = useRef(null);
   const [messageText, setMessageText] = useState('');
   const dispatch = useDispatch();
+  const chatStore = useSelector((state) => state.chat);
 
   const snapPoints = useMemo(() => ['25%', '95%'], []);
 
@@ -50,6 +51,10 @@ const BottomSheetChat = () => {
     }
     return <Styled.NoMessageText>O chat está vazio</Styled.NoMessageText>;
   };
+
+  if (!chatStore.isBottomChatOpen) {
+    return null;
+  }
 
   return (
     <Styled.Container>

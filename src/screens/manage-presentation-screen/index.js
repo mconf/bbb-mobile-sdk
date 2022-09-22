@@ -3,6 +3,7 @@ import { FlatList, SafeAreaView, Alert } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import { useOrientation } from '../../hooks/use-orientation';
 import IconButton from '../../components/icon-button';
+import withPortal from '../../components/high-order/with-portal';
 import Styled from './styles';
 
 const ManagePresentationScreen = () => {
@@ -93,4 +94,4 @@ const ManagePresentationScreen = () => {
   );
 };
 
-export default ManagePresentationScreen;
+export default withPortal(ManagePresentationScreen);

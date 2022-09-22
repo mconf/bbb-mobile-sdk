@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Menu, Provider } from 'react-native-paper';
 import { useOrientation } from '../../hooks/use-orientation';
+import withPortal from '../../components/high-order/with-portal';
 import Styled from './styles';
 
 const UserParticipantsScreen = () => {
@@ -76,4 +77,4 @@ const UserParticipantsScreen = () => {
   );
 };
 
-export default UserParticipantsScreen;
+export default withPortal(UserParticipantsScreen);

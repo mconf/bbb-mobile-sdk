@@ -1,9 +1,8 @@
 import { SafeAreaView } from 'react-native';
 import { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import withPortal from '../../components/high-order/with-portal';
 import { setBottomChatOpen } from '../../store/redux/slices/wide-app/chat';
-
-import BottomSheetChat from '../../components/chat/bottom-sheet-chat';
 import { useOrientation } from '../../hooks/use-orientation';
 import Colors from '../../constants/colors';
 import Styled from './styles';
@@ -67,7 +66,6 @@ const ClassroomMainScreen = () => {
             <Styled.ActionsBar />
           </Styled.ActionsBarContainer>
         </Styled.ContainerView>
-        {chatStore.isBottomChatOpen && <BottomSheetChat />}
       </SafeAreaView>
     );
   };
@@ -104,7 +102,6 @@ const ClassroomMainScreen = () => {
             <Styled.ActionsBar orientation={orientation} />
           </Styled.ActionsBarContainer>
         </Styled.ContainerView>
-        {chatStore.isBottomChatOpen && <BottomSheetChat />}
       </SafeAreaView>
     );
   };
@@ -115,4 +112,4 @@ const ClassroomMainScreen = () => {
   return renderLandscapeOrientation();
 };
 
-export default ClassroomMainScreen;
+export default withPortal(ClassroomMainScreen);
