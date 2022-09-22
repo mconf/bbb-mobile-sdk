@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-import VideoAvatarItem from '../video-avatar-item';
+import VideoContainer from '../video-container';
 
 const VideoList = styled.View`
   display: flex;
@@ -10,7 +10,7 @@ const VideoList = styled.View`
   flex-direction: row;
 `;
 
-const VideoAvatar = styled(VideoAvatarItem)`
+const VideoListItem = styled(VideoContainer)`
   width: 115px;
   height: 115px;
   margin: 4px;
@@ -22,4 +22,4 @@ const VideoAvatar = styled(VideoAvatarItem)`
   `}
 `;
 
-export default { VideoList, VideoAvatar };
+export default { VideoList, VideoListItem };
