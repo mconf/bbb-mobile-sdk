@@ -1,4 +1,4 @@
-import { useChatMsgs } from '../../hooks/chat/use-chat-msgs';
+import { useChatMsgs } from '../../hooks/selectors/chat/use-chat-msgs';
 import Styled from './styles';
 
 const Item = (props) => {

@@ -4,7 +4,7 @@ import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import { setBottomChatOpen } from '../../../store/redux/slices/wide-app/chat';
 import UserAvatar from '../../user-avatar';
 import IconButtonComponent from '../../icon-button';
-import { useChatMsgs } from '../../../hooks/chat/use-chat-msgs';
+import { useChatMsgs } from '../../../hooks/selectors/chat/use-chat-msgs';
 import ChatService from '../service';
 import Colors from '../../../constants/colors';
 import Styled from './styles';
