@@ -1,8 +1,8 @@
 import styled from 'styled-components/native';
 import { css } from 'styled-components';
+import { RTCView } from 'react-native-webrtc';
 import Colors from '../../../constants/colors';
 import Pressable from '../../pressable';
-import { RTCView } from 'react-native-webrtc';
 
 const ContainerPressable = styled(Pressable).attrs(() => ({
   pressStyle: {
@@ -27,6 +27,7 @@ const VideoStream = styled(RTCView)`
   width: 100%;
   height: 100%;
   overflow: hidden;
+  object-fit: contain;
 `;
 
 const UserColor = styled.View`
