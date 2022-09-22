@@ -4,7 +4,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import { Provider } from 'react-redux';
 // providers and store
 import ActionsBarContextProvider from './src/store/context/actions-bar-context';
-import BottomSheetContextProvider from './src/store/context/bottom-sheet-context';
 import { store } from './src/store/redux/store';
 // components
 import CustomDrawer from './src/components/custom-drawer';
