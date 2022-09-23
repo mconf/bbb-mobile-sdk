@@ -27,6 +27,12 @@ const MessageTimestamp = styled.Text`
   font-style: italic;
 `;
 
+const NoMessageText = styled.Text`
+  font-size: 24px;
+  text-align: center;
+  padding: 8px;
+`;
+
 const UserAvatar = styled(userAvatar)``;
 
 const MessageContent = styled.Text`
@@ -73,4 +79,5 @@ export default {
   TextInput,
   MessageTimestamp,
   MessageTopContainer,
+  NoMessageText,
 };

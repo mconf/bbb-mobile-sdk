@@ -1,3 +1,4 @@
+import { useChatMsgs } from '../../hooks/selectors/chat/use-chat-msgs';
 import Styled from './styles';
 
 const Item = (props) => {
@@ -23,7 +24,10 @@ const Item = (props) => {
 };
 
 const Chat = (props) => {
-  const { messages, onPressItem } = props;
+  const { onPressItem } = props;
+
+  const messages = useChatMsgs();
+
   // TODO review this after we get session chat
   const messagesInverted = messages.reverse();
 

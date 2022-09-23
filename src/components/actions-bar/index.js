@@ -5,6 +5,7 @@ import Styled from './styles';
 import Colors from '../../constants/colors';
 import AudioControls from '../audio/audio-controls';
 import VideoControls from '../video/video-controls';
+import ChatControls from '../chat/chat-controls';
 
 const ActionsBar = (props) => {
   const { style, orientation } = props;
@@ -14,20 +15,9 @@ const ActionsBar = (props) => {
 
   return (
     <Styled.ContainerView style={style}>
-      <IconButtonComponent
-        size={isLandscape ? 24 : 32}
-        icon={actionsBarStatus.isChatActive ? 'message' : 'message-off'}
-        iconColor={
-          actionsBarStatus.isChatActive ? Colors.white : Colors.lightGray300
-        }
-        containerColor={
-          actionsBarStatus.isChatActive ? Colors.blue : Colors.lightGray100
-        }
-        animated
-        onPress={() => triggerButton('isChatActive')}
-      />
-      <AudioControls isLandscape />
-      <VideoControls isLandscape />
+      <ChatControls isLandscape={isLandscape} />
+      <AudioControls isLandscape={isLandscape} />
+      <VideoControls isLandscape={isLandscape} />
       <IconButtonComponent
         size={isLandscape ? 24 : 32}
         icon={

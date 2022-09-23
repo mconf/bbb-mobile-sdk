@@ -2,6 +2,7 @@ import { KeyboardAvoidingView, Platform } from 'react-native';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useOrientation } from '../../hooks/use-orientation';
+import withPortal from '../../components/high-order/with-portal';
 import PreviousPollCard from './previous-polls';
 import CreatePollView from './create-poll';
 import AnswerPollView from './answer-poll';
@@ -90,4 +91,4 @@ const PollScreen = () => {
   );
 };
 
-export default PollScreen;
+export default withPortal(PollScreen);
