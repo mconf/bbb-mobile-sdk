@@ -89,13 +89,7 @@ module.exports = {
 
     // review below
     'flowtype/require-parameter-type': 0,
-    'flowtype/require-return-type': [
-      0,
-      'always',
-      {
-        annotateUndefined: 'never',
-      },
-    ],
+    'flowtype/require-return-type': 0,
 
     // disable annoying things
     'react/state-in-constructor': 'off',
@@ -113,5 +107,6 @@ module.exports = {
     'react/jsx-no-bind': 'off',
     'no-nested-ternary': 'off',
     'no-underscore-dangle': 'off',
+    'comma-dangle': 'off',
   },
 };
