@@ -3,7 +3,7 @@
     "name": "bbbmobile",
     "slug": "bbbmobile",
     "owner": "maxfranke",
-    "scheme": "bbb",
+    "scheme": "com.maxfranke.bbbmobile",
     "version": "1.0.0",
     "orientation": "default",
     "icon": "./src/assets/icon.png",
@@ -32,7 +32,8 @@
           "iCloudContainerEnvironment": "Development"
         }
       ],
-      "@config-plugins/react-native-webrtc"
+      "@config-plugins/react-native-webrtc",
+      ["expo-community-flipper", "0.123.0"]
     ],
     "android": {
       "adaptiveIcon": {
