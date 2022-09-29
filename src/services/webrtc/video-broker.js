@@ -243,7 +243,7 @@ class VideoBroker extends BaseBroker {
       cameraId: this.cameraId,
     };
 
-    this.sendMessage(message);
+    this.sendMessage(message, false);
   }
 }
 

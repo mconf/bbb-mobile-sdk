@@ -31,11 +31,12 @@ class BaseBroker extends EventEmitter2 {
     this.webRtcPeer = null;
     this.pingInterval = null;
     this.started = false;
-    this.signallingTransportOpen = false;
+    this.signalingTransportOpen = false;
     this.logCodePrefix = `${this.sfuComponent}_broker`;
     this.peerConfiguration = {};
     this._wsListenersSetup = false;
     this._preloadedWS = !!(ws && typeof ws === 'object');
+    this._wsQueue = [];
 
     this.onWSMessage = this.onWSMessage.bind(this);
     this.onWSClosed = this.onWSClosed.bind(this);
@@ -109,9 +110,9 @@ class BaseBroker extends EventEmitter2 {
         errorMessage: error.name || error.message || 'Unknown error',
         sfuComponent: this.sfuComponent,
       }
-    }, 'WebSocket connection to SFU failed');
+    }, `WebSocket connection to SFU failed: ${error.name} - ${error.message}`);
 
-    if (this.signallingTransportOpen) {
+    if (this.signalingTransportOpen) {
       // 1301: "WEBSOCKET_DISCONNECTED", transport was already open
       this.onerror(BaseBroker.assembleError(1301));
     } else {
@@ -131,15 +132,16 @@ class BaseBroker extends EventEmitter2 {
       this.ws.addEventListener('message', this.onWSMessage);
       this.ws.addEventListener('close', this.onWSClosed);
       this.ws.addEventListener('error', this.onWSError);
-      this.signallingTransportOpen = true;
+      this.signalingTransportOpen = true;
       this._wsListenersSetup = true;
     }
   }
 
   openWSConnection () {
     return new Promise((resolve, reject) => {
-      if (this.ws && (this.ws.readyState === 1 || this.ws.readyState === 0)) {
+      if (this._isWsSet()) {
         this._attachPreloadedWSListeners();
+        this._flushWsQueue();
         resolve();
         return;
       }
@@ -165,22 +167,41 @@ class BaseBroker extends EventEmitter2 {
       this.ws.addEventListener('error', preloadErrorCatcher);
       this.ws.onopen = () => {
         this.pingInterval = setInterval(this.ping.bind(this), PING_INTERVAL_MS);
-        this.signallingTransportOpen = true;
+        this.signalingTransportOpen = true;
         this._wsListenersSetup = true;
         this.ws.addEventListener('error', this.onWSError);
         this.ws.removeEventListener('error', preloadErrorCatcher);
+        this._flushWsQueue();
         return resolve();
       };
     });
   }
 
-  sendMessage (message) {
-    const jsonMessage = JSON.stringify(message);
-    this.ws.send(jsonMessage);
+  _isWsConnected() {
+    return !!this.ws && this.ws.readyState === 1;
+  }
+
+  _isWsSet() {
+    return !!this.ws && (this.ws.readyState === 1 || this.ws.readyState === 0);
+  }
+
+  _flushWsQueue() {
+    while (this._wsQueue.length > 0) {
+      this._sendMessage(this._wsQueue.pop());
+    }
+  }
+
+  sendMessage(message, buffer = true) {
+    if (this._isWsConnected()) {
+      const jsonMessage = JSON.stringify(message);
+      this.ws.send(jsonMessage);
+    } else if (buffer) {
+      this._wsQueue.push(message);
+    }
   }
 
   ping () {
-    this.sendMessage({ id: 'ping' });
+    this.sendMessage({ id: 'ping' }, false);
   }
 
   _processRemoteDescription(localDescription = null) {
@@ -345,6 +366,8 @@ class BaseBroker extends EventEmitter2 {
       this.ws.removeEventListener('error', this.onWSError);
       if (!this._preloadedWS) this.ws.close();
     }
+
+    this._wsQueue = [];
 
     if (this.pingInterval) {
       clearInterval(this.pingInterval);

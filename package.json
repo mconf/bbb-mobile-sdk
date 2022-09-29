@@ -40,6 +40,7 @@
     "react-native-webrtc": "^1.100.1",
     "react-native-webview": "11.18.1",
     "react-redux": "^8.0.2",
+    "reconnecting-websocket": "^4.4.0",
     "styled-components": "^5.3.5",
     "url": "^0.11.0",
     "util": "^0.12.4"
@@ -55,10 +56,10 @@
     "eslint-plugin-flowtype": "^8.0.3",
     "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-jsx-a11y": "^6.5.1",
-    "flow-bin": "^0.187.1",
     "eslint-plugin-react": "^7.28.0",
+    "eslint-plugin-react-hooks": "^4.3.0",
     "expo-community-flipper": "^46.0.1",
-    "eslint-plugin-react-hooks": "^4.3.0"
+    "flow-bin": "^0.187.1"
   },
   "private": true
 }
