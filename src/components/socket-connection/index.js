@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import { Text, View, StyleSheet } from 'react-native';
+import * as Linking from 'expo-linking';
 import { UsersModule } from './modules/users';
 import { GroupChatModule } from './modules/group-chat';
 import { GroupChatMsgModule } from './modules/group-chat-msg';
@@ -31,6 +33,7 @@ import MethodTransactionManager from './method-transaction-manager';
 import AudioManager from '../../services/webrtc/audio-manager';
 import VideoManager from '../../services/webrtc/video-manager';
 import ScreenshareManager from '../../services/webrtc/screenshare-manager';
+
 
 // TODO BAD - decouple, move elsewhere - everything from here to getMeetingData
 let GLOBAL_WS = null;
@@ -227,11 +230,13 @@ const logout = (ws, meetingData, modules) => {
 };
 
 const SocketConnectionComponent = () => {
+  const urlViaLinking = Linking.useURL();
   const [joinUrl, setJoinUrl] = useState('');
   const [meetingData, setMeetingData] = useState({});
   const [websocket, setWebsocket] = useState(null);
   const modules = useRef({});
   const validateReqId = useRef(null);
+  const navigation = useNavigation();
 
   const onOpen = () => {};
   const onClose = () => {
@@ -293,6 +298,18 @@ const SocketConnectionComponent = () => {
     }
   }, [joinUrl, meetingData]);
 
+  useEffect(() => {
+    if (urlViaLinking?.includes('/bigbluebutton/api/join?')) {
+      const joinUrlFiltered = urlViaLinking.replace('bigbluebutton://', 'https://');
+      setJoinUrl(joinUrlFiltered);
+    }
+  }, [urlViaLinking]);
+
+  useEffect(() => {
+    if (meetingData?.returncode === 'SUCCESS') {
+      navigation.navigate('Main');
+    }
+  }, [meetingData]);
   const processMessage = (ws, msgObj) => {
     switch (msgObj.msg) {
       case 'connected': {

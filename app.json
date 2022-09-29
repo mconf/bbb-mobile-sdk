@@ -3,7 +3,7 @@
     "name": "bbbmobile",
     "slug": "bbbmobile",
     "owner": "maxfranke",
-    "scheme": "com.maxfranke.bbbmobile",
+    "scheme": "bigbluebutton",
     "version": "1.0.0",
     "orientation": "default",
     "icon": "./src/assets/icon.png",

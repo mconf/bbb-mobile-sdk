@@ -16,6 +16,7 @@ import TestComponentsScreen from './src/screens/test-components-screen';
 import UserNotesScreen from './src/screens/user-notes-screen';
 import WhiteboardScreen from './src/screens/whiteboard-screen';
 import ManagePresentationScreen from './src/screens/manage-presentation-screen';
+import PortalWebviewScreen from './src/screens/portal-webview-screen';
 
 const App = () => {
   const Drawer = createDrawerNavigator();
@@ -43,6 +44,21 @@ const App = () => {
                 headerTitleAlign: 'center',
               }}
             >
+              <Drawer.Screen
+                name="TestComponent"
+                component={TestComponentsScreen}
+                options={{
+                  title: 'Test Component',
+                  drawerIcon: (config) => (
+                    <IconButton
+                      icon="brush"
+                      size={18}
+                      iconColor={config.color}
+                    />
+                  ),
+                }}
+              />
+
               <Drawer.Screen
                 name="Main"
                 component={ClassroomMainScreen}
@@ -134,10 +150,10 @@ const App = () => {
               />
 
               <Drawer.Screen
-                name="TestComponent"
-                component={TestComponentsScreen}
+                name="PortalWebviewScreen"
+                component={PortalWebviewScreen}
                 options={{
-                  title: 'Test Component',
+                  title: 'Login Portal',
                   drawerIcon: (config) => (
                     <IconButton
                       icon="brush"
