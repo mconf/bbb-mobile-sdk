@@ -7,11 +7,20 @@ import VideoManager from '../../../services/webrtc/video-manager';
 import usePrevious from '../../../hooks/use-previous';
 
 const VideoContainer = (props) => {
-  const { cameraId, userAvatar, userColor, userName, style } = props;
+  const {
+    cameraId,
+    userAvatar,
+    userColor,
+    userName,
+    style,
+  } = props;
   const [showOptions, setShowOptions] = useState(false);
   const prevCameraId = usePrevious(cameraId);
   const mediaStreamId = useSelector(
     (state) => state.video.videoStreams[cameraId]
+  );
+  const signalingTransportOpen = useSelector(
+    (state) => state.video.signalingTransportOpen
   );
 
   // TODO decouple subscribe/unsubscribe from component lifecycle
@@ -25,14 +34,16 @@ const VideoContainer = (props) => {
   }, [cameraId]);
 
   useEffect(() => {
-    if (cameraId && !mediaStreamId) {
-      VideoManager.subscribe(cameraId);
-    }
+    if (signalingTransportOpen) {
+      if (cameraId && !mediaStreamId) {
+        VideoManager.subscribe(cameraId);
+      }
 
-    if (prevCameraId && !cameraId) {
-      VideoManager.unsubscribe(prevCameraId);
+      if (prevCameraId && !cameraId) {
+        VideoManager.unsubscribe(prevCameraId);
+      }
     }
-  }, [cameraId, mediaStreamId]);
+  }, [cameraId, mediaStreamId, signalingTransportOpen]);
 
   const renderVideo = () => {
     if (typeof mediaStreamId === 'string') {
