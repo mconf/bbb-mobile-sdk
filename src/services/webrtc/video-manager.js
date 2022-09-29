@@ -1,3 +1,4 @@
+import ReconnectingWebSocket from 'reconnecting-websocket';
 import { mediaDevices } from 'react-native-webrtc';
 import logger from '../logger';
 import VideoBroker from './video-broker';
@@ -22,6 +23,7 @@ class VideoManager {
     this.bridge = null;
     this.iceServers = null;
     this.ws = null;
+    this._wsQueue = [];
 
     // Map<cameraId, VideoBroker>
     this.brokers = new Map();
@@ -86,9 +88,7 @@ class VideoManager {
       extraInfo: {
         errorMessage: error.name || error.message || 'Unknown error',
       }
-    }, 'WebSocket connection to SFU failed');
-
-    this._closeWS();
+    }, 'WebSocket connection to SFU dropped - will reconnect');
   }
 
   _onWSClosed() {
@@ -103,13 +103,17 @@ class VideoManager {
     }
   }
 
-  _sendMessage(message) {
-    const jsonMessage = JSON.stringify(message);
-    this.ws.send(jsonMessage);
+  _sendMessage(message, buffer = true) {
+    if (this._isWsConnected()) {
+      const jsonMessage = JSON.stringify(message);
+      this.ws.send(jsonMessage);
+    } else if (buffer) {
+      this._wsQueue.push(message);
+    }
   }
 
   _ping() {
-    this._sendMessage({ id: 'ping' });
+    this._sendMessage({ id: 'ping' }, false);
   }
 
   _closeWS() {
@@ -128,9 +132,23 @@ class VideoManager {
     }
   }
 
-  _openWSConnection (wsUrl) {
+  _isWsConnected() {
+    return !!this.ws && this.ws.readyState === 1;
+  }
+
+  _isWsSet() {
+    return !!this.ws && (this.ws.readyState === 1 || this.ws.readyState === 0);
+  }
+
+  _flushWsQueue() {
+    while (this._wsQueue.length > 0) {
+      this._sendMessage(this._wsQueue.pop());
+    }
+  }
+
+  _openWSConnection(wsUrl) {
     return new Promise((resolve, reject) => {
-      if (this.ws && (this.ws.readyState === 1 || this.ws.readyState === 0)) {
+      if (this._isWsSet()) {
         this._attachPreloadedWSListeners();
         resolve();
         return;
@@ -147,7 +165,7 @@ class VideoManager {
         return reject(error);
       }
 
-      this.ws = new WebSocket(wsUrl);
+      this.ws = new ReconnectingWebSocket(wsUrl, [], { connectionTimeout: 4000 });
       this.ws.addEventListener('close', this._onWSClosed, { once: true });
       this.ws.addEventListener('error', preloadErrorCatcher);
       this.ws.onopen = () => {
@@ -156,6 +174,7 @@ class VideoManager {
         this.ws.removeEventListener('error', preloadErrorCatcher);
         this._wsListenersSetup = true;
         store.dispatch(setSignalingTransportOpen(true));
+        this._flushWsQueue();
         return resolve();
       };
     });
@@ -247,7 +266,6 @@ class VideoManager {
     return bridge;
   }
 
-
   async init({
     userId,
     host,
@@ -288,7 +306,7 @@ class VideoManager {
         extraInfo: {
           errorMessage: error.name || error.message || 'Unknown error',
         }
-      }, 'WebSocket connection to SFU failed');
+      }, `WebSocket connection to SFU failed: ${error.name} - ${error.message}`);
     }
   }
 

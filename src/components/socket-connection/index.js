@@ -308,10 +308,11 @@ const SocketConnectionComponent = () => {
       case 'result': {
         // We're resolving a validateAuthToken request
         if (msgObj.id === validateReqId.current) {
-          modules.current = setupModules(ws);
-          // FIXME this is definitely not the place to do this. Remove when
-          // socket-connection is properly refactored - prlanzarin
+          // FIXME initializeMediaManagers: this is definitely not the place
+          // to do this. Remove when socket-connection is properly
+          // refactored - prlanzarin
           initializeMediaManagers(meetingData);
+          modules.current = setupModules(ws);
         } else {
           // Probably dealing with a module makeCall/method response
           if (msgObj.collection) {

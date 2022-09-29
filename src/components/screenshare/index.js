@@ -9,7 +9,6 @@ const Screenshare = (props) => {
     (state) => state.screenshare.screenshareStream
   );
   const isConnected = useSelector((state) => state.screenshare.isConnected);
-  const signalingTransportOpen = useSelector((state) => state.screenshare.signalingTransportOpen);
 
   // TODO decouple unsubscribe from component lifecycle
   useEffect(() => {
@@ -19,10 +18,10 @@ const Screenshare = (props) => {
   }, []);
 
   useEffect(() => {
-    if (!mediaStreamId && signalingTransportOpen) {
+    if (!mediaStreamId) {
       ScreenshareManager.subscribe();
     }
-  }, [mediaStreamId, signalingTransportOpen]);
+  }, [mediaStreamId]);
 
   if (isConnected && mediaStreamId) {
     return <Styled.ScreenshareStream style={style} streamURL={mediaStreamId} />;
