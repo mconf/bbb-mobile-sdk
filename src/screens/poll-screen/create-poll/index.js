@@ -1,11 +1,24 @@
+// @flow
+import type { Node } from 'react';
 import { useState } from 'react';
 import { Alert } from 'react-native';
 import Styled from './styles';
 
-const CreatePoll = () => {
+type AnswerType =
+  | 'TF'
+  | 'A-4'
+  | 'YNA'
+  | 'R-';
+
+type AnswerOptionsObjType = {
+  secretPoll: boolean,
+  isMultipleResponse: boolean
+  };
+
+const CreatePoll = (): Node => {
   // Create poll states
-  const [answerTypeSelected, setAnswerTypeSelected] = useState('TF');
-  const [answersOptions, setAnswersOptions] = useState({
+  const [answerTypeSelected, setAnswerTypeSelected] = useState<AnswerType>('TF');
+  const [answersOptions, setAnswersOptions] = useState<AnswerOptionsObjType>({
     secretPoll: false,
     isMultipleResponse: false,
   });
