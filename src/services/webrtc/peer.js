@@ -23,12 +23,16 @@ export default class WebRtcPeer extends EventEmitter2 {
     this.configuration = this.options.configuration;
     this.onicecandidate = this.options.onicecandidate;
     this.oncandidategatheringdone = this.options.oncandidategatheringdone;
+    this.onconnectionstatechange = this.options.onconnectionstatechange;
+    this.oniceconnectionstatechange = this.options.oniceconnectionstatechange;
     this.candidateGatheringDone = false;
 
     this._outboundCandidateQueue = [];
     this._inboundCandidateQueue = [];
     this._handleIceCandidate = this._handleIceCandidate.bind(this);
     this._handleSignalingStateChange = this._handleSignalingStateChange.bind(this);
+    this._handleIceConnectionStateChange = this._handleIceConnectionStateChange.bind(this);
+    this._handleConnectionStateChange = this._handleConnectionStateChange.bind(this);
 
     this._assignOverrides();
   }
@@ -39,6 +43,12 @@ export default class WebRtcPeer extends EventEmitter2 {
     }
     if (typeof this.oncandidategatheringdone === 'function') {
       this.on('candidategatheringdone', this.oncandidategatheringdone);
+    }
+    if (typeof this.onconnectionstatechange === 'function') {
+      this.on('connectionstatechange', this.onconnectionstatechange);
+    }
+    if (typeof this.oniceconnectionstatechange === 'function') {
+      this.on('iceconnectionstatechange', this.oniceconnectionstatechange);
     }
     if (typeof this.options.mediaStreamFactory === 'function') {
       this.mediaStreamFactory = this.options.mediaStreamFactory.bind(this);
@@ -98,9 +108,24 @@ export default class WebRtcPeer extends EventEmitter2 {
   }
 
   _handleSignalingStateChange() {
-    if (this.peerConnection?.signalingState === 'stable') {
-      this._flushInboundCandidateQueue();
-    }
+    const signalingState = this.peerConnection?.signalingState || 'closed';
+
+    if (signalingState === 'stable') this._flushInboundCandidateQueue();
+
+    this.logger.debug('BBB:WebRtcPeer::signalingstatechange', signalingState);
+    this.emit('signalingstatechange', signalingState);
+  }
+
+  _handleIceConnectionStateChange() {
+    const iceConnectionState = this.peerConnection?.iceConnectionState || 'closed';
+    this.logger.debug('BBB:WebRtcPeer::oniceconnectionstatechange', iceConnectionState);
+    this.emit('iceconnectionstatechange', iceConnectionState);
+  }
+
+  _handleConnectionStateChange() {
+    const connectionState = this.peerConnection?.connectionState || 'closed';
+    this.logger.debug('BBB:WebRtcPeer::onconnectionstatechange', connectionState);
+    this.emit('connectionstatechange', connectionState);
   }
 
   // Public method can be overriden via options
@@ -176,6 +201,14 @@ export default class WebRtcPeer extends EventEmitter2 {
     return !this.peerConnection || this.peerConnection.signalingState === 'closed';
   }
 
+  _trackPCEvents() {
+    if (this.peerConnection) {
+      this.peerConnection.addEventListener('icecandidate', this._handleIceCandidate);
+      this.peerConnection.addEventListener('iceconnectionstatechange', this._handleIceConnectionStateChange);
+      this.peerConnection.addEventListener('connectionstatechange', this._handleConnectionStateChange);
+    }
+  }
+
   start() {
     // Init PeerConnection
     if (!this.peerConnection) {
@@ -187,7 +220,7 @@ export default class WebRtcPeer extends EventEmitter2 {
       throw new Error('Invalid peer state: closed');
     }
 
-    this.peerConnection.addEventListener('icecandidate', this._handleIceCandidate);
+    this._trackPCEvents();
     this._trackQueueFlushEvents();
   }
 
