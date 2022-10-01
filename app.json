@@ -25,12 +25,6 @@
       "bundleIdentifier": "com.bbb.bbbmobile"
     },
     "plugins": [
-      [
-        "expo-document-picker",
-        {
-          "iCloudContainerEnvironment": "Development"
-        }
-      ],
       "@config-plugins/react-native-webrtc",
       ["expo-community-flipper", "0.123.0"]
     ],

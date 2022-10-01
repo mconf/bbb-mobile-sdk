@@ -14,7 +14,6 @@ import UserParticipantsScreen from './src/screens/user-participants-screen';
 import TestComponentsScreen from './src/screens/test-components-screen';
 import UserNotesScreen from './src/screens/user-notes-screen';
 import WhiteboardScreen from './src/screens/whiteboard-screen';
-import ManagePresentationScreen from './src/screens/manage-presentation-screen';
 import { injectStore as injectStoreVM } from './src/services/webrtc/video-manager';
 import { injectStore as injectStoreSM } from './src/services/webrtc/screenshare-manager';
 import { injectStore as injectStoreAM } from './src/services/webrtc/audio-manager';
@@ -29,6 +28,7 @@ const injectStore = () => {
 const App = () => {
   injectStore();
   const Drawer = createDrawerNavigator();
+
   return (
     <>
       <Provider store={store}>
@@ -75,21 +75,6 @@ const App = () => {
                 drawerIcon: (config) => (
                   <IconButton
                     icon="file-document"
-                    size={18}
-                    iconColor={config.color}
-                  />
-                ),
-              }}
-            />
-
-            <Drawer.Screen
-              name="ConfigPresentationScreen"
-              component={ManagePresentationScreen}
-              options={{
-                title: 'Gerenciar Apresentação',
-                drawerIcon: (config) => (
-                  <IconButton
-                    icon="presentation"
                     size={18}
                     iconColor={config.color}
                   />
