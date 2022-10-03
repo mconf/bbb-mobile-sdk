@@ -175,6 +175,10 @@ class VideoManager {
         this._wsListenersSetup = true;
         store.dispatch(setSignalingTransportOpen(true));
         this._flushWsQueue();
+        logger.info({
+          logCode: `videomanager_websocket_open`,
+        }, 'WebSocket connection to SFU established');
+
         return resolve();
       };
     });
@@ -222,6 +226,20 @@ class VideoManager {
     bridge.onstart = () => {
       this.onVideoPublished(cameraId);
     };
+    bridge.onreconnecting = () => {
+      logger.info({
+        logCode: 'video_reconnecting',
+        extraInfo: {
+          cameraId,
+          role: 'share',
+        },
+      }, 'Video reconnecting (publisher)');
+      // TODO - update local collection states about this and use it in the UI
+      // to let the user know something's happening.
+    };
+    bridge.onreconnected = () => {
+      this.onVideoPublished(cameraId);
+    };
     this.storeBroker(cameraId, bridge);
 
     return bridge;
@@ -258,6 +276,21 @@ class VideoManager {
       }, `Video error - errorCode=${error.code}, cause=${error.message}`);
     };
     bridge.onstart = () => {
+      const remoteStream = bridge.getRemoteStream();
+      if (remoteStream) this.storeMediaStream(cameraId, remoteStream);
+    };
+    bridge.onreconnecting = () => {
+      logger.info({
+        logCode: 'video_reconnecting',
+        extraInfo: {
+          cameraId,
+          role: 'viewer',
+        },
+      }, 'Video reconnecting (viewer)');
+      // TODO - update local collection states about this and use it in the UI
+      // to let the user know something's happening.
+    };
+    bridge.onreconnected = () => {
       const remoteStream = bridge.getRemoteStream();
       if (remoteStream) this.storeMediaStream(cameraId, remoteStream);
     };

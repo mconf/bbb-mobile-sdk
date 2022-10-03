@@ -5,14 +5,17 @@ import WebRtcPeer from './peer';
 const ON_ICE_CANDIDATE_MSG = 'onIceCandidate';
 const SUBSCRIBER_ANSWER = 'subscriberAnswer';
 const STOP = 'stop';
-
 const SFU_COMPONENT_NAME = 'video';
+const BASE_RECONNECTION_TIMEOUT = 3000;
+const MAX_RECONNECTION_TIMEOUT = 15000;
 
 class VideoBroker extends BaseBroker {
   constructor(role, options = {}) {
     super(SFU_COMPONENT_NAME, { wsUrl: options.wsUrl, ws: options.ws });
     this.role = role;
     this.offering = true;
+
+    this._reconnectionTimer = null;
 
     // Optional parameters are:
     // cameraId
@@ -77,6 +80,7 @@ class VideoBroker extends BaseBroker {
           onicecandidate: !this.signalCandidates ? null : (candidate) => {
             this.onIceCandidate(candidate, this.role);
           },
+          onconnectionstatechange: this.handleConnectionStateChange.bind(this),
           trace: this.traceLogs,
         };
 
@@ -84,7 +88,6 @@ class VideoBroker extends BaseBroker {
         this.webRtcPeer = new WebRtcPeer(peerRole, options);
         this.webRtcPeer.iceQueue = [];
         this.webRtcPeer.start();
-        this.webRtcPeer.peerConnection.onconnectionstatechange = this.handleConnectionStateChange.bind(this);
 
         if (this.offering) {
           this.webRtcPeer.generateOffer()
@@ -114,6 +117,7 @@ class VideoBroker extends BaseBroker {
   }
 
   joinVideo() {
+    this.started = false;
     return this.openWSConnection()
       .then(this._join.bind(this));
   }
@@ -132,8 +136,12 @@ class VideoBroker extends BaseBroker {
         this.handleIceCandidate(parsedMessage.candidate);
         break;
       case 'playStart':
-        this.onstart(parsedMessage);
         this.started = true;
+        if (!this.reconnecting) {
+          this.onstart();
+        } else {
+          this._onreconnected();
+        }
         break;
       case 'stop':
         this.stop();
@@ -148,6 +156,90 @@ class VideoBroker extends BaseBroker {
           logCode: `${this.logCodePrefix}_invalid_req`,
           extraInfo: { messageId: parsedMessage.id || 'Unknown', sfuComponent: this.sfuComponent },
         }, 'Discarded invalid SFU message');
+    }
+  }
+
+  _onreconnecting() {
+    this.reconnecting = true;
+    this.onreconnecting();
+  }
+
+  _onreconnected() {
+    this.reconnecting = false;
+    this._onreconnected();
+  }
+
+  reconnect() {
+    this.stop(true);
+    this._onreconnecting();
+    this.joinVideo();
+  }
+
+  _getScheduledReconnect() {
+    return () => {
+      // Peer that timed out is a subscriber/viewer
+      // Subscribers try to reconnect according to their timers if media could
+      // not reach the server. That's why we pass the restarting flag as true
+      // to the stop procedure as to not destroy the timers
+      // Create new reconnect interval time
+      const oldReconnectTimer = this._reconnectionTimer;
+      const newReconnectTimer = Math.min(
+        1.5 * oldReconnectTimer,
+        MAX_RECONNECTION_TIMEOUT,
+      );
+      this._reconnectionTimer = newReconnectTimer;
+
+      // Clear the current reconnect interval so it can be re-set in createWebRTCPeer
+      if (this._reconnectionTimeout) {
+        clearTimeout(this._reconnectionTimeout);
+        this._reconnectionTimeout = null;
+      }
+
+      logger.error({
+        logCode: 'video_provider_camera_view_timeout',
+        extraInfo: {
+          cameraId: this.cameraId,
+          role: this.role,
+          oldReconnectTimer,
+          newReconnectTimer,
+        },
+      }, 'Camera VIEWER failed. Reconnecting.');
+
+      this.reconnect();
+    };
+  }
+
+  scheduleReconnection() {
+    const shouldSetReconnectionTimeout = !this.reconnectionTimer && !this.started;
+
+    // This is an ongoing reconnection which succeeded in the first place but
+    // then failed mid call. Try to reconnect it right away. Clear the restart
+    // timers since we don't need them in this case.
+    if (this.started) {
+      this.clearReconnectionRoutine();
+      this.reconnect();
+      return;
+    }
+
+    // This is a reconnection timer for a peer that hasn't succeeded in the first
+    // place. Set reconnection timeouts with random intervals between them to try
+    // and reconnect without flooding the server
+    if (shouldSetReconnectionTimeout) {
+      const newReconnectTimer = this._reconnectionTimer || BASE_RECONNECTION_TIMEOUT;
+      this._reconnectionTimer = newReconnectTimer;
+
+      this._reconnectionTimeout = setTimeout(
+        this._getScheduledReconnect(),
+        this._reconnectionTimer,
+      );
+    }
+  }
+
+  handleConnectionStateChange(connectionState) {
+    this.emit('connectionstatechange', connectionState);
+
+    if (connectionState === 'failed' || connectionState === 'closed') {
+      this.scheduleReconnection();
     }
   }
 
@@ -235,6 +327,8 @@ class VideoBroker extends BaseBroker {
     this.sendMessage(message);
   }
 
+  // Is ALWAYS called by BaseBroker#STOP
+  // May be called internally for intermediate cleanups (bypassing BaseBroker#stop)
   _stop() {
     const message = {
       id: STOP,
