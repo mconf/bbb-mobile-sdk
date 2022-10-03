@@ -159,15 +159,6 @@ class VideoBroker extends BaseBroker {
     }
   }
 
-  clearReconnectionRoutine() {
-    if (this._reconnectionTimeout) {
-      clearTimeout(this._reconnectionTimeout);
-      this._reconnectionTimeout = null;
-    }
-
-    if (this._reconnectionTimer) this._reconnectionTimer = null;
-  }
-
   _onreconnecting() {
     this.reconnecting = true;
     this.onreconnecting();

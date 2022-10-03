@@ -355,6 +355,15 @@ class BaseBroker extends EventEmitter2 {
     }
   }
 
+  clearReconnectionRoutine() {
+    if (this._reconnectionTimeout) {
+      clearTimeout(this._reconnectionTimeout);
+      this._reconnectionTimeout = null;
+    }
+
+    if (this._reconnectionTimer) this._reconnectionTimer = null;
+  }
+
   _stop() {
     // Inheritors can build on stop by overriding this.
   }
