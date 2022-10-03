@@ -31,6 +31,7 @@ class BaseBroker extends EventEmitter2 {
     this.webRtcPeer = null;
     this.pingInterval = null;
     this.started = false;
+    this.reconnecting = false;
     this.signalingTransportOpen = false;
     this.logCodePrefix = `${this.sfuComponent}_broker`;
     this.peerConfiguration = {};
@@ -88,6 +89,14 @@ class BaseBroker extends EventEmitter2 {
   }
 
   onended () {
+    // To be implemented by inheritors
+  }
+
+  onreconnecting() {
+    // To be implemented by inheritors
+  }
+
+  onreconnected() {
     // To be implemented by inheritors
   }
 
@@ -350,27 +359,34 @@ class BaseBroker extends EventEmitter2 {
     // Inheritors can build on stop by overriding this.
   }
 
-  stop () {
-    this.onstart = function(){};
-    this.onerror = function(){};
+  stop (reconnecting = false) {
     // FIXME
     // window.removeEventListener('beforeunload', this.onbeforeunload);
+    if (!reconnecting) {
+      this.clearReconnectionRoutine();
+      this.onended();
+      this.onended = function(){};
+      this.onstart = function(){};
+      this.onerror = function(){};
+      this.onreconnected = function(){};
+      this.onreconnecting =  function(){};
+
+      if (this.ws !== null) {
+        this.ws.removeEventListener('message', this.onWSMessage);
+        this.ws.removeEventListener('close', this.onWSClosed);
+        this.ws.removeEventListener('error', this.onWSError);
+        if (!this._preloadedWS) this.ws.close();
+      }
+
+      this._wsQueue = [];
+
+      if (this.pingInterval) {
+        clearInterval(this.pingInterval);
+      }
+    }
 
     if (this.webRtcPeer) {
       this.webRtcPeer.peerConnection.onconnectionstatechange = null;
-    }
-
-    if (this.ws !== null) {
-      this.ws.removeEventListener('message', this.onWSMessage);
-      this.ws.removeEventListener('close', this.onWSClosed);
-      this.ws.removeEventListener('error', this.onWSError);
-      if (!this._preloadedWS) this.ws.close();
-    }
-
-    this._wsQueue = [];
-
-    if (this.pingInterval) {
-      clearInterval(this.pingInterval);
     }
 
     this.disposePeer();
@@ -381,11 +397,8 @@ class BaseBroker extends EventEmitter2 {
       extraInfo: { sfuComponent: this.sfuComponent },
     }, `Stopped broker session for ${this.sfuComponent}`);
 
-    this.onended();
-    this.onended = function(){};
     this._stop();
   }
 }
 
 export default BaseBroker;
-
