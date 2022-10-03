@@ -22,6 +22,7 @@ import audioReducer from './slices/wide-app/audio';
 import videoReducer from './slices/wide-app/video';
 import localScreenshareReducer from './slices/wide-app/screenshare';
 import chatReducer from './slices/wide-app/chat';
+import interactionsReducer from './slices/wide-app/interactions';
 
 export const store = configureStore({
   reducer: {
@@ -49,5 +50,6 @@ export const store = configureStore({
     video: videoReducer,
     screenshare: localScreenshareReducer,
     chat: chatReducer,
+    interactions: interactionsReducer,
   },
 });
