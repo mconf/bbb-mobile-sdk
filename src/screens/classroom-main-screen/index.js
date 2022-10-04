@@ -23,12 +23,21 @@ const ClassroomMainScreen = () => {
   const handleVideoUsers = useCallback(() => {
     // TODO refactor. This is ugly, inefficient and sucks - prlanzarin
     return Object.values(usersStore.usersCollection).map((user) => {
-      const cameraId = Object.values(
-        videoStreamsStore.videoStreamsCollection
-      ).find((stream) => stream.userId === user.intId)?.stream;
+      const {
+        stream: cameraId,
+        floor,
+        lastFloorTime,
+        pin,
+      } = Object.values(videoStreamsStore.videoStreamsCollection)
+        .find((stream) => stream.userId === user.intId) || {};
+
       return {
-        userName: user.name,
+        name: user.name,
         cameraId,
+        userId: user.intId,
+        floor,
+        lastFloorTime,
+        pin,
         userAvatar: user.avatar,
         userColor: user.color,
         // ...other properties
