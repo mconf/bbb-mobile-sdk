@@ -153,7 +153,7 @@ class ScreenshareManager {
 
     try {
       const bridge = this._initializeSubscriberBridge();
-      await bridge.view();
+      await bridge.joinScreenshare();
     } catch (error) {
       // Rollback and re-throw
       this.unsubscribe();
