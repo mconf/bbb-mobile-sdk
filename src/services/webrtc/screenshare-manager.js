@@ -55,13 +55,17 @@ class ScreenshareManager {
   }
 
   _initializeSubscriberBridge() {
-    const brokerOptions = {
-      iceServers: this.iceServers,
-      offering: false,
-      traceLogs: true,
-    };
-    const bridge = new ScreenshareBroker(this._getSFUAddr(), 'recv', brokerOptions);
-    bridge.onended = () => {
+    this.bridge = new ScreenshareBroker(
+      this._getSFUAddr(),
+      'recv',
+      {
+        iceServers: this.iceServers,
+        offering: false,
+        traceLogs: true,
+      },
+    );
+
+    this.bridge.onended = () => {
       logger.info({
         logCode: 'screenshare_ended',
         extraInfo: {
@@ -70,7 +74,8 @@ class ScreenshareManager {
       }, 'Screenshare ended without issue');
       this.onScreenshareUnsubscribed();
     };
-    bridge.onerror = (error) => {
+
+    this.bridge.onerror = (error) => {
       logger.error({
         logCode: 'screenshare_failure',
         extraInfo: {
@@ -82,16 +87,31 @@ class ScreenshareManager {
       // TODO retry
       this.unsubscribe();
     };
-    bridge.onstart = () => {
-      const remoteStream = bridge.getRemoteStream();
+
+    this.bridge.onstart = () => {
+      const remoteStream = this.bridge.getRemoteStream();
       if (remoteStream) this.storeMediaStream(remoteStream);
       this.onScreenshareSubscribed();
     };
-    this.bridge = bridge;
 
-    return bridge;
+    this.bridge.onreconnecting = () => {
+      logger.info({
+        logCode: 'screenshare_reconnecting',
+        extraInfo: {
+          role: 'recv',
+        },
+      }, 'Screenshare reconnecting (viewer)');
+      // TODO - update local collection states about this and use it in the UI
+      // to let the user know something's happening.
+    };
+
+    this.bridge.onreconnected = () => {
+      const remoteStream = this.bridge.getRemoteStream();
+      if (remoteStream) this.storeMediaStream(remoteStream);
+    };
+
+    return this.bridge;
   }
-
 
   async init({
     userId,

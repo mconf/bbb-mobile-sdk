@@ -5,6 +5,8 @@ import WebRtcPeer from './peer';
 const ON_ICE_CANDIDATE_MSG = 'iceCandidate';
 const SUBSCRIBER_ANSWER = 'subscriberAnswer';
 const SFU_COMPONENT_NAME = 'screenshare';
+const BASE_RECONNECTION_TIMEOUT = 3000;
+const MAX_RECONNECTION_TIMEOUT = 15000;
 
 class ScreenshareBroker extends BaseBroker {
   constructor(
@@ -55,15 +57,13 @@ class ScreenshareBroker extends BaseBroker {
           },
           configuration: this.populatePeerConfiguration(),
           onicecandidate: this.signalCandidates ? this.onIceCandidate.bind(this) : null,
+          onconnectionstatechange: this.handleConnectionStateChange.bind(this),
           trace: this.traceLogs,
         };
         const peerRole = this.role === 'send' ? 'sendonly' : 'recvonly';
         this.webRtcPeer = new WebRtcPeer(peerRole, options);
         this.webRtcPeer.iceQueue = [];
         this.webRtcPeer.start();
-        this.webRtcPeer.peerConnection.onconnectionstatechange = () => {
-          this.handleConnectionStateChange('screenshare');
-        };
 
         if (this.offering) {
           this.webRtcPeer.generateOffer()
@@ -133,6 +133,75 @@ class ScreenshareBroker extends BaseBroker {
             role: this.role,
           }
         }, 'Discarded invalid SFU message');
+    }
+  }
+
+  _onreconnecting() {
+    this.reconnecting = true;
+    this.onreconnecting();
+  }
+
+  _onreconnected() {
+    this.reconnecting = false;
+    this.onreconnected();
+  }
+
+  reconnect() {
+    this.stop(true);
+    this._onreconnecting();
+    this.joinScreenshare();
+  }
+
+  _getScheduledReconnect() {
+    return () => {
+      const oldReconnectTimer = this._reconnectionTimer;
+      const newReconnectTimer = Math.min(
+        1.5 * oldReconnectTimer,
+        MAX_RECONNECTION_TIMEOUT,
+      );
+      this._reconnectionTimer = newReconnectTimer;
+
+      // Clear the current reconnect interval so it can be re-set in createWebRTCPeer
+      if (this._reconnectionTimeout) {
+        clearTimeout(this._reconnectionTimeout);
+        this._reconnectionTimeout = null;
+      }
+
+      this.reconnect();
+    };
+  }
+
+  scheduleReconnection() {
+    const shouldSetReconnectionTimeout = !this.reconnectionTimer && !this.started;
+
+    // This is an ongoing reconnection which succeeded in the first place but
+    // then failed mid call. Try to reconnect it right away. Clear the restart
+    // timers since we don't need them in this case.
+    if (this.started) {
+      this._clearReconnectionRoutine();
+      this.reconnect();
+      return;
+    }
+
+    // This is a reconnection timer for a peer that hasn't succeeded in the first
+    // place. Set reconnection timeouts with random intervals between them to try
+    // and reconnect without flooding the server
+    if (shouldSetReconnectionTimeout) {
+      const newReconnectTimer = this._reconnectionTimer || BASE_RECONNECTION_TIMEOUT;
+      this._reconnectionTimer = newReconnectTimer;
+
+      this._reconnectionTimeout = setTimeout(
+        this._getScheduledReconnect(),
+        this._reconnectionTimer,
+      );
+    }
+  }
+
+  handleConnectionStateChange(connectionState) {
+    this.emit('connectionstatechange', connectionState);
+
+    if (connectionState === 'failed' || connectionState === 'closed') {
+      this.scheduleReconnection();
     }
   }
 
