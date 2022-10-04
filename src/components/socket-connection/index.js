@@ -125,12 +125,12 @@ const getMeetingData = async (joinUrl) => {
   const joinResp = await fetch(joinUrl, {
     method: 'GET',
   });
-
   const html5join = joinResp.url;
   const enterUrl = makeEnterUrl(html5join);
   const enterResp = await fetch(enterUrl).then((r) => r.json());
 
   return {
+    enterUrl,
     ...enterResp.response,
     host: getHost(html5join),
     sessionToken: getSessionToken(html5join)
@@ -286,7 +286,7 @@ const SocketConnectionComponent = () => {
 
   useEffect(() => {
     if (meetingData && Object.keys(meetingData).length) {
-      const ws = makeWS(joinUrl);
+      const ws = makeWS(meetingData.enterUrl);
 
       ws.onopen = onOpen;
       ws.onclose = onClose;
@@ -296,7 +296,7 @@ const SocketConnectionComponent = () => {
       // TODO move this elsewhere - prlanzarin
       GLOBAL_WS = ws;
     }
-  }, [joinUrl, meetingData]);
+  }, [meetingData]);
 
   useEffect(() => {
     if (urlViaLinking?.includes('/bigbluebutton/api/join?')) {
