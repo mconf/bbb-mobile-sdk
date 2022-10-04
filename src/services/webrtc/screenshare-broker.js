@@ -5,6 +5,8 @@ import WebRtcPeer from './peer';
 const ON_ICE_CANDIDATE_MSG = 'iceCandidate';
 const SUBSCRIBER_ANSWER = 'subscriberAnswer';
 const SFU_COMPONENT_NAME = 'screenshare';
+const BASE_RECONNECTION_TIMEOUT = 3000;
+const MAX_RECONNECTION_TIMEOUT = 15000;
 
 class ScreenshareBroker extends BaseBroker {
   constructor(
@@ -39,33 +41,64 @@ class ScreenshareBroker extends BaseBroker {
     this.onstreamended();
   }
 
+  // eslint-disable-next-line class-methods-use-this
   onstreamended() {
     // To be implemented by instantiators
   }
 
-  async share () {
+  _join() {
     return new Promise((resolve, reject) => {
-      if (this.stream == null) {
-        logger.error({
-          logCode: `${this.logCodePrefix}_missing_stream`,
-          extraInfo: { role: this.role, sfuComponent: this.sfuComponent },
-        }, 'Screenshare broker start failed: missing stream');
-        return reject(BaseBroker.assembleError(1305));
-      }
+      try {
+        const options = {
+          videoStream: this.stream,
+          mediaConstraints: {
+            audio: !!this.hasAudio,
+            video: true,
+          },
+          configuration: this.populatePeerConfiguration(),
+          onicecandidate: this.signalCandidates ? this.onIceCandidate.bind(this) : null,
+          onconnectionstatechange: this.handleConnectionStateChange.bind(this),
+          trace: this.traceLogs,
+        };
+        const peerRole = this.role === 'send' ? 'sendonly' : 'recvonly';
+        this.webRtcPeer = new WebRtcPeer(peerRole, options);
+        this.webRtcPeer.iceQueue = [];
+        this.webRtcPeer.start();
 
-      return this.openWSConnection()
-        .then(this.startScreensharing.bind(this))
-        .then(resolve)
-        .catch(reject);
+        if (this.offering) {
+          this.webRtcPeer.generateOffer()
+            .then(this.sendStartReq.bind(this))
+            .catch(this._handleOfferGenerationFailure.bind(this));
+        } else {
+          this.sendStartReq();
+        }
+
+        resolve();
+      } catch (error) {
+        // 1305: "PEER_NEGOTIATION_FAILED",
+        const normalizedError = BaseBroker.assembleError(1305);
+        logger.error({
+          logCode: `${this.logCodePrefix}_peer_creation_failed`,
+          extraInfo: {
+            errorMessage: error.name || error.message || 'Unknown error',
+            errorCode: normalizedError.errorCode,
+            role: this.role,
+            sfuComponent: this.sfuComponent,
+            started: this.started,
+          },
+        }, 'Screenshare peer creation failed');
+        this.onerror(normalizedError);
+        reject(normalizedError);
+      }
     });
   }
 
-  view () {
+  joinScreenshare() {
     return this.openWSConnection()
-      .then(this.subscribeToScreenStream.bind(this));
+      .then(this._join.bind(this));
   }
 
-  onWSMessage (message) {
+  onWSMessage(message) {
     const parsedMessage = JSON.parse(message.data);
 
     switch (parsedMessage.id) {
@@ -99,11 +132,80 @@ class ScreenshareBroker extends BaseBroker {
             sfuComponent: this.sfuComponent,
             role: this.role,
           }
-        }, `Discarded invalid SFU message`);
+        }, 'Discarded invalid SFU message');
     }
   }
 
-  handleSFUError (sfuResponse) {
+  _onreconnecting() {
+    this.reconnecting = true;
+    this.onreconnecting();
+  }
+
+  _onreconnected() {
+    this.reconnecting = false;
+    this.onreconnected();
+  }
+
+  reconnect() {
+    this.stop(true);
+    this._onreconnecting();
+    this.joinScreenshare();
+  }
+
+  _getScheduledReconnect() {
+    return () => {
+      const oldReconnectTimer = this._reconnectionTimer;
+      const newReconnectTimer = Math.min(
+        1.5 * oldReconnectTimer,
+        MAX_RECONNECTION_TIMEOUT,
+      );
+      this._reconnectionTimer = newReconnectTimer;
+
+      // Clear the current reconnect interval so it can be re-set in createWebRTCPeer
+      if (this._reconnectionTimeout) {
+        clearTimeout(this._reconnectionTimeout);
+        this._reconnectionTimeout = null;
+      }
+
+      this.reconnect();
+    };
+  }
+
+  scheduleReconnection() {
+    const shouldSetReconnectionTimeout = !this.reconnectionTimer && !this.started;
+
+    // This is an ongoing reconnection which succeeded in the first place but
+    // then failed mid call. Try to reconnect it right away. Clear the restart
+    // timers since we don't need them in this case.
+    if (this.started) {
+      this._clearReconnectionRoutine();
+      this.reconnect();
+      return;
+    }
+
+    // This is a reconnection timer for a peer that hasn't succeeded in the first
+    // place. Set reconnection timeouts with random intervals between them to try
+    // and reconnect without flooding the server
+    if (shouldSetReconnectionTimeout) {
+      const newReconnectTimer = this._reconnectionTimer || BASE_RECONNECTION_TIMEOUT;
+      this._reconnectionTimer = newReconnectTimer;
+
+      this._reconnectionTimeout = setTimeout(
+        this._getScheduledReconnect(),
+        this._reconnectionTimer,
+      );
+    }
+  }
+
+  handleConnectionStateChange(connectionState) {
+    this.emit('connectionstatechange', connectionState);
+
+    if (connectionState === 'failed' || connectionState === 'closed') {
+      this.scheduleReconnection();
+    }
+  }
+
+  handleSFUError(sfuResponse) {
     const { code, reason } = sfuResponse;
     const error = BaseBroker.assembleError(code, reason);
 
@@ -116,11 +218,11 @@ class ScreenshareBroker extends BaseBroker {
         sfuComponent: this.sfuComponent,
         started: this.started,
       },
-    }, `Screen sharing failed in SFU`);
+    }, 'Screen sharing failed in SFU');
     this.onerror(error);
   }
 
-  sendLocalDescription (localDescription) {
+  sendLocalDescription(localDescription) {
     const message = {
       id: SUBSCRIBER_ANSWER,
       type: this.sfuComponent,
@@ -131,7 +233,7 @@ class ScreenshareBroker extends BaseBroker {
     this.sendMessage(message);
   }
 
-  onRemoteDescriptionReceived (sfuResponse) {
+  onRemoteDescriptionReceived(sfuResponse) {
     if (this.offering) {
       return this.processAnswer(sfuResponse);
     }
@@ -166,51 +268,7 @@ class ScreenshareBroker extends BaseBroker {
     return this.onerror(error);
   }
 
-  startScreensharing() {
-    return new Promise((resolve, reject) => {
-      try {
-        const options = {
-          onicecandidate: this.signalCandidates ? this.onIceCandidate.bind(this) : null,
-          videoStream: this.stream,
-          configuration: this.populatePeerConfiguration(),
-          trace: this.traceLogs,
-        };
-        this.webRtcPeer = new WebRtcPeer('sendonly', options);
-        this.webRtcPeer.iceQueue = [];
-        this.webRtcPeer.start();
-        this.webRtcPeer.peerConnection.onconnectionstatechange = () => {
-          this.handleConnectionStateChange('screenshare');
-        };
-
-        if (this.offering) {
-          this.webRtcPeer.generateOffer()
-            .then(this.sendStartReq.bind(this))
-            .catch(this._handleOfferGenerationFailure.bind(this));
-        } else {
-          this.sendStartReq();
-        }
-
-        resolve();
-      } catch (error) {
-        // 1305: "PEER_NEGOTIATION_FAILED",
-        const normalizedError = BaseBroker.assembleError(1305);
-        logger.error({
-          logCode: `${this.logCodePrefix}_peer_creation_failed`,
-          extraInfo: {
-            errorMessage: error.name || error.message || 'Unknown error',
-            errorCode: normalizedError.errorCode,
-            role: this.role,
-            sfuComponent: this.sfuComponent,
-            started: this.started,
-          },
-        }, 'Screenshare peer creation failed');
-        this.onerror(normalizedError);
-        reject(normalizedError);
-      }
-    });
-  }
-
-  onIceCandidate (candidate) {
+  onIceCandidate(candidate) {
     const message = {
       id: ON_ICE_CANDIDATE_MSG,
       role: this.role,
@@ -219,54 +277,6 @@ class ScreenshareBroker extends BaseBroker {
     };
 
     this.sendMessage(message);
-  }
-
-  subscribeToScreenStream() {
-    return new Promise((resolve, reject) => {
-      try {
-        const options = {
-          mediaConstraints: {
-            audio: !!this.hasAudio,
-          },
-          onicecandidate: this.signalCandidates ? this.onIceCandidate.bind(this) : null,
-          configuration: this.populatePeerConfiguration(),
-          trace: this.traceLogs,
-        };
-
-        this.webRtcPeer = new WebRtcPeer('recvonly', options);
-        this.webRtcPeer.iceQueue = [];
-        this.webRtcPeer.start();
-        this.webRtcPeer.peerConnection.onconnectionstatechange = () => {
-          this.handleConnectionStateChange('screenshare');
-        };
-
-        if (this.offering) {
-          this.webRtcPeer.generateOffer()
-            .then(this.sendStartReq.bind(this))
-            .catch(this._handleOfferGenerationFailure.bind(this));
-        } else {
-          this.sendStartReq();
-        }
-
-        resolve();
-      } catch (error) {
-        // 1305: "PEER_NEGOTIATION_FAILED",
-        const normalizedError = BaseBroker.assembleError(1305);
-        logger.error({
-          logCode: `${this.logCodePrefix}_peer_creation_failed`,
-          extraInfo: {
-            errorMessage: error.name || error.message || 'Unknown error',
-            errorCode: normalizedError.errorCode,
-            role: this.role,
-            sfuComponent: this.sfuComponent,
-            started: this.started,
-          },
-        }, 'Screenshare peer creation failed');
-        this.onerror(normalizedError);
-        reject(normalizedError);
-
-      }
-    });
   }
 }
 
