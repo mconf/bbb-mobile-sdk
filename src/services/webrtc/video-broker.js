@@ -15,8 +15,6 @@ class VideoBroker extends BaseBroker {
     this.role = role;
     this.offering = true;
 
-    this._reconnectionTimer = null;
-
     // Optional parameters are:
     // cameraId
     // iceServers,
@@ -166,7 +164,7 @@ class VideoBroker extends BaseBroker {
 
   _onreconnected() {
     this.reconnecting = false;
-    this._onreconnected();
+    this.onreconnected();
   }
 
   reconnect() {
@@ -177,11 +175,6 @@ class VideoBroker extends BaseBroker {
 
   _getScheduledReconnect() {
     return () => {
-      // Peer that timed out is a subscriber/viewer
-      // Subscribers try to reconnect according to their timers if media could
-      // not reach the server. That's why we pass the restarting flag as true
-      // to the stop procedure as to not destroy the timers
-      // Create new reconnect interval time
       const oldReconnectTimer = this._reconnectionTimer;
       const newReconnectTimer = Math.min(
         1.5 * oldReconnectTimer,
@@ -195,16 +188,6 @@ class VideoBroker extends BaseBroker {
         this._reconnectionTimeout = null;
       }
 
-      logger.error({
-        logCode: 'video_provider_camera_view_timeout',
-        extraInfo: {
-          cameraId: this.cameraId,
-          role: this.role,
-          oldReconnectTimer,
-          newReconnectTimer,
-        },
-      }, 'Camera VIEWER failed. Reconnecting.');
-
       this.reconnect();
     };
   }
@@ -216,7 +199,7 @@ class VideoBroker extends BaseBroker {
     // then failed mid call. Try to reconnect it right away. Clear the restart
     // timers since we don't need them in this case.
     if (this.started) {
-      this.clearReconnectionRoutine();
+      this._clearReconnectionRoutine();
       this.reconnect();
       return;
     }

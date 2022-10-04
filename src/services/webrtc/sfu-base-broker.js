@@ -6,6 +6,8 @@ import { SFU_BROKER_ERRORS } from './broker-base-errors';
 const PING_INTERVAL_MS = 15000;
 
 class BaseBroker extends EventEmitter2 {
+  static _noop() {}
+
   static assembleError(code, reason) {
     const message = reason || SFU_BROKER_ERRORS[code];
     const error = new Error(message);
@@ -35,9 +37,12 @@ class BaseBroker extends EventEmitter2 {
     this.signalingTransportOpen = false;
     this.logCodePrefix = `${this.sfuComponent}_broker`;
     this.peerConfiguration = {};
+
     this._wsListenersSetup = false;
     this._preloadedWS = !!(ws && typeof ws === 'object');
     this._wsQueue = [];
+    this._reconnectionTimer = null;
+    this._reconnectionRoutine = null;
 
     this.onWSMessage = this.onWSMessage.bind(this);
     this.onWSClosed = this.onWSClosed.bind(this);
@@ -76,40 +81,53 @@ class BaseBroker extends EventEmitter2 {
     return null;
   }
 
-  onbeforeunload () {
+  onbeforeunload() {
     return this.stop();
   }
 
-  onstart () {
+  // eslint-disable-next-line class-methods-use-this
+  onstart() {
     // To be implemented by inheritors
   }
 
-  onerror (error) {
+  // eslint-disable-next-line class-methods-use-this,no-unused-vars
+  onerror(error) {
     // To be implemented by inheritors
   }
 
-  onended () {
+  // eslint-disable-next-line class-methods-use-this
+  onended() {
     // To be implemented by inheritors
   }
 
+  // eslint-disable-next-line class-methods-use-this
   onreconnecting() {
     // To be implemented by inheritors
   }
 
+  // eslint-disable-next-line class-methods-use-this
   onreconnected() {
     // To be implemented by inheritors
   }
 
-  handleSFUError (sfuResponse) {
+  // eslint-disable-next-line class-methods-use-this,no-unused-vars
+  handleSFUError(sfuResponse) {
     // To be implemented by inheritors
   }
 
-  sendLocalDescription (localDescription) {
+  // eslint-disable-next-line class-methods-use-this,no-unused-vars
+  sendLocalDescription(localDescription) {
     // To be implemented by inheritors
   }
 
+  // eslint-disable-next-line class-methods-use-this,no-unused-vars
   onWSMessage(message) {
     // To be implemented by inheritors
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  _stop() {
+    // Inheritors can build on stop by overriding this.
   }
 
   onWSError(error) {
@@ -168,7 +186,7 @@ class BaseBroker extends EventEmitter2 {
         const normalized1302 = BaseBroker.assembleError(1302);
         this.onerror(normalized1302);
         return reject(normalized1302);
-      }
+      };
 
       this.ws = new WebSocket(this.wsUrl);
       this.ws.addEventListener('message', this.onWSMessage);
@@ -348,14 +366,14 @@ class BaseBroker extends EventEmitter2 {
     }
   }
 
-  disposePeer () {
+  disposePeer(reconnecting = false) {
     if (this.webRtcPeer) {
-      this.webRtcPeer.dispose();
+      this.webRtcPeer.dispose({ preserveLocalStream: reconnecting });
       this.webRtcPeer = null;
     }
   }
 
-  clearReconnectionRoutine() {
+  _clearReconnectionRoutine() {
     if (this._reconnectionTimeout) {
       clearTimeout(this._reconnectionTimeout);
       this._reconnectionTimeout = null;
@@ -364,41 +382,50 @@ class BaseBroker extends EventEmitter2 {
     if (this._reconnectionTimer) this._reconnectionTimer = null;
   }
 
-  _stop() {
-    // Inheritors can build on stop by overriding this.
+  _cleanupExternalCallbacks() {
+    this.onended = BaseBroker.noop;
+    this.onstart = BaseBroker.noop;
+    this.onerror = BaseBroker.noop;
+    this.onreconnected = BaseBroker.noop;
+    this.onreconnecting = BaseBroker.noop;
   }
 
-  stop (reconnecting = false) {
+  _stopSignalingSocket() {
+    if (this.ws !== null) {
+      this.ws.removeEventListener('message', this.onWSMessage);
+      this.ws.removeEventListener('close', this.onWSClosed);
+      this.ws.removeEventListener('error', this.onWSError);
+      this._wsListenersSetup = false;
+      if (!this._preloadedWS) {
+        this.ws.close();
+        this.ws = null;
+      }
+    }
+
+    if (this.pingInterval) {
+      clearInterval(this.pingInterval);
+      this.pingInterval = null;
+    }
+
+    this._wsQueue = [];
+  }
+
+  stop(reconnecting = false) {
     // FIXME
     // window.removeEventListener('beforeunload', this.onbeforeunload);
     if (!reconnecting) {
-      this.clearReconnectionRoutine();
+      this._clearReconnectionRoutine();
       this.onended();
-      this.onended = function(){};
-      this.onstart = function(){};
-      this.onerror = function(){};
-      this.onreconnected = function(){};
-      this.onreconnecting =  function(){};
-
-      if (this.ws !== null) {
-        this.ws.removeEventListener('message', this.onWSMessage);
-        this.ws.removeEventListener('close', this.onWSClosed);
-        this.ws.removeEventListener('error', this.onWSError);
-        if (!this._preloadedWS) this.ws.close();
-      }
-
-      this._wsQueue = [];
-
-      if (this.pingInterval) {
-        clearInterval(this.pingInterval);
-      }
+      this._cleanupExternalCallbacks();
     }
+
+    this._stopSignalingSocket();
 
     if (this.webRtcPeer) {
       this.webRtcPeer.peerConnection.onconnectionstatechange = null;
     }
 
-    this.disposePeer();
+    this.disposePeer(reconnecting);
     this.started = false;
 
     logger.debug({

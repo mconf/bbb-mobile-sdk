@@ -5,8 +5,9 @@ import WebRtcPeer from './peer';
 const ON_ICE_CANDIDATE_MSG = 'iceCandidate';
 const SUBSCRIBER_ANSWER = 'subscriberAnswer';
 const DTMF = 'dtmf';
-
 const SFU_COMPONENT_NAME = 'audio';
+const BASE_RECONNECTION_TIMEOUT = 500;
+const MAX_RECONNECTION_TIMEOUT = 2500;
 
 class AudioBroker extends BaseBroker {
   constructor(
@@ -81,6 +82,7 @@ class AudioBroker extends BaseBroker {
           onicecandidate: !this.signalCandidates ? null : (candidate) => {
             this.onIceCandidate(candidate, this.role);
           },
+          onconnectionstatechange: this.handleConnectionStateChange.bind(this),
           trace: this.traceLogs,
         };
 
@@ -88,7 +90,6 @@ class AudioBroker extends BaseBroker {
         this.webRtcPeer = new WebRtcPeer(peerRole, options);
         this.webRtcPeer.iceQueue = [];
         this.webRtcPeer.start();
-        this.webRtcPeer.peerConnection.onconnectionstatechange = this.handleConnectionStateChange.bind(this);
 
         if (this.offering) {
           this.webRtcPeer.generateOffer()
@@ -133,7 +134,12 @@ class AudioBroker extends BaseBroker {
         this.handleIceCandidate(parsedMessage.candidate);
         break;
       case 'webRTCAudioSuccess':
-        this.onstart(parsedMessage.success);
+        this.started = true;
+        if (!this.reconnecting) {
+          this.onstart();
+        } else {
+          this._onreconnected();
+        }
         this.started = true;
         break;
       case 'webRTCAudioError':
@@ -147,6 +153,75 @@ class AudioBroker extends BaseBroker {
           logCode: `${this.logCodePrefix}_invalid_req`,
           extraInfo: { messageId: parsedMessage.id || 'Unknown', sfuComponent: this.sfuComponent },
         }, 'Discarded invalid SFU message');
+    }
+  }
+
+  _onreconnecting() {
+    this.reconnecting = true;
+    this.onreconnecting();
+  }
+
+  _onreconnected() {
+    this.reconnecting = false;
+    this.onreconnected();
+  }
+
+  reconnect() {
+    this.stop(true);
+    this._onreconnecting();
+    this.joinAudio();
+  }
+
+  _getScheduledReconnect() {
+    return () => {
+      const oldReconnectTimer = this._reconnectionTimer;
+      const newReconnectTimer = Math.min(
+        1.5 * oldReconnectTimer,
+        MAX_RECONNECTION_TIMEOUT,
+      );
+      this._reconnectionTimer = newReconnectTimer;
+
+      // Clear the current reconnect interval so it can be re-set in createWebRTCPeer
+      if (this._reconnectionTimeout) {
+        clearTimeout(this._reconnectionTimeout);
+        this._reconnectionTimeout = null;
+      }
+
+      this.reconnect();
+    };
+  }
+
+  scheduleReconnection() {
+    const shouldSetReconnectionTimeout = !this.reconnectionTimer && !this.started;
+
+    // This is an ongoing reconnection which succeeded in the first place but
+    // then failed mid call. Try to reconnect it right away. Clear the restart
+    // timers since we don't need them in this case.
+    if (this.started) {
+      this._clearReconnectionRoutine();
+      this.reconnect();
+      return;
+    }
+
+    // This is a reconnection timer for a peer that hasn't succeeded in the first
+    // place. Set reconnection timeouts with random intervals between them to try
+    // and reconnect without flooding the server
+    if (shouldSetReconnectionTimeout) {
+      const newReconnectTimer = this._reconnectionTimer || BASE_RECONNECTION_TIMEOUT;
+      this._reconnectionTimer = newReconnectTimer;
+
+      this._reconnectionTimeout = setTimeout(
+        this._getScheduledReconnect(),
+        this._reconnectionTimer,
+      );
+    }
+  }
+
+  handleConnectionStateChange(connectionState) {
+    this.emit('connectionstatechange', connectionState);
+
+    if (connectionState === 'failed' || connectionState === 'closed') {
+      this.scheduleReconnection();
     }
   }
 

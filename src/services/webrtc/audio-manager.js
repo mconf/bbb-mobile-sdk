@@ -113,13 +113,11 @@ class AudioManager {
     );
 
     this.bridge.onended = () => {
-      this.isReconnecting = false;
       logger.info({ logCode: 'audio_ended' }, 'Audio ended without issue');
       this.onAudioExit();
-
     };
+
     this.bridge.onerror = (error) => {
-      this.isReconnecting = false;
       logger.error({
         logCode: 'audio_failure',
         extraInfo: {
@@ -128,9 +126,21 @@ class AudioManager {
         },
       }, `Audio error - errorCode=${error.code}, cause=${error.message}`);
     };
+
     this.bridge.onstart = () => {
-      this.isReconnecting = false;
       this.onAudioJoin();
+    };
+
+    this.bridge.onreconnecting = () => {
+      logger.info({
+        logCode: 'audio_reconnecting',
+      }, 'Audio reconnecting');
+      // TODO - update local collection states about this and use it in the UI
+      // to let the user know something's happening.
+    };
+
+    this.bridge.onreconnected = () => {
+      this.onAudioReconnected();
     };
 
     return this.bridge;
@@ -179,6 +189,12 @@ class AudioManager {
     store.dispatch(setIsConnecting(false));
     store.dispatch(setMutedState(!this._getSenderTrackEnabled()));
     logger.info({ logCode: 'audio_joined' }, 'Audio Joined');
+  }
+
+  onAudioReconnected() {
+    // Enforce mute state
+    this._setSenderTrackEnabled(this._getSenderTrackEnabled());
+    this.onAudioJoin();
   }
 
   _joinAudio(callOptions) {

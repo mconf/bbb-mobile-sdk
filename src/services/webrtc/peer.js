@@ -345,7 +345,7 @@ export default class WebRtcPeer extends EventEmitter2 {
       });
   }
 
-  dispose() {
+  dispose({ preserveLocalStream = false }) {
     this.logger.debug('BBB::WebRtcPeer::dispose');
 
     try {
@@ -354,7 +354,7 @@ export default class WebRtcPeer extends EventEmitter2 {
         this.peerConnection = null;
       }
 
-      if (this.localStream) {
+      if (this.localStream && !preserveLocalStream) {
         stopStream(this.localStream);
         this.localStream = null;
       }
