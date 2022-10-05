@@ -1,4 +1,6 @@
-import { useCallback, useRef, useMemo, useState } from 'react';
+import {
+  useCallback, useRef, useMemo, useState
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import { setBottomChatOpen } from '../../../store/redux/slices/wide-app/chat';
@@ -25,6 +27,20 @@ const BottomSheetChat = () => {
     }
   }, []);
 
+  const handleMessage = (message) => {
+    if ((/^https?:/.test(message))) {
+      return (
+        <Styled.LinkPreviewCustom
+          text={message}
+          containerStyle={Styled.linkPreviewContainerStyle}
+          metadataContainerStyle={Styled.metadataContainerStyle}
+          enableAnimation
+        />
+      );
+    }
+    return <Styled.MessageContent>{message}</Styled.MessageContent>;
+  };
+
   const renderItem = ({ item }) => {
     const timestamp = new Date(item.timestamp);
     return (
@@ -39,7 +55,7 @@ const BottomSheetChat = () => {
               ).padStart(2, '0')}`}
             </Styled.MessageTimestamp>
           </Styled.MessageTopContainer>
-          <Styled.MessageContent>{item.message}</Styled.MessageContent>
+          {handleMessage(item.message)}
         </Styled.Card>
       </Styled.ContainerItem>
     );
