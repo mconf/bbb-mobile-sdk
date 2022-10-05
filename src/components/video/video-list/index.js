@@ -1,19 +1,25 @@
 import { FlatList } from 'react-native';
 import Styled from './styles';
+import { sortVideoStreams } from './service';
 
 const VideoList = (props) => {
   const { videoUsers, style, orientation } = props;
 
   const renderVideoListItem = (videoUser) => {
     const { item: vuItem } = videoUser;
-    const { cameraId, userAvatar, userColor, userName } = vuItem;
+    const {
+      cameraId,
+      userAvatar,
+      userColor,
+      name,
+    } = vuItem;
 
     return (
       <Styled.VideoListItem
         cameraId={cameraId}
         userAvatar={userAvatar}
         userColor={userColor}
-        userName={userName}
+        userName={name}
         orientation={orientation}
         style={style}
       />
@@ -23,7 +29,7 @@ const VideoList = (props) => {
   return (
     <FlatList
       horizontal
-      data={videoUsers}
+      data={sortVideoStreams(videoUsers)}
       renderItem={renderVideoListItem}
       contentContainerStyle={style}
     />
