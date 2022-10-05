@@ -1,4 +1,6 @@
 import styled from 'styled-components/native';
+import { LinkPreview } from '@flyerhq/react-native-link-preview';
+import { StyleSheet } from 'react-native';
 import userAvatar from '../../user-avatar';
 import textInput from '../../text-input';
 import Colors from '../../../constants/colors';
@@ -33,7 +35,9 @@ const NoMessageText = styled.Text`
   padding: 8px;
 `;
 
-const UserAvatar = styled(userAvatar)``;
+const UserAvatar = styled(userAvatar)`
+  padding-top: 30px;
+`;
 
 const MessageContent = styled.Text`
   color: ${Colors.lightGray300};
@@ -42,7 +46,6 @@ const MessageContent = styled.Text`
 const ContainerItem = styled.View`
   display: flex;
   flex-direction: row;
-  align-items: center;
   width: 90%;
   padding: 12px;
 `;
@@ -67,6 +70,23 @@ const TextInput = styled(textInput)`
   width: 85%;
 `;
 
+const LinkPreviewCustom = styled(LinkPreview)``;
+
+const StyleSheetStyles = StyleSheet.create({
+  linkPreviewContainerStyle: {
+    backgroundColor: '#f7f7f8',
+    borderRadius: 12,
+    marginTop: 16,
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    overflow: 'hidden',
+  },
+
+  metadataContainerStyle: {
+    display: 'none'
+  },
+});
+
 export default {
   Card,
   FlatList,
@@ -80,4 +100,7 @@ export default {
   MessageTimestamp,
   MessageTopContainer,
   NoMessageText,
+  LinkPreviewCustom,
+  linkPreviewContainerStyle: StyleSheetStyles.linkPreviewContainerStyle,
+  metadataContainerStyle: StyleSheetStyles.metadataContainerStyle
 };
