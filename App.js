@@ -149,7 +149,7 @@ const App = () => {
           </Drawer.Navigator>
         </NavigationContainer>
       </Provider>
-      <StatusBar style="auto" />
+      <StatusBar style="light" />
     </>
   );
 };
