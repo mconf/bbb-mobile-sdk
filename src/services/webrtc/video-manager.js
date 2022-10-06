@@ -403,11 +403,8 @@ class VideoManager {
   unsubscribe(cameraId) {
     const bridge = this.getBroker(cameraId);
 
-    if (bridge) {
+    if (bridge && bridge.role === 'viewer') {
       bridge.stop();
-    } else {
-      // No bridge/broker. Trailing request, just guarantee everything is cleaned up.
-      store.dispatch(setIsConnected(false));
       this.onRemoteVideoExit(cameraId);
     }
   }
