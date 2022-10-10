@@ -15,6 +15,7 @@ export default class WebRtcPeer extends EventEmitter2 {
 
     this.mode = mode;
     this.options = options;
+    this.candidateGatheringDone = false;
     this.peerConnection = this.options.peerConnection;
     this.videoStream = this.options.videoStream;
     this.audioStream = this.options.audioStream;
@@ -25,7 +26,9 @@ export default class WebRtcPeer extends EventEmitter2 {
     this.oncandidategatheringdone = this.options.oncandidategatheringdone;
     this.onconnectionstatechange = this.options.onconnectionstatechange;
     this.oniceconnectionstatechange = this.options.oniceconnectionstatechange;
-    this.candidateGatheringDone = false;
+    this.appData = this.options.appData;
+    this.logger = this.options.logger || WebRtcPeer.internalLogger();
+    this._logMetadata = this.options?.appData?.logMetadata ?? {};
 
     this._outboundCandidateQueue = [];
     this._inboundCandidateQueue = [];
@@ -35,6 +38,20 @@ export default class WebRtcPeer extends EventEmitter2 {
     this._handleConnectionStateChange = this._handleConnectionStateChange.bind(this);
 
     this._assignOverrides();
+  }
+
+  static shimmedLogger(level, msg, metadata = {}) {
+    console[level](msg, metadata);
+  }
+
+  static internalLogger() {
+    return {
+      info: (metadata, msg) => WebRtcPeer.shimmedLogger('info', msg, metadata),
+      log: (metadata, msg) => WebRtcPeer.shimmedLogger('log', msg, metadata),
+      warn: (metadata, msg) => WebRtcPeer.shimmedLogger('warn', msg, metadata),
+      debug: (metadata, msg) => WebRtcPeer.shimmedLogger('debug', msg, metadata),
+      error: (metadata, msg) => WebRtcPeer.shimmedLogger('error', msg, metadata),
+    };
   }
 
   _assignOverrides() {
@@ -112,19 +129,28 @@ export default class WebRtcPeer extends EventEmitter2 {
 
     if (signalingState === 'stable') this._flushInboundCandidateQueue();
 
-    this.logger.debug('BBB:WebRtcPeer::signalingstatechange', signalingState);
+    this.logger.debug({
+      logCode: 'BBB::WebRtcPeer::signalingstatechange',
+      extraInfo: { ...this._logMetadata, signalingState },
+    }, 'BBB::WebRtcPeer::signalingstatechange');
     this.emit('signalingstatechange', signalingState);
   }
 
   _handleIceConnectionStateChange() {
     const iceConnectionState = this.peerConnection?.iceConnectionState || 'closed';
-    this.logger.debug('BBB:WebRtcPeer::oniceconnectionstatechange', iceConnectionState);
+    this.logger.debug({
+      logCode: 'BBB::WebRtcPeer::oniceconnectionstatechange',
+      extraInfo: { ...this._logMetadata, iceConnectionState },
+    }, 'BBB::WebRtcPeer::oniceconnectionstatechange');
     this.emit('iceconnectionstatechange', iceConnectionState);
   }
 
   _handleConnectionStateChange() {
     const connectionState = this.peerConnection?.connectionState || 'closed';
-    this.logger.debug('BBB:WebRtcPeer::onconnectionstatechange', connectionState);
+    this.logger.debug({
+      logCode: 'BBB::WebRtcPeer::onconnectionstatechange',
+      extraInfo: { ...this._logMetadata, connectionState },
+    }, 'BBB::WebRtcPeer::onconnectionstatechange');
     this.emit('connectionstatechange', connectionState);
   }
 
@@ -134,20 +160,25 @@ export default class WebRtcPeer extends EventEmitter2 {
       return Promise.resolve();
     }
 
-    this.logger.info('BBB::WebRtcPeer::mediaStreamFactory - running default factory', this.mediaConstraints);
-
     // eslint-disable-next-line no-undef
     return navigator.mediaDevices.getUserMedia(this.mediaConstraints).then((stream) => {
       if (stream.getAudioTracks().length > 0) {
         this.audioStream = stream;
-        this.logger.debug('BBB::WebRtcPeer::mediaStreamFactory - generated audio', this.audioStream);
       }
       if (stream.getVideoTracks().length > 0) {
         this.videoStream = stream;
-        this.logger.debug('BBB::WebRtcPeer::mediaStreamFactory - generated video', this.videoStream);
       }
     }).catch((error) => {
-      this.logger.error('BBB::WebRtcPeer::mediaStreamFactory - gUM failed', error);
+      this.logger.error({
+        logCode: 'BBB::WebRtcPeer::mediaStreamFactory::gUMFailed',
+        extraInfo: {
+          ...this._logMetadata,
+          videoStream: !!this.videoStream,
+          audioStream: !!this.audioStream,
+          errorName: error.name,
+          errorMessage: error.message,
+        },
+      }, 'BBB::WebRtcPeer::mediaStreamFactory - gUM failed');
       throw error;
     });
   }
@@ -160,8 +191,12 @@ export default class WebRtcPeer extends EventEmitter2 {
     return this._pc;
   }
 
+  set logger(_logger) {
+    this._logger = _logger;
+  }
+
   get logger() {
-    if (this.trace) return console;
+    if (this.trace) return this._logger
     return silentConsole;
   }
 
@@ -216,7 +251,10 @@ export default class WebRtcPeer extends EventEmitter2 {
     }
 
     if (this.isPeerConnectionClosed()) {
-      this.logger.trace('BBB::WebRtcPeer::start - peer connection closed');
+      this.logger.trace({
+        logCode: 'BBB::WebRtcPeer::start::closed',
+        extraInfo: this._logMetadata,
+      }, 'BBB::WebRtcPeer::start - Peer connection closed');
       throw new Error('Invalid peer state: closed');
     }
 
@@ -229,17 +267,14 @@ export default class WebRtcPeer extends EventEmitter2 {
 
     switch (this.peerConnection?.signalingState) {
       case 'closed':
-        this.logger.trace('BBB::WebRtcPeer::addIceCandidate - peer connection closed');
         throw new Error('PeerConnection object is closed');
       case 'stable': {
         if (this.peerConnection.remoteDescription) {
-          this.logger.debug('BBB::WebRtcPeer::addIceCandidate - adding candidate', candidate);
           return this.peerConnection.addIceCandidate(candidate);
         }
       }
       // eslint-ignore-next-line no-fallthrough
       default: {
-        this.logger.debug('BBB::WebRtcPeer::addIceCandidate - buffering inbound candidate', candidate);
         const promise = new Promise();
         this._inboundCandidateQueue.push({
           candidate,
@@ -293,12 +328,20 @@ export default class WebRtcPeer extends EventEmitter2 {
 
     return this.peerConnection.createOffer(sessionConstraints)
       .then((offer) => {
-        this.logger.debug('BBB::WebRtcPeer::generateOffer - created offer', offer);
+        this.logger.debug({
+          logCode: 'BBB::WebRtcPeer::generateOffer::createOffer',
+          extraInfo: { offer },
+        }, 'BBB::WebRtcPeer::generateOffer - Offer created');
+
         return this.peerConnection.setLocalDescription(offer);
       })
       .then(() => {
         const localDescription = this.getLocalSessionDescriptor();
-        this.logger.debug('BBB::WebRtcPeer::generateOffer - local description set', localDescription);
+        this.logger.debug({
+          logCode: 'BBB::WebRtcPeer::generateOffer::setLocalDescription',
+          extraInfo: { ...this._logMetadata, localDescription },
+        }, 'BBB::WebRtcPeer::generateOffer - Local description set');
+
         return localDescription.sdp;
       });
   }
@@ -310,13 +353,32 @@ export default class WebRtcPeer extends EventEmitter2 {
     });
 
     if (this.isPeerConnectionClosed()) {
-      this.logger.error('BBB::WebRtcPeer::processAnswer - peer connection closed');
+      this.logger.error({
+        logCode: 'BBB::WebRtcPeer::processAnswer::closed',
+        extraInfo: this._logMetadata,
+      }, 'BBB::WebRtcPeer::processAnswer - Peer connection closed');
+
       throw new Error('Peer connection is closed');
     }
 
-    this.logger.debug('BBB::WebRtcPeer::processAnswer - setting remote description', answer);
+    return this.peerConnection.setRemoteDescription(answer).then(() => {
+      this.logger.debug({
+        logCode: 'BBB::WebRtcPeer::processAnswer::setRemoteDescription',
+        extraInfo: { ...this._logMetadata, answer },
+      }, 'BBB::WebRtcPeer::processAnswer - Remote description set');
+    }).catch((error) => {
+      this.logger.error({
+        logCode: 'BBB::WebRtcPeer::processAnswer::setRemoteDescription::failed',
+        extraInfo: {
+          ...this._logMetadata,
+          errorName: error.name,
+          errorMessage: error.message,
+          answer
+        },
+      }, 'BBB::WebRtcPeer::processAnswer::setRemoteDescription - failed');
 
-    return this.peerConnection.setRemoteDescription(answer);
+      throw error;
+    });
   }
 
   processOffer(sdp) {
@@ -326,27 +388,46 @@ export default class WebRtcPeer extends EventEmitter2 {
     });
 
     if (this.isPeerConnectionClosed()) {
-      this.logger.error('BBB::WebRtcPeer::processOffer - peer connection closed');
+      this.logger.error({
+        logCode: 'BBB::WebRtcPeer::processOffer::closed',
+        extraInfo: this._logMetadata,
+      }, 'BBB::WebRtcPeer::processOffer - Peer connection closed');
+
       throw new Error('Peer connection is closed');
     }
 
-    this.logger.debug('BBB::WebRtcPeer::processOffer - setting remote description', offer);
-
     return this.peerConnection.setRemoteDescription(offer)
-      .then(() => this.peerConnection.createAnswer())
+      .then(() => {
+        this.logger.debug({
+          logCode: 'BBB::WebRtcPeer::processOffer::setRemoteDescription',
+          extraInfo: { ...this._logMetadata, offer },
+        }, 'BBB::WebRtcPeer::processOffer - Remote description set');
+        this.peerConnection.createAnswer()
+      })
       .then((answer) => {
-        this.logger.debug('BBB::WebRtcPeer::processOffer - created answer', answer);
+        this.logger.debug({
+          logCode: 'BBB::WebRtcPeer::processOffer::createAnswer',
+          extraInfo: { ...this._logMetadata, answer },
+        }, 'BBB::WebRtcPeer::processOffer - Created answer');
+
         return this.peerConnection.setLocalDescription(answer);
       })
       .then(() => {
         const localDescription = this.getLocalSessionDescriptor();
-        this.logger.debug('BBB::WebRtcPeer::processOffer - local description set', localDescription.sdp);
+        this.logger.debug({
+          logCode: 'BBB::WebRtcPeer::processOffer::setLocalDescription',
+          extraInfo: { ...this._logMetadata, localDescription },
+        }, 'BBB::WebRtcPeer::processOffer - Local description set');
+
         return localDescription.sdp;
       });
   }
 
   dispose({ preserveLocalStream = false }) {
-    this.logger.debug('BBB::WebRtcPeer::dispose');
+    this.logger.debug({
+      logCode: 'BBB::WebRtcPeer::dispose',
+      extraInfo: this._logMetadata
+    }, 'BBB::WebRtcPeer::dispose');
 
     try {
       if (this.peerConnection) {
@@ -367,7 +448,14 @@ export default class WebRtcPeer extends EventEmitter2 {
       this._outboundCandidateQueue = [];
       this.candidateGatheringDone = false;
     } catch (error) {
-      this.logger.trace('BBB::WebRtcPeer::dispose - failed', error);
+      this.logger.error({
+        logCode: 'BBB::WebRtcPeer::dispose::failed',
+        extraInfo: {
+          ...this._logMetadata,
+          errorName: error.name,
+          errorMessage: error.message,
+        },
+      }, 'Dispose peer failed');
     }
 
     this.removeAllListeners();

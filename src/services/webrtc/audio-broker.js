@@ -84,6 +84,13 @@ class AudioBroker extends BaseBroker {
           },
           onconnectionstatechange: this.handleConnectionStateChange.bind(this),
           trace: this.traceLogs,
+          appData: {
+            logMetadata: {
+              sfuComponent: this.sfuComponent,
+              role: this.role,
+              clientSessionNumber: this.clientSessionNumber,
+            },
+          }
         };
 
         const peerRole = this.role === 'sendrecv' ? this.role : 'recvonly';
