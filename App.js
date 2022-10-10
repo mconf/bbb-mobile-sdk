@@ -21,8 +21,9 @@ const App = () => {
   return (
     <>
       <Provider store={store}>
-        <NavigationContainer>
+        <NavigationContainer independent>
           <Drawer.Navigator
+            independent
             drawerContent={(props) => <CustomDrawer {...props} />}
             screenOptions={{
               contentOptions: {
