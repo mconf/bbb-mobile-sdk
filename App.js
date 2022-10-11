@@ -25,7 +25,7 @@ const injectStore = () => {
   injectStoreAM(store);
 };
 
-const App = () => {
+const App = ({ onLeaveSession }) => {
   injectStore();
   const Drawer = createDrawerNavigator();
 
@@ -35,7 +35,7 @@ const App = () => {
         <NavigationContainer independent>
           <Drawer.Navigator
             independent
-            drawerContent={(props) => <CustomDrawer {...props} />}
+            drawerContent={(props) => <CustomDrawer {...props} onLeaveSession={onLeaveSession} />}
             screenOptions={{
               contentOptions: {
                 style: {

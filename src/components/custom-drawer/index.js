@@ -8,6 +8,7 @@ import Colors from '../../constants/colors';
 import Styled from './styles';
 
 const CustomDrawer = (props) => {
+  const { onLeaveSession } = props;
   const currentUserStore = useSelector((state) => state.currentUserCollection);
 
   // TODO Think a way to avoid this
@@ -46,7 +47,7 @@ const CustomDrawer = (props) => {
         </Styled.ContainerDrawerItemList>
       </DrawerContentScrollView>
       <Styled.ContainerCustomButtons>
-        <Styled.ButtonLeaveContainer onPress={() => {}}>
+        <Styled.ButtonLeaveContainer onPress={onLeaveSession}>
           <Styled.ViewLeaveContainer>
             <Styled.TextLeaveContainer>
               Sair da sessão
