@@ -16,7 +16,7 @@ import UserNotesScreen from './src/screens/user-notes-screen';
 import WhiteboardScreen from './src/screens/whiteboard-screen';
 import PortalWebviewScreen from './src/screens/portal-webview-screen';
 
-const App = () => {
+const App = ({ onLeaveSession }) => {
   const Drawer = createDrawerNavigator();
   return (
     <>
@@ -24,7 +24,7 @@ const App = () => {
         <NavigationContainer independent>
           <Drawer.Navigator
             independent
-            drawerContent={(props) => <CustomDrawer {...props} />}
+            drawerContent={(props) => <CustomDrawer {...props} onLeaveSession={onLeaveSession} />}
             screenOptions={{
               contentOptions: {
                 style: {
