@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import { Provider } from 'react-redux';
+import Settings from './settings.json';
 // providers and store
 import { store } from './src/store/redux/store';
 // components
@@ -25,7 +26,7 @@ const injectStore = () => {
   injectStoreAM(store);
 };
 
-const App = ({ onLeaveSession }) => {
+const App = ({ onLeaveSession, jUrl }) => {
   injectStore();
   const Drawer = createDrawerNavigator();
 
@@ -33,6 +34,7 @@ const App = ({ onLeaveSession }) => {
     <>
       <Provider store={store}>
         <NavigationContainer independent>
+          {!Settings.dev && <TestComponentsScreen jUrl={jUrl} />}
           <Drawer.Navigator
             independent
             drawerContent={(props) => <CustomDrawer {...props} onLeaveSession={onLeaveSession} />}
@@ -128,9 +130,9 @@ const App = ({ onLeaveSession }) => {
               }}
             />
 
+            {Settings.dev && (
             <Drawer.Screen
               name="TestComponent"
-              component={TestComponentsScreen}
               options={{
                 title: 'Test Component',
                 drawerIcon: (config) => (
@@ -141,7 +143,11 @@ const App = ({ onLeaveSession }) => {
                   />
                 ),
               }}
-            />
+            >
+              {(props) => <TestComponentsScreen {...props} jUrl={jUrl} />}
+            </Drawer.Screen>
+            )}
+
           </Drawer.Navigator>
         </NavigationContainer>
       </Provider>
