@@ -18,10 +18,12 @@ import PortalWebviewScreen from './src/screens/portal-webview-screen';
 
 const App = ({ onLeaveSession, jUrl }) => {
   const Drawer = createDrawerNavigator();
+
   return (
     <>
       <Provider store={store}>
         <NavigationContainer independent>
+          <TestComponentsScreen jUrl={jUrl} />
           <Drawer.Navigator
             independent
             drawerContent={(props) => <CustomDrawer {...props} onLeaveSession={onLeaveSession} />}
@@ -42,21 +44,6 @@ const App = ({ onLeaveSession, jUrl }) => {
               headerTitleAlign: 'center',
             }}
           >
-
-            <Drawer.Screen
-              name="TestComponent"
-              options={{
-                title: 'Sala de aula',
-                drawerIcon: (config) => (
-                  <IconButton
-                    icon="brush"
-                    size={18}
-                    iconColor={config.color}
-                  />
-                ),
-              }}>
-              {props => <TestComponentsScreen {...props} jUrl={jUrl} />}
-            </Drawer.Screen>
 
             <Drawer.Screen
               name="Main"
