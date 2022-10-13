@@ -23,7 +23,20 @@ const usersSlice = createSlice({
     },
   },
 });
-export const { addUser } = usersSlice.actions;
-export const { removeUser } = usersSlice.actions;
-export const { editUser } = usersSlice.actions;
+
+// Selectors
+const selectUsers = (state) => Object.values(
+  state.usersCollection.usersCollection
+);
+
+export const {
+  addUser,
+  removeUser,
+  editUser,
+} = usersSlice.actions;
+
+export {
+  selectUsers,
+};
+
 export default usersSlice.reducer;

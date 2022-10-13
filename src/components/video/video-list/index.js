@@ -1,6 +1,5 @@
 import { FlatList } from 'react-native';
 import Styled from './styles';
-import { sortVideoStreams } from './service';
 
 const VideoList = (props) => {
   const { videoUsers, style, orientation } = props;
@@ -29,7 +28,7 @@ const VideoList = (props) => {
   return (
     <FlatList
       horizontal
-      data={sortVideoStreams(videoUsers)}
+      data={videoUsers}
       renderItem={renderVideoListItem}
       contentContainerStyle={style}
     />

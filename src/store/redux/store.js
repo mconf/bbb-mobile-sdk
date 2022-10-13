@@ -13,7 +13,7 @@ import currentUserReducer from './slices/current-user';
 import presentationsReducer from './slices/presentations';
 import slidesReducer from './slices/slides';
 import externalVideoMeetingsReducer from './slices/external-video-meetings';
-import videoStreamsReducer from './slices/video-streams';
+import videoStreamsReducer, { videoStreamCleanupMW } from './slices/video-streams';
 import screenshareReducer from './slices/screenshare';
 
 // app exclusive wide state collections
@@ -51,5 +51,9 @@ export const store = configureStore({
     screenshare: localScreenshareReducer,
     chat: chatReducer,
     interactions: interactionsReducer,
+  },
+  middleware: (getDefaultMiddleware) => {
+    return getDefaultMiddleware()
+      .prepend(videoStreamCleanupMW.middleware);
   },
 });
