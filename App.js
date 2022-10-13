@@ -16,7 +16,7 @@ import UserNotesScreen from './src/screens/user-notes-screen';
 import WhiteboardScreen from './src/screens/whiteboard-screen';
 import PortalWebviewScreen from './src/screens/portal-webview-screen';
 
-const App = ({ onLeaveSession }) => {
+const App = ({ onLeaveSession, jUrl }) => {
   const Drawer = createDrawerNavigator();
   return (
     <>
@@ -45,9 +45,8 @@ const App = ({ onLeaveSession }) => {
 
             <Drawer.Screen
               name="TestComponent"
-              component={TestComponentsScreen}
               options={{
-                title: 'Test Component',
+                title: 'Sala de aula',
                 drawerIcon: (config) => (
                   <IconButton
                     icon="brush"
@@ -55,8 +54,9 @@ const App = ({ onLeaveSession }) => {
                     iconColor={config.color}
                   />
                 ),
-              }}
-            />
+              }}>
+              {props => <TestComponentsScreen {...props} jUrl={jUrl} />}
+            </Drawer.Screen>
 
             <Drawer.Screen
               name="Main"

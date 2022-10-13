@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { Text, View, StyleSheet } from 'react-native';
 import * as Linking from 'expo-linking';
 import { UsersModule } from './modules/users';
 import { GroupChatModule } from './modules/group-chat';
@@ -229,7 +228,8 @@ const logout = (ws, meetingData, modules) => {
   destroyMediaManagers();
 };
 
-const SocketConnectionComponent = () => {
+const SocketConnectionComponent = (props) => {
+  const { jUrl } = props;
   const urlViaLinking = Linking.useURL();
   const [joinUrl, setJoinUrl] = useState('');
   const [meetingData, setMeetingData] = useState({});
@@ -266,6 +266,7 @@ const SocketConnectionComponent = () => {
 
   useEffect(() => {
     // console.log('Component Will Mount');
+    setJoinUrl(jUrl)
     return () => {
       // console.log('Component Will Unmount');
       logout(websocket, meetingData, modules.current);
@@ -396,26 +397,8 @@ const SocketConnectionComponent = () => {
     });
   };
 
-  return (
-    <View>
-      <Text style={styles.data}>{JSON.stringify(meetingData)}</Text>
-      {}
-      <View style={{ height: '20%' }}>
-        <TextInput
-          placeholder="Join URL"
-          onChangeText={(join) => setJoinUrl(join)}
-          defaultValue={joinUrl}
-        />
-      </View>
-    </View>
-  );
+  return null;
 };
-
-const styles = StyleSheet.create({
-  data: {
-    color: 'white',
-  },
-});
 
 export { makeCall };
 export default SocketConnectionComponent;
