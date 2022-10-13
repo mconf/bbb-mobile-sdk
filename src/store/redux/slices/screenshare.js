@@ -39,7 +39,7 @@ const selectScreenshare = (state) => Object.values(
 const screenshareCleanupMW = createListenerMiddleware();
 screenshareCleanupMW.startListening({
   actionCreator: screenshareSlice.actions.removeScreenshare,
-  effect: async (action, listenerApi) => {
+  effect: (action, listenerApi) => {
     const { screenshareObject } = action.payload;
     const previousState = listenerApi.getOriginalState();
     const removedScreenshareStream = selectScreenshareByDocumentId(
