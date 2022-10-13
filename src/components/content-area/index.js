@@ -1,17 +1,13 @@
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import Styled from './styles';
+import { selectScreenshare } from '../../store/redux/slices/screenshare';
 
 const ContentArea = (props) => {
   const { style } = props;
   const slidesStore = useSelector((state) => state.slidesCollection);
-  const presentationsStore = useSelector(
-    (state) => state.presentationsCollection
-  );
-  const screenshare = useSelector(
-    (state) =>
-      Object.values(state.screenshareCollection.screenshareCollection)[0]
-  );
+  const presentationsStore = useSelector((state) => state.presentationsCollection);
+  const screenshare = useSelector(selectScreenshare);
 
   const handleSlideAndPresentationActive = useCallback(() => {
     // TODO Review this collection after update the 2.6 code

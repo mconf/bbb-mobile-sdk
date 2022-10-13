@@ -14,7 +14,7 @@ import presentationsReducer from './slices/presentations';
 import slidesReducer from './slices/slides';
 import externalVideoMeetingsReducer from './slices/external-video-meetings';
 import videoStreamsReducer, { videoStreamCleanupMW } from './slices/video-streams';
-import screenshareReducer from './slices/screenshare';
+import screenshareReducer, { screenshareCleanupMW } from './slices/screenshare';
 
 // app exclusive wide state collections
 import previousPollPublishedReducer from './slices/wide-app/previous-poll-published';
@@ -54,6 +54,7 @@ export const store = configureStore({
   },
   middleware: (getDefaultMiddleware) => {
     return getDefaultMiddleware()
-      .prepend(videoStreamCleanupMW.middleware);
+      .prepend(videoStreamCleanupMW.middleware)
+      .prepend(screenshareCleanupMW.middleware);
   },
 });

@@ -16,10 +16,12 @@ import UserNotesScreen from './src/screens/user-notes-screen';
 import WhiteboardScreen from './src/screens/whiteboard-screen';
 import ManagePresentationScreen from './src/screens/manage-presentation-screen';
 import { injectStore as injectStoreVM } from './src/services/webrtc/video-manager';
+import { injectStore as injectStoreSM } from './src/services/webrtc/screenshare-manager';
 
 //  Inject store in non-component files
 const injectStore = () => {
   injectStoreVM(store);
+  injectStoreSM(store);
 };
 
 const App = () => {
