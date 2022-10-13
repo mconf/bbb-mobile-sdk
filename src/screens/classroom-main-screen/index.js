@@ -1,49 +1,21 @@
 import { SafeAreaView } from 'react-native';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import withPortal from '../../components/high-order/with-portal';
 import { setBottomChatOpen } from '../../store/redux/slices/wide-app/chat';
 import { useOrientation } from '../../hooks/use-orientation';
 import Colors from '../../constants/colors';
 import Styled from './styles';
+import { selectSortedVideoStreams } from '../../store/redux/slices/video-streams';
 
 const ClassroomMainScreen = () => {
   // variables
-  const usersStore = useSelector((state) => state.usersCollection);
   const chatStore = useSelector((state) => state.chat);
-  const videoStreamsStore = useSelector(
-    (state) => state.videoStreamsCollection
-  );
+  const videoUsers = useSelector(selectSortedVideoStreams);
   const orientation = useOrientation();
   const [switchLandscapeLayout, setSwitchLandscapeLayout] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
-
-  // handle redux store methods
-  const handleVideoUsers = useCallback(() => {
-    // TODO refactor. This is ugly, inefficient and sucks - prlanzarin
-    return Object.values(usersStore.usersCollection).map((user) => {
-      const {
-        stream: cameraId,
-        floor,
-        lastFloorTime,
-        pin,
-      } = Object.values(videoStreamsStore.videoStreamsCollection)
-        .find((stream) => stream.userId === user.intId) || {};
-
-      return {
-        name: user.name,
-        cameraId,
-        userId: user.intId,
-        floor,
-        lastFloorTime,
-        pin,
-        userAvatar: user.avatar,
-        userColor: user.color,
-        // ...other properties
-      };
-    });
-  }, [usersStore, videoStreamsStore]);
 
   // lifecycle methods
   useEffect(() => {
@@ -56,7 +28,7 @@ const ClassroomMainScreen = () => {
       <SafeAreaView>
         <Styled.ContainerView>
           <Styled.VideoListContainer>
-            <Styled.VideoList videoUsers={handleVideoUsers()} />
+            <Styled.VideoList videoUsers={videoUsers} />
           </Styled.VideoListContainer>
 
           <Styled.ContentAreaContainer>
@@ -91,7 +63,7 @@ const ClassroomMainScreen = () => {
               {!switchLandscapeLayout && (
                 <Styled.VideoListContainer orientation={orientation}>
                   <Styled.VideoList
-                    videoUsers={handleVideoUsers()}
+                    videoUsers={videoUsers}
                     orientation={orientation}
                   />
                 </Styled.VideoListContainer>

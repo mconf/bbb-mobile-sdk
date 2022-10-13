@@ -12,10 +12,15 @@ import {
   addVideoStream,
   removeVideoStream,
 } from '../../store/redux/slices/wide-app/video';
-import { store } from '../../store/redux/store';
 import { getRandomAlphanumeric } from '../../components/socket-connection/utils';
 
 const PING_INTERVAL_MS = 15000;
+
+let store;
+
+export const injectStore = (_store) => {
+  store = _store;
+};
 
 class VideoManager {
   constructor() {
@@ -407,6 +412,11 @@ class VideoManager {
       bridge.stop();
       this.onRemoteVideoExit(cameraId);
     }
+  }
+
+  stopVideo(cameraId) {
+    const bridge = this.getBroker(cameraId);
+    if (bridge) bridge.stop();
   }
 
   onLocalVideoExit(cameraId) {

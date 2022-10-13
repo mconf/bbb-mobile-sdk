@@ -24,7 +24,6 @@ class ScreenshareBroker extends BaseBroker {
     this.ending = false;
 
     // Optional parameters are:
-    // caleeName,
     // iceServers,
     // hasAudio,
     // bitrate,
@@ -59,6 +58,12 @@ class ScreenshareBroker extends BaseBroker {
           onicecandidate: this.signalCandidates ? this.onIceCandidate.bind(this) : null,
           onconnectionstatechange: this.handleConnectionStateChange.bind(this),
           trace: this.traceLogs,
+          appData: {
+            logMetadata: {
+              sfuComponent: this.sfuComponent,
+              role: this.role,
+            }
+          },
         };
         const peerRole = this.role === 'send' ? 'sendonly' : 'recvonly';
         this.webRtcPeer = new WebRtcPeer(peerRole, options);

@@ -8,7 +8,12 @@ import {
   addScreenshareStream,
   removeScreenshareStream,
 } from '../../store/redux/slices/wide-app/screenshare';
-import { store } from '../../store/redux/store';
+
+let store;
+
+export const injectStore = (_store) => {
+  store = _store;
+};
 
 class ScreenshareManager {
   constructor() {
@@ -192,7 +197,7 @@ class ScreenshareManager {
   }
 
   destroy() {
-    this.unsubscribe()
+    this.unsubscribe();
     // TODO clean everything up.
   }
 }

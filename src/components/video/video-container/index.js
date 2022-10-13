@@ -4,7 +4,6 @@ import { Alert } from 'react-native';
 import Styled from './styles';
 import IconButtonComponent from '../../icon-button';
 import VideoManager from '../../../services/webrtc/video-manager';
-import usePrevious from '../../../hooks/use-previous';
 
 const VideoContainer = (props) => {
   const {
@@ -15,7 +14,6 @@ const VideoContainer = (props) => {
     style,
   } = props;
   const [showOptions, setShowOptions] = useState(false);
-  const prevCameraId = usePrevious(cameraId);
   const mediaStreamId = useSelector(
     (state) => state.video.videoStreams[cameraId]
   );
@@ -23,24 +21,10 @@ const VideoContainer = (props) => {
     (state) => state.video.signalingTransportOpen
   );
 
-  // TODO decouple subscribe/unsubscribe from component lifecycle
-  // Move to a decoupled, re-usable hook
-  useEffect(() => {
-    return () => {
-      if (cameraId && mediaStreamId) {
-        VideoManager.unsubscribe(cameraId);
-      }
-    };
-  }, [cameraId]);
-
   useEffect(() => {
     if (signalingTransportOpen) {
       if (cameraId && !mediaStreamId) {
         VideoManager.subscribe(cameraId);
-      }
-
-      if (prevCameraId && !cameraId) {
-        VideoManager.unsubscribe(prevCameraId);
       }
     }
   }, [cameraId, mediaStreamId, signalingTransportOpen]);
