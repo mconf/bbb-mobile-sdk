@@ -14,7 +14,6 @@ import UserParticipantsScreen from './src/screens/user-participants-screen';
 import TestComponentsScreen from './src/screens/test-components-screen';
 import UserNotesScreen from './src/screens/user-notes-screen';
 import WhiteboardScreen from './src/screens/whiteboard-screen';
-import PortalWebviewScreen from './src/screens/portal-webview-screen';
 
 const App = ({ onLeaveSession, jUrl }) => {
   const Drawer = createDrawerNavigator();
@@ -120,20 +119,6 @@ const App = ({ onLeaveSession, jUrl }) => {
               }}
             />
 
-            <Drawer.Screen
-              name="PortalWebviewScreen"
-              component={PortalWebviewScreen}
-              options={{
-                title: 'Login Portal',
-                drawerIcon: (config) => (
-                  <IconButton
-                    icon="brush"
-                    size={18}
-                    iconColor={config.color}
-                  />
-                ),
-              }}
-            />
           </Drawer.Navigator>
         </NavigationContainer>
       </Provider>
