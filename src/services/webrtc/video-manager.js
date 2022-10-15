@@ -51,6 +51,14 @@ class VideoManager {
     return this._ws;
   }
 
+  set userId(userId) {
+    this._userId = userId;
+  }
+
+  get userId() {
+    return this._userId;
+  }
+
   storeBroker(cameraId, broker) {
     this.brokers.set(cameraId, broker);
   }
@@ -227,6 +235,7 @@ class VideoManager {
           errorMessage: error.message,
         },
       }, `Video error - errorCode=${error.code}, cause=${error.message}`);
+      this.stopVideo(cameraId);
     };
     bridge.onstart = () => {
       this.onVideoPublished(cameraId);
@@ -279,6 +288,7 @@ class VideoManager {
           errorMessage: error.message,
         },
       }, `Video error - errorCode=${error.code}, cause=${error.message}`);
+      this.stopVideo(cameraId);
     };
     bridge.onstart = () => {
       const remoteStream = bridge.getRemoteStream();
@@ -315,7 +325,7 @@ class VideoManager {
       throw new TypeError('Video manager: invalid init data');
     }
 
-    this._userId = userId;
+    this.userId = userId;
     this._host = host;
     this._sessionToken = sessionToken;
     // FIXME temporary - we need to refactor sockt-connection to use makeCall
@@ -363,6 +373,7 @@ class VideoManager {
   async publish() {
     if (!this.initialized) throw new TypeError('Video manager is not ready');
 
+    // TODO this is not ideal - redo assembly by using deviceId?
     const cameraId = `${this._userId}_${getRandomAlphanumeric(10)}`;
 
     try {
@@ -396,6 +407,7 @@ class VideoManager {
     if (!this.initialized) throw new TypeError('Video manager is not ready');
 
     try {
+      if (!!this.getBroker(cameraId)) return Promise.resolve();
       const bridge = this._initializeSubscriberBridge({ cameraId });
       await bridge.joinVideo();
     } catch (error) {
@@ -444,7 +456,10 @@ class VideoManager {
   }
 
   destroy() {
-    // TODO clean everything up.
+    // eslint-disable-next-line no-restricted-syntax
+    for (const cameraId of this.brokers.keys()) {
+      this.stopVideo(cameraId);
+    }
     this._closeWS();
   }
 }

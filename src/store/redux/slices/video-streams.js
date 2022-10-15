@@ -72,7 +72,7 @@ const selectVideoStreamByDocumentId = (state, documentId) => {
 const videoStreamCleanupMW = createListenerMiddleware();
 videoStreamCleanupMW.startListening({
   actionCreator: videoStreamsSlice.actions.removeVideoStream,
-  effect: async (action, listenerApi) => {
+  effect: (action, listenerApi) => {
     const { videoStreamObject } = action.payload;
     const previousState = listenerApi.getOriginalState();
     const removedVideoStream = selectVideoStreamByDocumentId(
