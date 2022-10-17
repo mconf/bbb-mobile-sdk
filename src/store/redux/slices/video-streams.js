@@ -17,7 +17,7 @@ const videoStreamsSlice = createSlice({
   reducers: {
     addVideoStream: (state, action) => {
       const { videoStreamObject } = action.payload;
-      state.videoStreamsCollection[videoStreamObject.id] = action.payload.videoStreamObject.fields;
+      state.videoStreamsCollection[videoStreamObject.id] = videoStreamObject.fields;
     },
     removeVideoStream: (state, action) => {
       const { videoStreamObject } = action.payload;
@@ -27,7 +27,7 @@ const videoStreamsSlice = createSlice({
       const { videoStreamObject } = action.payload;
       state.videoStreamsCollection[videoStreamObject.id] = {
         ...state.videoStreamsCollection[videoStreamObject.id],
-        ...action.payload.videoStreamObject.fields,
+        ...videoStreamObject.fields,
       };
     },
   },

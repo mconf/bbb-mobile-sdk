@@ -8,8 +8,7 @@ const voiceCallStatesSlice = createSlice({
   reducers: {
     addVoiceCallState: (state, action) => {
       const { voiceCallStateObject } = action.payload;
-      state.voiceCallStatesCollection[voiceCallStateObject.id] =
-        action.payload.voiceCallStateObject.fields;
+      state.voiceCallStatesCollection[voiceCallStateObject.id] = voiceCallStateObject.fields;
     },
     removeVoiceCallState: (state, action) => {
       const { voiceCallStateObject } = action.payload;
@@ -24,6 +23,11 @@ const voiceCallStatesSlice = createSlice({
     },
   },
 });
-export const { addVoiceCallState, removeVoiceCallState, editVoiceCallState } =
-  voiceCallStatesSlice.actions;
+
+export const {
+  addVoiceCallState,
+  removeVoiceCallState,
+  editVoiceCallState,
+} = voiceCallStatesSlice.actions;
+
 export default voiceCallStatesSlice.reducer;
