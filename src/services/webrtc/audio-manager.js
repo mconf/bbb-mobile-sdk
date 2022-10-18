@@ -101,6 +101,7 @@ class AudioManager {
     return `wss://${this._host}/bbb-webrtc-sfu?sessionToken=${this._sessionToken}`;
   }
 
+
   _initializeBridge({ isListenOnly = false, inputStream, muted }) {
     const brokerOptions = {
       clientSessionNumber: this.getNewAudioSessionNumber(),
@@ -224,6 +225,7 @@ class AudioManager {
 
     store.dispatch(setIsHangingUp(true));
     this.bridge.stop();
+    this.bridge = null;
   }
 
   onAudioExit() {
@@ -235,6 +237,8 @@ class AudioManager {
       this.inputStream.getTracks().forEach((track) => track.stop());
       this.inputStream = null;
     }
+
+    this.bridge = null;
   }
 
   mute() {

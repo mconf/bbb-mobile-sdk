@@ -6,8 +6,6 @@ import { SFU_BROKER_ERRORS } from './broker-base-errors';
 const PING_INTERVAL_MS = 15000;
 
 class BaseBroker extends EventEmitter2 {
-  static _noop() {}
-
   static assembleError(code, reason) {
     const message = reason || SFU_BROKER_ERRORS[code];
     const error = new Error(message);
@@ -383,11 +381,11 @@ class BaseBroker extends EventEmitter2 {
   }
 
   _cleanupExternalCallbacks() {
-    this.onended = BaseBroker.noop;
-    this.onstart = BaseBroker.noop;
-    this.onerror = BaseBroker.noop;
-    this.onreconnected = BaseBroker.noop;
-    this.onreconnecting = BaseBroker.noop;
+    this.onended = () => {};
+    this.onstart = () => {};
+    this.onerror = () => {};
+    this.onreconnected = () => {};
+    this.onreconnecting = () => {};
   }
 
   _stopSignalingSocket() {
