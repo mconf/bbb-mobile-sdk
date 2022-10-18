@@ -396,10 +396,13 @@ class BaseBroker extends EventEmitter2 {
       this.ws.removeEventListener('close', this.onWSClosed);
       this.ws.removeEventListener('error', this.onWSError);
       this._wsListenersSetup = false;
+
       if (!this._preloadedWS) {
+        this.ws.onopen = () => {};
         this.ws.close();
-        this.ws = null;
       }
+
+      this.ws = null;
     }
 
     if (this.pingInterval) {
