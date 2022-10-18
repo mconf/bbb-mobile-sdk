@@ -29,6 +29,7 @@ class AudioBroker extends BaseBroker {
     // stream,
     // signalCandidates
     // traceLogs
+    // muted
     Object.assign(this, options);
   }
 
@@ -69,6 +70,23 @@ class AudioBroker extends BaseBroker {
     return Promise.resolve();
   }
 
+  setSenderTrackEnabled(shouldEnable) {
+    if (this.role === 'recvonly') return false;
+
+    const localStream = this.getLocalStream() || this.stream;
+
+    if (localStream) {
+      localStream.getAudioTracks().forEach((track) => {
+        track.enabled = shouldEnable;
+      });
+      this.muted = !shouldEnable;
+
+      return true;
+    }
+
+    return false;
+  }
+
   _join() {
     return new Promise((resolve, reject) => {
       try {
@@ -97,6 +115,8 @@ class AudioBroker extends BaseBroker {
         this.webRtcPeer = new WebRtcPeer(peerRole, options);
         this.webRtcPeer.iceQueue = [];
         this.webRtcPeer.start();
+        // Enforce mute state
+        if (typeof this.muted === 'boolean') this.setSenderTrackEnabled(!this.muted);
 
         if (this.offering) {
           this.webRtcPeer.generateOffer()
