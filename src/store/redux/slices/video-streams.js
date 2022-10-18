@@ -1,8 +1,4 @@
-import {
-  createSlice,
-  createSelector,
-  createListenerMiddleware,
-} from '@reduxjs/toolkit';
+import { createSlice, createSelector } from '@reduxjs/toolkit';
 import { selectUsers } from './users';
 import { selectCurrentUser } from './current-user';
 import { sortVideoStreams } from '../../../services/sorts/video';
@@ -68,22 +64,18 @@ const selectVideoStreamByDocumentId = (state, documentId) => {
   return state.videoStreamsCollection.videoStreamsCollection[documentId];
 };
 
-// Middlewares
-const videoStreamCleanupMW = createListenerMiddleware();
-videoStreamCleanupMW.startListening({
-  actionCreator: videoStreamsSlice.actions.removeVideoStream,
-  effect: (action, listenerApi) => {
-    const { videoStreamObject } = action.payload;
-    const previousState = listenerApi.getOriginalState();
-    const removedVideoStream = selectVideoStreamByDocumentId(
-      previousState,
-      videoStreamObject.id
-    );
-    listenerApi.cancelActiveListeners();
-    // Stop video manager units (if they exist)
-    if (removedVideoStream?.stream) VideoManager.stopVideo(removedVideoStream.stream);
-  },
-});
+// Middleware effects and listeners
+const videoStreamCleanupListener = (action, listenerApi) => {
+  const { videoStreamObject } = action.payload;
+  const previousState = listenerApi.getOriginalState();
+  const removedVideoStream = selectVideoStreamByDocumentId(
+    previousState,
+    videoStreamObject.id
+  );
+  listenerApi.cancelActiveListeners();
+  // Stop video manager units (if they exist)
+  if (removedVideoStream?.stream) VideoManager.stopVideo(removedVideoStream.stream);
+};
 
 export const {
   addVideoStream,
@@ -94,7 +86,7 @@ export const {
 export {
   selectSortedVideoStreams,
   selectVideoStreamByDocumentId,
-  videoStreamCleanupMW,
+  videoStreamCleanupListener,
 };
 
 export default videoStreamsSlice.reducer;

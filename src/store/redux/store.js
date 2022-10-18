@@ -13,8 +13,8 @@ import currentUserReducer from './slices/current-user';
 import presentationsReducer from './slices/presentations';
 import slidesReducer from './slices/slides';
 import externalVideoMeetingsReducer from './slices/external-video-meetings';
-import videoStreamsReducer, { videoStreamCleanupMW } from './slices/video-streams';
-import screenshareReducer, { screenshareCleanupMW } from './slices/screenshare';
+import videoStreamsReducer from './slices/video-streams';
+import screenshareReducer from './slices/screenshare';
 // app exclusive wide state collections
 import previousPollPublishedReducer from './slices/wide-app/previous-poll-published';
 import audioReducer from './slices/wide-app/audio';
@@ -24,6 +24,8 @@ import chatReducer from './slices/wide-app/chat';
 import interactionsReducer from './slices/wide-app/interactions';
 // Middlewares
 import {
+  screenshareCleanupObserver,
+  videoStreamCleanupObserver,
   voiceUserStateObserver,
 } from './middlewares';
 
@@ -57,8 +59,8 @@ export const store = configureStore({
   },
   middleware: (getDefaultMiddleware) => {
     return getDefaultMiddleware().prepend([
-      videoStreamCleanupMW.middleware,
-      screenshareCleanupMW.middleware,
+      videoStreamCleanupObserver.middleware,
+      screenshareCleanupObserver.middleware,
       voiceUserStateObserver.middleware,
     ]);
   },

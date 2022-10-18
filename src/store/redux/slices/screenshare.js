@@ -1,4 +1,4 @@
-import { createSlice, createListenerMiddleware } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import ScreenshareManager from '../../../services/webrtc/screenshare-manager';
 
 // Slice
@@ -35,22 +35,18 @@ const selectScreenshare = (state) => Object.values(
   state.screenshareCollection.screenshareCollection
 )[0];
 
-// Middlewares
-const screenshareCleanupMW = createListenerMiddleware();
-screenshareCleanupMW.startListening({
-  actionCreator: screenshareSlice.actions.removeScreenshare,
-  effect: (action, listenerApi) => {
-    const { screenshareObject } = action.payload;
-    const previousState = listenerApi.getOriginalState();
-    const removedScreenshareStream = selectScreenshareByDocumentId(
-      previousState,
-      screenshareObject.id
-    );
-    listenerApi.cancelActiveListeners();
-    // Stop screenshare manager units (if they exist)
-    if (removedScreenshareStream) ScreenshareManager.unsubscribe();
-  },
-});
+// Middleware effects and listeners
+const screenshareCleanupListener = (action, listenerApi) => {
+  const { screenshareObject } = action.payload;
+  const previousState = listenerApi.getOriginalState();
+  const removedScreenshareStream = selectScreenshareByDocumentId(
+    previousState,
+    screenshareObject.id
+  );
+  listenerApi.cancelActiveListeners();
+  // Stop screenshare manager units (if they exist)
+  if (removedScreenshareStream) ScreenshareManager.unsubscribe();
+};
 
 export const {
   addScreenshare,
@@ -59,9 +55,9 @@ export const {
 } = screenshareSlice.actions;
 
 export {
+  screenshareCleanupListener,
   selectScreenshare,
   selectScreenshareByDocumentId,
-  screenshareCleanupMW,
 };
 
 export default screenshareSlice.reducer;
