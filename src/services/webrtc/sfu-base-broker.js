@@ -422,8 +422,6 @@ class BaseBroker extends EventEmitter2 {
       this._cleanupExternalCallbacks();
     }
 
-    this._stopSignalingSocket();
-
     if (this.webRtcPeer) {
       this.webRtcPeer.peerConnection.onconnectionstatechange = null;
     }
@@ -437,6 +435,7 @@ class BaseBroker extends EventEmitter2 {
     }, `Stopped broker session for ${this.sfuComponent}`);
 
     this._stop();
+    this._stopSignalingSocket();
   }
 }
 

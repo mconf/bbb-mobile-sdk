@@ -1,7 +1,7 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit';
 import { selectUsers } from './users';
-import { selectCurrentUser } from './current-user';
 import { sortVideoStreams } from '../../../services/sorts/video';
+import { selectLocalCameraId } from './wide-app/video';
 import VideoManager from '../../../services/webrtc/video-manager';
 
 // Slice
@@ -35,8 +35,8 @@ const selectVideoStreams = (state) => Object.values(
 );
 
 const selectSortedVideoStreams = createSelector(
-  [selectVideoStreams, selectUsers, selectCurrentUser],
-  (videoStreams, users, currentUser) => {
+  [selectVideoStreams, selectUsers, selectLocalCameraId],
+  (videoStreams, users, localCameraId) => {
     return sortVideoStreams(users.map((user) => {
       const {
         stream: cameraId,
@@ -44,6 +44,8 @@ const selectSortedVideoStreams = createSelector(
         lastFloorTime,
         pin,
       } = videoStreams.find((stream) => stream.userId === user.intId) || {};
+      const local = (typeof cameraId === 'string' && localCameraId === cameraId)
+        || user.intId === VideoManager.userId;
 
       return {
         name: user.name,
@@ -54,7 +56,7 @@ const selectSortedVideoStreams = createSelector(
         pin,
         userAvatar: user.avatar,
         userColor: user.color,
-        local: user.intId === currentUser?.userId
+        local,
       };
     }));
   }

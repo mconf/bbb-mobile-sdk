@@ -374,7 +374,7 @@ class VideoManager {
     if (!this.initialized) throw new TypeError('Video manager is not ready');
 
     // TODO this is not ideal - redo assembly by using deviceId?
-    const cameraId = `${this._userId}_${getRandomAlphanumeric(10)}`;
+    const cameraId = `${this.userId}_${getRandomAlphanumeric(10)}`;
 
     try {
       this.onVideoPublishing(cameraId);
