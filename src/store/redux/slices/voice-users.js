@@ -37,8 +37,7 @@ const voiceStateChangePredicate = (action, currentState) => {
   const currentVoiceUser = selectVoiceUserByDocumentId(currentState, voiceUserObject.id);
   // Not for us - skip
   if (currentVoiceUser.intId !== AudioManager.userId) return false;
-  // Currently only watching for mute state changes - add more cases when necessary
-  return voiceUserObject?.muted !== currentState.audio.isMuted;
+  return true;
 };
 
 const voiceStateChangeListener = (action, listenerApi) => {
