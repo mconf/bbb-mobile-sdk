@@ -27,6 +27,7 @@ import {
   screenshareCleanupObserver,
   videoStreamCleanupObserver,
   voiceUserStateObserver,
+  voiceCallStateObserver,
 } from './middlewares';
 
 export const store = configureStore({
@@ -62,6 +63,7 @@ export const store = configureStore({
       videoStreamCleanupObserver.middleware,
       screenshareCleanupObserver.middleware,
       voiceUserStateObserver.middleware,
+      voiceCallStateObserver.middleware,
     ]);
   },
 });

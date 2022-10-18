@@ -59,6 +59,10 @@ class AudioManager {
     return this.audioSessionNumber;
   }
 
+  getCurrentAudioSessionNumber() {
+    return this.audioSessionNumber;
+  }
+
   async _mediaFactory(constraints = { audio: true }) {
     if (this.inputStream && this.inputStream.active) return this.inputStream;
 
@@ -134,7 +138,7 @@ class AudioManager {
     };
 
     this.bridge.onstart = () => {
-      this.onAudioJoin();
+      this.onAudioConnected();
     };
 
     this.bridge.onreconnecting = () => {
@@ -188,6 +192,11 @@ class AudioManager {
     store.dispatch(setIsConnecting(true));
   }
 
+  // Connected, but needs acknowledgement from call states to be flagged as joined
+  onAudioConnected() {
+    logger.info({ logCode: 'audio_connected' }, 'Audio connected');
+  }
+
   onAudioJoin() {
     store.dispatch(setIsConnected(true));
     store.dispatch(setIsConnecting(false));
@@ -195,7 +204,7 @@ class AudioManager {
   }
 
   onAudioReconnected() {
-    this.onAudioJoin();
+    this.onAudioConnected();
   }
 
   _joinAudio(callOptions) {
