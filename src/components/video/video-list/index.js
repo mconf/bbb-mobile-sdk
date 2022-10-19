@@ -11,6 +11,7 @@ const VideoList = (props) => {
       userAvatar,
       userColor,
       name,
+      local,
     } = vuItem;
 
     return (
@@ -19,6 +20,7 @@ const VideoList = (props) => {
         userAvatar={userAvatar}
         userColor={userColor}
         userName={name}
+        local={local}
         orientation={orientation}
         style={style}
       />

@@ -39,6 +39,8 @@ const videoSlice = createSlice({
   },
 });
 
+const selectLocalCameraId = (state) => state.video.localCameraId;
+
 export const {
   setIsConnecting,
   setIsConnected,
@@ -48,4 +50,9 @@ export const {
   addVideoStream,
   removeVideoStream,
 } = videoSlice.actions;
+
+export {
+  selectLocalCameraId,
+};
+
 export default videoSlice.reducer;

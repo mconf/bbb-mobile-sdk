@@ -6,8 +6,6 @@ import { SFU_BROKER_ERRORS } from './broker-base-errors';
 const PING_INTERVAL_MS = 15000;
 
 class BaseBroker extends EventEmitter2 {
-  static _noop() {}
-
   static assembleError(code, reason) {
     const message = reason || SFU_BROKER_ERRORS[code];
     const error = new Error(message);
@@ -383,11 +381,11 @@ class BaseBroker extends EventEmitter2 {
   }
 
   _cleanupExternalCallbacks() {
-    this.onended = BaseBroker.noop;
-    this.onstart = BaseBroker.noop;
-    this.onerror = BaseBroker.noop;
-    this.onreconnected = BaseBroker.noop;
-    this.onreconnecting = BaseBroker.noop;
+    this.onended = () => {};
+    this.onstart = () => {};
+    this.onerror = () => {};
+    this.onreconnected = () => {};
+    this.onreconnecting = () => {};
   }
 
   _stopSignalingSocket() {
@@ -396,10 +394,13 @@ class BaseBroker extends EventEmitter2 {
       this.ws.removeEventListener('close', this.onWSClosed);
       this.ws.removeEventListener('error', this.onWSError);
       this._wsListenersSetup = false;
+
       if (!this._preloadedWS) {
+        this.ws.onopen = () => {};
         this.ws.close();
-        this.ws = null;
       }
+
+      this.ws = null;
     }
 
     if (this.pingInterval) {
@@ -419,8 +420,6 @@ class BaseBroker extends EventEmitter2 {
       this._cleanupExternalCallbacks();
     }
 
-    this._stopSignalingSocket();
-
     if (this.webRtcPeer) {
       this.webRtcPeer.peerConnection.onconnectionstatechange = null;
     }
@@ -434,6 +433,7 @@ class BaseBroker extends EventEmitter2 {
     }, `Stopped broker session for ${this.sfuComponent}`);
 
     this._stop();
+    this._stopSignalingSocket();
   }
 }
 

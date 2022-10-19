@@ -3,12 +3,17 @@ import { StatusBar } from 'expo-status-bar';
 import Colors from '../../../constants/colors';
 import IconButtonComponent from '../../icon-button';
 import AudioManager from '../../../services/webrtc/audio-manager';
+import { selectMeeting } from '../../../store/redux/slices/meeting';
+import { toggleMuteMicrophone } from '../service';
 
 const AudioControls = (props) => {
   const { isLandscape } = props;
+  const muteOnStart = useSelector((state) => selectMeeting(state)?.voiceProp?.muteOnStart);
   const isMuted = useSelector((state) => state.audio.isMuted);
   const isConnected = useSelector((state) => state.audio.isConnected);
   const isConnecting = useSelector((state) => state.audio.isConnecting);
+  const isActive = isConnected || isConnecting;
+  const unmutedAndConnected = !isMuted && isConnected;
 
   return (
     <>
@@ -16,17 +21,13 @@ const AudioControls = (props) => {
       {isConnecting && <StatusBar backgroundColor="#FFC845" style="dark" />}
       <IconButtonComponent
         size={isLandscape ? 24 : 32}
-        icon={!isMuted ? 'microphone' : 'microphone-off'}
-        iconColor={!isMuted ? Colors.white : Colors.lightGray300}
-        containerColor={!isMuted ? Colors.blue : Colors.lightGray100}
+        icon={unmutedAndConnected ? 'microphone' : 'microphone-off'}
+        iconColor={unmutedAndConnected ? Colors.white : Colors.lightGray300}
+        containerColor={unmutedAndConnected ? Colors.blue : Colors.lightGray100}
         disabled={!isConnected}
         animated
         onPress={() => {
-          if (isMuted) {
-            AudioManager.unmute();
-          } else {
-            AudioManager.mute();
-          }
+          toggleMuteMicrophone();
         }}
       />
       <IconButtonComponent
@@ -36,10 +37,10 @@ const AudioControls = (props) => {
         containerColor={isConnected ? Colors.blue : Colors.lightGray100}
         animated
         onPress={() => {
-          if (isConnected) {
+          if (isActive) {
             AudioManager.exitAudio();
           } else {
-            AudioManager.joinMicrophone();
+            AudioManager.joinMicrophone({ muted: muteOnStart });
           }
         }}
       />

@@ -12,6 +12,7 @@ const VideoContainer = (props) => {
     userColor,
     userName,
     style,
+    local,
   } = props;
   const [showOptions, setShowOptions] = useState(false);
   const mediaStreamId = useSelector(
@@ -23,7 +24,7 @@ const VideoContainer = (props) => {
 
   useEffect(() => {
     if (signalingTransportOpen) {
-      if (cameraId && !mediaStreamId) {
+      if (cameraId && !mediaStreamId && !local) {
         VideoManager.subscribe(cameraId);
       }
     }

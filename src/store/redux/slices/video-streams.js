@@ -1,11 +1,7 @@
-import {
-  createSlice,
-  createSelector,
-  createListenerMiddleware,
-} from '@reduxjs/toolkit';
+import { createSlice, createSelector } from '@reduxjs/toolkit';
 import { selectUsers } from './users';
-import { selectCurrentUser } from './current-user';
 import { sortVideoStreams } from '../../../services/sorts/video';
+import { selectLocalCameraId } from './wide-app/video';
 import VideoManager from '../../../services/webrtc/video-manager';
 
 // Slice
@@ -17,7 +13,7 @@ const videoStreamsSlice = createSlice({
   reducers: {
     addVideoStream: (state, action) => {
       const { videoStreamObject } = action.payload;
-      state.videoStreamsCollection[videoStreamObject.id] = action.payload.videoStreamObject.fields;
+      state.videoStreamsCollection[videoStreamObject.id] = videoStreamObject.fields;
     },
     removeVideoStream: (state, action) => {
       const { videoStreamObject } = action.payload;
@@ -27,7 +23,7 @@ const videoStreamsSlice = createSlice({
       const { videoStreamObject } = action.payload;
       state.videoStreamsCollection[videoStreamObject.id] = {
         ...state.videoStreamsCollection[videoStreamObject.id],
-        ...action.payload.videoStreamObject.fields,
+        ...videoStreamObject.fields,
       };
     },
   },
@@ -39,8 +35,8 @@ const selectVideoStreams = (state) => Object.values(
 );
 
 const selectSortedVideoStreams = createSelector(
-  [selectVideoStreams, selectUsers, selectCurrentUser],
-  (videoStreams, users, currentUser) => {
+  [selectVideoStreams, selectUsers, selectLocalCameraId],
+  (videoStreams, users, localCameraId) => {
     return sortVideoStreams(users.map((user) => {
       const {
         stream: cameraId,
@@ -48,6 +44,8 @@ const selectSortedVideoStreams = createSelector(
         lastFloorTime,
         pin,
       } = videoStreams.find((stream) => stream.userId === user.intId) || {};
+      const local = (typeof cameraId === 'string' && localCameraId === cameraId)
+        || user.intId === VideoManager.userId;
 
       return {
         name: user.name,
@@ -58,7 +56,7 @@ const selectSortedVideoStreams = createSelector(
         pin,
         userAvatar: user.avatar,
         userColor: user.color,
-        local: user.intId === currentUser?.userId
+        local,
       };
     }));
   }
@@ -68,22 +66,18 @@ const selectVideoStreamByDocumentId = (state, documentId) => {
   return state.videoStreamsCollection.videoStreamsCollection[documentId];
 };
 
-// Middlewares
-const videoStreamCleanupMW = createListenerMiddleware();
-videoStreamCleanupMW.startListening({
-  actionCreator: videoStreamsSlice.actions.removeVideoStream,
-  effect: (action, listenerApi) => {
-    const { videoStreamObject } = action.payload;
-    const previousState = listenerApi.getOriginalState();
-    const removedVideoStream = selectVideoStreamByDocumentId(
-      previousState,
-      videoStreamObject.id
-    );
-    listenerApi.cancelActiveListeners();
-    // Stop video manager units (if they exist)
-    if (removedVideoStream?.stream) VideoManager.stopVideo(removedVideoStream.stream);
-  },
-});
+// Middleware effects and listeners
+const videoStreamCleanupListener = (action, listenerApi) => {
+  const { videoStreamObject } = action.payload;
+  const previousState = listenerApi.getOriginalState();
+  const removedVideoStream = selectVideoStreamByDocumentId(
+    previousState,
+    videoStreamObject.id
+  );
+  listenerApi.cancelActiveListeners();
+  // Stop video manager units (if they exist)
+  if (removedVideoStream?.stream) VideoManager.stopVideo(removedVideoStream.stream);
+};
 
 export const {
   addVideoStream,
@@ -94,7 +88,7 @@ export const {
 export {
   selectSortedVideoStreams,
   selectVideoStreamByDocumentId,
-  videoStreamCleanupMW,
+  videoStreamCleanupListener,
 };
 
 export default videoStreamsSlice.reducer;
