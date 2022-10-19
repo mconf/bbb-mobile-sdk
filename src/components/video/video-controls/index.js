@@ -6,7 +6,9 @@ import VideoManager from '../../../services/webrtc/video-manager';
 const VideoControls = (props) => {
   const { isLandscape } = props;
   const isConnected = useSelector((state) => state.video.isConnected);
+  const isConnecting = useSelector((state) => state.video.isConnecting);
   const localCameraId = useSelector((state) => state.video.localCameraId);
+  const isActive = isConnected || isConnecting;
 
   return (
     <IconButtonComponent
@@ -16,7 +18,7 @@ const VideoControls = (props) => {
       containerColor={isConnected ? Colors.blue : Colors.lightGray100}
       animated
       onPress={() => {
-        if (isConnected) {
+        if (isActive) {
           VideoManager.unpublish(localCameraId);
         } else {
           VideoManager.publish();
