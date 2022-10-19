@@ -10,6 +10,10 @@ const BASE_RECONNECTION_TIMEOUT = 3000;
 const MAX_RECONNECTION_TIMEOUT = 15000;
 
 class VideoBroker extends BaseBroker {
+  static extractCameraIdFromResponse(parsedResponse) {
+    return parsedResponse.cameraId || parsedResponse.streamId;
+  }
+
   constructor(role, options = {}) {
     super(SFU_COMPONENT_NAME, { wsUrl: options.wsUrl, ws: options.ws });
     this.role = role;
@@ -129,9 +133,10 @@ class VideoBroker extends BaseBroker {
 
   onWSMessage(message) {
     const parsedMessage = JSON.parse(message.data);
+    const cameraId = VideoBroker.extractCameraIdFromResponse(parsedMessage);
 
     // Not for me. Skip.
-    if (parsedMessage.cameraId !== this.cameraId) return;
+    if (cameraId !== this.cameraId) return;
 
     switch (parsedMessage.id) {
       case 'startResponse':
@@ -262,9 +267,10 @@ class VideoBroker extends BaseBroker {
     this.sendMessage(message);
   }
 
-
   onRemoteDescriptionReceived(sfuResponse) {
-    if (sfuResponse.cameraId !== this.cameraId) return;
+    const cameraId = VideoBroker.extractCameraIdFromResponse(sfuResponse);
+
+    if (cameraId !== this.cameraId) return;
 
     if (this.offering) {
       return this.processAnswer(sfuResponse);
