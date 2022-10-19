@@ -24,5 +24,13 @@ const meetingSlice = createSlice({
     },
   },
 });
+
+const selectMeeting = (state) => Object.values(state.meetingCollection.meetingCollection)[0];
+
 export const { addMeeting, removeMeeting, editMeeting } = meetingSlice.actions;
+
+export {
+  selectMeeting,
+};
+
 export default meetingSlice.reducer;

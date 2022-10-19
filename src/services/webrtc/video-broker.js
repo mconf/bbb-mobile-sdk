@@ -80,6 +80,13 @@ class VideoBroker extends BaseBroker {
           },
           onconnectionstatechange: this.handleConnectionStateChange.bind(this),
           trace: this.traceLogs,
+          appData: {
+            logMetadata: {
+              sfuComponent: this.sfuComponent,
+              role: this.role,
+              cameraId: this.cameraId,
+            }
+          }
         };
 
         const peerRole = this.role === 'share' ? 'sendonly' : 'recvonly';

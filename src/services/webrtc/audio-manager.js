@@ -9,7 +9,12 @@ import {
   setAudioStream,
   setMutedState
 } from '../../store/redux/slices/wide-app/audio';
-import { store } from '../../store/redux/store';
+
+let store;
+
+export const injectStore = (_store) => {
+  store = _store;
+};
 
 class AudioManager {
   constructor() {
@@ -40,9 +45,21 @@ class AudioManager {
     return this._inputStream;
   }
 
+  set userId(userId) {
+    this._userId = userId;
+  }
+
+  get userId() {
+    return this._userId;
+  }
+
   getNewAudioSessionNumber() {
     this.audioSessionNumber += 1;
 
+    return this.audioSessionNumber;
+  }
+
+  getCurrentAudioSessionNumber() {
     return this.audioSessionNumber;
   }
 
@@ -65,28 +82,19 @@ class AudioManager {
 
     if (localStream == null) return true;
 
-    return !localStream.getAudioTracks().some(track => !track.enabled);
+    return !localStream.getAudioTracks().some((track) => !track.enabled);
   }
 
   _setSenderTrackEnabled(shouldEnable) {
-    // If the bridge is set to listen only mode, nothing to do here. This method
-    // is solely for muting outbound tracks.
     if (this.isListenOnly) return;
 
-    // Bridge -> SIP.js bridge, the only full audio capable one right now
-    const peer = this.bridge?.webRtcPeer;
-    let localStream = this.inputStream;
+    if (this.bridge) {
+      if (this.bridge.setSenderTrackEnabled(shouldEnable)) {
+        const newEnabledState = this._getSenderTrackEnabled();
+        store.dispatch(setMutedState(!newEnabledState));
 
-    if (peer) {
-      localStream = peer.getLocalStream() || this.inputStream;
+      }
     }
-
-    localStream.getAudioTracks().forEach((track) => {
-      track.enabled = shouldEnable;
-    });
-
-    store.dispatch(setMutedState(!shouldEnable));
-    this._makeCall('toggleVoice', null, !shouldEnable);
   }
 
   _getStunFetchURL() {
@@ -97,13 +105,15 @@ class AudioManager {
     return `wss://${this._host}/bbb-webrtc-sfu?sessionToken=${this._sessionToken}`;
   }
 
-  _initializeBridge({ isListenOnly = false, inputStream }) {
+
+  _initializeBridge({ isListenOnly = false, inputStream, muted }) {
     const brokerOptions = {
       clientSessionNumber: this.getNewAudioSessionNumber(),
       iceServers: this.iceServers,
       stream: (inputStream && inputStream.active) ? inputStream : undefined,
       offering: true,
       traceLogs: true,
+      muted,
     };
 
     this.bridge = new AudioBroker(
@@ -128,7 +138,7 @@ class AudioManager {
     };
 
     this.bridge.onstart = () => {
-      this.onAudioJoin();
+      this.onAudioConnected();
     };
 
     this.bridge.onreconnecting = () => {
@@ -157,7 +167,7 @@ class AudioManager {
       throw new TypeError('Audio manager: invalid init data');
     }
 
-    this._userId = userId;
+    this.userId = userId;
     this._host = host;
     this._sessionToken = sessionToken;
     // FIXME temporary - we need to refactor sockt-connection to use makeCall
@@ -180,21 +190,21 @@ class AudioManager {
 
   onAudioJoining() {
     store.dispatch(setIsConnecting(true));
+  }
 
-    return Promise.resolve();
+  // Connected, but needs acknowledgement from call states to be flagged as joined
+  onAudioConnected() {
+    logger.info({ logCode: 'audio_connected' }, 'Audio connected');
   }
 
   onAudioJoin() {
     store.dispatch(setIsConnected(true));
     store.dispatch(setIsConnecting(false));
-    store.dispatch(setMutedState(!this._getSenderTrackEnabled()));
     logger.info({ logCode: 'audio_joined' }, 'Audio Joined');
   }
 
   onAudioReconnected() {
-    // Enforce mute state
-    this._setSenderTrackEnabled(this._getSenderTrackEnabled());
-    this.onAudioJoin();
+    this.onAudioConnected();
   }
 
   _joinAudio(callOptions) {
@@ -207,11 +217,11 @@ class AudioManager {
     });
   }
 
-  joinMicrophone() {
+  joinMicrophone({ muted = false }) {
     this.onAudioJoining();
 
     return this._mediaFactory().then((inputStream) => {
-      return this._joinAudio({ inputStream, isListenOnly: false });
+      return this._joinAudio({ inputStream, isListenOnly: false, muted });
     });
   }
 
@@ -224,18 +234,20 @@ class AudioManager {
 
     store.dispatch(setIsHangingUp(true));
     this.bridge.stop();
+    this.bridge = null;
   }
 
   onAudioExit() {
     store.dispatch(setIsConnected(false));
     store.dispatch(setIsConnecting(false));
     store.dispatch(setIsHangingUp(false));
-    store.dispatch(setMutedState(true));
 
     if (this.inputStream) {
       this.inputStream.getTracks().forEach((track) => track.stop());
       this.inputStream = null;
     }
+
+    this.bridge = null;
   }
 
   mute() {
@@ -246,12 +258,16 @@ class AudioManager {
     this._setSenderTrackEnabled(true);
   }
 
+  setMutedState(isMuted) {
+    this._setSenderTrackEnabled(!isMuted);
+  }
+
   isLocalStreamMuted() {
     return !this._getSenderTrackEnabled();
   }
 
   destroy() {
-    this.exitAudio()
+    this.exitAudio();
     // TODO clean everything up.
   }
 }

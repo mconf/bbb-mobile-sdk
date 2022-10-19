@@ -12,10 +12,15 @@ import {
   addVideoStream,
   removeVideoStream,
 } from '../../store/redux/slices/wide-app/video';
-import { store } from '../../store/redux/store';
 import { getRandomAlphanumeric } from '../../components/socket-connection/utils';
 
 const PING_INTERVAL_MS = 15000;
+
+let store;
+
+export const injectStore = (_store) => {
+  store = _store;
+};
 
 class VideoManager {
   constructor() {
@@ -44,6 +49,14 @@ class VideoManager {
 
   get ws() {
     return this._ws;
+  }
+
+  set userId(userId) {
+    this._userId = userId;
+  }
+
+  get userId() {
+    return this._userId;
   }
 
   storeBroker(cameraId, broker) {
@@ -222,6 +235,7 @@ class VideoManager {
           errorMessage: error.message,
         },
       }, `Video error - errorCode=${error.code}, cause=${error.message}`);
+      this.stopVideo(cameraId);
     };
     bridge.onstart = () => {
       this.onVideoPublished(cameraId);
@@ -274,6 +288,7 @@ class VideoManager {
           errorMessage: error.message,
         },
       }, `Video error - errorCode=${error.code}, cause=${error.message}`);
+      this.stopVideo(cameraId);
     };
     bridge.onstart = () => {
       const remoteStream = bridge.getRemoteStream();
@@ -310,7 +325,7 @@ class VideoManager {
       throw new TypeError('Video manager: invalid init data');
     }
 
-    this._userId = userId;
+    this.userId = userId;
     this._host = host;
     this._sessionToken = sessionToken;
     // FIXME temporary - we need to refactor sockt-connection to use makeCall
@@ -358,7 +373,8 @@ class VideoManager {
   async publish() {
     if (!this.initialized) throw new TypeError('Video manager is not ready');
 
-    const cameraId = `${this._userId}_${getRandomAlphanumeric(10)}`;
+    // TODO this is not ideal - redo assembly by using deviceId?
+    const cameraId = `${this.userId}_${getRandomAlphanumeric(10)}`;
 
     try {
       this.onVideoPublishing(cameraId);
@@ -391,6 +407,7 @@ class VideoManager {
     if (!this.initialized) throw new TypeError('Video manager is not ready');
 
     try {
+      if (!!this.getBroker(cameraId)) return Promise.resolve();
       const bridge = this._initializeSubscriberBridge({ cameraId });
       await bridge.joinVideo();
     } catch (error) {
@@ -407,6 +424,11 @@ class VideoManager {
       bridge.stop();
       this.onRemoteVideoExit(cameraId);
     }
+  }
+
+  stopVideo(cameraId) {
+    const bridge = this.getBroker(cameraId);
+    if (bridge) bridge.stop();
   }
 
   onLocalVideoExit(cameraId) {
@@ -434,7 +456,10 @@ class VideoManager {
   }
 
   destroy() {
-    // TODO clean everything up.
+    // eslint-disable-next-line no-restricted-syntax
+    for (const cameraId of this.brokers.keys()) {
+      this.stopVideo(cameraId);
+    }
     this._closeWS();
   }
 }
