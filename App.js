@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import { Provider } from 'react-redux';
+import Settings from './settings.json';
 // providers and store
 import { store } from './src/store/redux/store';
 // components
@@ -14,7 +15,6 @@ import UserParticipantsScreen from './src/screens/user-participants-screen';
 import TestComponentsScreen from './src/screens/test-components-screen';
 import UserNotesScreen from './src/screens/user-notes-screen';
 import WhiteboardScreen from './src/screens/whiteboard-screen';
-import ManagePresentationScreen from './src/screens/manage-presentation-screen';
 import { injectStore as injectStoreVM } from './src/services/webrtc/video-manager';
 import { injectStore as injectStoreSM } from './src/services/webrtc/screenshare-manager';
 import { injectStore as injectStoreAM } from './src/services/webrtc/audio-manager';
@@ -26,15 +26,18 @@ const injectStore = () => {
   injectStoreAM(store);
 };
 
-const App = () => {
+const App = ({ onLeaveSession, jUrl }) => {
   injectStore();
   const Drawer = createDrawerNavigator();
+
   return (
     <>
       <Provider store={store}>
-        <NavigationContainer>
+        <NavigationContainer independent>
+          {!Settings.dev && <TestComponentsScreen jUrl={jUrl} />}
           <Drawer.Navigator
-            drawerContent={(props) => <CustomDrawer {...props} />}
+            independent
+            drawerContent={(props) => <CustomDrawer {...props} onLeaveSession={onLeaveSession} />}
             screenOptions={{
               contentOptions: {
                 style: {
@@ -75,21 +78,6 @@ const App = () => {
                 drawerIcon: (config) => (
                   <IconButton
                     icon="file-document"
-                    size={18}
-                    iconColor={config.color}
-                  />
-                ),
-              }}
-            />
-
-            <Drawer.Screen
-              name="ConfigPresentationScreen"
-              component={ManagePresentationScreen}
-              options={{
-                title: 'Gerenciar Apresentação',
-                drawerIcon: (config) => (
-                  <IconButton
-                    icon="presentation"
                     size={18}
                     iconColor={config.color}
                   />
@@ -142,9 +130,9 @@ const App = () => {
               }}
             />
 
+            {Settings.dev && (
             <Drawer.Screen
               name="TestComponent"
-              component={TestComponentsScreen}
               options={{
                 title: 'Test Component',
                 drawerIcon: (config) => (
@@ -155,7 +143,11 @@ const App = () => {
                   />
                 ),
               }}
-            />
+            >
+              {(props) => <TestComponentsScreen {...props} jUrl={jUrl} />}
+            </Drawer.Screen>
+            )}
+
           </Drawer.Navigator>
         </NavigationContainer>
       </Provider>
