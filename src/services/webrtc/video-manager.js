@@ -37,6 +37,7 @@ class VideoManager {
 
     this._wsListenersSetup = false;
     this._pingInterval = null;
+    this._wsUrl = null;
 
     this._onWSError = this._onWSError.bind(this);
     this._onWSClosed = this._onWSClosed.bind(this);
@@ -106,6 +107,12 @@ class VideoManager {
 
   _onWSClosed() {
     store.dispatch(setSignalingTransportOpen(false));
+    logger.info({
+      logCode: 'videomanager_websocket_closed',
+      extraInfo: {
+        address: this._wsUrl,
+      },
+    }, 'WebSocket connection to SFU closed');
   }
 
   _attachPreloadedWSListeners() {
@@ -138,6 +145,7 @@ class VideoManager {
     }
 
     this._onWSClosed();
+    this._wsUrl = null;
 
     if (this._pingInterval) {
       clearInterval(this._pingInterval);
@@ -161,24 +169,28 @@ class VideoManager {
 
   _openWSConnection(wsUrl) {
     return new Promise((resolve, reject) => {
-      if (this._isWsSet()) {
+      if (this._isWsSet() && this._wsUrl === wsUrl) {
         this._attachPreloadedWSListeners();
         resolve();
         return;
       }
 
+      // Trailing WS instance - close it
+      if (this.ws) this._closeWS();
+
       const preloadErrorCatcher = (error) => {
         logger.error({
-          logCode: `videomanager_websocket_error_beforeopen`,
+          logCode: 'videomanager_websocket_error_beforeopen',
           extraInfo: {
             errorMessage: error.name || error.message || 'Unknown error',
           }
         }, 'WebSocket connection to SFU failed (beforeopen)');
 
         return reject(error);
-      }
+      };
 
       this.ws = new ReconnectingWebSocket(wsUrl, [], { connectionTimeout: 4000 });
+      this._wsUrl = wsUrl;
       this.ws.addEventListener('close', this._onWSClosed, { once: true });
       this.ws.addEventListener('error', preloadErrorCatcher);
       this.ws.onopen = () => {
@@ -189,7 +201,10 @@ class VideoManager {
         store.dispatch(setSignalingTransportOpen(true));
         this._flushWsQueue();
         logger.info({
-          logCode: `videomanager_websocket_open`,
+          logCode: 'videomanager_websocket_open',
+          extraInfo: {
+            address: wsUrl,
+          },
         }, 'WebSocket connection to SFU established');
 
         return resolve();
@@ -350,7 +365,7 @@ class VideoManager {
       await this._openWSConnection(this._getSFUAddr());
     } catch (error) {
       logger.error({
-        logCode: `videomanager_websocket_error`,
+        logCode: 'videomanager_websocket_error',
         extraInfo: {
           errorMessage: error.name || error.message || 'Unknown error',
         }
