@@ -1,4 +1,3 @@
-import logger from '../logger';
 import BaseBroker from './sfu-base-broker';
 import WebRtcPeer from './peer';
 
@@ -15,7 +14,7 @@ class AudioBroker extends BaseBroker {
     role,
     options = {},
   ) {
-    super(SFU_COMPONENT_NAME, { wsUrl });
+    super(SFU_COMPONENT_NAME, { wsUrl, logger: options?.logger });
     this.role = role;
     this.offering = true;
 
@@ -30,6 +29,7 @@ class AudioBroker extends BaseBroker {
     // signalCandidates
     // traceLogs
     // muted
+    // logger
     Object.assign(this, options);
   }
 
@@ -91,6 +91,7 @@ class AudioBroker extends BaseBroker {
     return new Promise((resolve, reject) => {
       try {
         const options = {
+          logger: this.logger,
           audioStream: this.stream,
           mediaConstraints: {
             audio: this.constraints ? this.constraints : true,
@@ -130,7 +131,7 @@ class AudioBroker extends BaseBroker {
       } catch (error) {
         // 1305: "PEER_NEGOTIATION_FAILED",
         const normalizedError = BaseBroker.assembleError(1305);
-        logger.error({
+        this.logger.error({
           logCode: `${this.logCodePrefix}_peer_creation_failed`,
           extraInfo: {
             errorMessage: error.name || error.message || 'Unknown error',
@@ -176,7 +177,7 @@ class AudioBroker extends BaseBroker {
       case 'pong':
         break;
       default:
-        logger.debug({
+        this.logger.debug({
           logCode: `${this.logCodePrefix}_invalid_req`,
           extraInfo: { messageId: parsedMessage.id || 'Unknown', sfuComponent: this.sfuComponent },
         }, 'Discarded invalid SFU message');
@@ -256,7 +257,7 @@ class AudioBroker extends BaseBroker {
     const { code, reason, role } = sfuResponse;
     const error = BaseBroker.assembleError(code, reason);
 
-    logger.error({
+    this.logger.error({
       logCode: `${this.logCodePrefix}_sfu_error`,
       extraInfo: {
         errorCode: code,
@@ -299,7 +300,7 @@ class AudioBroker extends BaseBroker {
       extension: this.extension,
     };
 
-    logger.debug({
+    this.logger.debug({
       logCode: `${this.logCodePrefix}_offer_generated`,
       extraInfo: { sfuComponent: this.sfuComponent, role: this.role },
     }, 'SFU audio offer generated');
@@ -309,7 +310,7 @@ class AudioBroker extends BaseBroker {
 
   _handleOfferGenerationFailure(error) {
     if (error) {
-      logger.error({
+      this.logger.error({
         logCode: `${this.logCodePrefix}_offer_failure`,
         extraInfo: {
           errorMessage: error.name || error.message || 'Unknown error',

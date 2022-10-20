@@ -1,5 +1,4 @@
 import { mediaDevices } from 'react-native-webrtc';
-import logger from '../logger';
 import AudioBroker from './audio-broker';
 import fetchIceServers from './fetch-ice-servers';
 import {
@@ -114,6 +113,7 @@ class AudioManager {
       offering: true,
       traceLogs: true,
       muted,
+      logger: this.logger,
     };
 
     this.bridge = new AudioBroker(
@@ -123,12 +123,12 @@ class AudioManager {
     );
 
     this.bridge.onended = () => {
-      logger.info({ logCode: 'audio_ended' }, 'Audio ended without issue');
+      this.logger.info({ logCode: 'audio_ended' }, 'Audio ended without issue');
       this.onAudioExit();
     };
 
     this.bridge.onerror = (error) => {
-      logger.error({
+      this.logger.error({
         logCode: 'audio_failure',
         extraInfo: {
           errorCode: error.code,
@@ -142,7 +142,7 @@ class AudioManager {
     };
 
     this.bridge.onreconnecting = () => {
-      logger.info({
+      this.logger.info({
         logCode: 'audio_reconnecting',
       }, 'Audio reconnecting');
       // TODO - update local collection states about this and use it in the UI
@@ -160,7 +160,8 @@ class AudioManager {
     userId,
     host,
     sessionToken,
-    makeCall
+    makeCall,
+    logger,
   }) {
     if (typeof host !== 'string'
       || typeof sessionToken !== 'string') {
@@ -173,11 +174,12 @@ class AudioManager {
     // FIXME temporary - we need to refactor sockt-connection to use makeCall
     // as a proper util method without creating circular dependencies
     this._makeCall = makeCall;
+    this.logger = logger;
     this.initialized = true;
     try {
       this.iceServers = await fetchIceServers(this._getStunFetchURL());
     } catch (error) {
-      logger.error({
+      this.logger.error({
         logCode: 'sfuaudio_stun-turn_fetch_failed',
         extraInfo: {
           errorCode: error.code,
@@ -194,13 +196,13 @@ class AudioManager {
 
   // Connected, but needs acknowledgement from call states to be flagged as joined
   onAudioConnected() {
-    logger.info({ logCode: 'audio_connected' }, 'Audio connected');
+    this.logger.info({ logCode: 'audio_connected' }, 'Audio connected');
   }
 
   onAudioJoin() {
     store.dispatch(setIsConnected(true));
     store.dispatch(setIsConnecting(false));
-    logger.info({ logCode: 'audio_joined' }, 'Audio Joined');
+    this.logger.info({ logCode: 'audio_joined' }, 'Audio Joined');
   }
 
   onAudioReconnected() {
@@ -229,6 +231,7 @@ class AudioManager {
     if (!this.bridge) {
       // Bridge is nil => there's no audio anymore - guarantee local states reflect that
       this.onAudioExit();
+
       return;
     }
 

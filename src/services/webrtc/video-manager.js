@@ -1,6 +1,5 @@
 import ReconnectingWebSocket from 'reconnecting-websocket';
 import { mediaDevices } from 'react-native-webrtc';
-import logger from '../logger';
 import VideoBroker from './video-broker';
 import fetchIceServers from './fetch-ice-servers';
 import {
@@ -97,7 +96,7 @@ class VideoManager {
   }
 
   _onWSError(error) {
-    logger.error({
+    this.logger.error({
       logCode: `videomanager_websocket_error`,
       extraInfo: {
         errorMessage: error.name || error.message || 'Unknown error',
@@ -107,7 +106,7 @@ class VideoManager {
 
   _onWSClosed() {
     store.dispatch(setSignalingTransportOpen(false));
-    logger.info({
+    this.logger.info({
       logCode: 'videomanager_websocket_closed',
       extraInfo: {
         address: this._wsUrl,
@@ -179,7 +178,7 @@ class VideoManager {
       if (this.ws) this._closeWS();
 
       const preloadErrorCatcher = (error) => {
-        logger.error({
+        this.logger.error({
           logCode: 'videomanager_websocket_error_beforeopen',
           extraInfo: {
             errorMessage: error.name || error.message || 'Unknown error',
@@ -200,7 +199,7 @@ class VideoManager {
         this._wsListenersSetup = true;
         store.dispatch(setSignalingTransportOpen(true));
         this._flushWsQueue();
-        logger.info({
+        this.logger.info({
           logCode: 'videomanager_websocket_open',
           extraInfo: {
             address: wsUrl,
@@ -228,10 +227,11 @@ class VideoManager {
       stream: (inputStream && inputStream.active) ? inputStream : undefined,
       offering: true,
       traceLogs: true,
+      logger: this.logger,
     };
     const bridge = new VideoBroker('share', brokerOptions);
     bridge.onended = () => {
-      logger.info({
+      this.logger.info({
         logCode: 'video_ended',
         extraInfo: {
           cameraId,
@@ -241,7 +241,7 @@ class VideoManager {
       this.onLocalVideoExit(cameraId);
     };
     bridge.onerror = (error) => {
-      logger.error({
+      this.logger.error({
         logCode: 'video_failure',
         extraInfo: {
           cameraId,
@@ -256,7 +256,7 @@ class VideoManager {
       this.onVideoPublished(cameraId);
     };
     bridge.onreconnecting = () => {
-      logger.info({
+      this.logger.info({
         logCode: 'video_reconnecting',
         extraInfo: {
           cameraId,
@@ -281,10 +281,11 @@ class VideoManager {
       iceServers: this.iceServers,
       offering: false,
       traceLogs: true,
+      logger: this.logger,
     };
     const bridge = new VideoBroker('viewer', brokerOptions);
     bridge.onended = () => {
-      logger.info({
+      this.logger.info({
         logCode: 'video_ended',
         extraInfo: {
           cameraId,
@@ -294,7 +295,7 @@ class VideoManager {
       this.onRemoteVideoExit(cameraId);
     };
     bridge.onerror = (error) => {
-      logger.error({
+      this.logger.error({
         logCode: 'video_failure',
         extraInfo: {
           cameraId,
@@ -310,7 +311,7 @@ class VideoManager {
       if (remoteStream) this.storeMediaStream(cameraId, remoteStream);
     };
     bridge.onreconnecting = () => {
-      logger.info({
+      this.logger.info({
         logCode: 'video_reconnecting',
         extraInfo: {
           cameraId,
@@ -333,7 +334,8 @@ class VideoManager {
     userId,
     host,
     sessionToken,
-    makeCall
+    makeCall,
+    logger,
   }) {
     if (typeof host !== 'string'
       || typeof sessionToken !== 'string') {
@@ -346,11 +348,12 @@ class VideoManager {
     // FIXME temporary - we need to refactor sockt-connection to use makeCall
     // as a proper util method without creating circular dependencies
     this._makeCall = makeCall;
+    this.logger = logger;
     this.initialized = true;
     try {
       this.iceServers = await fetchIceServers(this._getStunFetchURL());
     } catch (error) {
-      logger.error({
+      this.logger.error({
         logCode: 'sfuvideo_stun-turn_fetch_failed',
         extraInfo: {
           errorCode: error.code,
@@ -364,7 +367,7 @@ class VideoManager {
       // TODO setup retry...
       await this._openWSConnection(this._getSFUAddr());
     } catch (error) {
-      logger.error({
+      this.logger.error({
         logCode: 'videomanager_websocket_error',
         extraInfo: {
           errorMessage: error.name || error.message || 'Unknown error',
@@ -382,7 +385,7 @@ class VideoManager {
     store.dispatch(setIsConnected(true));
     store.dispatch(setIsConnecting(false));
     this._makeCall('userShareWebcam', cameraId);
-    logger.info({ logCode: 'video_joined' }, 'Video Joined');
+    this.logger.info({ logCode: 'video_joined' }, 'Video Joined');
   }
 
   async publish() {

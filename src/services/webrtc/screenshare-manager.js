@@ -1,4 +1,3 @@
-import logger from '../logger';
 import ScreenshareBroker from './screenshare-broker';
 import fetchIceServers from './fetch-ice-servers';
 import {
@@ -60,18 +59,15 @@ class ScreenshareManager {
   }
 
   _initializeSubscriberBridge() {
-    this.bridge = new ScreenshareBroker(
-      this._getSFUAddr(),
-      'recv',
-      {
-        iceServers: this.iceServers,
-        offering: false,
-        traceLogs: true,
-      },
-    );
+    this.bridge = new ScreenshareBroker(this._getSFUAddr(), 'recv', {
+      iceServers: this.iceServers,
+      offering: false,
+      traceLogs: true,
+      logger: this.logger,
+    });
 
     this.bridge.onended = () => {
-      logger.info({
+      this.logger.info({
         logCode: 'screenshare_ended',
         extraInfo: {
           role: 'recv',
@@ -81,7 +77,7 @@ class ScreenshareManager {
     };
 
     this.bridge.onerror = (error) => {
-      logger.error({
+      this.logger.error({
         logCode: 'screenshare_failure',
         extraInfo: {
           role: 'recv',
@@ -100,7 +96,7 @@ class ScreenshareManager {
     };
 
     this.bridge.onreconnecting = () => {
-      logger.info({
+      this.logger.info({
         logCode: 'screenshare_reconnecting',
         extraInfo: {
           role: 'recv',
@@ -122,7 +118,8 @@ class ScreenshareManager {
     userId,
     host,
     sessionToken,
-    makeCall
+    makeCall,
+    logger,
   }) {
     if (typeof host !== 'string'
       || typeof sessionToken !== 'string') {
@@ -135,11 +132,12 @@ class ScreenshareManager {
     // FIXME temporary - we need to refactor sockt-connection to use makeCall
     // as a proper util method without creating circular dependencies
     this._makeCall = makeCall;
+    this.logger = logger;
     this.initialized = true;
     try {
       this.iceServers = await fetchIceServers(this._getStunFetchURL());
     } catch (error) {
-      logger.error({
+      this.logger.error({
         logCode: 'sfuscreenshare_stun-turn_fetch_failed',
         extraInfo: {
           errorCode: error.code,
@@ -157,7 +155,7 @@ class ScreenshareManager {
   onScreenshareSubscribed() {
     store.dispatch(setIsConnected(true));
     store.dispatch(setIsConnecting(false));
-    logger.info({ logCode: 'screenshare_joined' }, 'Screenshare Joined');
+    this.logger.info({ logCode: 'screenshare_joined' }, 'Screenshare Joined');
   }
 
   onScreenshareUnsubscribed() {
