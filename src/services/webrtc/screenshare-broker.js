@@ -1,4 +1,3 @@
-import logger from '../logger';
 import BaseBroker from './sfu-base-broker';
 import WebRtcPeer from './peer';
 
@@ -14,7 +13,7 @@ class ScreenshareBroker extends BaseBroker {
     role,
     options = {},
   ) {
-    super(SFU_COMPONENT_NAME, { wsUrl });
+    super(SFU_COMPONENT_NAME, { wsUrl, logger: options?.logger });
     this.role = role;
     this.ws = null;
     this.webRtcPeer = null;
@@ -31,6 +30,7 @@ class ScreenshareBroker extends BaseBroker {
     // mediaServer,
     // signalCandidates,
     // traceLogs
+    // logger
     Object.assign(this, options);
   }
 
@@ -64,6 +64,7 @@ class ScreenshareBroker extends BaseBroker {
               role: this.role,
             }
           },
+          logger: this.logger,
         };
         const peerRole = this.role === 'send' ? 'sendonly' : 'recvonly';
         this.webRtcPeer = new WebRtcPeer(peerRole, options);
@@ -82,7 +83,7 @@ class ScreenshareBroker extends BaseBroker {
       } catch (error) {
         // 1305: "PEER_NEGOTIATION_FAILED",
         const normalizedError = BaseBroker.assembleError(1305);
-        logger.error({
+        this.logger.error({
           logCode: `${this.logCodePrefix}_peer_creation_failed`,
           extraInfo: {
             errorMessage: error.name || error.message || 'Unknown error',
@@ -130,7 +131,7 @@ class ScreenshareBroker extends BaseBroker {
       case 'pong':
         break;
       default:
-        logger.debug({
+        this.logger.debug({
           logCode: `${this.logCodePrefix}_invalid_req`,
           extraInfo: {
             messageId: parsedMessage.id || 'Unknown',
@@ -214,7 +215,7 @@ class ScreenshareBroker extends BaseBroker {
     const { code, reason } = sfuResponse;
     const error = BaseBroker.assembleError(code, reason);
 
-    logger.error({
+    this.logger.error({
       logCode: `${this.logCodePrefix}_sfu_error`,
       extraInfo: {
         errorCode: code,
@@ -261,7 +262,7 @@ class ScreenshareBroker extends BaseBroker {
   }
 
   _handleOfferGenerationFailure(error) {
-    logger.error({
+    this.logger.error({
       logCode: `${this.logCodePrefix}_offer_failure`,
       extraInfo: {
         errorMessage: error.name || error.message || 'Unknown error',

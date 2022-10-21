@@ -1,4 +1,3 @@
-import logger from '../logger';
 import BaseBroker from './sfu-base-broker';
 import WebRtcPeer from './peer';
 
@@ -15,7 +14,7 @@ class VideoBroker extends BaseBroker {
   }
 
   constructor(role, options = {}) {
-    super(SFU_COMPONENT_NAME, { wsUrl: options.wsUrl, ws: options.ws });
+    super(SFU_COMPONENT_NAME, { wsUrl: options.wsUrl, ws: options.ws, logger: options?.logger });
     this.role = role;
     this.offering = true;
 
@@ -29,6 +28,7 @@ class VideoBroker extends BaseBroker {
     // stream,
     // signalCandidates
     // traceLogs
+    // logger
     Object.assign(this, options);
   }
 
@@ -90,7 +90,8 @@ class VideoBroker extends BaseBroker {
               role: this.role,
               cameraId: this.cameraId,
             }
-          }
+          },
+          logger: this.logger,
         };
 
         const peerRole = this.role === 'share' ? 'sendonly' : 'recvonly';
@@ -110,7 +111,7 @@ class VideoBroker extends BaseBroker {
       } catch (error) {
         // 1305: "PEER_NEGOTIATION_FAILED",
         const normalizedError = BaseBroker.assembleError(1305);
-        logger.error({
+        this.logger.error({
           logCode: `${this.logCodePrefix}_peer_creation_failed`,
           extraInfo: {
             errorMessage: error.name || error.message || 'Unknown error',
@@ -162,7 +163,7 @@ class VideoBroker extends BaseBroker {
       case 'pong':
         break;
       default:
-        logger.debug({
+        this.logger.debug({
           logCode: `${this.logCodePrefix}_invalid_req`,
           extraInfo: { messageId: parsedMessage.id || 'Unknown', sfuComponent: this.sfuComponent },
         }, 'Discarded invalid SFU message');
@@ -242,7 +243,7 @@ class VideoBroker extends BaseBroker {
     const { code, reason, role } = sfuResponse;
     const error = BaseBroker.assembleError(code, reason);
 
-    logger.error({
+    this.logger.error({
       logCode: `${this.logCodePrefix}_sfu_error`,
       extraInfo: {
         errorCode: code,
@@ -289,7 +290,7 @@ class VideoBroker extends BaseBroker {
       mediaServer: this.mediaServer,
     };
 
-    logger.debug({
+    this.logger.debug({
       logCode: `${this.logCodePrefix}_offer_generated`,
       extraInfo: { sfuComponent: this.sfuComponent, role: this.role },
     }, 'SFU video offer generated');
@@ -299,7 +300,7 @@ class VideoBroker extends BaseBroker {
 
   _handleOfferGenerationFailure(error) {
     if (error) {
-      logger.error({
+      this.logger.error({
         logCode: `${this.logCodePrefix}_offer_failure`,
         extraInfo: {
           errorMessage: error.name || error.message || 'Unknown error',

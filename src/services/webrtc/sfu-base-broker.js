@@ -1,5 +1,4 @@
 import { EventEmitter2 } from 'eventemitter2';
-import logger from '../logger';
 import { notifyStreamStateChange } from './stream-state-service';
 import { SFU_BROKER_ERRORS } from './broker-base-errors';
 
@@ -23,6 +22,7 @@ class BaseBroker extends EventEmitter2 {
     // ws: Provide a previously set up socket that should be re-used. Ping-pong
     // procedures et al must be previously set up.
     ws,
+    logger,
   }) {
     super({ newListener: true });
     this.wsUrl = wsUrl;
@@ -35,6 +35,7 @@ class BaseBroker extends EventEmitter2 {
     this.signalingTransportOpen = false;
     this.logCodePrefix = `${this.sfuComponent}_broker`;
     this.peerConfiguration = {};
+    this.logger = logger;
 
     this._wsListenersSetup = false;
     this._preloadedWS = !!(ws && typeof ws === 'object');
@@ -129,7 +130,7 @@ class BaseBroker extends EventEmitter2 {
   }
 
   onWSError(error) {
-    logger.error({
+    this.logger.error({
       logCode: `${this.logCodePrefix}_websocket_error`,
       extraInfo: {
         errorMessage: error.name || error.message || 'Unknown error',
@@ -172,7 +173,7 @@ class BaseBroker extends EventEmitter2 {
       }
 
       const preloadErrorCatcher = (error) => {
-        logger.error({
+        this.logger.error({
           logCode: `${this.logCodePrefix}_websocket_error_beforeopen`,
           extraInfo: {
             errorMessage: error.name || error.message || 'Unknown error',
@@ -240,7 +241,7 @@ class BaseBroker extends EventEmitter2 {
   _validateStartResponse (sfuResponse) {
     const { response, role } = sfuResponse;
 
-    logger.debug({
+    this.logger.debug({
       logCode: `${this.logCodePrefix}_start_success`,
       extraInfo: {
         role,
@@ -256,7 +257,7 @@ class BaseBroker extends EventEmitter2 {
       this.webRtcPeer.processOffer(sfuResponse.sdpAnswer)
         .then(this._processRemoteDescription.bind(this))
         .catch((error) => {
-          logger.error({
+          this.logger.error({
             logCode: `${this.logCodePrefix}_processoffer_error`,
             extraInfo: {
               errorMessage: error.name || error.message || 'Unknown error',
@@ -274,7 +275,7 @@ class BaseBroker extends EventEmitter2 {
       this.webRtcPeer.processAnswer(sfuResponse.sdpAnswer)
         .then(this._processRemoteDescription.bind(this))
         .catch((error) => {
-          logger.error({
+          this.logger.error({
             logCode: `${this.logCodePrefix}_processanswer_error`,
             extraInfo: {
               errorMessage: error.name || error.message || 'Unknown error',
@@ -329,7 +330,7 @@ class BaseBroker extends EventEmitter2 {
       // Just log the error. We can't be sure if a candidate failure on add is
       // fatal or not, so that's why we have a timeout set up for negotiations and
       // listeners for ICE state transitioning to failures, so we won't act on it here
-      logger.error({
+      this.logger.error({
         logCode: `${this.logCodePrefix}_addicecandidate_error`,
         extraInfo: {
           errorMessage: error.name || error.message || 'Unknown error',
@@ -427,7 +428,7 @@ class BaseBroker extends EventEmitter2 {
     this.disposePeer(reconnecting);
     this.started = false;
 
-    logger.debug({
+    this.logger.debug({
       logCode: `${this.logCodePrefix}_stop`,
       extraInfo: { sfuComponent: this.sfuComponent },
     }, `Stopped broker session for ${this.sfuComponent}`);

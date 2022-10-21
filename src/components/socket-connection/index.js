@@ -26,6 +26,11 @@ import {
 } from './utils';
 import 'react-native-url-polyfill/auto';
 import TextInput from '../text-input';
+import logger, {
+  injectMakeCall,
+  injectAuthInfoFetcher,
+  injectSessionIdFetcher,
+} from '../../services/logger';
 // TODO BAD - decouple, move elsewhere
 import MessageSender from './message-sender';
 import MethodTransaction from './method-transaction';
@@ -37,6 +42,8 @@ import ScreenshareManager from '../../services/webrtc/screenshare-manager';
 
 // TODO BAD - decouple, move elsewhere - everything from here to getMeetingData
 let GLOBAL_WS = null;
+let CURRENT_MEETING_DATA = {};
+let CURRENT_SESSION_ID;
 const GLOBAL_TRANSACTIONS = new MethodTransactionManager();
 
 const sendMessage = (ws, msgObj) => {
@@ -79,6 +86,26 @@ const sendValidationMsg = (ws, meetingData) => {
   return validateReqId;
 };
 
+const getAuthInfo = () => {
+  const {
+    meetingID, sessionToken, internalUserID,
+    fullname, externUserID, confname,
+  } = CURRENT_MEETING_DATA;
+
+  return {
+    sessionToken,
+    meetingId: meetingID,
+    requesterUserId: internalUserID,
+    fullname,
+    confname,
+    externUserID,
+  };
+};
+
+const getCurrentSessionId = () => {
+  return CURRENT_SESSION_ID;
+}
+
 const makeCall = (name, ...args) => {
   if (GLOBAL_WS == null) throw new TypeError('Socket is not open');
 
@@ -93,14 +120,14 @@ const getHost = (_url) => {
   const url = new URL(_url);
 
   return url.host;
-}
+};
 
 const getSessionToken = (_url) => {
   const url = new URL(_url);
   const params = new URLSearchParams(url.search);
 
   return params.get('sessionToken');
-}
+};
 
 const makeWS = (joinUrl) => {
   const url = new URL(joinUrl);
@@ -138,14 +165,16 @@ const getMeetingData = async (joinUrl) => {
 };
 
 const initializeMediaManagers = ({ internalUserID, host, sessionToken }) => {
-  AudioManager.init({ userId: internalUserID, host, sessionToken, makeCall });
-  VideoManager.init({ userId: internalUserID, host, sessionToken, makeCall });
-  ScreenshareManager.init({
+  const mediaManagerConfigs = {
     userId: internalUserID,
     host,
     sessionToken,
-    makeCall
-  });
+    makeCall,
+    logger,
+  };
+  AudioManager.init(mediaManagerConfigs);
+  VideoManager.init(mediaManagerConfigs);
+  ScreenshareManager.init(mediaManagerConfigs);
 };
 
 const destroyMediaManagers = () => {
@@ -283,6 +312,7 @@ const SocketConnectionComponent = (props) => {
 
       const resp = await getMeetingData(joinUrl);
       setMeetingData(resp);
+      CURRENT_MEETING_DATA = resp;
     }
     getData();
   }, [joinUrl]);
@@ -417,5 +447,16 @@ const SocketConnectionComponent = (props) => {
   return null;
 };
 
-export { makeCall };
+// TODO refactor out - see logger.js - prlanzarin
+injectMakeCall(makeCall);
+injectAuthInfoFetcher(getAuthInfo);
+injectSessionIdFetcher(getCurrentSessionId);
+
 export default SocketConnectionComponent;
+// General API stuff that is bound to signaling and join procedures
+// TODO should be moved elsewhere
+export {
+  getCurrentSessionId,
+  getAuthInfo,
+  makeCall
+};

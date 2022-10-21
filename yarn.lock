@@ -1350,6 +1350,37 @@
     "@babel/helper-validator-identifier" "^7.19.1"
     to-fast-properties "^2.0.0"
 
+"@browser-bunyan/console-formatted-stream@^1.8.0":
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/@browser-bunyan/console-formatted-stream/-/console-formatted-stream-1.8.0.tgz#dda9dcab6ce445cbf2911045709930757e5d48c1"
+  integrity sha512-Lg5SC2uXrvZ6aLwLZT6SErfN1Is4NcrTOb5km4BW/BfL8Lv0CfpsYuhuD7ltdURL6awTYBUiT+BwhKw1Xd9glQ==
+  dependencies:
+    "@browser-bunyan/levels" "^1.8.0"
+
+"@browser-bunyan/console-plain-stream@^1.8.0":
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/@browser-bunyan/console-plain-stream/-/console-plain-stream-1.8.0.tgz#18cd8fe879a0f576cf84c4fa4647e86cd3feea3e"
+  integrity sha512-S0WNsH5zvMfkbayIx90wANGHQ8l3Bvd7mjgy95/bYmUzcI+Mwkv2eJcSufdTP/MbdHBhjv/lEdLDOXEPBi+w3A==
+  dependencies:
+    "@browser-bunyan/levels" "^1.8.0"
+
+"@browser-bunyan/console-raw-stream@^1.8.0":
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/@browser-bunyan/console-raw-stream/-/console-raw-stream-1.8.0.tgz#5d0438139bbffd9ed779241df6ae7e5f3a2a7b0c"
+  integrity sha512-6M/xEiNckbFslQMaS1BHAxvuvN1Wtbh/aq4UzQD3fjEPFCxtubvf4KyzwPxUXA5CXq7leVZ+cibEUCRBsm5bzg==
+  dependencies:
+    "@browser-bunyan/levels" "^1.8.0"
+
+"@browser-bunyan/levels@^1.8.0":
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/@browser-bunyan/levels/-/levels-1.8.0.tgz#1c0a98d04284e0620e8ee414d7ce43385080a5cf"
+  integrity sha512-f9oSDik8kAl+4rhVyHqIr012P1boHFUKc7D9nzA5+lDsFoP90UQnDwpseqBdF2mTaWYju10E7h+GdH8u+7MHOQ==
+
+"@browser-bunyan/server-stream@^1.8.0":
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/@browser-bunyan/server-stream/-/server-stream-1.8.0.tgz#479f5343de0f22971e4bc02351c63d885d5ec8d2"
+  integrity sha512-Jccy9FuJbk/LW52M0SEEzHS5WbFpcP1XgsSzAvGbgSJDNw9S+6vLbVLJi/o/yABuhj6fWzLmACbvin1YJk4XJQ==
+
 "@callstack/react-theme-provider@^3.0.7":
   version "3.0.7"
   resolved "https://registry.npmjs.org/@callstack/react-theme-provider/-/react-theme-provider-3.0.7.tgz"
@@ -1411,7 +1442,7 @@
 
 "@expo/bunyan@4.0.0", "@expo/bunyan@^4.0.0":
   version "4.0.0"
-  resolved "https://registry.npmjs.org/@expo/bunyan/-/bunyan-4.0.0.tgz"
+  resolved "https://registry.yarnpkg.com/@expo/bunyan/-/bunyan-4.0.0.tgz#be0c1de943c7987a9fbd309ea0b1acd605890c7b"
   integrity sha512-Ydf4LidRB/EBI+YrB+cVLqIseiRfjUI/AeHBgjGMtq3GroraDu81OV7zqophRgupngoL3iS3JUMDMnxO7g39qA==
   dependencies:
     uuid "^8.0.0"
@@ -2870,6 +2901,16 @@ braces@^3.0.2, braces@~3.0.2:
   integrity sha512-b8um+L1RzM3WDSzvhm6gIz1yfTbBt6YTlcEKAvsmqCZZFw46z626lVj9j1yEPW33H5H+lBQpZMP1k8l+78Ha0A==
   dependencies:
     fill-range "^7.0.1"
+
+browser-bunyan@^1.8.0:
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/browser-bunyan/-/browser-bunyan-1.8.0.tgz#6b9662fea571c642fce80ad002d62e3ea1453393"
+  integrity sha512-Et1TaRUm8m2oy4OTi69g0qAM8wqpofACUgkdBnj1Kq2aC8Wpl8w+lNevebPG6zKH2w0Aq+BHiAXWwjm0/QbkaQ==
+  dependencies:
+    "@browser-bunyan/console-formatted-stream" "^1.8.0"
+    "@browser-bunyan/console-plain-stream" "^1.8.0"
+    "@browser-bunyan/console-raw-stream" "^1.8.0"
+    "@browser-bunyan/levels" "^1.8.0"
 
 browserslist@^4.20.2, browserslist@^4.20.3:
   version "4.20.4"

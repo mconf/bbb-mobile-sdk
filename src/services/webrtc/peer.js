@@ -330,7 +330,7 @@ export default class WebRtcPeer extends EventEmitter2 {
       .then((offer) => {
         this.logger.debug({
           logCode: 'BBB::WebRtcPeer::generateOffer::createOffer',
-          extraInfo: { offer },
+          extraInfo: this._logMetadata,
         }, 'BBB::WebRtcPeer::generateOffer - Offer created');
 
         return this.peerConnection.setLocalDescription(offer);
@@ -339,7 +339,7 @@ export default class WebRtcPeer extends EventEmitter2 {
         const localDescription = this.getLocalSessionDescriptor();
         this.logger.debug({
           logCode: 'BBB::WebRtcPeer::generateOffer::setLocalDescription',
-          extraInfo: { ...this._logMetadata, localDescription },
+          extraInfo: this._logMetadata,
         }, 'BBB::WebRtcPeer::generateOffer - Local description set');
 
         return localDescription.sdp;
@@ -362,9 +362,9 @@ export default class WebRtcPeer extends EventEmitter2 {
     }
 
     return this.peerConnection.setRemoteDescription(answer).then(() => {
-      this.logger.debug({
+      this.logger.info({
         logCode: 'BBB::WebRtcPeer::processAnswer::setRemoteDescription',
-        extraInfo: { ...this._logMetadata, answer },
+        extraInfo: { ...this._logMetadata },
       }, 'BBB::WebRtcPeer::processAnswer - Remote description set');
     }).catch((error) => {
       this.logger.error({
@@ -373,7 +373,6 @@ export default class WebRtcPeer extends EventEmitter2 {
           ...this._logMetadata,
           errorName: error.name,
           errorMessage: error.message,
-          answer
         },
       }, 'BBB::WebRtcPeer::processAnswer::setRemoteDescription - failed');
 
@@ -400,14 +399,14 @@ export default class WebRtcPeer extends EventEmitter2 {
       .then(() => {
         this.logger.debug({
           logCode: 'BBB::WebRtcPeer::processOffer::setRemoteDescription',
-          extraInfo: { ...this._logMetadata, offer },
+          extraInfo: this._logMetadata,
         }, 'BBB::WebRtcPeer::processOffer - Remote description set');
         this.peerConnection.createAnswer()
       })
       .then((answer) => {
         this.logger.debug({
           logCode: 'BBB::WebRtcPeer::processOffer::createAnswer',
-          extraInfo: { ...this._logMetadata, answer },
+          extraInfo: this._logMetadata,
         }, 'BBB::WebRtcPeer::processOffer - Created answer');
 
         return this.peerConnection.setLocalDescription(answer);
@@ -416,7 +415,7 @@ export default class WebRtcPeer extends EventEmitter2 {
         const localDescription = this.getLocalSessionDescriptor();
         this.logger.debug({
           logCode: 'BBB::WebRtcPeer::processOffer::setLocalDescription',
-          extraInfo: { ...this._logMetadata, localDescription },
+          extraInfo: this._logMetadata,
         }, 'BBB::WebRtcPeer::processOffer - Local description set');
 
         return localDescription.sdp;
