@@ -247,11 +247,12 @@ export default class WebRtcPeer extends EventEmitter2 {
   start() {
     // Init PeerConnection
     if (!this.peerConnection) {
-      this.peerConnection = new RTCPeerConnection(this.configuration);
+      this.peerConnection = new RTCPeerConnection();
+      this.peerConnection.setConfiguration(this.configuration);
     }
 
     if (this.isPeerConnectionClosed()) {
-      this.logger.trace({
+      this.logger.debug({
         logCode: 'BBB::WebRtcPeer::start::closed',
         extraInfo: this._logMetadata,
       }, 'BBB::WebRtcPeer::start - Peer connection closed');
@@ -333,7 +334,9 @@ export default class WebRtcPeer extends EventEmitter2 {
           extraInfo: this._logMetadata,
         }, 'BBB::WebRtcPeer::generateOffer - Offer created');
 
-        return this.peerConnection.setLocalDescription(offer);
+        return this.peerConnection.setLocalDescription(
+          new RTCSessionDescription(offer),
+        );
       })
       .then(() => {
         const localDescription = this.getLocalSessionDescriptor();
@@ -401,7 +404,7 @@ export default class WebRtcPeer extends EventEmitter2 {
           logCode: 'BBB::WebRtcPeer::processOffer::setRemoteDescription',
           extraInfo: this._logMetadata,
         }, 'BBB::WebRtcPeer::processOffer - Remote description set');
-        this.peerConnection.createAnswer()
+        return this.peerConnection.createAnswer()
       })
       .then((answer) => {
         this.logger.debug({
@@ -409,7 +412,9 @@ export default class WebRtcPeer extends EventEmitter2 {
           extraInfo: this._logMetadata,
         }, 'BBB::WebRtcPeer::processOffer - Created answer');
 
-        return this.peerConnection.setLocalDescription(answer);
+        return this.peerConnection.setLocalDescription(
+          new RTCSessionDescription(answer)
+        );
       })
       .then(() => {
         const localDescription = this.getLocalSessionDescriptor();
