@@ -22,6 +22,7 @@ import videoReducer from './slices/wide-app/video';
 import localScreenshareReducer from './slices/wide-app/screenshare';
 import chatReducer from './slices/wide-app/chat';
 import interactionsReducer from './slices/wide-app/interactions';
+import notificationBarReducer from './slices/wide-app/notification-bar';
 import layoutReducer from './slices/wide-app/layout';
 import clientReducer from './slices/wide-app/client';
 // Middlewares
@@ -30,6 +31,7 @@ import {
   videoStreamCleanupObserver,
   voiceUserStateObserver,
   voiceCallStateObserver,
+  notificationBarObserver,
 } from './middlewares';
 
 const appReducer = combineReducers({
@@ -58,6 +60,7 @@ const appReducer = combineReducers({
   screenshare: localScreenshareReducer,
   chat: chatReducer,
   interactions: interactionsReducer,
+  notificationBar: notificationBarReducer,
   layout: layoutReducer,
   client: clientReducer,
 });
@@ -79,6 +82,7 @@ export const store = configureStore({
       screenshareCleanupObserver.middleware,
       voiceUserStateObserver.middleware,
       voiceCallStateObserver.middleware,
+      notificationBarObserver.middleware,
     ]);
   },
 });
