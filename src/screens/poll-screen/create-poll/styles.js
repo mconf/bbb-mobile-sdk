@@ -32,6 +32,17 @@ const ConfirmButton = styled(button)`
   margin-top: 32px;
 `;
 
+const PublishButton = styled(button)`
+  background-color: ${Colors.orange};
+  color: ${Colors.white};
+  font-size: 16px;
+  font-weight: 400;
+  padding: 12px;
+  margin-bottom: 16px;
+  border-radius: 12px;
+  margin-top: 8px;
+`;
+
 const Title = styled.Text`
   font-size: 24px;
   font-weight: 600;
@@ -48,6 +59,49 @@ const AnswerTitle = styled.Text`
 
 const TextInput = styled(textInput)``;
 
+const Answer = styled.Text`
+  font-weight: 400;
+  font-size: 16px;
+  color: #667080;
+  width: 30%;
+  text-align: center;
+`;
+
+const Bar = styled.View`
+  background-color: #D4DDE4;
+  border-radius: 4px;
+`;
+
+const InsideBarText = styled.Text`
+  color: #667080;
+  font-weight: 400;
+  font-size: 12px;
+  position: absolute;
+`;
+
+const Percentage = styled.Text`
+  font-weight: 400;
+  font-size: 16px;
+  color: #667080;
+  text-align: center;
+  width: 10%;
+`;
+
+const AnswerContainer = styled.View`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  padding: 4px;
+`;
+
+const InfoText = styled.Text`
+  color: #667080;
+  font-weight: 400;
+  font-size: 12px;
+  margin-top: 16px;
+  margin-bottom: 8px;
+`;
+
 export default {
   Title,
   OptionsButton,
@@ -55,4 +109,11 @@ export default {
   ButtonsContainer,
   ConfirmButton,
   TextInput,
+  Answer,
+  Bar,
+  Percentage,
+  AnswerContainer,
+  InfoText,
+  InsideBarText,
+  PublishButton,
 };

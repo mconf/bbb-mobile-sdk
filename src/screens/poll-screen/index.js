@@ -58,7 +58,8 @@ const PollScreen = () => {
   };
 
   const handlePollViewCurrentState = () => {
-    if (isPresenter) {
+    // Campus party event
+    if (true) {
       return <CreatePollView />;
     }
 
