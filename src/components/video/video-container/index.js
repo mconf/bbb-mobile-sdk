@@ -1,9 +1,9 @@
-import { useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
-import { Alert } from 'react-native';
-import Styled from './styles';
+import { useDispatch, useSelector } from 'react-redux';
+import { setFocusedElement, setFocusedId, setIsFocused } from '../../../store/redux/slices/wide-app/layout';
 import IconButtonComponent from '../../icon-button';
 import VideoManager from '../../../services/webrtc/video-manager';
+import Styled from './styles';
 
 const VideoContainer = (props) => {
   const {
@@ -14,7 +14,9 @@ const VideoContainer = (props) => {
     style,
     local,
   } = props;
+
   const [showOptions, setShowOptions] = useState(false);
+  const dispatch = useDispatch();
   const mediaStreamId = useSelector(
     (state) => state.video.videoStreams[cameraId]
   );
@@ -36,10 +38,25 @@ const VideoContainer = (props) => {
     }
 
     if (userAvatar && userAvatar.length !== 0) {
-      return <Styled.UserAvatar source={userAvatar} />;
+      return <Styled.UserAvatar source={{ uri: userAvatar }} />;
     }
 
     return <Styled.UserColor userColor={userColor} />;
+  };
+
+  const handleFocusClick = () => {
+    if (typeof mediaStreamId === 'string') {
+      dispatch(setFocusedId(mediaStreamId));
+      dispatch(setFocusedElement('videoStream'));
+    } else if (userAvatar && userAvatar.length !== 0) {
+      dispatch(setFocusedId(userAvatar));
+      dispatch(setFocusedElement('avatar'));
+    } else {
+      dispatch(setFocusedId(userColor));
+      dispatch(setFocusedElement('color'));
+    }
+
+    dispatch(setIsFocused(true));
   };
 
   return (
@@ -58,12 +75,7 @@ const VideoContainer = (props) => {
       {showOptions && (
         <Styled.PressableButton
           activeOpacity={0.6}
-          onPress={() =>
-            Alert.alert(
-              'Currently under development',
-              'This feature will be addressed soon, please check out our github page'
-            )
-          }
+          onPress={handleFocusClick}
         >
           <IconButtonComponent
             icon="fullscreen"

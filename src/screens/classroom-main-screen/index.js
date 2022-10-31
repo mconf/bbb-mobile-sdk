@@ -10,7 +10,6 @@ import { selectSortedVideoStreams } from '../../store/redux/slices/video-streams
 
 const ClassroomMainScreen = () => {
   // variables
-  const chatStore = useSelector((state) => state.chat);
   const videoUsers = useSelector(selectSortedVideoStreams);
   const orientation = useOrientation();
   const [switchLandscapeLayout, setSwitchLandscapeLayout] = useState(false);
@@ -36,11 +35,9 @@ const ClassroomMainScreen = () => {
           </Styled.ContentAreaContainer>
 
           <Styled.ChatContainer>
-            {chatStore.isFastChatOpen && (
-              <Styled.Chat
-                onPressItem={() => dispatch(setBottomChatOpen(true))}
-              />
-            )}
+            <Styled.Chat
+              onPressItem={() => dispatch(setBottomChatOpen(true))}
+            />
           </Styled.ChatContainer>
 
           <Styled.ActionsBarContainer>

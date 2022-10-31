@@ -22,6 +22,7 @@ import videoReducer from './slices/wide-app/video';
 import localScreenshareReducer from './slices/wide-app/screenshare';
 import chatReducer from './slices/wide-app/chat';
 import interactionsReducer from './slices/wide-app/interactions';
+import layoutReducer from './slices/wide-app/layout';
 // Middlewares
 import {
   screenshareCleanupObserver,
@@ -57,6 +58,7 @@ export const store = configureStore({
     screenshare: localScreenshareReducer,
     chat: chatReducer,
     interactions: interactionsReducer,
+    layout: layoutReducer,
   },
   middleware: (getDefaultMiddleware) => {
     return getDefaultMiddleware().prepend([
