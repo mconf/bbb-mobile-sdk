@@ -1,4 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
+import { StatusBar } from 'expo-status-bar';
 import { setFocusedElement, setFocusedId, setIsFocused } from '../../store/redux/slices/wide-app/layout';
 import Styled from './styles';
 
@@ -27,6 +28,7 @@ const FullscreenWrapper = () => {
       <Styled.ConfirmButton onPress={onCloseFullscreen}>
         Desfocar
       </Styled.ConfirmButton>
+      <StatusBar hidden />
     </Styled.Container>
   );
 };
