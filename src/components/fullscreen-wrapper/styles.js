@@ -40,10 +40,21 @@ const UserAvatar = styled.Image`
   overflow: hidden;
 `;
 
+const UserColor = styled.View`
+  width: 95%;
+  height: 95%;
+  margin: 16px;
+  border: ${Colors.white} solid 2px;
+  border-radius: 8px;
+  background-color: ${({ userColor }) => userColor};
+  overflow: hidden;
+`;
+
 export default {
   VideoStream,
   ConfirmButton,
   Container,
   Wrapper,
   UserAvatar,
+  UserColor,
 };

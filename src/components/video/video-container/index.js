@@ -51,7 +51,11 @@ const VideoContainer = (props) => {
     } else if (userAvatar && userAvatar.length !== 0) {
       dispatch(setFocusedId(userAvatar));
       dispatch(setFocusedElement('avatar'));
+    } else {
+      dispatch(setFocusedId(userColor));
+      dispatch(setFocusedElement('color'));
     }
+
     dispatch(setIsFocused(true));
   };
 
