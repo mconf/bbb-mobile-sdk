@@ -38,7 +38,7 @@ const VideoContainer = (props) => {
     }
 
     if (userAvatar && userAvatar.length !== 0) {
-      return <Styled.UserAvatar source={userAvatar} />;
+      return <Styled.UserAvatar source={{ uri: userAvatar }} />;
     }
 
     return <Styled.UserColor userColor={userColor} />;
