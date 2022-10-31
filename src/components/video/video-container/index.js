@@ -1,9 +1,9 @@
-import { useDispatch, useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
-import Styled from './styles';
+import { useDispatch, useSelector } from 'react-redux';
+import { setFocusedElement, setFocusedId, setIsFocused } from '../../../store/redux/slices/wide-app/layout';
 import IconButtonComponent from '../../icon-button';
 import VideoManager from '../../../services/webrtc/video-manager';
-import { setFocusedId, setIsFocused } from '../../../store/redux/slices/wide-app/layout';
+import Styled from './styles';
 
 const VideoContainer = (props) => {
   const {
@@ -44,6 +44,17 @@ const VideoContainer = (props) => {
     return <Styled.UserColor userColor={userColor} />;
   };
 
+  const handleFocusClick = () => {
+    if (typeof mediaStreamId === 'string') {
+      dispatch(setFocusedId(mediaStreamId));
+      dispatch(setFocusedElement('videoStream'));
+    } else if (userAvatar && userAvatar.length !== 0) {
+      dispatch(setFocusedId(userAvatar));
+      dispatch(setFocusedElement('avatar'));
+    }
+    dispatch(setIsFocused(true));
+  };
+
   return (
     <Styled.ContainerPressable
       style={style}
@@ -60,10 +71,7 @@ const VideoContainer = (props) => {
       {showOptions && (
         <Styled.PressableButton
           activeOpacity={0.6}
-          onPress={() => {
-            dispatch(setFocusedId(mediaStreamId));
-            dispatch(setIsFocused(true));
-          }}
+          onPress={handleFocusClick}
         >
           <IconButtonComponent
             icon="fullscreen"

@@ -34,9 +34,16 @@ const ConfirmButton = styled(button)`
   padding: 12px;
 `;
 
+const UserAvatar = styled.Image`
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+`;
+
 export default {
   VideoStream,
   ConfirmButton,
   Container,
   Wrapper,
+  UserAvatar,
 };

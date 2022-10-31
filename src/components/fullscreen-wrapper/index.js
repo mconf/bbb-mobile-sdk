@@ -1,10 +1,16 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { setFocusedId, setIsFocused } from '../../store/redux/slices/wide-app/layout';
+import { setFocusedElement, setFocusedId, setIsFocused } from '../../store/redux/slices/wide-app/layout';
 import Styled from './styles';
 
 const FullscreenWrapper = () => {
   const layoutStore = useSelector((state) => state.layout);
   const dispatch = useDispatch();
+
+  const onCloseFullscreen = () => {
+    dispatch(setIsFocused(false));
+    dispatch(setFocusedId(''));
+    dispatch(setFocusedElement(''));
+  };
 
   if (!layoutStore.isFocused) {
     return null;
@@ -13,15 +19,11 @@ const FullscreenWrapper = () => {
   return (
     <Styled.Container>
       <Styled.Wrapper>
-        <Styled.VideoStream streamURL={layoutStore.focusedId} />
+        {layoutStore.focusedElement === 'videoStream' && <Styled.VideoStream streamURL={layoutStore.focusedId} />}
+        {layoutStore.focusedElement === 'avatar' && <Styled.UserAvatar source={{ uri: layoutStore.focusedId }} />}
       </Styled.Wrapper>
-      <Styled.ConfirmButton
-        onPress={() => {
-          dispatch(setIsFocused(false));
-          dispatch(setFocusedId(''));
-        }}
-      >
-        Minimizar
+      <Styled.ConfirmButton onPress={onCloseFullscreen}>
+        Desfocar
       </Styled.ConfirmButton>
     </Styled.Container>
   );

@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   isFocused: false,
   focusedId: '',
+  focusedElement: '',
 };
 
 const layoutSlice = createSlice({
@@ -15,8 +16,15 @@ const layoutSlice = createSlice({
     setFocusedId: (state, action) => {
       state.focusedId = action.payload;
     },
+    setFocusedElement: (state, action) => {
+      state.focusedElement = action.payload;
+    },
   },
 });
 
-export const { setIsFocused, setFocusedId } = layoutSlice.actions;
+export const {
+  setIsFocused,
+  setFocusedId,
+  setFocusedElement
+} = layoutSlice.actions;
 export default layoutSlice.reducer;
