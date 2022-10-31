@@ -22,6 +22,7 @@ const FullscreenWrapper = () => {
         {layoutStore.focusedElement === 'videoStream' && <Styled.VideoStream streamURL={layoutStore.focusedId} />}
         {layoutStore.focusedElement === 'avatar' && <Styled.UserAvatar source={{ uri: layoutStore.focusedId }} />}
         {layoutStore.focusedElement === 'color' && <Styled.UserColor userColor={layoutStore.focusedId} />}
+        {layoutStore.focusedElement === 'presentation' && <Styled.Presentation source={{ uri: layoutStore.focusedId }} />}
       </Styled.Wrapper>
       <Styled.ConfirmButton onPress={onCloseFullscreen}>
         Desfocar
