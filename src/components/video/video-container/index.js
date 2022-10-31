@@ -1,9 +1,9 @@
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
-import { Alert } from 'react-native';
 import Styled from './styles';
 import IconButtonComponent from '../../icon-button';
 import VideoManager from '../../../services/webrtc/video-manager';
+import { setFocusedId, setIsFocused } from '../../../store/redux/slices/wide-app/layout';
 
 const VideoContainer = (props) => {
   const {
@@ -14,7 +14,9 @@ const VideoContainer = (props) => {
     style,
     local,
   } = props;
+
   const [showOptions, setShowOptions] = useState(false);
+  const dispatch = useDispatch();
   const mediaStreamId = useSelector(
     (state) => state.video.videoStreams[cameraId]
   );
@@ -58,12 +60,10 @@ const VideoContainer = (props) => {
       {showOptions && (
         <Styled.PressableButton
           activeOpacity={0.6}
-          onPress={() =>
-            Alert.alert(
-              'Currently under development',
-              'This feature will be addressed soon, please check out our github page'
-            )
-          }
+          onPress={() => {
+            dispatch(setFocusedId(mediaStreamId));
+            dispatch(setIsFocused(true));
+          }}
         >
           <IconButtonComponent
             icon="fullscreen"
