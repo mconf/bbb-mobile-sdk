@@ -1,6 +1,7 @@
 import ContentLoader, { Rect } from 'react-content-loader/native';
 import { RTCView } from 'react-native-webrtc';
 import styled from 'styled-components/native';
+import Colors from '../../constants/colors';
 
 const ScreenshareSkeleton = () => (
   <ContentLoader
@@ -18,6 +19,9 @@ const ScreenshareSkeleton = () => (
 const ScreenshareStream = styled(RTCView)`
   width: 100%;
   height: 100%;
+  overflow: hidden;
+  object-fit: contain;
+  background-color: ${Colors.contentLetterboxColor};
 `;
 
 export default { ScreenshareSkeleton, ScreenshareStream };

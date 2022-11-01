@@ -24,10 +24,12 @@ const UserAvatar = styled.Image`
 `;
 
 const VideoStream = styled(RTCView)`
+  position: relative;
   width: 100%;
   height: 100%;
   overflow: hidden;
   object-fit: contain;
+  background-color: ${Colors.contentLetterboxColor};
 `;
 
 const UserColor = styled.View`
