@@ -2,6 +2,7 @@ import styled from 'styled-components/native';
 import { RTCView } from 'react-native-webrtc';
 import button from '../button';
 import Colors from '../../constants/colors';
+import presentation from '../presentation';
 
 const Container = styled.View`
   position: absolute;
@@ -52,6 +53,8 @@ const UserColor = styled.View`
   overflow: hidden;
 `;
 
+const Presentation = styled(presentation)``;
+
 export default {
   VideoStream,
   ConfirmButton,
@@ -59,4 +62,5 @@ export default {
   Wrapper,
   UserAvatar,
   UserColor,
+  Presentation,
 };

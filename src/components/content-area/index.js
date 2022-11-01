@@ -1,13 +1,15 @@
 import { useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Styled from './styles';
 import { selectScreenshare } from '../../store/redux/slices/screenshare';
+import { setFocusedElement, setFocusedId, setIsFocused } from '../../store/redux/slices/wide-app/layout';
 
 const ContentArea = (props) => {
   const { style } = props;
   const slidesStore = useSelector((state) => state.slidesCollection);
   const presentationsStore = useSelector((state) => state.presentationsCollection);
   const screenshare = useSelector(selectScreenshare);
+  const dispatch = useDispatch();
 
   const handleSlideAndPresentationActive = useCallback(() => {
     // TODO Review this collection after update the 2.6 code
@@ -29,15 +31,23 @@ const ContentArea = (props) => {
     return imageUri?.replace('/svg/', '/png/');
   }, [presentationsStore, slidesStore]);
 
+  const onClickPresentation = () => {
+    dispatch(setIsFocused(true));
+    dispatch(setFocusedId(handleSlideAndPresentationActive()));
+    dispatch(setFocusedElement('presentation'));
+  };
+
   if (!screenshare) {
     return (
-      <Styled.Presentation
-        width="100%"
-        height="100%"
-        source={{
-          uri: handleSlideAndPresentationActive(),
-        }}
-      />
+      <Styled.PresentationPressable onPress={onClickPresentation}>
+        <Styled.Presentation
+          width="100%"
+          height="100%"
+          source={{
+            uri: handleSlideAndPresentationActive(),
+          }}
+        />
+      </Styled.PresentationPressable>
     );
   }
 
