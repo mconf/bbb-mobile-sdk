@@ -32,9 +32,10 @@ const AudioControls = (props) => {
       />
       <IconButtonComponent
         size={isLandscape ? 24 : 32}
-        icon={isConnected ? 'headphones' : 'headphones-off'}
-        iconColor={isConnected ? Colors.white : Colors.lightGray300}
-        containerColor={isConnected ? Colors.blue : Colors.lightGray100}
+        icon={isActive ? 'headphones' : 'headphones-off'}
+        iconColor={isActive ? Colors.white : Colors.lightGray300}
+        containerColor={isActive ? Colors.blue : Colors.lightGray100}
+        loading={isConnecting}
         animated
         onPress={() => {
           if (isActive) {

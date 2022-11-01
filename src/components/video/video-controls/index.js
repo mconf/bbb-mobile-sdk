@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
-import Colors from '../../../constants/colors';
 import IconButtonComponent from '../../icon-button';
+import Colors from '../../../constants/colors';
 import VideoManager from '../../../services/webrtc/video-manager';
 
 const VideoControls = (props) => {
@@ -13,10 +13,11 @@ const VideoControls = (props) => {
   return (
     <IconButtonComponent
       size={isLandscape ? 24 : 32}
-      icon={isConnected ? 'video' : 'video-off'}
-      iconColor={isConnected ? Colors.white : Colors.lightGray300}
-      containerColor={isConnected ? Colors.blue : Colors.lightGray100}
+      icon={isActive ? 'video' : 'video-off'}
+      iconColor={isActive ? Colors.white : Colors.lightGray300}
+      containerColor={isActive ? Colors.blue : Colors.lightGray100}
       animated
+      loading={isConnecting}
       onPress={() => {
         if (isActive) {
           VideoManager.unpublish(localCameraId);
