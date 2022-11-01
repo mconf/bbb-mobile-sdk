@@ -1,10 +1,12 @@
 import { useSelector } from 'react-redux';
 import { StatusBar } from 'expo-status-bar';
+import { ActivityIndicator, View } from 'react-native';
 import Colors from '../../../constants/colors';
 import IconButtonComponent from '../../icon-button';
 import AudioManager from '../../../services/webrtc/audio-manager';
 import { selectMeeting } from '../../../store/redux/slices/meeting';
 import { toggleMuteMicrophone } from '../service';
+import Styled from './styles';
 
 const AudioControls = (props) => {
   const { isLandscape } = props;
@@ -14,13 +16,15 @@ const AudioControls = (props) => {
   const isConnecting = useSelector((state) => state.audio.isConnecting);
   const isActive = isConnected || isConnecting;
   const unmutedAndConnected = !isMuted && isConnected;
+  const joinAudioIconColor = isActive ? Colors.white : Colors.lightGray300;
+  const buttonSize = isLandscape ? 24 : 32;
 
   return (
     <>
       {isConnected && <StatusBar backgroundColor="#00BF6F" style="light" />}
       {isConnecting && <StatusBar backgroundColor="#FFC845" style="dark" />}
       <IconButtonComponent
-        size={isLandscape ? 24 : 32}
+        size={buttonSize}
         icon={unmutedAndConnected ? 'microphone' : 'microphone-off'}
         iconColor={unmutedAndConnected ? Colors.white : Colors.lightGray300}
         containerColor={unmutedAndConnected ? Colors.blue : Colors.lightGray100}
@@ -30,21 +34,31 @@ const AudioControls = (props) => {
           toggleMuteMicrophone();
         }}
       />
-      <IconButtonComponent
-        size={isLandscape ? 24 : 32}
-        icon={isActive ? 'headphones' : 'headphones-off'}
-        iconColor={isActive ? Colors.white : Colors.lightGray300}
-        containerColor={isActive ? Colors.blue : Colors.lightGray100}
-        loading={isConnecting}
-        animated
-        onPress={() => {
-          if (isActive) {
-            AudioManager.exitAudio();
-          } else {
-            AudioManager.joinMicrophone({ muted: muteOnStart });
-          }
-        }}
-      />
+      <View>
+        <IconButtonComponent
+          size={buttonSize}
+          icon={isActive ? 'headphones' : 'headphones-off'}
+          iconColor={joinAudioIconColor}
+          containerColor={isActive ? Colors.blue : Colors.lightGray100}
+          loading={isConnecting}
+          animated
+          onPress={() => {
+            if (isActive) {
+              AudioManager.exitAudio();
+            } else {
+              AudioManager.joinMicrophone({ muted: muteOnStart });
+            }
+          }}
+        />
+        <Styled.LoadingWrapper pointerEvents="none">
+          <ActivityIndicator
+            size={buttonSize * 2}
+            color={joinAudioIconColor}
+            animating={isConnecting}
+            hidesWhenStopped
+          />
+        </Styled.LoadingWrapper>
+      </View>
     </>
   );
 };
