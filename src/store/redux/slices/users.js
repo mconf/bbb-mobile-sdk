@@ -29,6 +29,9 @@ const selectUsers = (state) => Object.values(
   state.usersCollection.usersCollection
 );
 
+const selectUserByIntId = (state, userId) => selectUsers(state)
+  .find((user) => user.intId === userId);
+
 export const {
   addUser,
   removeUser,
@@ -37,6 +40,7 @@ export const {
 
 export {
   selectUsers,
+  selectUserByIntId,
 };
 
 export default usersSlice.reducer;

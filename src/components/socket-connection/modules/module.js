@@ -63,7 +63,7 @@ export default class Module {
 
   // eslint-disable-next-line class-methods-use-this
   onDisconnectedBeforeWebsocketClose() {
-    console.debug('Needs to be implemented by the module');
+    this.onDisconnected();
   }
 
   // eslint-disable-next-line class-methods-use-this
