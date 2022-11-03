@@ -1,5 +1,4 @@
-import { configureStore } from '@reduxjs/toolkit';
-import { combineReducers } from 'redux';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
 // meteor collections
 import usersReducer from './slices/users';
 import meetingReducer from './slices/meeting';
