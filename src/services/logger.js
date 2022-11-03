@@ -65,22 +65,30 @@ class MeteorStream {
         this.rec.extraInfo = {};
       }
 
-      makeCall(
-        'logClient',
-        nameFromLevel[this.rec.level],
-        this.rec.msg,
-        this.rec.logCode,
-        this.rec.extraInfo,
-        fullInfo,
-      );
+      try {
+        makeCall(
+          'logClient',
+          nameFromLevel[this.rec.level],
+          this.rec.msg,
+          this.rec.logCode,
+          this.rec.extraInfo,
+          fullInfo,
+        );
+      } catch (error) {
+        console.debug('Logger makeCall failed', error);
+      }
     } else {
-      makeCall(
-        'logClient',
-        nameFromLevel[this.rec.level],
-        this.rec.msg,
-        this.rec.logCode,
-        this.rec.extraInfo,
-      );
+      try {
+        makeCall(
+          'logClient',
+          nameFromLevel[this.rec.level],
+          this.rec.msg,
+          this.rec.logCode,
+          this.rec.extraInfo,
+        );
+      } catch (error) {
+        console.debug('Logger makeCall failed', error);
+      }
     }
   }
 }
