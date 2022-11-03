@@ -3,6 +3,7 @@ import { RTCView } from 'react-native-webrtc';
 import button from '../button';
 import Colors from '../../constants/colors';
 import presentation from '../presentation';
+import iconButton from '../icon-button';
 
 const Container = styled.View`
   position: absolute;
@@ -33,6 +34,7 @@ const ConfirmButton = styled(button)`
   font-size: 16px;
   font-weight: 400;
   padding: 12px;
+  border-radius: 8px;
 `;
 
 const UserAvatar = styled.Image`
@@ -55,6 +57,12 @@ const UserColor = styled.View`
 
 const Presentation = styled(presentation)``;
 
+const CloseFullscreenButton = styled(iconButton)`
+  position: absolute;
+  right: 10px;
+  opacity: 0.7;
+`;
+
 export default {
   VideoStream,
   ConfirmButton,
@@ -63,4 +71,5 @@ export default {
   UserAvatar,
   UserColor,
   Presentation,
+  CloseFullscreenButton,
 };
