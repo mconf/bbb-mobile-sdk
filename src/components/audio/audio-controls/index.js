@@ -7,6 +7,7 @@ import AudioManager from '../../../services/webrtc/audio-manager';
 import { selectMeeting } from '../../../store/redux/slices/meeting';
 import { toggleMuteMicrophone } from '../service';
 import Styled from './styles';
+import logger from '../../../services/logger'
 
 const AudioControls = (props) => {
   const { isLandscape } = props;
@@ -46,7 +47,16 @@ const AudioControls = (props) => {
             if (isActive) {
               AudioManager.exitAudio();
             } else {
-              AudioManager.joinMicrophone({ muted: muteOnStart });
+              AudioManager.joinMicrophone({ muted: muteOnStart }).catch((error) => {
+                // TODO surface error via toast or chain a retry.
+                logger.error({
+                  logCode: 'audio_publish_failure',
+                  extraInfo: {
+                    errorCode: error.code,
+                    errorMessage: error.message,
+                  }
+                }, `Audio published failed: ${error.message}`);
+              });
             }
           }}
         />

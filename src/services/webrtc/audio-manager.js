@@ -219,12 +219,15 @@ class AudioManager {
     });
   }
 
-  joinMicrophone({ muted = false }) {
-    this.onAudioJoining();
-
-    return this._mediaFactory().then((inputStream) => {
-      return this._joinAudio({ inputStream, isListenOnly: false, muted });
-    });
+  async joinMicrophone({ muted = false }) {
+    try {
+      this.onAudioJoining();
+      const inputStream = await this._mediaFactory();
+      await this._joinAudio({ inputStream, isListenOnly: false, muted });
+    } catch (error) {
+      this.exitAudio();
+      throw error;
+    }
   }
 
   exitAudio() {

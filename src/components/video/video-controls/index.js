@@ -4,6 +4,7 @@ import IconButtonComponent from '../../icon-button';
 import Colors from '../../../constants/colors';
 import VideoManager from '../../../services/webrtc/video-manager';
 import Styled from './styles';
+import logger from '../../../services/logger'
 
 const VideoControls = (props) => {
   const { isLandscape } = props;
@@ -26,7 +27,16 @@ const VideoControls = (props) => {
           if (isActive) {
             VideoManager.unpublish(localCameraId);
           } else {
-            VideoManager.publish();
+            VideoManager.publish().catch((error) => {
+              // TODO surface error via toast or chain a retry.
+              logger.error({
+                logCode: 'video_publish_failure',
+                extraInfo: {
+                  errorCode: error.code,
+                  errorMessage: error.message,
+                }
+              }, `Video published failed: ${error.message}`);
+            });
           }
         }}
       />
