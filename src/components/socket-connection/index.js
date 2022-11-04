@@ -41,13 +41,13 @@ import AudioManager from '../../services/webrtc/audio-manager';
 import VideoManager from '../../services/webrtc/video-manager';
 import ScreenshareManager from '../../services/webrtc/screenshare-manager';
 import { selectUserByIntId } from '../../store/redux/slices/users';
+import { selectMeeting } from '../../store/redux/slices/meeting';
 import {
   setLoggingIn,
   setLoggedIn,
   setLoggingOut,
   setConnected,
 } from '../../store/redux/slices/wide-app/client';
-import usePrevious from '../../hooks/use-previous';
 
 // TODO BAD - decouple, move elsewhere - everything from here to getMeetingData
 let GLOBAL_WS = null;
@@ -278,12 +278,17 @@ const SocketConnectionComponent = (props) => {
   const validateReqId = useRef(null);
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const currentUser = useSelector((state) => selectUserByIntId(state, meetingData.internalUserID));
-  const prevCurrentUser = usePrevious(currentUser);
-  const loggedIn = useSelector((state) => state.client.loggedIn);
-  const loggingOut = useSelector((state) => state.client.loggingOut);
-  const loggingIn = useSelector((state) => state.client.loggingIn);
-  const connected = useSelector((state) => state.client.connected);
+  const { loggedOut, ejected } = useSelector((state) => {
+    const user = selectUserByIntId(state, meetingData.internalUserID);
+    return { loggedOut: user?.loggedOut, ejected: user?.ejected };
+  });
+  const meetingEnded = useSelector((state) => selectMeeting(state)?.meetingEnded);
+  const {
+    loggedIn,
+    loggingOut,
+    loggingIn,
+    connected,
+  } = useSelector((state) => state.client);
 
   const onOpen = () => {
     dispatch(setConnected(true));
@@ -297,7 +302,6 @@ const SocketConnectionComponent = (props) => {
     logger.info({
       logCode: 'main_websocket_closed',
     }, 'Main websocket connection closed');
-
   };
 
   useEffect(() => {
@@ -334,22 +338,21 @@ const SocketConnectionComponent = (props) => {
     }
   };
 
+  // Login/logout tracker
   useEffect(() => {
-    // Isn't logged in - clean up data.
-    if (!loggedIn && !joinUrl) {
+    if (!loggingOut
+      && (loggedOut === true || ejected === true || meetingEnded === true)) {
+      // User is logged in, isn't logging out yet but the server side data
+      // mandates a logout -> start the logout procedure
+      _logout(websocket, meetingData, modules.current);
+    } else if (!loggedIn && !joinUrl) {
+      // Isn't logged in - clean up data.
       setWebsocket(null);
       GLOBAL_WS = null;
       setMeetingData({});
       dispatch(setLoggingOut(false));
-    } else if (!loggingOut && currentUser && prevCurrentUser
-      && ((prevCurrentUser.loggedOut === false && currentUser.loggedOut === true)
-        || (!prevCurrentUser.ejected && currentUser.ejected === true))
-    ) {
-      // User is logged in, isn't logging out yet but the server side data
-      // mandates a logout -> start the logout procedure
-      _logout(websocket, meetingData, modules.current);
     }
-  }, [joinUrl, loggedIn, loggingOut, currentUser]);
+  }, [joinUrl, loggedIn, loggingOut, ejected, loggedOut, meetingEnded]);
 
   useEffect(() => {
     setJoinUrl(jUrl);
@@ -485,7 +488,8 @@ const SocketConnectionComponent = (props) => {
         break;
       }
 
-      default: return;
+      default:
+        break;
     }
   };
 
