@@ -98,7 +98,7 @@ const sendValidationMsg = (ws, meetingData) => {
 const getAuthInfo = () => {
   const {
     meetingID, sessionToken, internalUserID,
-    fullname, externUserID, confname,
+    fullname, externUserID, confname, host,
   } = CURRENT_MEETING_DATA;
 
   return {
@@ -108,6 +108,7 @@ const getAuthInfo = () => {
     fullname,
     confname,
     externUserID,
+    host,
   };
 };
 
@@ -125,7 +126,7 @@ const makeCall = (name, ...args) => {
   return transaction.promise;
 };
 
-const getHost = (_url) => {
+const getHostFromURL = (_url) => {
   const url = new URL(_url);
 
   return url.host;
@@ -168,7 +169,7 @@ const getMeetingData = async (joinUrl) => {
   return {
     enterUrl,
     ...enterResp.response,
-    host: getHost(html5join),
+    host: getHostFromURL(html5join),
     sessionToken: getSessionToken(html5join)
   };
 };
