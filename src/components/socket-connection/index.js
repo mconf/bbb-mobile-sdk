@@ -246,26 +246,16 @@ const setupModules = (ws) => {
   return modules;
 };
 
-const logout = (ws, meetingData, modules) => {
+const terminate = (ws, modules) => {
   if (ws) {
-    sendMessage(ws, {
-      msg: 'method',
-      method: 'userLeftMeeting',
-      params: [],
-    });
-
-    Object.values(modules).forEach((module) => {
-      module.onDisconnectedBeforeWebsocketClose();
-    });
-
     ws.close();
   }
 
-  destroyMediaManagers();
+  Object.values(modules).forEach((module) => {
+    module.onDisconnectedBeforeWebsocketClose();
+  });
 
-  if (Object.keys(meetingData).length) {
-    fetch(meetingData.logoutUrl);
-  }
+  destroyMediaManagers();
 };
 
 const SocketConnectionComponent = (props) => {
@@ -332,10 +322,15 @@ const SocketConnectionComponent = (props) => {
     }
   };
 
-  const _logout = () => {
-    if (!loggingOut) {
-      dispatch(setLoggingOut(true));
-      logout(websocket, meetingData, modules.current);
+  const _terminate = (_loggingOut) => {
+    // Termination can happen for reasons other than a shutdown (ie reconnections)
+    // If loggingOut is true, then this is a final action (ejection, leave, ...)
+    if (_loggingOut) dispatch(setLoggingOut(true));
+
+    terminate(websocket, modules.current);
+
+    if (_loggingOut && meetingData && typeof meetingData.logoutUrl === 'string') {
+      fetch(meetingData.logoutUrl);
     }
   };
 
@@ -345,8 +340,8 @@ const SocketConnectionComponent = (props) => {
       && (loggedOut === true || ejected === true || meetingEnded === true)) {
       // User is logged in, isn't logging out yet but the server side data
       // mandates a logout -> start the logout procedure
-      _logout(websocket, meetingData, modules.current);
-    } else if (!loggedIn && !joinUrl) {
+      _terminate(true);
+    } else if (!loggedIn && !joinUrl && loggingOut) {
       // Isn't logged in - clean up data.
       setWebsocket(null);
       GLOBAL_WS = null;
@@ -358,7 +353,7 @@ const SocketConnectionComponent = (props) => {
   useEffect(() => {
     setJoinUrl(jUrl);
     return () => {
-      _logout(websocket, meetingData, modules.current);
+      _terminate(false);
     };
   }, []);
 
