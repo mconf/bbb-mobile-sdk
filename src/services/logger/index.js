@@ -5,8 +5,8 @@ import { createLogger, stdSerializers } from 'browser-bunyan';
 import { ConsoleFormattedStream } from '@browser-bunyan/console-formatted-stream';
 import { ConsoleRawStream } from '@browser-bunyan/console-raw-stream';
 import { nameFromLevel } from '@browser-bunyan/levels';
-import { ServerStream } from './logger/server-stream';
-import Settings from '../../settings.json';
+import { ServerStream } from './server-stream';
+import Settings from '../../../settings.json';
 
 const APP_VERSION = Constants.manifest.version;
 
