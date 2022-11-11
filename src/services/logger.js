@@ -1,12 +1,20 @@
 /* eslint max-classes-per-file: 0 */
 import Constants from 'expo-constants';
+import NetInfo from '@react-native-community/netinfo';
 import { createLogger, stdSerializers } from 'browser-bunyan';
 import { ConsoleFormattedStream } from '@browser-bunyan/console-formatted-stream';
 import { ConsoleRawStream } from '@browser-bunyan/console-raw-stream';
-import { ServerStream } from '@browser-bunyan/server-stream';
 import { nameFromLevel } from '@browser-bunyan/levels';
+import { ServerStream } from './logger/server-stream';
+import Settings from '../../settings.json';
 
 const APP_VERSION = Constants.manifest.version;
+
+// TODO pull configuration from server
+const LOG_CONFIG = Settings.clientLog || {
+  console: { enabled: true, level: 'debug' },
+  server: { enabled: false, level: 'debug' },
+};
 
 // TODO this is not good - refactor out later - prlanzarin
 let getAuthInfo = () => { return {}; };
@@ -22,24 +30,53 @@ const injectSessionIdFetcher = (func) => {
   getCurrentSessionId = func;
 };
 
-// TODO pull configuration from server
-const LOG_CONFIG = {
-  console: { enabled: true, level: 'debug' },
-  server: { enabled: true, level: 'debug' },
-};
-
 // Custom stream that logs to an end-point
 class ServerLoggerStream extends ServerStream {
-  constructor(params) {
-    super(params);
+  static getRemoteLogEndpointURL(host, route) {
+    return `https://${host}/${route}`;
+  }
 
-    if (params.logTag) {
-      this.logTagString = params.logTag;
-    }
+  constructor({
+    flushOnClose,
+    logTag,
+    method,
+    throttleInterval,
+    route,
+  }) {
+    super({
+      flushOnClose,
+      method,
+      throttleInterval,
+      route,
+    });
+
+    if (logTag) this.logTagString = logTag;
+    if (route) this.route = route;
+
+    this.writeCondition = this._writeCondition.bind(this);
+    this._connected = false;
+    this._trackConnectivityState();
+  }
+
+  _trackConnectivityState() {
+    NetInfo.addEventListener(({ isConnected }) => {
+      this._connected = isConnected;
+    });
+  }
+
+  _writeCondition() {
+    return this._connected;
   }
 
   write(rec) {
     const fullInfo = getAuthInfo();
+    if (fullInfo?.host) {
+      const remoteEndpointURL = ServerLoggerStream.getRemoteLogEndpointURL(
+        fullInfo?.host,
+        this.route
+      );
+      if (this.url !== remoteEndpointURL) this.url = remoteEndpointURL;
+    }
 
     this.rec = rec;
     if (fullInfo.meetingId != null) {
@@ -65,22 +102,30 @@ class MeteorStream {
         this.rec.extraInfo = {};
       }
 
-      makeCall(
-        'logClient',
-        nameFromLevel[this.rec.level],
-        this.rec.msg,
-        this.rec.logCode,
-        this.rec.extraInfo,
-        fullInfo,
-      );
+      try {
+        makeCall(
+          'logClient',
+          nameFromLevel[this.rec.level],
+          this.rec.msg,
+          this.rec.logCode,
+          this.rec.extraInfo,
+          fullInfo,
+        );
+      } catch (error) {
+        console.debug('Logger makeCall failed', error);
+      }
     } else {
-      makeCall(
-        'logClient',
-        nameFromLevel[this.rec.level],
-        this.rec.msg,
-        this.rec.logCode,
-        this.rec.extraInfo,
-      );
+      try {
+        makeCall(
+          'logClient',
+          nameFromLevel[this.rec.level],
+          this.rec.msg,
+          this.rec.logCode,
+          this.rec.extraInfo,
+        );
+      } catch (error) {
+        console.debug('Logger makeCall failed', error);
+      }
     }
   }
 }

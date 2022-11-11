@@ -27,6 +27,7 @@
     "@config-plugins/react-native-webrtc": "^3.0.0",
     "@flyerhq/react-native-link-preview": "^1.6.0",
     "@gorhom/bottom-sheet": "^4.4.2",
+    "@react-native-community/netinfo": "8.2.0",
     "@react-navigation/drawer": "^6.4.1",
     "@react-navigation/native": "^6.0.10",
     "@react-navigation/native-stack": "^6.6.2",

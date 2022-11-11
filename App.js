@@ -12,6 +12,7 @@ import IconButton from './src/components/icon-button';
 import PollNavigator from './src/screens/poll-screen/navigator';
 import ClassroomMainScreen from './src/screens/classroom-main-screen';
 import UserParticipantsScreen from './src/screens/user-participants-screen';
+import FullscreenWrapper from './src/components/fullscreen-wrapper';
 import TestComponentsScreen from './src/screens/test-components-screen';
 import UserNotesScreen from './src/screens/user-notes-screen';
 import WhiteboardScreen from './src/screens/whiteboard-screen';
@@ -150,6 +151,7 @@ const App = ({ onLeaveSession, jUrl }) => {
 
           </Drawer.Navigator>
         </NavigationContainer>
+        <FullscreenWrapper />
       </Provider>
       <StatusBar style="light" />
     </>

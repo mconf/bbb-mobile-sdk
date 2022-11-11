@@ -10,7 +10,7 @@ const IconButtonComponent = (props) => {
     iconColor,
     containerColor,
     selected,
-    size,
+    size = 24,
     disabled,
     animated,
     accessibilityLabel,

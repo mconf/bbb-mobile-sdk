@@ -1,3 +1,22 @@
 {
-  "dev": false
+  "dev": false,
+  "clientLog": {
+    "server": {
+      "enabled": false,
+      "level": "debug"
+    },
+    "console": {
+      "enabled": true,
+      "level": "debug"
+    },
+    "external": {
+      "enabled": false,
+      "level": "debug",
+      "route": "/html5Log",
+      "method": "POST",
+      "throttleInterval": 400,
+      "flushOnClose": false,
+      "logTag": "bbb-app"
+    }
+  }
 }

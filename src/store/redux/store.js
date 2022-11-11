@@ -1,4 +1,4 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
 // meteor collections
 import usersReducer from './slices/users';
 import meetingReducer from './slices/meeting';
@@ -22,6 +22,8 @@ import videoReducer from './slices/wide-app/video';
 import localScreenshareReducer from './slices/wide-app/screenshare';
 import chatReducer from './slices/wide-app/chat';
 import interactionsReducer from './slices/wide-app/interactions';
+import layoutReducer from './slices/wide-app/layout';
+import clientReducer from './slices/wide-app/client';
 // Middlewares
 import {
   screenshareCleanupObserver,
@@ -30,34 +32,47 @@ import {
   voiceCallStateObserver,
 } from './middlewares';
 
-export const store = configureStore({
-  reducer: {
-    // meteor collections
-    meetingCollection: meetingReducer,
-    usersCollection: usersReducer,
-    voiceUsersCollection: voiceUsersReducer,
-    voiceCallStatesCollection: voiceCallStatesReducer,
-    pollsCollection: pollsReducer,
-    padsCollection: padsReducer,
-    presentationsCollection: presentationsReducer,
-    slidesCollection: slidesReducer,
-    currentPollCollection: currentPollReducer,
-    currentUserCollection: currentUserReducer,
-    externalVideoMeetingsCollection: externalVideoMeetingsReducer,
-    groupChatCollection: groupChatReducer,
-    groupChatMsgCollection: groupChatMsgReducer,
-    videoStreamsCollection: videoStreamsReducer,
-    screenshareCollection: screenshareReducer,
-    // ...other collections
+const appReducer = combineReducers({
+  // meteor collections
+  meetingCollection: meetingReducer,
+  usersCollection: usersReducer,
+  voiceUsersCollection: voiceUsersReducer,
+  voiceCallStatesCollection: voiceCallStatesReducer,
+  pollsCollection: pollsReducer,
+  padsCollection: padsReducer,
+  presentationsCollection: presentationsReducer,
+  slidesCollection: slidesReducer,
+  currentPollCollection: currentPollReducer,
+  currentUserCollection: currentUserReducer,
+  externalVideoMeetingsCollection: externalVideoMeetingsReducer,
+  groupChatCollection: groupChatReducer,
+  groupChatMsgCollection: groupChatMsgReducer,
+  videoStreamsCollection: videoStreamsReducer,
+  screenshareCollection: screenshareReducer,
+  // ...other collections
 
-    // app exclusive wide state collections
-    previousPollPublishedCollection: previousPollPublishedReducer,
-    audio: audioReducer,
-    video: videoReducer,
-    screenshare: localScreenshareReducer,
-    chat: chatReducer,
-    interactions: interactionsReducer,
-  },
+  // app exclusive wide state collections
+  previousPollPublishedCollection: previousPollPublishedReducer,
+  audio: audioReducer,
+  video: videoReducer,
+  screenshare: localScreenshareReducer,
+  chat: chatReducer,
+  interactions: interactionsReducer,
+  layout: layoutReducer,
+  client: clientReducer,
+});
+
+const rootReducer = (state, action) => {
+  // Reset the store on logouts
+  if (action.type === 'client/setLoggedIn' && action.payload === false) {
+    return appReducer(undefined, action);
+  }
+
+  return appReducer(state, action);
+};
+
+export const store = configureStore({
+  reducer: rootReducer,
   middleware: (getDefaultMiddleware) => {
     return getDefaultMiddleware().prepend([
       videoStreamCleanupObserver.middleware,

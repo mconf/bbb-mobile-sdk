@@ -6,6 +6,7 @@ const Colors = {
   lightGray200: '#D4DDE4',
   lightGray300: '#667080',
   lightGray400: '#28282D',
+  contentLetterboxColor: '#3B4A5C',
 };
 
 export default Colors;

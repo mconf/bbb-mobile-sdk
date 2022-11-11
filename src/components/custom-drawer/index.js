@@ -6,10 +6,16 @@ import {
 } from '@react-navigation/drawer';
 import Colors from '../../constants/colors';
 import Styled from './styles';
+import { makeCall } from '../../services/api';
 
 const CustomDrawer = (props) => {
   const { onLeaveSession } = props;
   const currentUserStore = useSelector((state) => state.currentUserCollection);
+
+  const leaveSession = () => {
+    makeCall('userLeftMeeting');
+    if (typeof onLeaveSession === 'function') onLeaveSession();
+  }
 
   // TODO Think a way to avoid this
   const currentUserObj = Object.values(
@@ -47,7 +53,7 @@ const CustomDrawer = (props) => {
         </Styled.ContainerDrawerItemList>
       </DrawerContentScrollView>
       <Styled.ContainerCustomButtons>
-        <Styled.ButtonLeaveContainer onPress={onLeaveSession}>
+        <Styled.ButtonLeaveContainer onPress={leaveSession}>
           <Styled.ViewLeaveContainer>
             <Styled.TextLeaveContainer>
               Sair da sessão

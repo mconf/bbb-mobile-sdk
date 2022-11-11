@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import * as Linking from 'expo-linking';
@@ -39,6 +40,14 @@ import MethodTransactionManager from './method-transaction-manager';
 import AudioManager from '../../services/webrtc/audio-manager';
 import VideoManager from '../../services/webrtc/video-manager';
 import ScreenshareManager from '../../services/webrtc/screenshare-manager';
+import { selectUserByIntId } from '../../store/redux/slices/users';
+import { selectMeeting } from '../../store/redux/slices/meeting';
+import {
+  setLoggingIn,
+  setLoggedIn,
+  setLoggingOut,
+  setConnected,
+} from '../../store/redux/slices/wide-app/client';
 
 // TODO BAD - decouple, move elsewhere - everything from here to getMeetingData
 let GLOBAL_WS = null;
@@ -90,7 +99,7 @@ const sendValidationMsg = (ws, meetingData) => {
 const getAuthInfo = () => {
   const {
     meetingID, sessionToken, internalUserID,
-    fullname, externUserID, confname,
+    fullname, externUserID, confname, host,
   } = CURRENT_MEETING_DATA;
 
   return {
@@ -100,12 +109,13 @@ const getAuthInfo = () => {
     fullname,
     confname,
     externUserID,
+    host,
   };
 };
 
 const getCurrentSessionId = () => {
   return CURRENT_SESSION_ID;
-}
+};
 
 const makeCall = (name, ...args) => {
   if (GLOBAL_WS == null) throw new TypeError('Socket is not open');
@@ -117,7 +127,7 @@ const makeCall = (name, ...args) => {
   return transaction.promise;
 };
 
-const getHost = (_url) => {
+const getHostFromURL = (_url) => {
   const url = new URL(_url);
 
   return url.host;
@@ -160,7 +170,7 @@ const getMeetingData = async (joinUrl) => {
   return {
     enterUrl,
     ...enterResp.response,
-    host: getHost(html5join),
+    host: getHostFromURL(html5join),
     sessionToken: getSessionToken(html5join)
   };
 };
@@ -242,24 +252,14 @@ const setupModules = (ws) => {
   return modules;
 };
 
-const logout = (ws, meetingData, modules) => {
+const terminate = (ws, modules) => {
   if (ws) {
-    sendMessage(ws, {
-      msg: 'method',
-      method: 'userLeftMeeting',
-      params: [],
-    });
-
-    Object.values(modules).forEach((module) => {
-      module.onDisconnectedBeforeWebsocketClose();
-    });
-
-    ws.close(0);
+    ws.close();
   }
 
-  if (Object.keys(meetingData).length) {
-    fetch(meetingData.logoutUrl);
-  }
+  Object.values(modules).forEach((module) => {
+    module.onDisconnectedBeforeWebsocketClose();
+  });
 
   destroyMediaManagers();
 };
@@ -274,15 +274,42 @@ const SocketConnectionComponent = (props) => {
   const modules = useRef({});
   const validateReqId = useRef(null);
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const { loggedOut, ejected } = useSelector((state) => {
+    const user = selectUserByIntId(state, meetingData.internalUserID);
+    return { loggedOut: user?.loggedOut, ejected: user?.ejected };
+  });
+  const meetingEnded = useSelector((state) => selectMeeting(state)?.meetingEnded);
+  const {
+    loggedIn,
+    loggingOut,
+    loggingIn,
+    connected,
+  } = useSelector((state) => state.client);
 
-  const onOpen = () => {};
-  const onClose = () => {
-    console.log(`Main websocket connection closed.`);
-
-    tearDownModules(websocket, modules.current);
-    setWebsocket(null);
-    GLOBAL_WS = null;
+  const onOpen = () => {
+    dispatch(setConnected(true));
+    logger.info({
+      logCode: 'main_websocket_open',
+    }, 'Main websocket connection open');
   };
+
+  const onClose = () => {
+    dispatch(setConnected(false));
+    logger.info({
+      logCode: 'main_websocket_closed',
+    }, 'Main websocket connection closed');
+  };
+
+  useEffect(() => {
+    if (connected === false) {
+      tearDownModules(websocket, modules.current);
+      if (loggingOut) {
+        setJoinUrl('');
+        dispatch(setLoggedIn(false));
+      }
+    }
+  }, [connected, loggingOut]);
 
   const onMessage = (ws, event) => {
     let msg = event.data;
@@ -301,27 +328,65 @@ const SocketConnectionComponent = (props) => {
     }
   };
 
+  const _terminate = (_loggingOut) => {
+    // Termination can happen for reasons other than a shutdown (ie reconnections)
+    // If loggingOut is true, then this is a final action (ejection, leave, ...)
+    if (_loggingOut) dispatch(setLoggingOut(true));
+
+    terminate(websocket, modules.current);
+
+    if (_loggingOut && meetingData && typeof meetingData.logoutUrl === 'string') {
+      fetch(meetingData.logoutUrl);
+    }
+  };
+
+  // Login/logout tracker
   useEffect(() => {
-    // console.log('Component Will Mount');
+    if (!loggingOut
+      && (loggedOut === true || ejected === true || meetingEnded === true)) {
+      // User is logged in, isn't logging out yet but the server side data
+      // mandates a logout -> start the logout procedure
+      _terminate(true);
+    } else if (!loggedIn && !joinUrl && loggingOut) {
+      // Isn't logged in - clean up data.
+      setWebsocket(null);
+      GLOBAL_WS = null;
+      setMeetingData({});
+      dispatch(setLoggingOut(false));
+    }
+  }, [joinUrl, loggedIn, loggingOut, ejected, loggedOut, meetingEnded]);
+
+  useEffect(() => {
     setJoinUrl(jUrl);
     return () => {
-      // console.log('Component Will Unmount');
-      logout(websocket, meetingData, modules.current);
+      _terminate(false);
     };
   }, []);
 
   useEffect(() => {
-    async function getData() {
-      if (!joinUrl?.length) {
-        return;
+    async function getData(_joinUrl) {
+      try {
+        dispatch(setLoggingIn(true));
+        const resp = await getMeetingData(_joinUrl);
+        setMeetingData(resp);
+        CURRENT_MEETING_DATA = resp;
+      } catch (error) {
+        logger.info({
+          logCode: 'user_join_failed',
+          extraInfo: {
+            errorMessage: error.message,
+            errorCode: error.code,
+          },
+        }, `User join failed: ${error.message}`);
+        setJoinUrl('');
+        dispatch(setLoggingIn(false));
       }
-
-      const resp = await getMeetingData(joinUrl);
-      setMeetingData(resp);
-      CURRENT_MEETING_DATA = resp;
     }
-    getData();
-  }, [joinUrl]);
+
+    if (joinUrl?.length && !loggingOut && !loggingIn && !loggedIn) {
+      getData(joinUrl);
+    }
+  }, [joinUrl, loggedIn, loggingIn, loggingOut]);
 
   useEffect(() => {
     if (meetingData && Object.keys(meetingData).length) {
@@ -349,6 +414,7 @@ const SocketConnectionComponent = (props) => {
       navigation.navigate('Main');
     }
   }, [meetingData]);
+
   const processMessage = (ws, msgObj) => {
     switch (msgObj.msg) {
       case 'connected': {
@@ -369,6 +435,8 @@ const SocketConnectionComponent = (props) => {
           // to do this. Remove when socket-connection is properly
           // refactored - prlanzarin
           initializeMediaManagers(meetingData);
+          dispatch(setLoggedIn(true));
+          dispatch(setLoggingIn(false));
         } else {
           // Probably dealing with a module makeCall/method response
           if (msgObj.collection) {
@@ -419,13 +487,11 @@ const SocketConnectionComponent = (props) => {
       }
 
       case 'updated': {
-        // console.log('what to do with update');
         break;
       }
 
-      default: {
-        // console.log('default case');
-      }
+      default:
+        break;
     }
   };
 
@@ -442,7 +508,7 @@ const SocketConnectionComponent = (props) => {
         <View style={{ height: '20%' }}>
           <TextInput
             placeholder="Join URL"
-            onChangeText={(join) => setJoinUrl(join)}
+            onSubmitEditing={({ nativeEvent: { text } }) => setJoinUrl(text)}
             defaultValue={joinUrl}
           />
         </View>
