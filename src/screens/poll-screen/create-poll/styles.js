@@ -13,9 +13,8 @@ const OptionsButton = styled(button)`
   padding: 12px;
   border-radius: 12px;
 
-  ${({ selected }) =>
-    selected &&
-    `
+  ${({ selected }) => selected
+    && `
       background-color: #003399;
       color: ${Colors.white};
   `}

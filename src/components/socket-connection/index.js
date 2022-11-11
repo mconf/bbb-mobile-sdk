@@ -44,6 +44,7 @@ import ScreenshareManager from '../../services/webrtc/screenshare-manager';
 let GLOBAL_WS = null;
 let CURRENT_MEETING_DATA = {};
 let CURRENT_SESSION_ID;
+let GLOBAL_MESSAGE_SENDER = null;
 const GLOBAL_TRANSACTIONS = new MethodTransactionManager();
 
 const sendMessage = (ws, msgObj) => {
@@ -186,6 +187,7 @@ const destroyMediaManagers = () => {
 /// Set up the web socket modules.
 const setupModules = (ws) => {
   const messageSender = new MessageSender(ws, GLOBAL_TRANSACTIONS);
+  GLOBAL_MESSAGE_SENDER = messageSender;
 
   const modules = {
     users: new UsersModule(messageSender),
@@ -229,8 +231,12 @@ const setupModules = (ws) => {
     // whiteboard-multi-user:
   };
 
+  GLOBAL_MODULES = modules;
+
   Object.values(modules).forEach((module) => {
-    module.onConnected();
+    if (module !== 'current-poll') {
+      module.onConnected();
+    }
   });
 
   return modules;
@@ -458,5 +464,6 @@ export default SocketConnectionComponent;
 export {
   getCurrentSessionId,
   getAuthInfo,
-  makeCall
+  makeCall,
+  GLOBAL_MESSAGE_SENDER,
 };

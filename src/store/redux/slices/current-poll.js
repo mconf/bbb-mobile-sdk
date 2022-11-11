@@ -26,6 +26,6 @@ const currentPollSlice = createSlice({
     },
   },
 });
-export const { addCurrentPoll, removeCurrentPoll, editCurrentPoll } =
-  currentPollSlice.actions;
+
+export const { addCurrentPoll, removeCurrentPoll, editCurrentPoll } = currentPollSlice.actions;
 export default currentPollSlice.reducer;

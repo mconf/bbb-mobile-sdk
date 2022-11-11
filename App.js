@@ -9,7 +9,7 @@ import { store } from './src/store/redux/store';
 import CustomDrawer from './src/components/custom-drawer';
 import IconButton from './src/components/icon-button';
 // screens
-import PollScreen from './src/screens/poll-screen';
+import PollNavigator from './src/screens/poll-screen/navigator';
 import ClassroomMainScreen from './src/screens/classroom-main-screen';
 import UserParticipantsScreen from './src/screens/user-participants-screen';
 import TestComponentsScreen from './src/screens/test-components-screen';
@@ -87,7 +87,7 @@ const App = ({ onLeaveSession, jUrl }) => {
 
             <Drawer.Screen
               name="PollScreen"
-              component={PollScreen}
+              component={PollNavigator}
               options={{
                 title: 'Enquete',
                 drawerIcon: (config) => (
