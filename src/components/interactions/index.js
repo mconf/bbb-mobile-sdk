@@ -1,28 +1,45 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setIsHandRaised } from '../../store/redux/slices/wide-app/interactions';
+import { hideNotification, setProfile } from '../../store/redux/slices/wide-app/notification-bar';
+import InteractionsService from './service';
 import IconButtonComponent from '../icon-button';
 import Colors from '../../constants/colors';
 
 const InteractionsControls = (props) => {
   const { isLandscape } = props;
-  const interactionsStore = useSelector((state) => state.interactions);
+  const currentUserStore = useSelector((state) => state.currentUserCollection);
+  const currentUserObj = Object.values(
+    currentUserStore.currentUserCollection
+  )[0];
+  const isHandRaised = currentUserObj?.emoji === 'raiseHand';
   const dispatch = useDispatch();
 
   return (
     <IconButtonComponent
       size={isLandscape ? 24 : 32}
-      icon={interactionsStore.isHandRaised
+      icon={isHandRaised
         ? 'hand-back-left-outline'
         : 'hand-back-left-off-outline'}
       iconColor={
-        interactionsStore.isHandRaised ? Colors.white : Colors.lightGray300
+        isHandRaised ? Colors.white : Colors.lightGray300
       }
       containerColor={
-        interactionsStore.isHandRaised ? Colors.blue : Colors.lightGray100
+        isHandRaised ? Colors.blue : Colors.lightGray100
       }
       animated
-      onPress={() => dispatch(setIsHandRaised(!interactionsStore.isHandRaised))}
+      onPress={async () => {
+        await InteractionsService.handleSendRaiseHand(
+          isHandRaised
+            ? 'none'
+            : 'raiseHand'
+        );
+        if (!isHandRaised) {
+          dispatch(setProfile('handsUp'));
+          setTimeout(() => {
+            dispatch(hideNotification());
+          }, 5000);
+        }
+      }}
     />
   );
 };

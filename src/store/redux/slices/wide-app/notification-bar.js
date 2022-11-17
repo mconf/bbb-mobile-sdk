@@ -18,6 +18,13 @@ const notificationBarSlice = createSlice({
       state.isShow = false;
     },
 
+    hideNotification: (state) => {
+      state.isShow = false;
+      state.messageTitle = '';
+      state.messageSubtitle = '';
+      state.icon = '';
+    },
+
     // notification profiles
     setProfile: (state, action) => {
       if (action.payload === 'handsUp') {
@@ -34,5 +41,6 @@ export const {
   show,
   hide,
   setProfile,
+  hideNotification,
 } = notificationBarSlice.actions;
 export default notificationBarSlice.reducer;
