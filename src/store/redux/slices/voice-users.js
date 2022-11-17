@@ -1,5 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 import AudioManager from '../../../services/webrtc/audio-manager';
+import { setLoggedIn } from './wide-app/client';
+import { selectMeeting } from './meeting';
+import logger from '../../../services/logger';
 
 const voiceUsersSlice = createSlice({
   name: 'voiceUsers',
@@ -51,6 +54,29 @@ const voiceStateChangeListener = (action, listenerApi) => {
   }
 };
 
+const joinAudioOnLoginPredicate = (action, currentState) => {
+  return setLoggedIn.match(action)
+    && action.payload === true
+    && !currentState.audio.isConnected
+    && !currentState.audio.isConnecting;
+};
+
+const joinAudioOnLoginListener = (action, listenerApi) => {
+  const state = listenerApi.getState();
+  const muteOnStart = selectMeeting(state)?.voiceProp?.muteOnStart;
+
+  AudioManager.joinMicrophone({ muted: muteOnStart }).catch((error) => {
+    // TODO surface error via toast or chain a retry.
+    logger.error({
+      logCode: 'audio_publish_failure',
+      extraInfo: {
+        errorCode: error.code,
+        errorMessage: error.message,
+      }
+    }, `Audio published failed: ${error.message}`);
+  });
+};
+
 export const {
   addVoiceUser,
   removeVoiceUser,
@@ -61,6 +87,8 @@ export {
   selectVoiceUserByDocumentId,
   voiceStateChangeListener,
   voiceStateChangePredicate,
+  joinAudioOnLoginListener,
+  joinAudioOnLoginPredicate,
 };
 
 export default voiceUsersSlice.reducer;
