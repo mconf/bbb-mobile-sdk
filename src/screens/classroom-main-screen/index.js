@@ -6,11 +6,11 @@ import { setBottomChatOpen } from '../../store/redux/slices/wide-app/chat';
 import { useOrientation } from '../../hooks/use-orientation';
 import Colors from '../../constants/colors';
 import Styled from './styles';
-import { selectSortedVideoStreams } from '../../store/redux/slices/video-streams';
+import { selectSortedVideoUsers } from '../../store/redux/slices/video-streams';
 
 const ClassroomMainScreen = () => {
   // variables
-  const videoUsers = useSelector(selectSortedVideoStreams);
+  const videoUsers = useSelector(selectSortedVideoUsers);
   const orientation = useOrientation();
   const [switchLandscapeLayout, setSwitchLandscapeLayout] = useState(false);
   const [isLoading, setIsLoading] = useState(true);

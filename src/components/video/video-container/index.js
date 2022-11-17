@@ -13,6 +13,7 @@ const VideoContainer = (props) => {
     userName,
     style,
     local,
+    visible,
   } = props;
 
   const [showOptions, setShowOptions] = useState(false);
@@ -26,11 +27,17 @@ const VideoContainer = (props) => {
 
   useEffect(() => {
     if (signalingTransportOpen) {
-      if (cameraId && !mediaStreamId && !local) {
-        VideoManager.subscribe(cameraId);
+      if (cameraId && !local) {
+        if (!mediaStreamId && visible) {
+          VideoManager.subscribe(cameraId);
+        }
+
+        if (mediaStreamId && !visible) {
+          VideoManager.unsubscribe(cameraId);
+        }
       }
     }
-  }, [cameraId, mediaStreamId, signalingTransportOpen]);
+  }, [cameraId, mediaStreamId, signalingTransportOpen, visible]);
 
   const renderVideo = () => {
     if (typeof mediaStreamId === 'string') {
