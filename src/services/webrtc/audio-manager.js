@@ -20,7 +20,7 @@ class AudioManager {
     this.initialized = false;
     this.inputStream = null;
     this.bridge = null;
-    this.audioSessionNumber = 0;
+    this.audioSessionNumber = Date.now();
     this.iceServers = null;
   }
 
@@ -52,9 +52,8 @@ class AudioManager {
     return this._userId;
   }
 
-  getNewAudioSessionNumber() {
-    this.audioSessionNumber += 1;
-
+  bumpSessionNumber() {
+    this.audioSessionNumber = Date.now();
     return this.audioSessionNumber;
   }
 
@@ -107,7 +106,7 @@ class AudioManager {
 
   _initializeBridge({ isListenOnly = false, inputStream, muted }) {
     const brokerOptions = {
-      clientSessionNumber: this.getNewAudioSessionNumber(),
+      clientSessionNumber: this.audioSessionNumber,
       iceServers: this.iceServers,
       stream: (inputStream && inputStream.active) ? inputStream : undefined,
       offering: true,
@@ -191,6 +190,7 @@ class AudioManager {
   }
 
   onAudioJoining() {
+    this.bumpSessionNumber();
     store.dispatch(setIsConnecting(true));
   }
 
@@ -234,7 +234,6 @@ class AudioManager {
     if (!this.bridge) {
       // Bridge is nil => there's no audio anymore - guarantee local states reflect that
       this.onAudioExit();
-
       return;
     }
 

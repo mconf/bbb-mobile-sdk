@@ -24,17 +24,18 @@ const AudioControls = (props) => {
     <>
       {isConnected && <StatusBar backgroundColor="#00BF6F" style="light" />}
       {isConnecting && <StatusBar backgroundColor="#FFC845" style="dark" />}
-      <IconButtonComponent
-        size={buttonSize}
-        icon={unmutedAndConnected ? 'microphone' : 'microphone-off'}
-        iconColor={unmutedAndConnected ? Colors.white : Colors.lightGray300}
-        containerColor={unmutedAndConnected ? Colors.blue : Colors.lightGray100}
-        disabled={!isConnected}
-        animated
-        onPress={() => {
-          toggleMuteMicrophone();
-        }}
-      />
+      {isConnected && (
+        <IconButtonComponent
+          size={buttonSize}
+          icon={unmutedAndConnected ? 'microphone' : 'microphone-off'}
+          iconColor={unmutedAndConnected ? Colors.white : Colors.lightGray300}
+          containerColor={unmutedAndConnected ? Colors.blue : Colors.lightGray100}
+          animated
+          onPress={() => {
+            toggleMuteMicrophone();
+          }}
+        />
+      )}
       <View>
         <IconButtonComponent
           size={buttonSize}

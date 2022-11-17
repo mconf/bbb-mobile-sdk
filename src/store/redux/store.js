@@ -30,6 +30,7 @@ import {
   videoStreamCleanupObserver,
   voiceUserStateObserver,
   voiceCallStateObserver,
+  joinAudioOnLogin,
 } from './middlewares';
 
 const appReducer = combineReducers({
@@ -79,6 +80,7 @@ export const store = configureStore({
       screenshareCleanupObserver.middleware,
       voiceUserStateObserver.middleware,
       voiceCallStateObserver.middleware,
+      joinAudioOnLogin.middleware,
     ]);
   },
 });
