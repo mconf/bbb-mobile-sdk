@@ -26,6 +26,22 @@ export function useChatMsgs() {
               'O histórico do bate-papo público foi apagado por um moderador',
         };
       }
+      // if is a status message
+      if (message.id.toString().includes('SYSTEM_MESSAGE-PUBLIC_CHAT_STATUS')) {
+        const handleMessage = () => {
+          if (message.extra.status === 'away') {
+            return 'Está temporariamente ausente';
+          }
+          return 'Está presente';
+        };
+
+        return {
+          // TODO 'senderName' exclusive for mconf, remove if BBB
+          author: message.extra.senderName,
+          timestamp: message.timestamp,
+          message: handleMessage(),
+        };
+      }
       return {
         author: message.senderName,
         timestamp: message.timestamp,

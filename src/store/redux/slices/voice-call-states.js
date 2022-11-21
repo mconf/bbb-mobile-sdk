@@ -62,7 +62,8 @@ const voiceCallStateChangeListener = (action, listenerApi) => {
     voiceCallStateObject.id
   );
 
-  if (currentVoiceCallState?.callState !== previousVoiceCallState?.callState) {
+  if (currentVoiceCallState?.callState !== previousVoiceCallState?.callState
+    && currentVoiceCallState?.clientSession == AudioManager.audioSessionNumber) {
     switch (currentVoiceCallState?.callState) {
       case 'IN_CONFERENCE':
         if (currentState.audio.isConnecting) AudioManager.onAudioJoin();

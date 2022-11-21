@@ -13,6 +13,13 @@ export class CurrentPollModule extends Module {
     super(CURRENT_POLL_TOPIC, messageSender);
   }
 
+  // TODO FIX THIS
+  onConnected() {
+    this.topics.forEach((topic) => {
+      this.subscribeToCollection(topic, false, true);
+    });
+  }
+
   // eslint-disable-next-line class-methods-use-this
   add(msgObj) {
     return store.dispatch(

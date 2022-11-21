@@ -9,7 +9,7 @@ import { store } from './src/store/redux/store';
 import CustomDrawer from './src/components/custom-drawer';
 import IconButton from './src/components/icon-button';
 // screens
-import PollScreen from './src/screens/poll-screen';
+import PollNavigator from './src/screens/poll-screen/navigator';
 import ClassroomMainScreen from './src/screens/classroom-main-screen';
 import UserParticipantsScreen from './src/screens/user-participants-screen';
 import FullscreenWrapper from './src/components/fullscreen-wrapper';
@@ -19,12 +19,14 @@ import WhiteboardScreen from './src/screens/whiteboard-screen';
 import { injectStore as injectStoreVM } from './src/services/webrtc/video-manager';
 import { injectStore as injectStoreSM } from './src/services/webrtc/screenshare-manager';
 import { injectStore as injectStoreAM } from './src/services/webrtc/audio-manager';
+import { injectStore as injectStoreIM } from './src/components/interactions/service';
 
 //  Inject store in non-component files
 const injectStore = () => {
   injectStoreVM(store);
   injectStoreSM(store);
   injectStoreAM(store);
+  injectStoreIM(store);
 };
 
 const App = ({ onLeaveSession, jUrl }) => {
@@ -88,7 +90,7 @@ const App = ({ onLeaveSession, jUrl }) => {
 
             <Drawer.Screen
               name="PollScreen"
-              component={PollScreen}
+              component={PollNavigator}
               options={{
                 title: 'Enquete',
                 drawerIcon: (config) => (
