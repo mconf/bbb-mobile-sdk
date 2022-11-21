@@ -241,8 +241,6 @@ const setupModules = (ws) => {
     // whiteboard-multi-user:
   };
 
-  GLOBAL_MODULES = modules;
-
   Object.values(modules).forEach((module) => {
     if (module !== 'current-poll') {
       module.onConnected();
