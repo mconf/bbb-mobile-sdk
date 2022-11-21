@@ -1,5 +1,8 @@
 {
-  "dev": true,
+  "dev": false,
+  "media": {
+    "videoPageSize": 3
+  },
   "clientLog": {
     "server": {
       "enabled": false,
