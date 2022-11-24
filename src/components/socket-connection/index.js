@@ -299,6 +299,16 @@ const SocketConnectionComponent = (props) => {
     }, 'Main websocket connection closed');
   };
 
+  const onError = (error) => {
+    logger.info({
+      logCode: 'main_websocket_error',
+      extraInfo: {
+        errorMessage: error.message,
+        errorCode: error.code,
+      },
+    }, `Main websocket error: ${error.message}`);
+  };
+
   useEffect(() => {
     if (connected === false) {
       tearDownModules(websocket, modules.current);
@@ -392,6 +402,7 @@ const SocketConnectionComponent = (props) => {
 
       ws.onopen = onOpen;
       ws.onclose = onClose;
+      ws.onerror = onError;
       ws.onmessage = (msg) => onMessage(ws, msg);
 
       setWebsocket(ws);
