@@ -13,15 +13,15 @@ const ClassroomMainScreen = () => {
   const videoUsers = useSelector(selectSortedVideoUsers);
   const orientation = useOrientation();
   const [switchLandscapeLayout, setSwitchLandscapeLayout] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
 
-  // lifecycle methods
+  /* lifecycle methods */
   useEffect(() => {
     setTimeout(() => setIsLoading(false), 500);
   }, []);
 
-  // view components
+  /* view components */
   const renderPortraitOrientation = () => {
     return (
       <SafeAreaView>
@@ -70,9 +70,7 @@ const ClassroomMainScreen = () => {
                 iconColor={Colors.lightGray300}
                 containerColor={Colors.lightGray100}
                 animated
-                onPress={() =>
-                  setSwitchLandscapeLayout((prevState) => !prevState)
-                }
+                onPress={() => setSwitchLandscapeLayout((prevState) => !prevState)}
               />
             </>
           </Styled.ContentAreaContainer>
@@ -84,7 +82,7 @@ const ClassroomMainScreen = () => {
     );
   };
 
-  // return
+  /*  return area  */
   if (isLoading) return Styled.renderSkeletonLoading();
   if (orientation === 'PORTRAIT') return renderPortraitOrientation();
   return renderLandscapeOrientation();
