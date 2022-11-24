@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import * as Linking from 'expo-linking';
+import { useNetInfo } from "@react-native-community/netinfo";
 import Settings from '../../../settings.json';
 import { UsersModule } from './modules/users';
 import { GroupChatModule } from './modules/group-chat';
@@ -55,6 +56,17 @@ let CURRENT_MEETING_DATA = {};
 let CURRENT_SESSION_ID;
 let GLOBAL_MESSAGE_SENDER = null;
 const GLOBAL_TRANSACTIONS = new MethodTransactionManager();
+const TERMINATION_REASONS = [
+  'user_logged_out_reason',
+  'validate_token_failed_eject_reason',
+  'banned_user_rejoining_reason',
+  'joined_another_window_reason',
+  'user_inactivity_eject_reason',
+  'user_requested_eject_reason',
+  'duplicate_user_in_meeting_eject_reason',
+  'not_enough_permission_eject_reason',
+  'able_to_rejoin_user_disconnected_reason',
+];
 
 const sendMessage = (ws, msgObj) => {
   const msg = JSON.stringify(msgObj).replace(/"/g, '\\"');
@@ -273,6 +285,8 @@ const SocketConnectionComponent = (props) => {
   const validateReqId = useRef(null);
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const { isConnected: online } = useNetInfo();
+
   const { loggedOut, ejected } = useSelector((state) => {
     const user = selectUserByIntId(state, meetingData.internalUserID);
     return { loggedOut: user?.loggedOut, ejected: user?.ejected };
@@ -297,6 +311,16 @@ const SocketConnectionComponent = (props) => {
     logger.info({
       logCode: 'main_websocket_closed',
     }, 'Main websocket connection closed');
+  };
+
+  const onError = (error) => {
+    logger.info({
+      logCode: 'main_websocket_error',
+      extraInfo: {
+        errorMessage: error.message,
+        errorCode: error.code,
+      },
+    }, `Main websocket error: ${error.message}`);
   };
 
   useEffect(() => {
@@ -332,6 +356,9 @@ const SocketConnectionComponent = (props) => {
     if (_loggingOut) dispatch(setLoggingOut(true));
 
     terminate(websocket, modules.current);
+    // This is a sure socket termination - guarantee it is set as disconnected
+    // because we can't rely on onClose in scenarios like component unmounts
+    dispatch(setConnected(false));
 
     if (_loggingOut && meetingData && typeof meetingData.logoutUrl === 'string') {
       fetch(meetingData.logoutUrl);
@@ -387,18 +414,24 @@ const SocketConnectionComponent = (props) => {
   }, [joinUrl, loggedIn, loggingIn, loggingOut]);
 
   useEffect(() => {
-    if (meetingData && Object.keys(meetingData).length) {
+    if (meetingData
+      && Object.keys(meetingData).length
+      && online
+      && !connected
+      && !loggingOut
+    ) {
       const ws = makeWS(meetingData.enterUrl);
 
       ws.onopen = onOpen;
       ws.onclose = onClose;
+      ws.onerror = onError;
       ws.onmessage = (msg) => onMessage(ws, msg);
 
       setWebsocket(ws);
       // TODO move this elsewhere - prlanzarin
       GLOBAL_WS = ws;
     }
-  }, [meetingData]);
+  }, [meetingData, connected, online, loggingOut, loggedIn]);
 
   useEffect(() => {
     if (urlViaLinking?.includes('/bigbluebutton/api/join?')) {
@@ -428,6 +461,13 @@ const SocketConnectionComponent = (props) => {
       case 'result': {
         // We're resolving a validateAuthToken request
         if (msgObj.id === validateReqId.current) {
+          // Session ended
+          if (msgObj?.result?.reason
+            && TERMINATION_REASONS.some((reason) => reason === msgObj.result.reason)) {
+            _terminate(true);
+            return;
+          }
+
           modules.current = setupModules(ws);
           // FIXME initializeMediaManagers: this is definitely not the place
           // to do this. Remove when socket-connection is properly
@@ -436,6 +476,13 @@ const SocketConnectionComponent = (props) => {
           dispatch(setLoggedIn(true));
           dispatch(setLoggingIn(false));
         } else {
+          // Session ended
+          if (msgObj?.result?.reason
+            && TERMINATION_REASONS.some((reason) => reason === msgObj.result.reason)) {
+            _terminate(true);
+            return;
+          }
+
           // Probably dealing with a module makeCall/method response
           if (msgObj.collection) {
             const currentModule = modules.current[msgObj.collection];
@@ -449,10 +496,12 @@ const SocketConnectionComponent = (props) => {
           }
 
           // Resolve/reject any higher level transactions called from /services/api/makeCall
-          if (typeof msgObj.error === 'object') {
-            GLOBAL_TRANSACTIONS.rejectTransaction(msgObj.id, msgObj.error);
-          } else {
-            GLOBAL_TRANSACTIONS.resolveTransaction(msgObj.id, msgObj.result);
+          if (GLOBAL_TRANSACTIONS.hasTransaction(msgObj.id)) {
+            if (typeof msgObj.error === 'object') {
+              GLOBAL_TRANSACTIONS.rejectTransaction(msgObj.id, msgObj.error);
+            } else {
+              GLOBAL_TRANSACTIONS.resolveTransaction(msgObj.id, msgObj.result);
+            }
           }
         }
         break;

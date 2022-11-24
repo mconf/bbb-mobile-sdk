@@ -1,7 +1,8 @@
+import { useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
-import { Provider } from 'react-redux';
+import { Provider, useDispatch } from 'react-redux';
 // providers and store
 import { store } from './src/store/redux/store';
 // screens
@@ -12,6 +13,7 @@ import { injectStore as injectStoreVM } from './src/services/webrtc/video-manage
 import { injectStore as injectStoreSM } from './src/services/webrtc/screenshare-manager';
 import { injectStore as injectStoreAM } from './src/services/webrtc/audio-manager';
 import { injectStore as injectStoreIM } from './src/components/interactions/service';
+import { ConnectionStatusTracker } from './src/store/redux/middlewares';
 
 //  Inject store in non-component files
 const injectStore = () => {
@@ -21,28 +23,45 @@ const injectStore = () => {
   injectStoreIM(store);
 };
 
-const App = ({ onLeaveSession, jUrl }) => {
-  injectStore();
+const AppContent = ({ onLeaveSession, jUrl }) => {
   const Stack = createNativeStackNavigator();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    injectStore();
+    dispatch(ConnectionStatusTracker.registerConnectionStatusListeners());
+
+    return () => {
+      dispatch(ConnectionStatusTracker.unregisterConnectionStatusListeners());
+    };
+  }, []);
 
   return (
     <>
+      <NavigationContainer independent>
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: '#06172A' }
+          }}
+        >
+          {/*<Stack.Screen name="GuestScreen" component={GuestScreen} />*/}
+          <Stack.Screen name="DrawerNavigator">
+            {() => <DrawerNavigator jUrl={jUrl} onLeaveSession={onLeaveSession} />}
+          </Stack.Screen>
+          <Stack.Screen name="EndSessionScreen" component={EndSessionScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+      <FullscreenWrapper />
+    </>
+  );
+};
+
+const App = (props) => {
+  return (
+    <>
       <Provider store={store}>
-        <NavigationContainer independent>
-          <Stack.Navigator
-            screenOptions={{
-              headerShown: false,
-              contentStyle: { backgroundColor: '#06172A' }
-            }}
-          >
-            {/*<Stack.Screen name="GuestScreen" component={GuestScreen} />*/}
-            <Stack.Screen name="DrawerNavigator">
-              {() => <DrawerNavigator jUrl={jUrl} onLeaveSession={onLeaveSession} />}
-            </Stack.Screen>
-            <Stack.Screen name="EndSessionScreen" component={EndSessionScreen} />
-          </Stack.Navigator>
-        </NavigationContainer>
-        <FullscreenWrapper />
+        <AppContent {...props} />
       </Provider>
       <StatusBar style="light" />
     </>
