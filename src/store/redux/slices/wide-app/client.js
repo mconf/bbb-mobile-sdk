@@ -5,6 +5,15 @@ const initialState = {
   loggedIn: false,
   loggingOut: false,
   loggingIn: false,
+  connectionStatus: {
+    isConnected: null,
+    isInternetReachable: null,
+    isWifiEnabled: null,
+    type: null,
+    cellularGeneration: null,
+    isConnectionExpensive: null,
+    strength: null,
+  }
 };
 
 const clientSlice = createSlice({
@@ -23,6 +32,28 @@ const clientSlice = createSlice({
     setLoggingIn: (state, action) => {
       state.loggingIn = action.payload;
     },
+    connectionStatusChanged: (state, action) => {
+      const {
+        isConnected,
+        isInternetReachable,
+        isWifiEnabled,
+        type,
+        details: {
+          isConnectionExpensive = null,
+          strength = null,
+          cellularGeneration = null,
+        } = {},
+      } = action.payload;
+      state.connectionStatus = {
+        isConnected,
+        isInternetReachable,
+        isWifiEnabled,
+        type,
+        isConnectionExpensive,
+        strength,
+        cellularGeneration,
+      };
+    },
   },
 });
 
@@ -31,6 +62,7 @@ export const {
   setLoggedIn,
   setLoggingOut,
   setLoggingIn,
+  connectionStatusChanged,
 } = clientSlice.actions;
 
 export default clientSlice.reducer;

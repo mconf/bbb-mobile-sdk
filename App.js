@@ -1,7 +1,8 @@
+import { useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
-import { Provider } from 'react-redux';
+import { Provider, useDispatch } from 'react-redux';
 import Settings from './settings.json';
 // providers and store
 import { store } from './src/store/redux/store';
@@ -20,6 +21,7 @@ import { injectStore as injectStoreVM } from './src/services/webrtc/video-manage
 import { injectStore as injectStoreSM } from './src/services/webrtc/screenshare-manager';
 import { injectStore as injectStoreAM } from './src/services/webrtc/audio-manager';
 import { injectStore as injectStoreIM } from './src/components/interactions/service';
+import { ConnectionStatusTracker } from './src/store/redux/middlewares';
 
 //  Inject store in non-component files
 const injectStore = () => {
@@ -29,111 +31,119 @@ const injectStore = () => {
   injectStoreIM(store);
 };
 
-const App = ({ onLeaveSession, jUrl }) => {
-  injectStore();
+const AppContent = ({ onLeaveSession, jUrl }) => {
+  const dispatch = useDispatch();
   const Drawer = createDrawerNavigator();
+
+  useEffect(() => {
+    injectStore();
+    dispatch(ConnectionStatusTracker.registerConnectionStatusListeners());
+
+    return () => {
+      dispatch(ConnectionStatusTracker.unregisterConnectionStatusListeners());
+    };
+  }, []);
 
   return (
     <>
-      <Provider store={store}>
-        <NavigationContainer independent>
-          {!Settings.dev && <TestComponentsScreen jUrl={jUrl} />}
-          <Drawer.Navigator
-            independent
-            drawerContent={(props) => <CustomDrawer {...props} onLeaveSession={onLeaveSession} />}
-            screenOptions={{
-              contentOptions: {
-                style: {
-                  backgroundColor: 'black',
-                  flex: 1,
-                },
+      <NavigationContainer independent>
+        {!Settings.dev && <TestComponentsScreen jUrl={jUrl} />}
+        <Drawer.Navigator
+          independent
+          drawerContent={(props) => <CustomDrawer {...props} onLeaveSession={onLeaveSession} />}
+          screenOptions={{
+            contentOptions: {
+              style: {
+                backgroundColor: 'black',
+                flex: 1,
               },
+            },
 
-              sceneContainerStyle: { backgroundColor: '#06172A' },
-              drawerActiveBackgroundColor: '#003399',
-              drawerActiveTintColor: 'white',
-              headerStyle: { backgroundColor: '#003399' },
-              headerTintColor: 'white',
-              drawerBackgroundColor: '#003399',
-              headerTitleAlign: 'center',
+            sceneContainerStyle: { backgroundColor: '#06172A' },
+            drawerActiveBackgroundColor: '#003399',
+            drawerActiveTintColor: 'white',
+            headerStyle: { backgroundColor: '#003399' },
+            headerTintColor: 'white',
+            drawerBackgroundColor: '#003399',
+            headerTitleAlign: 'center',
+          }}
+        >
+          <Drawer.Screen
+            name="Main"
+            component={ClassroomMainScreen}
+            options={{
+              title: 'Sala de aula',
+              drawerIcon: (config) => (
+                <IconButton
+                  icon="home"
+                  size={18}
+                  iconColor={config.color}
+                />
+              ),
             }}
-          >
-            <Drawer.Screen
-              name="Main"
-              component={ClassroomMainScreen}
-              options={{
-                title: 'Sala de aula',
-                drawerIcon: (config) => (
-                  <IconButton
-                    icon="home"
-                    size={18}
-                    iconColor={config.color}
-                  />
-                ),
-              }}
-            />
+          />
 
-            <Drawer.Screen
-              name="SharedNoteScreen"
-              component={UserNotesScreen}
-              options={{
-                title: 'Nota compartilhada',
-                drawerIcon: (config) => (
-                  <IconButton
-                    icon="file-document"
-                    size={18}
-                    iconColor={config.color}
-                  />
-                ),
-              }}
-            />
+          <Drawer.Screen
+            name="SharedNoteScreen"
+            component={UserNotesScreen}
+            options={{
+              title: 'Nota compartilhada',
+              drawerIcon: (config) => (
+                <IconButton
+                  icon="file-document"
+                  size={18}
+                  iconColor={config.color}
+                />
+              ),
+            }}
+          />
 
-            <Drawer.Screen
-              name="PollScreen"
-              component={PollNavigator}
-              options={{
-                title: 'Enquete',
-                drawerIcon: (config) => (
-                  <IconButton
-                    icon="chart-box"
-                    size={18}
-                    iconColor={config.color}
-                  />
-                ),
-              }}
-            />
+          <Drawer.Screen
+            name="PollScreen"
+            component={PollNavigator}
+            options={{
+              title: 'Enquete',
+              drawerIcon: (config) => (
+                <IconButton
+                  icon="chart-box"
+                  size={18}
+                  iconColor={config.color}
+                />
+              ),
+            }}
+          />
 
-            <Drawer.Screen
-              name="UserParticipantsScreen"
-              component={UserParticipantsScreen}
-              options={{
-                title: 'Lista de participantes',
-                drawerIcon: (config) => (
-                  <IconButton
-                    icon="account-multiple"
-                    size={18}
-                    iconColor={config.color}
-                  />
-                ),
-              }}
-            />
+          <Drawer.Screen
+            name="UserParticipantsScreen"
+            component={UserParticipantsScreen}
+            options={{
+              title: 'Lista de participantes',
+              drawerIcon: (config) => (
+                <IconButton
+                  icon="account-multiple"
+                  size={18}
+                  iconColor={config.color}
+                />
+              ),
+            }}
+          />
 
-            <Drawer.Screen
-              name="WhiteboardScreen"
-              component={WhiteboardScreen}
-              options={{
-                title: 'Quadro Branco',
-                drawerIcon: (config) => (
-                  <IconButton
-                    icon="brush"
-                    size={18}
-                    iconColor={config.color}
-                  />
-                ),
-              }}
-            />
+          <Drawer.Screen
+            name="WhiteboardScreen"
+            component={WhiteboardScreen}
+            options={{
+              title: 'Quadro Branco',
+              drawerIcon: (config) => (
+                <IconButton
+                  icon="brush"
+                  size={18}
+                  iconColor={config.color}
+                />
+              ),
+            }}
+          />
 
-            {Settings.dev && (
+          {Settings.dev && (
             <Drawer.Screen
               name="TestComponent"
               options={{
@@ -149,11 +159,20 @@ const App = ({ onLeaveSession, jUrl }) => {
             >
               {(props) => <TestComponentsScreen {...props} jUrl={jUrl} />}
             </Drawer.Screen>
-            )}
+          )}
 
-          </Drawer.Navigator>
-        </NavigationContainer>
-        <FullscreenWrapper />
+        </Drawer.Navigator>
+      </NavigationContainer>
+      <FullscreenWrapper />
+    </>
+  );
+};
+
+const App = (props) => {
+  return (
+    <>
+      <Provider store={store}>
+        <AppContent {...props} />
       </Provider>
       <StatusBar style="light" />
     </>
