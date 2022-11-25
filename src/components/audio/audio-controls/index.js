@@ -1,5 +1,4 @@
 import { useSelector } from 'react-redux';
-import { StatusBar } from 'expo-status-bar';
 import { ActivityIndicator, View } from 'react-native';
 import Colors from '../../../constants/colors';
 import IconButtonComponent from '../../icon-button';
@@ -22,8 +21,6 @@ const AudioControls = (props) => {
 
   return (
     <>
-      {isConnected && <StatusBar backgroundColor="#00BF6F" style="light" />}
-      {isConnecting && <StatusBar backgroundColor="#FFC845" style="dark" />}
       {isConnected && (
         <IconButtonComponent
           size={buttonSize}

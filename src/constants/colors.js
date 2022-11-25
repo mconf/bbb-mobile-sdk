@@ -7,6 +7,8 @@ const Colors = {
   lightGray300: '#667080',
   lightGray400: '#28282D',
   contentLetterboxColor: '#3B4A5C',
+  statusBarConnected: '#00BF6F',
+  statusBarConnecting: '#FFC845',
 };
 
 export default Colors;
