@@ -73,6 +73,7 @@ const sortVideoUsers = (videoUsers, remoteCap = 0) => {
   ] = videoUsers.reduce(([local, pinned, remote, rest], videoUser) => {
     // Local cameras first
     if (videoUser.local) {
+      videoUser.visible = true;
       local.push(videoUser);
     } else if (!videoUser.cameraId) {
       // Users without cameras last
