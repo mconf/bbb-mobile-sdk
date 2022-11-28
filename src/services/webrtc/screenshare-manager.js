@@ -17,21 +17,19 @@ export const injectStore = (_store) => {
 class ScreenshareManager {
   constructor() {
     this.initialized = false;
-    this.bridge = null;
     this.iceServers = null;
-
     // <ScreenshareBroker>
-    this.bridge = null;
+    this.broker = null;
     // <MediaStream>
     this.screenshareStream = null;
   }
 
-  set bridge(_bridge) {
-    this._bridge = _bridge;
+  set broker(_broker) {
+    this._broker = _broker;
   }
 
-  get bridge() {
-    return this._bridge;
+  get broker() {
+    return this._broker;
   }
 
   storeMediaStream(mediaStream) {
@@ -58,15 +56,15 @@ class ScreenshareManager {
     return `https://${this._host}/bigbluebutton/api/stuns?sessionToken=${this._sessionToken}`;
   }
 
-  _initializeSubscriberBridge() {
-    this.bridge = new ScreenshareBroker(this._getSFUAddr(), 'recv', {
+  _initializeSubscriberBroker() {
+    this.broker = new ScreenshareBroker(this._getSFUAddr(), 'recv', {
       iceServers: this.iceServers,
       offering: false,
       traceLogs: true,
       logger: this.logger,
     });
 
-    this.bridge.onended = () => {
+    this.broker.onended = () => {
       this.logger.info({
         logCode: 'screenshare_ended',
         extraInfo: {
@@ -76,7 +74,7 @@ class ScreenshareManager {
       this.onScreenshareUnsubscribed();
     };
 
-    this.bridge.onerror = (error) => {
+    this.broker.onerror = (error) => {
       this.logger.error({
         logCode: 'screenshare_failure',
         extraInfo: {
@@ -89,13 +87,13 @@ class ScreenshareManager {
       this.unsubscribe();
     };
 
-    this.bridge.onstart = () => {
-      const remoteStream = this.bridge.getRemoteStream();
+    this.broker.onstart = () => {
+      const remoteStream = this.broker.getRemoteStream();
       if (remoteStream) this.storeMediaStream(remoteStream);
       this.onScreenshareSubscribed();
     };
 
-    this.bridge.onreconnecting = () => {
+    this.broker.onreconnecting = () => {
       this.logger.info({
         logCode: 'screenshare_reconnecting',
         extraInfo: {
@@ -106,12 +104,12 @@ class ScreenshareManager {
       // to let the user know something's happening.
     };
 
-    this.bridge.onreconnected = () => {
-      const remoteStream = this.bridge.getRemoteStream();
+    this.broker.onreconnected = () => {
+      const remoteStream = this.broker.getRemoteStream();
       if (remoteStream) this.storeMediaStream(remoteStream);
     };
 
-    return this.bridge;
+    return this.broker;
   }
 
   async init({
@@ -144,7 +142,7 @@ class ScreenshareManager {
           errorMessage: error.message,
           url: this._getStunFetchURL(),
         },
-      }, 'SFU screenshare bridge failed to fetch STUN/TURN info, using default servers');
+      }, 'SFU screenshare broker failed to fetch STUN/TURN info, using default servers');
     }
   }
 
@@ -162,7 +160,7 @@ class ScreenshareManager {
     store.dispatch(setIsConnected(false));
     store.dispatch(setIsConnecting(false));
     store.dispatch(setIsHangingUp(false));
-    this.bridge = null;
+    this.broker = null;
     const mediaStream = this.getMediaStream();
 
     if (mediaStream) {
@@ -175,8 +173,8 @@ class ScreenshareManager {
     if (!this.initialized) throw new TypeError('Screenshare manager is not ready');
 
     try {
-      const bridge = this._initializeSubscriberBridge();
-      await bridge.joinScreenshare();
+      const broker = this._initializeSubscriberBroker();
+      await broker.joinScreenshare();
     } catch (error) {
       // Rollback and re-throw
       this.unsubscribe();
@@ -185,9 +183,9 @@ class ScreenshareManager {
   }
 
   unsubscribe() {
-    if (this.bridge) {
-      this.bridge.stop();
-      this.bridge = null;
+    if (this.broker) {
+      this.broker.stop();
+      this.broker = null;
     }
 
     this.deleteMediaStream();
