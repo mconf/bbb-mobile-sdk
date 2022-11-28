@@ -424,8 +424,14 @@ class VideoManager {
     if (!this.initialized) throw new TypeError('Video manager is not ready');
 
     try {
-      if (!!this.getBroker(cameraId)) return Promise.resolve();
-      const broker = this._initializeSubscriberBroker({ cameraId });
+      let broker = this.getBroker(cameraId);
+
+      if (broker) {
+        this.broker.stop(true);
+        this.deleteBroker(cameraId);
+      }
+
+      broker = this._initializeSubscriberBroker({ cameraId });
       await broker.joinVideo();
     } catch (error) {
       // Rollback and re-throw
