@@ -40,8 +40,9 @@ const VideoContainer = (props) => {
   }, [cameraId, mediaStreamId, signalingTransportOpen, visible]);
 
   const renderVideo = () => {
-    if (typeof mediaStreamId === 'string') {
-      return <Styled.VideoStream streamURL={mediaStreamId} />;
+    if (cameraId && visible) {
+      if (typeof mediaStreamId === 'string') return <Styled.VideoStream streamURL={mediaStreamId} />;
+      return <Styled.VideoSkeleton />;
     }
 
     if (userAvatar && userAvatar.length !== 0) {
