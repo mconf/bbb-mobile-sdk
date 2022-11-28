@@ -92,7 +92,7 @@ class ScreenshareBroker extends BaseBroker {
             sfuComponent: this.sfuComponent,
             started: this.started,
           },
-        }, 'Screenshare peer creation failed');
+        }, `Screenshare peer creation failed: ${error.message}`);
         this.onerror(normalizedError);
         reject(normalizedError);
       }
@@ -102,6 +102,12 @@ class ScreenshareBroker extends BaseBroker {
   joinScreenshare() {
     return this.openWSConnection()
       .then(this._join.bind(this));
+  }
+
+  onWSClosed() {
+    // 1301: "WEBSOCKET_DISCONNECTED",
+    this.onerror(BaseBroker.assembleError(1301));
+    this.scheduleReconnection();
   }
 
   onWSMessage(message) {
@@ -114,9 +120,13 @@ class ScreenshareBroker extends BaseBroker {
         }
         break;
       case 'playStart':
-        if (!this.ending && !this.started) {
-          this.onstart();
-          this.started = true;
+        if (!this.ending) {
+          if (!this.reconnecting) {
+            this.onstart();
+            this.started = true;
+          } else {
+            this._onreconnected();
+          }
         }
         break;
       case 'stopSharing':
@@ -149,24 +159,29 @@ class ScreenshareBroker extends BaseBroker {
 
   _onreconnected() {
     this.reconnecting = false;
+    this.started = true;
     this.onreconnected();
   }
 
   reconnect() {
     this.stop(true);
     this._onreconnecting();
-    this.joinScreenshare();
+    this.joinScreenshare().catch((error) => {
+      this.logger.warn({
+        logCode: `${this.logCodePrefix}_reconnect_error`,
+        extraInfo: {
+          errorMessage: error.name || error.message || 'Unknown error',
+          role: this.role,
+          sfuComponent: this.sfuComponent,
+          started: this.started,
+          errorCode: error.code,
+        },
+      }, `Screenshare reconnect failed: ${error.message}`);
+    });
   }
 
   _getScheduledReconnect() {
     return () => {
-      const oldReconnectTimer = this._reconnectionTimer;
-      const newReconnectTimer = Math.min(
-        1.5 * oldReconnectTimer,
-        MAX_RECONNECTION_TIMEOUT,
-      );
-      this._reconnectionTimer = newReconnectTimer;
-
       // Clear the current reconnect interval so it can be re-set in createWebRTCPeer
       if (this._reconnectionTimeout) {
         clearTimeout(this._reconnectionTimeout);
@@ -178,7 +193,7 @@ class ScreenshareBroker extends BaseBroker {
   }
 
   scheduleReconnection() {
-    const shouldSetReconnectionTimeout = !this.reconnectionTimer && !this.started;
+    const shouldSetReconnectionTimeout = !this._reconnectionTimeout && !this.started;
 
     // This is an ongoing reconnection which succeeded in the first place but
     // then failed mid call. Try to reconnect it right away. Clear the restart
@@ -193,7 +208,11 @@ class ScreenshareBroker extends BaseBroker {
     // place. Set reconnection timeouts with random intervals between them to try
     // and reconnect without flooding the server
     if (shouldSetReconnectionTimeout) {
-      const newReconnectTimer = this._reconnectionTimer || BASE_RECONNECTION_TIMEOUT;
+      const oldReconnectTimer = this._reconnectionTimer || BASE_RECONNECTION_TIMEOUT;
+      const newReconnectTimer = Math.min(
+        1.5 * oldReconnectTimer,
+        MAX_RECONNECTION_TIMEOUT,
+      );
       this._reconnectionTimer = newReconnectTimer;
 
       this._reconnectionTimeout = setTimeout(

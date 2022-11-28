@@ -20,6 +20,9 @@ const screenshareSlice = createSlice({
     setIsHangingUp: (state, action) => {
       state.isHangingUp = action.payload;
     },
+    setIsReconnecting: (state, action) => {
+      state.isReconnecting = action.payload;
+    },
     addScreenshareStream: (state, action) => {
       state.screenshareStream = action.payload;
     },
@@ -33,6 +36,7 @@ export const {
   setIsConnecting,
   setIsConnected,
   setIsHangingUp,
+  setIsReconnecting,
   addScreenshareStream,
   removeScreenshareStream,
 } = screenshareSlice.actions;

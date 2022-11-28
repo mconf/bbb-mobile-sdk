@@ -4,6 +4,7 @@ import {
   setIsConnecting,
   setIsConnected,
   setIsHangingUp,
+  setIsReconnecting,
   addScreenshareStream,
   removeScreenshareStream,
 } from '../../store/redux/slices/wide-app/screenshare';
@@ -17,21 +18,19 @@ export const injectStore = (_store) => {
 class ScreenshareManager {
   constructor() {
     this.initialized = false;
-    this.bridge = null;
     this.iceServers = null;
-
     // <ScreenshareBroker>
-    this.bridge = null;
+    this.broker = null;
     // <MediaStream>
     this.screenshareStream = null;
   }
 
-  set bridge(_bridge) {
-    this._bridge = _bridge;
+  set broker(_broker) {
+    this._broker = _broker;
   }
 
-  get bridge() {
-    return this._bridge;
+  get broker() {
+    return this._broker;
   }
 
   storeMediaStream(mediaStream) {
@@ -58,15 +57,15 @@ class ScreenshareManager {
     return `https://${this._host}/bigbluebutton/api/stuns?sessionToken=${this._sessionToken}`;
   }
 
-  _initializeSubscriberBridge() {
-    this.bridge = new ScreenshareBroker(this._getSFUAddr(), 'recv', {
+  _initializeSubscriberBroker() {
+    this.broker = new ScreenshareBroker(this._getSFUAddr(), 'recv', {
       iceServers: this.iceServers,
       offering: false,
       traceLogs: true,
       logger: this.logger,
     });
 
-    this.bridge.onended = () => {
+    this.broker.onended = () => {
       this.logger.info({
         logCode: 'screenshare_ended',
         extraInfo: {
@@ -76,7 +75,7 @@ class ScreenshareManager {
       this.onScreenshareUnsubscribed();
     };
 
-    this.bridge.onerror = (error) => {
+    this.broker.onerror = (error) => {
       this.logger.error({
         logCode: 'screenshare_failure',
         extraInfo: {
@@ -85,33 +84,21 @@ class ScreenshareManager {
           errorMessage: error.message,
         },
       }, `Screenshare error - errorCode=${error.code}, cause=${error.message}`);
-      // TODO retry
-      this.unsubscribe();
     };
 
-    this.bridge.onstart = () => {
-      const remoteStream = this.bridge.getRemoteStream();
-      if (remoteStream) this.storeMediaStream(remoteStream);
+    this.broker.onstart = () => {
       this.onScreenshareSubscribed();
     };
 
-    this.bridge.onreconnecting = () => {
-      this.logger.info({
-        logCode: 'screenshare_reconnecting',
-        extraInfo: {
-          role: 'recv',
-        },
-      }, 'Screenshare reconnecting (viewer)');
-      // TODO - update local collection states about this and use it in the UI
-      // to let the user know something's happening.
+    this.broker.onreconnecting = () => {
+      this.onScreenshareReconnecting();
     };
 
-    this.bridge.onreconnected = () => {
-      const remoteStream = this.bridge.getRemoteStream();
-      if (remoteStream) this.storeMediaStream(remoteStream);
+    this.broker.onreconnected = () => {
+      this.onScreenshareReconnected();
     };
 
-    return this.bridge;
+    return this.broker;
   }
 
   async init({
@@ -144,8 +131,23 @@ class ScreenshareManager {
           errorMessage: error.message,
           url: this._getStunFetchURL(),
         },
-      }, 'SFU screenshare bridge failed to fetch STUN/TURN info, using default servers');
+      }, 'SFU screenshare broker failed to fetch STUN/TURN info, using default servers');
     }
+  }
+
+  onScreenshareReconnecting() {
+    this.logger.info({
+      logCode: 'screenshare_reconnecting',
+      extraInfo: {
+        role: 'recv',
+      },
+    }, 'Screenshare reconnecting (viewer)');
+    store.dispatch(setIsReconnecting(true));
+    store.dispatch(setIsConnected(false));
+  }
+
+  onScreenshareReconnected() {
+    this.onScreenshareSubscribed();
   }
 
   onScreenshareSubscribing() {
@@ -153,17 +155,22 @@ class ScreenshareManager {
   }
 
   onScreenshareSubscribed() {
+    const remoteStream = this.broker.getRemoteStream();
+    if (remoteStream) this.storeMediaStream(remoteStream);
     store.dispatch(setIsConnected(true));
     store.dispatch(setIsConnecting(false));
+    store.dispatch(setIsReconnecting(false));
     this.logger.info({ logCode: 'screenshare_joined' }, 'Screenshare Joined');
   }
 
   onScreenshareUnsubscribed() {
+    const mediaStream = this.getMediaStream();
+
     store.dispatch(setIsConnected(false));
     store.dispatch(setIsConnecting(false));
     store.dispatch(setIsHangingUp(false));
-    this.bridge = null;
-    const mediaStream = this.getMediaStream();
+    store.dispatch(setIsReconnecting(false));
+    this.broker = null;
 
     if (mediaStream) {
       mediaStream.getTracks().forEach((track) => track.stop());
@@ -175,8 +182,12 @@ class ScreenshareManager {
     if (!this.initialized) throw new TypeError('Screenshare manager is not ready');
 
     try {
-      const bridge = this._initializeSubscriberBridge();
-      await bridge.joinScreenshare();
+      if (this.broker) {
+        this.broker.stop(true);
+        this.broker = null;
+      }
+      const broker = this._initializeSubscriberBroker();
+      await broker.joinScreenshare();
     } catch (error) {
       // Rollback and re-throw
       this.unsubscribe();
@@ -185,12 +196,12 @@ class ScreenshareManager {
   }
 
   unsubscribe() {
-    if (this.bridge) {
-      this.bridge.stop();
-      this.bridge = null;
+    if (this.broker) {
+      store.dispatch(setIsHangingUp(true));
+      this.broker.stop();
+      this.broker = null;
     }
 
-    this.deleteMediaStream();
     this.onScreenshareUnsubscribed();
   }
 
