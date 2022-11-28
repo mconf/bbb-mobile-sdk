@@ -4,7 +4,9 @@ import Colors from '../../constants/colors';
 
 const AppStatusBar = () => {
   const audioIsConnected = useSelector((state) => state.audio.isConnected);
-  const audioIsConnecting = useSelector((state) => state.audio.isConnecting);
+  const audioIsConnecting = useSelector((state) => {
+    return state.audio.isConnecting || state.audio.isReconnecting;
+  });
   const clientIsDisconnected = useSelector((state) => {
     return !state.client.connected && (state.client.loggedIn || state.client.loggingIn);
   });

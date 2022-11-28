@@ -4,6 +4,7 @@ const initialState = {
   isMuted: true,
   isConnected: false,
   isConnecting: false,
+  isReconnecting: false,
   isHangingUp: false,
   audioStream: null,
 };
@@ -24,6 +25,9 @@ const audioSlice = createSlice({
     setIsHangingUp: (state, action) => {
       state.isHangingUp = action.payload;
     },
+    setIsReconnecting: (state, action) => {
+      state.isReconnecting = action.payload;
+    },
     setAudioStream: (state, action) => {
       state.inputStream = action.payload;
     },
@@ -36,5 +40,6 @@ export const {
   setIsConnecting,
   setIsHangingUp,
   setIsConnected,
+  setIsReconnecting,
 } = audioSlice.actions;
 export default audioSlice.reducer;
