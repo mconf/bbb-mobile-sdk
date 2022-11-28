@@ -24,7 +24,6 @@ export const injectStore = (_store) => {
 class VideoManager {
   constructor() {
     this.initialized = false;
-    this.bridge = null;
     this.iceServers = null;
     this.ws = null;
     this._wsQueue = [];
@@ -219,7 +218,7 @@ class VideoManager {
     return `https://${this._host}/bigbluebutton/api/stuns?sessionToken=${this._sessionToken}`;
   }
 
-  _initializePublisherBridge({ cameraId, inputStream }) {
+  _initializePublisherBroker({ cameraId, inputStream }) {
     const brokerOptions = {
       ws: this.ws,
       cameraId,
@@ -229,8 +228,8 @@ class VideoManager {
       traceLogs: true,
       logger: this.logger,
     };
-    const bridge = new VideoBroker('share', brokerOptions);
-    bridge.onended = () => {
+    const broker = new VideoBroker('share', brokerOptions);
+    broker.onended = () => {
       this.logger.info({
         logCode: 'video_ended',
         extraInfo: {
@@ -240,7 +239,7 @@ class VideoManager {
       }, 'Video ended without issue');
       this.onLocalVideoExit(cameraId);
     };
-    bridge.onerror = (error) => {
+    broker.onerror = (error) => {
       this.logger.error({
         logCode: 'video_failure',
         extraInfo: {
@@ -252,10 +251,10 @@ class VideoManager {
       }, `Video error - errorCode=${error.code}, cause=${error.message}`);
       this.stopVideo(cameraId);
     };
-    bridge.onstart = () => {
+    broker.onstart = () => {
       this.onVideoPublished(cameraId);
     };
-    bridge.onreconnecting = () => {
+    broker.onreconnecting = () => {
       this.logger.info({
         logCode: 'video_reconnecting',
         extraInfo: {
@@ -266,15 +265,15 @@ class VideoManager {
       // TODO - update local collection states about this and use it in the UI
       // to let the user know something's happening.
     };
-    bridge.onreconnected = () => {
+    broker.onreconnected = () => {
       this.onVideoPublished(cameraId);
     };
-    this.storeBroker(cameraId, bridge);
+    this.storeBroker(cameraId, broker);
 
-    return bridge;
+    return broker;
   }
 
-  _initializeSubscriberBridge({ cameraId }) {
+  _initializeSubscriberBroker({ cameraId }) {
     const brokerOptions = {
       ws: this.ws,
       cameraId,
@@ -283,8 +282,8 @@ class VideoManager {
       traceLogs: true,
       logger: this.logger,
     };
-    const bridge = new VideoBroker('viewer', brokerOptions);
-    bridge.onended = () => {
+    const broker = new VideoBroker('viewer', brokerOptions);
+    broker.onended = () => {
       this.logger.info({
         logCode: 'video_ended',
         extraInfo: {
@@ -294,7 +293,7 @@ class VideoManager {
       }, 'Video ended without issue');
       this.onRemoteVideoExit(cameraId);
     };
-    bridge.onerror = (error) => {
+    broker.onerror = (error) => {
       this.logger.error({
         logCode: 'video_failure',
         extraInfo: {
@@ -306,11 +305,11 @@ class VideoManager {
       }, `Video error - errorCode=${error.code}, cause=${error.message}`);
       this.stopVideo(cameraId);
     };
-    bridge.onstart = () => {
-      const remoteStream = bridge.getRemoteStream();
+    broker.onstart = () => {
+      const remoteStream = broker.getRemoteStream();
       if (remoteStream) this.storeMediaStream(cameraId, remoteStream);
     };
-    bridge.onreconnecting = () => {
+    broker.onreconnecting = () => {
       this.logger.info({
         logCode: 'video_reconnecting',
         extraInfo: {
@@ -321,13 +320,13 @@ class VideoManager {
       // TODO - update local collection states about this and use it in the UI
       // to let the user know something's happening.
     };
-    bridge.onreconnected = () => {
-      const remoteStream = bridge.getRemoteStream();
+    broker.onreconnected = () => {
+      const remoteStream = broker.getRemoteStream();
       if (remoteStream) this.storeMediaStream(cameraId, remoteStream);
     };
-    this.storeBroker(cameraId, bridge);
+    this.storeBroker(cameraId, broker);
 
-    return bridge;
+    return broker;
   }
 
   async init({
@@ -360,7 +359,7 @@ class VideoManager {
           errorMessage: error.message,
           url: this._getStunFetchURL(),
         },
-      }, 'SFU video bridge failed to fetch STUN/TURN info, using default servers');
+      }, 'SFU video broker failed to fetch STUN/TURN info, using default servers');
     }
 
     try {
@@ -398,8 +397,8 @@ class VideoManager {
       this.onVideoPublishing(cameraId);
       const inputStream = await this._mediaFactory();
       this.storeMediaStream(cameraId, inputStream);
-      const bridge = this._initializePublisherBridge({ cameraId, inputStream });
-      await bridge.joinVideo();
+      const broker = this._initializePublisherBroker({ cameraId, inputStream });
+      await broker.joinVideo();
       return cameraId;
     } catch (error) {
       // Rollback and re-throw
@@ -409,13 +408,13 @@ class VideoManager {
   }
 
   unpublish(cameraId) {
-    const bridge = this.getBroker(cameraId);
+    const broker = this.getBroker(cameraId);
 
-    if (bridge) {
+    if (broker) {
       store.dispatch(setIsHangingUp(true));
-      bridge.stop();
+      broker.stop();
     } else {
-      // No bridge/broker. Trailing request, just guarantee everything is cleaned up.
+      // No broker/broker. Trailing request, just guarantee everything is cleaned up.
       store.dispatch(setIsConnected(false));
       this.onLocalVideoExit(cameraId);
     }
@@ -426,8 +425,8 @@ class VideoManager {
 
     try {
       if (!!this.getBroker(cameraId)) return Promise.resolve();
-      const bridge = this._initializeSubscriberBridge({ cameraId });
-      await bridge.joinVideo();
+      const broker = this._initializeSubscriberBroker({ cameraId });
+      await broker.joinVideo();
     } catch (error) {
       // Rollback and re-throw
       this.unsubscribe(cameraId);
@@ -436,17 +435,17 @@ class VideoManager {
   }
 
   unsubscribe(cameraId) {
-    const bridge = this.getBroker(cameraId);
+    const broker = this.getBroker(cameraId);
 
-    if (bridge && bridge.role === 'viewer') {
-      bridge.stop();
+    if (broker && broker.role === 'viewer') {
+      broker.stop();
       this.onRemoteVideoExit(cameraId);
     }
   }
 
   stopVideo(cameraId) {
-    const bridge = this.getBroker(cameraId);
-    if (bridge) bridge.stop();
+    const broker = this.getBroker(cameraId);
+    if (broker) broker.stop();
   }
 
   onLocalVideoExit(cameraId) {
