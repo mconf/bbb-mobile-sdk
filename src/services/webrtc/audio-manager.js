@@ -5,6 +5,7 @@ import {
   setIsConnecting,
   setIsConnected,
   setIsHangingUp,
+  setIsReconnecting,
   setAudioStream,
   setMutedState
 } from '../../store/redux/slices/wide-app/audio';
@@ -141,11 +142,7 @@ class AudioManager {
     };
 
     this.bridge.onreconnecting = () => {
-      this.logger.info({
-        logCode: 'audio_reconnecting',
-      }, 'Audio reconnecting');
-      // TODO - update local collection states about this and use it in the UI
-      // to let the user know something's happening.
+      return this.onAudioReconnecting();
     };
 
     this.bridge.onreconnected = () => {
@@ -202,15 +199,30 @@ class AudioManager {
   onAudioJoin() {
     store.dispatch(setIsConnected(true));
     store.dispatch(setIsConnecting(false));
+    store.dispatch(setIsReconnecting(false));
     this.logger.info({ logCode: 'audio_joined' }, 'Audio Joined');
   }
 
+  onAudioReconnecting() {
+    this.logger.info({
+      logCode: 'audio_reconnecting',
+    }, 'Audio reconnecting');
+    store.dispatch(setIsReconnecting(true));
+    store.dispatch(setIsConnected(false));
+    return this.bumpSessionNumber();
+  }
+
   onAudioReconnected() {
-    this.onAudioConnected();
+    this.onAudioJoin();
   }
 
   _joinAudio(callOptions) {
     if (!this.initialized) throw new TypeError('Audio manager is not ready');
+
+    if (this.bridge) {
+      this.bridge.stop(true);
+      this.bridge = null;
+    }
 
     this._initializeBridge(callOptions);
 
@@ -245,6 +257,7 @@ class AudioManager {
   onAudioExit() {
     store.dispatch(setIsConnected(false));
     store.dispatch(setIsConnecting(false));
+    store.dispatch(setIsReconnecting(false));
     store.dispatch(setIsHangingUp(false));
 
     if (this.inputStream) {

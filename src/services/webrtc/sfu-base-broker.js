@@ -188,9 +188,9 @@ class BaseBroker extends EventEmitter2 {
       };
 
       this.ws = new WebSocket(this.wsUrl);
-      this.ws.addEventListener('message', this.onWSMessage);
-      this.ws.addEventListener('close', this.onWSClosed);
       this.ws.addEventListener('error', preloadErrorCatcher);
+      this.ws.addEventListener('close', this.onWSClosed);
+      this.ws.addEventListener('message', this.onWSMessage);
       this.ws.onopen = () => {
         this.pingInterval = setInterval(this.ping.bind(this), PING_INTERVAL_MS);
         this.signalingTransportOpen = true;
@@ -298,7 +298,10 @@ class BaseBroker extends EventEmitter2 {
   }
 
   addIceServers () {
-    if (this.iceServers && this.iceServers.length > 0) {
+    if (this.iceServers
+      && this.iceServers.length > 0
+      && this.peerConfiguration.iceServers == null
+    ) {
       this.peerConfiguration.iceServers = this.iceServers;
     }
   }

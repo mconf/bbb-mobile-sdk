@@ -139,7 +139,7 @@ class AudioBroker extends BaseBroker {
             sfuComponent: this.sfuComponent,
             started: this.started,
           },
-        }, 'Audio peer creation failed');
+        }, `Audio peer creation failed: ${error.message}`);
         this.onerror(normalizedError);
         reject(normalizedError);
       }
@@ -149,6 +149,12 @@ class AudioBroker extends BaseBroker {
   joinAudio() {
     return this.openWSConnection()
       .then(this._join.bind(this));
+  }
+
+  onWSClosed() {
+    // 1301: "WEBSOCKET_DISCONNECTED",
+    this.onerror(BaseBroker.assembleError(1301));
+    this.scheduleReconnection();
   }
 
   onWSMessage(message) {
@@ -186,7 +192,7 @@ class AudioBroker extends BaseBroker {
 
   _onreconnecting() {
     this.reconnecting = true;
-    this.onreconnecting();
+    this.clientSessionNumber = this.onreconnecting();
   }
 
   _onreconnected() {
@@ -197,18 +203,21 @@ class AudioBroker extends BaseBroker {
   reconnect() {
     this.stop(true);
     this._onreconnecting();
-    this.joinAudio();
+    this.joinAudio().catch((error) => {
+      this.logger.warn({
+        logCode: `${this.logCodePrefix}_reconnect_error`,
+        extraInfo: {
+          errorMessage: error.name || error.message || 'Unknown error',
+          errorCode: error.code,
+          sfuComponent: this.sfuComponent,
+          started: this.started,
+        },
+      }, `Audio reconnect failed: ${error.message}`);
+    });
   }
 
   _getScheduledReconnect() {
     return () => {
-      const oldReconnectTimer = this._reconnectionTimer;
-      const newReconnectTimer = Math.min(
-        1.5 * oldReconnectTimer,
-        MAX_RECONNECTION_TIMEOUT,
-      );
-      this._reconnectionTimer = newReconnectTimer;
-
       // Clear the current reconnect interval so it can be re-set in createWebRTCPeer
       if (this._reconnectionTimeout) {
         clearTimeout(this._reconnectionTimeout);
@@ -220,7 +229,7 @@ class AudioBroker extends BaseBroker {
   }
 
   scheduleReconnection() {
-    const shouldSetReconnectionTimeout = !this.reconnectionTimer && !this.started;
+    const shouldSetReconnectionTimeout = !this._reconnectionTimeout && !this.started;
 
     // This is an ongoing reconnection which succeeded in the first place but
     // then failed mid call. Try to reconnect it right away. Clear the restart
@@ -235,7 +244,11 @@ class AudioBroker extends BaseBroker {
     // place. Set reconnection timeouts with random intervals between them to try
     // and reconnect without flooding the server
     if (shouldSetReconnectionTimeout) {
-      const newReconnectTimer = this._reconnectionTimer || BASE_RECONNECTION_TIMEOUT;
+      const oldReconnectTimer = this._reconnectionTimer || BASE_RECONNECTION_TIMEOUT;
+      const newReconnectTimer = Math.min(
+        1.5 * oldReconnectTimer,
+        MAX_RECONNECTION_TIMEOUT,
+      );
       this._reconnectionTimer = newReconnectTimer;
 
       this._reconnectionTimeout = setTimeout(
