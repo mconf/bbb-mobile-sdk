@@ -8,7 +8,8 @@ const AppStatusBar = () => {
     return state.audio.isConnecting || state.audio.isReconnecting;
   });
   const clientIsDisconnected = useSelector((state) => {
-    return !state.client.connected && (state.client.loggedIn || state.client.loggingIn);
+    return !state.client.connected
+      && (state.client.loggingIn || (state.client.loggedIn && !state.client.loggingOut));
   });
   const statusBarConnected = audioIsConnected && !clientIsDisconnected;
   const statusBarConnecting = audioIsConnecting || clientIsDisconnected;
