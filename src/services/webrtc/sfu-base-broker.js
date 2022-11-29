@@ -213,7 +213,7 @@ class BaseBroker extends EventEmitter2 {
 
   _flushWsQueue() {
     while (this._wsQueue.length > 0) {
-      this._sendMessage(this._wsQueue.pop());
+      this.sendMessage(this._wsQueue.pop());
     }
   }
 
