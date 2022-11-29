@@ -27,20 +27,21 @@ const DrawerNavigator = ({ onLeaveSession, jUrl }) => {
   const navigation = useNavigation();
 
   // selectors
-  const currentUser = useSelector(selectCurrentUser);
-  const currentMeeting = useSelector(selectMeeting);
+  const ejected = useSelector((state) => selectCurrentUser(state)?.ejected);
+  const ejectedReason = useSelector((state) => selectCurrentUser(state)?.ejectedReason);
+  const meetingEnded = useSelector((state) => selectMeeting(state)?.meetingEnded);
 
   // this effect controls the meeting ended
   useEffect(() => {
     // if current user is ejected, navigate to EndScreen
-    if (currentUser?.ejected) {
-      navigation.replace('EndSessionScreen', { ejectedReason: currentUser?.ejectedReason });
+    if (ejected) {
+      navigation.replace('EndSessionScreen', { ejectedReason });
     }
     // if the current meeting was ended
-    else if (currentMeeting?.meetingEnded) {
+    else if (meetingEnded) {
       navigation.replace('EndSessionScreen', { ejectedReason: 'MEETING_ENDED' });
     }
-  }, [currentUser, currentMeeting]);
+  }, [ejected, ejectedReason, meetingEnded]);
 
   return (
     <Drawer.Navigator
