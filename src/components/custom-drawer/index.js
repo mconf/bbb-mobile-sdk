@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   DrawerContentScrollView,
   DrawerItemList,
@@ -8,9 +8,11 @@ import Colors from '../../constants/colors';
 import Styled from './styles';
 import { makeCall } from '../../services/api';
 import { selectCurrentUser } from '../../store/redux/slices/current-user';
+import { setSessionEnded } from '../../store/redux/slices/wide-app/client';
 
 const CustomDrawer = (props) => {
   const { onLeaveSession } = props;
+  const dispatch = useDispatch();
   const currentUserStore = useSelector((state) => state.currentUserCollection);
   const userLoggedOut = useSelector((state) => selectCurrentUser(state)?.loggedOut);
   const clientLoggedIn = useSelector((state) => state.client.loggedIn);
@@ -20,6 +22,7 @@ const CustomDrawer = (props) => {
       && userLoggedOut
       && !clientLoggedIn
     ) {
+      dispatch(setSessionEnded(true));
       onLeaveSession();
     }
   }, [userLoggedOut, clientLoggedIn]);
