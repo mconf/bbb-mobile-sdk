@@ -4,11 +4,13 @@ import { NavigationContainer } from '@react-navigation/native';
 import { Provider, useDispatch } from 'react-redux';
 // providers and store
 import { store } from './src/store/redux/store';
+import Settings from './settings.json';
 // screens
 import DrawerNavigator from './src/components/custom-drawer/drawer-navigator';
 import FullscreenWrapper from './src/components/fullscreen-wrapper';
 import EndSessionScreen from './src/screens/end-session-screen';
 import AppStatusBar from './src/components/status-bar';
+import TestComponentsScreen from './src/screens/test-components-screen';
 import { injectStore as injectStoreVM } from './src/services/webrtc/video-manager';
 import { injectStore as injectStoreSM } from './src/services/webrtc/screenshare-manager';
 import { injectStore as injectStoreAM } from './src/services/webrtc/audio-manager';
@@ -39,6 +41,7 @@ const AppContent = ({ onLeaveSession, jUrl }) => {
   return (
     <>
       <NavigationContainer independent>
+        {!Settings.dev && <TestComponentsScreen jUrl={jUrl} />}
         <Stack.Navigator
           screenOptions={{
             headerShown: false,
