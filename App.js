@@ -14,6 +14,8 @@ import { injectStore as injectStoreSM } from './src/services/webrtc/screenshare-
 import { injectStore as injectStoreAM } from './src/services/webrtc/audio-manager';
 import { injectStore as injectStoreIM } from './src/components/interactions/service';
 import { ConnectionStatusTracker } from './src/store/redux/middlewares';
+import Settings from './settings.json';
+import TestComponentsScreen from './src/screens/test-components-screen';
 
 //  Inject store in non-component files
 const injectStore = () => {
@@ -39,6 +41,7 @@ const AppContent = ({ onLeaveSession, jUrl }) => {
   return (
     <>
       <NavigationContainer independent>
+        {!Settings.dev && <TestComponentsScreen jUrl={jUrl} />}
         <Stack.Navigator
           screenOptions={{
             headerShown: false,
