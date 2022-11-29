@@ -65,7 +65,7 @@ const appReducer = combineReducers({
 
 const rootReducer = (state, action) => {
   // Reset the store on logouts
-  if (action.type === 'client/setLoggedIn' && action.payload === false) {
+  if (action.type === 'client/setSessionEnded' && action.payload === true) {
     return appReducer(undefined, action);
   }
 

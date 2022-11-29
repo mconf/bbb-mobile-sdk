@@ -5,6 +5,7 @@ const initialState = {
   loggedIn: false,
   loggingOut: false,
   loggingIn: false,
+  sessionEnded: false,
   connectionStatus: {
     isConnected: null,
     isInternetReachable: null,
@@ -31,6 +32,9 @@ const clientSlice = createSlice({
     },
     setLoggingIn: (state, action) => {
       state.loggingIn = action.payload;
+    },
+    setSessionEnded: (state, action) => {
+      state.sessionEnded = action.payload;
     },
     connectionStatusChanged: (state, action) => {
       const {
@@ -62,6 +66,7 @@ export const {
   setLoggedIn,
   setLoggingOut,
   setLoggingIn,
+  setSessionEnded,
   connectionStatusChanged,
 } = clientSlice.actions;
 
