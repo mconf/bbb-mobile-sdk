@@ -18,12 +18,9 @@ const CustomDrawer = (props) => {
   const clientLoggedIn = useSelector((state) => state.client.loggedIn);
 
   useEffect(() => {
-    if (typeof onLeaveSession === 'function'
-      && userLoggedOut
-      && !clientLoggedIn
-    ) {
+    if (userLoggedOut && !clientLoggedIn) {
       dispatch(setSessionEnded(true));
-      onLeaveSession();
+      if (typeof onLeaveSession === 'function') onLeaveSession();
     }
   }, [userLoggedOut, clientLoggedIn]);
 
