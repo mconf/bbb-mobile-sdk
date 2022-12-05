@@ -6,7 +6,7 @@ import AudioManager from '../../../services/webrtc/audio-manager';
 import { selectMeeting } from '../../../store/redux/slices/meeting';
 import { toggleMuteMicrophone } from '../service';
 import Styled from './styles';
-import logger from '../../../services/logger'
+import logger from '../../../services/logger';
 
 const AudioControls = (props) => {
   const { isLandscape } = props;
