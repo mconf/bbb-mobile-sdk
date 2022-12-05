@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
-import { Provider, useDispatch } from 'react-redux';
+import { Provider, useDispatch, useSelector } from 'react-redux';
 // providers and store
 import { store } from './src/store/redux/store';
 // screens
@@ -16,6 +16,7 @@ import { injectStore as injectStoreIM } from './src/components/interactions/serv
 import { ConnectionStatusTracker } from './src/store/redux/middlewares';
 import Settings from './settings.json';
 import TestComponentsScreen from './src/screens/test-components-screen';
+import GuestScreen from './src/screens/guest-screen';
 
 //  Inject store in non-component files
 const injectStore = () => {
@@ -28,6 +29,7 @@ const injectStore = () => {
 const AppContent = ({ onLeaveSession, jUrl }) => {
   const Stack = createNativeStackNavigator();
   const dispatch = useDispatch();
+  const guestStatus = useSelector((state) => state.client.guestStatus);
 
   useEffect(() => {
     injectStore();
@@ -41,6 +43,7 @@ const AppContent = ({ onLeaveSession, jUrl }) => {
   return (
     <>
       <NavigationContainer independent>
+        {(guestStatus === 'WAIT') && <GuestScreen />}
         {!Settings.dev && <TestComponentsScreen jUrl={jUrl} />}
         <Stack.Navigator
           screenOptions={{
@@ -48,7 +51,6 @@ const AppContent = ({ onLeaveSession, jUrl }) => {
             contentStyle: { backgroundColor: '#06172A' }
           }}
         >
-          {/*<Stack.Screen name="GuestScreen" component={GuestScreen} />*/}
           <Stack.Screen name="DrawerNavigator">
             {() => <DrawerNavigator jUrl={jUrl} onLeaveSession={onLeaveSession} />}
           </Stack.Screen>

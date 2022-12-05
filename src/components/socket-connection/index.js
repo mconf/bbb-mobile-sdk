@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import * as Linking from 'expo-linking';
-import { useNetInfo } from "@react-native-community/netinfo";
+import { useNetInfo } from '@react-native-community/netinfo';
 import Settings from '../../../settings.json';
 import { UsersModule } from './modules/users';
 import { GroupChatModule } from './modules/group-chat';
@@ -41,6 +41,7 @@ import MethodTransactionManager from './method-transaction-manager';
 import AudioManager from '../../services/webrtc/audio-manager';
 import VideoManager from '../../services/webrtc/video-manager';
 import ScreenshareManager from '../../services/webrtc/screenshare-manager';
+import { store } from '../../store/redux/store';
 import { selectUserByIntId } from '../../store/redux/slices/users';
 import { selectMeeting } from '../../store/redux/slices/meeting';
 import {
@@ -48,11 +49,13 @@ import {
   setLoggedIn,
   setLoggingOut,
   setConnected,
+  setMeetingData,
+  setJoinUrl,
+  join,
 } from '../../store/redux/slices/wide-app/client';
 
 // TODO BAD - decouple, move elsewhere - everything from here to getMeetingData
 let GLOBAL_WS = null;
-let CURRENT_MEETING_DATA = {};
 let CURRENT_SESSION_ID;
 let GLOBAL_MESSAGE_SENDER = null;
 const GLOBAL_TRANSACTIONS = new MethodTransactionManager();
@@ -108,11 +111,12 @@ const sendValidationMsg = (ws, meetingData) => {
   return validateReqId;
 };
 
-const getAuthInfo = () => {
+const getAuthInfo = (meetingData = store.getState().client.meetingData) => {
   const {
     meetingID, sessionToken, internalUserID,
     fullname, externUserID, confname, host,
-  } = CURRENT_MEETING_DATA;
+    joinUrl,
+  } = meetingData;
 
   return {
     sessionToken,
@@ -122,6 +126,7 @@ const getAuthInfo = () => {
     confname,
     externUserID,
     host,
+    joinUrl,
   };
 };
 
@@ -139,19 +144,6 @@ const makeCall = (name, ...args) => {
   return transaction.promise;
 };
 
-const getHostFromURL = (_url) => {
-  const url = new URL(_url);
-
-  return url.host;
-};
-
-const getSessionToken = (_url) => {
-  const url = new URL(_url);
-  const params = new URLSearchParams(url.search);
-
-  return params.get('sessionToken');
-};
-
 const makeWS = (joinUrl) => {
   const url = new URL(joinUrl);
   const wsUrl = `wss://${url.host}/html5client/sockjs/${getRandomDigits(
@@ -160,31 +152,6 @@ const makeWS = (joinUrl) => {
 
   // eslint-disable-next-line no-undef
   return new WebSocket(wsUrl);
-};
-
-const makeEnterUrl = (joinUrl) => {
-  const url = new URL(joinUrl);
-  const params = new URLSearchParams(url.search);
-
-  return `${url.protocol}//${
-    url.host
-  }/bigbluebutton/api/enter?sessionToken=${params.get('sessionToken')}`;
-};
-
-const getMeetingData = async (joinUrl) => {
-  const joinResp = await fetch(joinUrl, {
-    method: 'GET',
-  });
-  const html5join = joinResp.url;
-  const enterUrl = makeEnterUrl(html5join);
-  const enterResp = await fetch(enterUrl).then((r) => r.json());
-
-  return {
-    enterUrl,
-    ...enterResp.response,
-    host: getHostFromURL(html5join),
-    sessionToken: getSessionToken(html5join)
-  };
 };
 
 const initializeMediaManagers = ({ internalUserID, host, sessionToken }) => {
@@ -278,26 +245,36 @@ const SocketConnectionComponent = (props) => {
   // jUrl === join Url from portal
   const { jUrl } = props;
   const urlViaLinking = Linking.useURL();
-  const [joinUrl, setJoinUrl] = useState('');
-  const [meetingData, setMeetingData] = useState({});
   const [websocket, setWebsocket] = useState(null);
   const modules = useRef({});
   const validateReqId = useRef(null);
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const { isConnected: online } = useNetInfo();
-
-  const { loggedOut, ejected } = useSelector((state) => {
-    const user = selectUserByIntId(state, meetingData.internalUserID);
-    return { loggedOut: user?.loggedOut, ejected: user?.ejected };
-  });
-  const meetingEnded = useSelector((state) => selectMeeting(state)?.meetingEnded);
   const {
     loggedIn,
     loggingOut,
     loggingIn,
     connected,
+    meetingData,
+    guestStatus,
   } = useSelector((state) => state.client);
+  const joinUrl = useSelector((state) => state.client.meetingData.joinUrl);
+  const enterUrl = useSelector((state) => state.client.meetingData.enterUrl);
+  const loggedOut = useSelector((state) => {
+    return selectUserByIntId(state, meetingData.internalUserID)?.loggedOut;
+  });
+  const ejected = useSelector((state) => {
+    return selectUserByIntId(state, meetingData.internalUserID)?.ejected;
+  });
+  const meetingEnded = useSelector((state) => selectMeeting(state)?.meetingEnded);
+
+  useEffect(() => {
+    dispatch(setJoinUrl(jUrl));
+    return () => {
+      _terminate(false);
+    };
+  }, []);
 
   const onOpen = () => {
     dispatch(setConnected(true));
@@ -327,7 +304,7 @@ const SocketConnectionComponent = (props) => {
     if (connected === false) {
       tearDownModules(websocket, modules.current);
       if (loggingOut) {
-        setJoinUrl('');
+        dispatch(setJoinUrl(null));
         dispatch(setLoggedIn(false));
       }
     }
@@ -376,51 +353,28 @@ const SocketConnectionComponent = (props) => {
       // Isn't logged in - clean up data.
       setWebsocket(null);
       GLOBAL_WS = null;
-      setMeetingData({});
+      dispatch(setMeetingData({}));
       dispatch(setLoggingOut(false));
     }
   }, [joinUrl, loggedIn, loggingOut, ejected, loggedOut, meetingEnded]);
 
   useEffect(() => {
-    setJoinUrl(jUrl);
-    return () => {
-      _terminate(false);
-    };
-  }, []);
-
-  useEffect(() => {
-    async function getData(_joinUrl) {
-      try {
-        dispatch(setLoggingIn(true));
-        const resp = await getMeetingData(_joinUrl);
-        setMeetingData(resp);
-        CURRENT_MEETING_DATA = resp;
-      } catch (error) {
-        logger.info({
-          logCode: 'user_join_failed',
-          extraInfo: {
-            errorMessage: error.message,
-            errorCode: error.code,
-          },
-        }, `User join failed: ${error.message}`);
-        setJoinUrl('');
-        dispatch(setLoggingIn(false));
-      }
-    }
-
     if (joinUrl?.length && !loggingOut && !loggingIn && !loggedIn) {
-      getData(joinUrl);
+      // First run of the join procedure
+      // If it runs into a guest lobby, it'll be run again in the guest status
+      // thunk if it succeeds - see client/fetchGuestStatus
+      dispatch(join(joinUrl));
     }
   }, [joinUrl, loggedIn, loggingIn, loggingOut]);
 
   useEffect(() => {
-    if (meetingData
-      && Object.keys(meetingData).length
+    if (enterUrl
       && online
       && !connected
       && !loggingOut
+      && guestStatus === 'ALLOW'
     ) {
-      const ws = makeWS(meetingData.enterUrl);
+      const ws = makeWS(enterUrl);
 
       ws.onopen = onOpen;
       ws.onclose = onClose;
@@ -431,12 +385,12 @@ const SocketConnectionComponent = (props) => {
       // TODO move this elsewhere - prlanzarin
       GLOBAL_WS = ws;
     }
-  }, [meetingData, connected, online, loggingOut, loggedIn]);
+  }, [enterUrl, online, connected, loggingOut, guestStatus]);
 
   useEffect(() => {
     if (urlViaLinking?.includes('/bigbluebutton/api/join?')) {
       const joinUrlFiltered = urlViaLinking.replace('bigbluebutton://', 'https://');
-      setJoinUrl(joinUrlFiltered);
+      dispatch(setJoinUrl(joinUrlFiltered));
     }
   }, [urlViaLinking]);
 
@@ -555,7 +509,7 @@ const SocketConnectionComponent = (props) => {
         <View style={{ height: '20%' }}>
           <TextInput
             placeholder="Join URL"
-            onSubmitEditing={({ nativeEvent: { text } }) => setJoinUrl(text)}
+            onSubmitEditing={({ nativeEvent: { text } }) => dispatch(setJoinUrl(text))}
             defaultValue={joinUrl}
           />
         </View>
