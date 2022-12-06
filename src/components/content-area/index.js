@@ -37,9 +37,16 @@ const ContentArea = (props) => {
     dispatch(setFocusedElement('presentation'));
   };
 
+  const onClickScreenshare = () => {
+    dispatch(setIsFocused(true));
+    // Focused ID is not needed here because the Screenshare component is self contained
+    dispatch(setFocusedId(''));
+    dispatch(setFocusedElement('screenshare'));
+  };
+
   if (!screenshare) {
     return (
-      <Styled.PresentationPressable onPress={onClickPresentation}>
+      <Styled.ContentAreaPressable onPress={onClickPresentation}>
         <Styled.Presentation
           width="100%"
           height="100%"
@@ -47,11 +54,15 @@ const ContentArea = (props) => {
             uri: handleSlideAndPresentationActive(),
           }}
         />
-      </Styled.PresentationPressable>
+      </Styled.ContentAreaPressable>
     );
   }
 
-  return <Styled.Screenshare style={style} />;
+  return (
+    <Styled.ContentAreaPressable onPress={onClickScreenshare}>
+      <Styled.Screenshare style={style} />
+    </Styled.ContentAreaPressable>
+  );
 };
 
 export default ContentArea;

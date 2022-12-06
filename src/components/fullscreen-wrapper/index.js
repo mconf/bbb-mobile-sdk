@@ -25,6 +25,7 @@ const FullscreenWrapper = () => {
         {layoutStore.focusedElement === 'avatar' && <Styled.UserAvatar source={{ uri: layoutStore.focusedId }} />}
         {layoutStore.focusedElement === 'color' && <Styled.UserColor userColor={layoutStore.focusedId} />}
         {layoutStore.focusedElement === 'presentation' && <Styled.Presentation source={{ uri: layoutStore.focusedId }} />}
+        {layoutStore.focusedElement === 'screenshare' && <Styled.FullscreenScreenshare />}
       </Styled.Wrapper>
       <Styled.CloseFullscreenButton
         icon="fullscreen-exit"

@@ -6,7 +6,7 @@ import Pressable from '../pressable';
 
 const Presentation = styled(presentation)``;
 const Screenshare = styled(screenshare)``;
-const PresentationPressable = styled(Pressable).attrs(() => ({
+const ContentAreaPressable = styled(Pressable).attrs(() => ({
   pressStyle: {
     opacity: 0.8,
   },
@@ -19,5 +19,5 @@ const PresentationPressable = styled(Pressable).attrs(() => ({
 export default {
   Presentation,
   Screenshare,
-  PresentationPressable
+  ContentAreaPressable
 };
