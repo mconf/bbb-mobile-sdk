@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import ScreenshareManager from '../../../services/webrtc/screenshare-manager';
+import { setFocusedElement, setFocusedId, setIsFocused } from './wide-app/layout';
 
 // Slice
 const screenshareSlice = createSlice({
@@ -39,13 +40,24 @@ const selectScreenshare = (state) => Object.values(
 const screenshareCleanupListener = (action, listenerApi) => {
   const { screenshareObject } = action.payload;
   const previousState = listenerApi.getOriginalState();
+  const currentState = listenerApi.getState();
   const removedScreenshareStream = selectScreenshareByDocumentId(
     previousState,
     screenshareObject.id
   );
   listenerApi.cancelActiveListeners();
+
   // Stop screenshare manager units (if they exist)
-  if (removedScreenshareStream) ScreenshareManager.unsubscribe();
+  if (removedScreenshareStream) {
+    // Cleanup layout focus if necessary
+    if (currentState.layout.focusedElement === 'screenshare') {
+      listenerApi.dispatch(setIsFocused(false));
+      listenerApi.dispatch(setFocusedId(''));
+      listenerApi.dispatch(setFocusedElement(''));
+    }
+
+    ScreenshareManager.unsubscribe();
+  }
 };
 
 export const {

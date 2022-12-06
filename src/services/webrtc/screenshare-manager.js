@@ -35,7 +35,7 @@ class ScreenshareManager {
 
   storeMediaStream(mediaStream) {
     if (mediaStream) {
-      this.screnshareStream = mediaStream;
+      this.screenshareStream = mediaStream;
       store.dispatch(addScreenshareStream(mediaStream.toURL()));
     }
   }

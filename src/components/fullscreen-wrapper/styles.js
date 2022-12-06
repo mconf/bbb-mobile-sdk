@@ -4,6 +4,7 @@ import button from '../button';
 import Colors from '../../constants/colors';
 import presentation from '../presentation';
 import iconButton from '../icon-button';
+import Screenshare from '../screenshare';
 
 const Container = styled.View`
   position: absolute;
@@ -57,6 +58,10 @@ const UserColor = styled.View`
 
 const Presentation = styled(presentation)``;
 
+const FullscreenScreenshare = styled(Screenshare)`
+  background-color: none;
+`;
+
 const CloseFullscreenButton = styled(iconButton)`
   position: absolute;
   right: 10px;
@@ -72,4 +77,5 @@ export default {
   UserColor,
   Presentation,
   CloseFullscreenButton,
+  FullscreenScreenshare,
 };
