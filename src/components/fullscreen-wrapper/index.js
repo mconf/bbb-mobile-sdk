@@ -1,5 +1,4 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { StatusBar } from 'expo-status-bar';
 import { setFocusedElement, setFocusedId, setIsFocused } from '../../store/redux/slices/wide-app/layout';
 import Colors from '../../constants/colors';
 import Styled from './styles';
@@ -34,7 +33,6 @@ const FullscreenWrapper = () => {
         animated
         onPress={onCloseFullscreen}
       />
-      <StatusBar hidden />
     </Styled.Container>
   );
 };
