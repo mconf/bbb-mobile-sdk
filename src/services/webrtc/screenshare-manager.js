@@ -205,9 +205,18 @@ class ScreenshareManager {
     this.onScreenshareUnsubscribed();
   }
 
+  deinit() {
+    this.initialized = false;
+    this.userId = null;
+    this._host = null;
+    this._sessionToken = null;
+    this._makeCall = null;
+    this.iceServers = null;
+  }
+
   destroy() {
     this.unsubscribe();
-    // TODO clean everything up.
+    this.deinit();
   }
 }
 
