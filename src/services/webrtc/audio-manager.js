@@ -284,9 +284,18 @@ class AudioManager {
     return !this._getSenderTrackEnabled();
   }
 
+  deinit() {
+    this.initialized = false;
+    this.userId = null;
+    this._host = null;
+    this._sessionToken = null;
+    this._makeCall = null;
+    this.iceServers = null;
+  }
+
   destroy() {
     this.exitAudio();
-    // TODO clean everything up.
+    this.deinit();
   }
 }
 

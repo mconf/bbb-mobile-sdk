@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import Colors from '../../constants/colors';
 
 const AppStatusBar = () => {
+  const fullscreenActive = useSelector((state) => state.layout.isFocused);
   const audioIsConnected = useSelector((state) => state.audio.isConnected);
   const audioIsConnecting = useSelector((state) => {
     return state.audio.isConnecting || state.audio.isReconnecting;
@@ -21,7 +22,7 @@ const AppStatusBar = () => {
       : null;
 
   return (
-    <StatusBar backgroundColor={backgroundColor} style={style} />
+    <StatusBar backgroundColor={backgroundColor} style={style} hidden={fullscreenActive} />
   );
 };
 

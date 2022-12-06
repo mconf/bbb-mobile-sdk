@@ -96,7 +96,7 @@ class VideoManager {
 
   _onWSError(error) {
     this.logger.error({
-      logCode: `videomanager_websocket_error`,
+      logCode: 'videomanager_websocket_error',
       extraInfo: {
         errorMessage: error.name || error.message || 'Unknown error',
       }
@@ -478,12 +478,23 @@ class VideoManager {
     }
   }
 
+  deinit() {
+    this.initialized = false;
+    this.userId = null;
+    this._host = null;
+    this._sessionToken = null;
+    this._makeCall = null;
+    this.iceServers = null;
+    this._closeWS();
+  }
+
   destroy() {
     // eslint-disable-next-line no-restricted-syntax
     for (const cameraId of this.brokers.keys()) {
       this.stopVideo(cameraId);
     }
-    this._closeWS();
+
+    this.deinit();
   }
 }
 
