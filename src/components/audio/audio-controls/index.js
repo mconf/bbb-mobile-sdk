@@ -13,7 +13,9 @@ const AudioControls = (props) => {
   const muteOnStart = useSelector((state) => selectMeeting(state)?.voiceProp?.muteOnStart);
   const isMuted = useSelector((state) => state.audio.isMuted);
   const isConnected = useSelector((state) => state.audio.isConnected);
-  const isConnecting = useSelector((state) => state.audio.isConnecting);
+  const isConnecting = useSelector((state) => {
+    return state.audio.isConnecting || state.audio.isReconnecting
+  });
   const isActive = isConnected || isConnecting;
   const unmutedAndConnected = !isMuted && isConnected;
   const joinAudioIconColor = isActive ? Colors.white : Colors.lightGray300;
