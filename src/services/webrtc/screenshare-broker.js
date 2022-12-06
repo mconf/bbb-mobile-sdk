@@ -243,7 +243,7 @@ class ScreenshareBroker extends BaseBroker {
         sfuComponent: this.sfuComponent,
         started: this.started,
       },
-    }, 'Screen sharing failed in SFU');
+    }, `Screen sharing failed in SFU: ${error.message}`);
     this.onerror(error);
   }
 
