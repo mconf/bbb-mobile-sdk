@@ -429,6 +429,11 @@ const SocketConnectionComponent = (props) => {
           initializeMediaManagers(meetingData);
           dispatch(setLoggedIn(true));
           dispatch(setLoggingIn(false));
+          makeCall('setMobileUser').catch((error) => {
+            logger.warn({
+              logCode: 'set_mobile_user_failed',
+            }, `Failed to flag app as mobile user: ${error.message}`);
+          });
         } else {
           // Session ended
           if (msgObj?.result?.reason
