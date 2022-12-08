@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import NetInfo from '@react-native-community/netinfo';
 
 const initialState = {
   connected: false,
@@ -103,6 +104,16 @@ const clientSlice = createSlice({
 });
 
 // Middlewares and thunks
+const refreshConnectionStatus = createAsyncThunk(
+  'client/refreshConnectionStatus',
+  async (_, thunkAPI) => {
+    const connectionInfo = await NetInfo.fetch();
+    thunkAPI.dispatch(connectionStatusChanged(connectionInfo));
+
+    return connectionInfo;
+  },
+);
+
 const GUEST_WAIT_ENDPOINT = '/bigbluebutton/api/guestWait';
 const fetchGuestStatus = createAsyncThunk(
   'client/fetchGuestStatus',
@@ -125,6 +136,7 @@ const fetchGuestStatus = createAsyncThunk(
 const join = createAsyncThunk(
   'client/join',
   async (joinUrl, thunkAPI) => {
+    await thunkAPI.dispatch(refreshConnectionStatus());
     const joinResp = await fetch(joinUrl, { method: 'GET' });
     thunkAPI.dispatch(setJoinUrl(joinUrl));
     const joinResponseUrl = joinResp.url;
@@ -156,6 +168,7 @@ const join = createAsyncThunk(
 );
 
 export {
+  refreshConnectionStatus,
   fetchGuestStatus,
   join,
 };
