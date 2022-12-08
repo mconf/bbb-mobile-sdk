@@ -6,7 +6,7 @@ const SUBSCRIBER_ANSWER = 'subscriberAnswer';
 const DTMF = 'dtmf';
 const SFU_COMPONENT_NAME = 'audio';
 const BASE_RECONNECTION_TIMEOUT = 500;
-const MAX_RECONNECTION_TIMEOUT = 2500;
+const MAX_RECONNECTION_TIMEOUT = 5000;
 
 class AudioBroker extends BaseBroker {
   constructor(
@@ -203,17 +203,28 @@ class AudioBroker extends BaseBroker {
   reconnect() {
     this.stop(true);
     this._onreconnecting();
-    this.joinAudio().catch((error) => {
+    if (this.reconnectCondition()) {
+      this.joinAudio().catch((error) => {
+        this.logger.warn({
+          logCode: `${this.logCodePrefix}_reconnect_error`,
+          extraInfo: {
+            errorMessage: error.name || error.message || 'Unknown error',
+            errorCode: error.code,
+            sfuComponent: this.sfuComponent,
+            started: this.started,
+          },
+        }, `Audio reconnect failed: ${error.message}`);
+      });
+    } else {
       this.logger.warn({
         logCode: `${this.logCodePrefix}_reconnect_error`,
         extraInfo: {
-          errorMessage: error.name || error.message || 'Unknown error',
-          errorCode: error.code,
           sfuComponent: this.sfuComponent,
           started: this.started,
         },
-      }, `Audio reconnect failed: ${error.message}`);
-    });
+      }, 'Audio reconnect condition is false - schedule again');
+      this.scheduleReconnection();
+    }
   }
 
   _getScheduledReconnect() {

@@ -16,6 +16,10 @@ class BaseBroker extends EventEmitter2 {
     return error;
   }
 
+  static defaultReconnectCondition() {
+    return true;
+  }
+
   constructor(sfuComponent, {
     // wsUrl: Provide a WS URL if a new socket has to be created
     wsUrl,
@@ -23,6 +27,7 @@ class BaseBroker extends EventEmitter2 {
     // procedures et al must be previously set up.
     ws,
     logger,
+    reconnectCondition,
   }) {
     super({ newListener: true });
     this.wsUrl = wsUrl;
@@ -36,6 +41,9 @@ class BaseBroker extends EventEmitter2 {
     this.logCodePrefix = `${this.sfuComponent}_broker`;
     this.peerConfiguration = {};
     this.logger = logger;
+    this.reconnectCondition = typeof reconnectCondition === 'function'
+      ? reconnectCondition.bind(this)
+      : BaseBroker.defaultReconnectCondition;
 
     this._wsListenersSetup = false;
     this._preloadedWS = !!(ws && typeof ws === 'object');
