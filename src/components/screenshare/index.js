@@ -9,12 +9,17 @@ const Screenshare = (props) => {
   const screenshare = useSelector(selectScreenshare);
   const mediaStreamId = useSelector((state) => state.screenshare.screenshareStream);
   const isConnected = useSelector((state) => state.screenshare.isConnected);
+  const clientIsReady = useSelector(({ client }) => {
+    return client.connectionStatus.isConnected
+      && client.connected
+      && client.loggedIn;
+  });
 
   useEffect(() => {
-    if (!mediaStreamId && screenshare) {
+    if (clientIsReady && !mediaStreamId && screenshare) {
       ScreenshareManager.subscribe();
     }
-  }, [mediaStreamId, screenshare]);
+  }, [clientIsReady, mediaStreamId, screenshare]);
 
   if (isConnected && mediaStreamId) {
     return <Styled.ScreenshareStream style={style} streamURL={mediaStreamId} />;

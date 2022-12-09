@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import * as Linking from 'expo-linking';
-import { useNetInfo } from '@react-native-community/netinfo';
 import Settings from '../../../settings.json';
 import { UsersModule } from './modules/users';
 import { GroupChatModule } from './modules/group-chat';
@@ -250,7 +249,7 @@ const SocketConnectionComponent = (props) => {
   const validateReqId = useRef(null);
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const { isConnected: online } = useNetInfo();
+  const online = useSelector((state) => state.client.connectionStatus.isConnected);
   const {
     loggedIn,
     loggingOut,

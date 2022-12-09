@@ -16,6 +16,27 @@ export const injectStore = (_store) => {
 };
 
 class ScreenshareManager {
+  static reconnectCondition() {
+    try {
+      const currentState = store.getState();
+      if (!currentState) return false;
+      const { client } = currentState;
+      return client.connectionStatus.isConnected
+        && client.connected
+        && client.loggedIn;
+    } catch (error) {
+      this.logger.error({
+        logCode: 'screenshare_reconnect_condition_exception',
+        extraInfo: {
+          role: 'recv',
+          errorCode: error.code,
+          errorMessage: error.message,
+        },
+      }, `Screenshare: reconnect condition exception - errorCode=${error.code}, cause=${error.message}`);
+      return false;
+    }
+  }
+
   constructor() {
     this.initialized = false;
     this.iceServers = null;
@@ -63,6 +84,7 @@ class ScreenshareManager {
       offering: false,
       traceLogs: true,
       logger: this.logger,
+      reconnectCondition: ScreenshareManager.reconnectCondition,
     });
 
     this.broker.onended = () => {

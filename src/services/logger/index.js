@@ -1,5 +1,5 @@
 /* eslint max-classes-per-file: 0 */
-import Constants from 'expo-constants';
+import { nativeApplicationVersion, nativeBuildVersion } from 'expo-application';
 import NetInfo from '@react-native-community/netinfo';
 import { createLogger, stdSerializers } from 'browser-bunyan';
 import { ConsoleFormattedStream } from '@browser-bunyan/console-formatted-stream';
@@ -8,7 +8,8 @@ import { nameFromLevel } from '@browser-bunyan/levels';
 import { ServerStream } from './server-stream';
 import Settings from '../../../settings.json';
 
-const APP_VERSION = Constants.manifest.version;
+const APP_VERSION = nativeApplicationVersion;
+const BUILD_NUMBER = parseInt(nativeBuildVersion, 10) || 0;
 
 // TODO pull configuration from server
 const LOG_CONFIG = Settings.clientLog || {
@@ -82,7 +83,8 @@ class ServerLoggerStream extends ServerStream {
     if (fullInfo.meetingId != null) {
       this.rec.userInfo = fullInfo;
     }
-    this.rec.clientBuild = APP_VERSION;
+    this.rec.appVersion = APP_VERSION;
+    this.rec.clientBuild = BUILD_NUMBER;
     this.rec.connectionId = getCurrentSessionId();
     if (this.logTagString) {
       this.rec.logTag = this.logTagString;

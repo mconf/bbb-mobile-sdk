@@ -18,15 +18,16 @@ const VideoContainer = (props) => {
 
   const [showOptions, setShowOptions] = useState(false);
   const dispatch = useDispatch();
-  const mediaStreamId = useSelector(
-    (state) => state.video.videoStreams[cameraId]
-  );
-  const signalingTransportOpen = useSelector(
-    (state) => state.video.signalingTransportOpen
-  );
+  const clientIsReady = useSelector(({ client }) => {
+    return client.connectionStatus.isConnected
+      && client.connected
+      && client.loggedIn;
+  });
+  const mediaStreamId = useSelector((state) => state.video.videoStreams[cameraId]);
+  const signalingTransportOpen = useSelector((state) => state.video.signalingTransportOpen);
 
   useEffect(() => {
-    if (signalingTransportOpen) {
+    if (signalingTransportOpen && clientIsReady) {
       if (cameraId && !local) {
         if (!mediaStreamId && visible) {
           VideoManager.subscribe(cameraId);
@@ -37,7 +38,7 @@ const VideoContainer = (props) => {
         }
       }
     }
-  }, [cameraId, mediaStreamId, signalingTransportOpen, visible]);
+  }, [clientIsReady, cameraId, mediaStreamId, signalingTransportOpen, visible]);
 
   const renderVideo = () => {
     if (cameraId && visible) {

@@ -17,6 +17,26 @@ export const injectStore = (_store) => {
 };
 
 class AudioManager {
+  static reconnectCondition() {
+    try {
+      const currentState = store.getState();
+      if (!currentState) return false;
+      const { client } = currentState;
+      return client.connectionStatus.isConnected
+        && client.connected
+        && client.loggedIn;
+    } catch (error) {
+      this.logger.error({
+        logCode: 'audio_reconnect_condition_exception',
+        extraInfo: {
+          errorCode: error.code,
+          errorMessage: error.message,
+        },
+      }, `Audio: reconnect condition exception - errorCode=${error.code}, cause=${error.message}`);
+      return false;
+    }
+  }
+
   constructor() {
     this.initialized = false;
     this.inputStream = null;
@@ -104,6 +124,42 @@ class AudioManager {
     return `wss://${this._host}/bbb-webrtc-sfu?sessionToken=${this._sessionToken}`;
   }
 
+  _attachProgressListeners(bridge) {
+    bridge.onended = () => {
+      this.logger.info({ logCode: 'audio_ended' }, 'Audio ended without issue');
+      this.onAudioExit(bridge);
+    };
+
+    bridge.onerror = (error) => {
+      this.logger.error({
+        logCode: 'audio_failure',
+        extraInfo: {
+          errorCode: error.code,
+          errorMessage: error.message,
+        },
+      }, `Audio error - errorCode=${error.code}, cause=${error.message}`);
+    };
+
+    bridge.onstart = () => {
+      this.onAudioConnected(bridge);
+    };
+
+    bridge.onreconnecting = () => {
+      return this.onAudioReconnecting(bridge);
+    };
+
+    bridge.onreconnected = () => {
+      this.onAudioReconnected(bridge);
+    };
+  }
+
+  _deattachProgressListeners(bridge) {
+    bridge.onended = () => {};
+    bridge.onerror = () => {};
+    bridge.onstart = () => {};
+    bridge.onreconnecting = () => {};
+    bridge.onreconnected = () => {};
+  }
 
   _initializeBridge({ isListenOnly = false, inputStream, muted }) {
     const brokerOptions = {
@@ -114,42 +170,17 @@ class AudioManager {
       traceLogs: true,
       muted,
       logger: this.logger,
+      reconnectCondition: AudioManager.reconnectCondition,
     };
 
-    this.bridge = new AudioBroker(
+    const bridge = new AudioBroker(
       this._getSFUAddr(),
       (!isListenOnly ? 'sendrecv' : 'recvonly'),
       brokerOptions,
     );
+    this._attachProgressListeners(bridge);
 
-    this.bridge.onended = () => {
-      this.logger.info({ logCode: 'audio_ended' }, 'Audio ended without issue');
-      this.onAudioExit();
-    };
-
-    this.bridge.onerror = (error) => {
-      this.logger.error({
-        logCode: 'audio_failure',
-        extraInfo: {
-          errorCode: error.code,
-          errorMessage: error.message,
-        },
-      }, `Audio error - errorCode=${error.code}, cause=${error.message}`);
-    };
-
-    this.bridge.onstart = () => {
-      this.onAudioConnected();
-    };
-
-    this.bridge.onreconnecting = () => {
-      return this.onAudioReconnecting();
-    };
-
-    this.bridge.onreconnected = () => {
-      this.onAudioReconnected();
-    };
-
-    return this.bridge;
+    return bridge;
   }
 
   async init({
@@ -189,42 +220,87 @@ class AudioManager {
   onAudioJoining() {
     this.bumpSessionNumber();
     store.dispatch(setIsConnecting(true));
+    store.dispatch(setIsConnected(false));
+    store.dispatch(setIsHangingUp(false));
   }
 
   // Connected, but needs acknowledgement from call states to be flagged as joined
-  onAudioConnected() {
-    this.logger.info({ logCode: 'audio_connected' }, 'Audio connected');
+  onAudioConnected(bridge) {
+    this.logger.info({
+      logCode: 'audio_connected',
+      extraInfo: {
+        clientSessionNumber: bridge?.clientSessionNumber,
+      },
+    }, 'Audio connected');
   }
 
-  onAudioJoin() {
-    store.dispatch(setIsConnected(true));
-    store.dispatch(setIsConnecting(false));
-    store.dispatch(setIsReconnecting(false));
-    this.logger.info({ logCode: 'audio_joined' }, 'Audio Joined');
+  onAudioJoin(clientSessionNumber) {
+    if (clientSessionNumber == this.bridge?.clientSessionNumber) {
+      store.dispatch(setIsConnected(true));
+      store.dispatch(setIsConnecting(false));
+      store.dispatch(setIsReconnecting(false));
+    }
+
+    this.logger.info({
+      logCode: 'audio_joined',
+      extraInfo: {
+        clientSessionNumber,
+      },
+    }, 'Audio Joined');
   }
 
-  onAudioReconnecting() {
+  onAudioReconnecting(bridge) {
+    const clientSessionNumber = bridge?.clientSessionNumber;
     this.logger.info({
       logCode: 'audio_reconnecting',
     }, 'Audio reconnecting');
-    store.dispatch(setIsReconnecting(true));
-    store.dispatch(setIsConnected(false));
-    return this.bumpSessionNumber();
+
+    if (this.bridge?.clientSessionNumber <= clientSessionNumber) {
+      store.dispatch(setIsReconnecting(true));
+      store.dispatch(setIsConnected(false));
+      return this.bumpSessionNumber();
+    }
+
+    // This is a stale reconnect attempt from a dangling bridge - something
+    // pretty weird going on. Request full stop.
+    if (bridge) {
+      bridge.stop();
+    }
+    return clientSessionNumber;
   }
 
-  onAudioReconnected() {
-    this.onAudioJoin();
+  onAudioReconnected(bridge) {
+    if (this.bridge?.clientSessionNumber === bridge.clientSessionNumber) {
+      this.onAudioJoin(bridge.clientSessionNumber);
+    }
+  }
+
+  onAudioExit(bridge) {
+    if (bridge == null || this.bridge?.clientSessionNumber === bridge.clientSessionNumber) {
+      store.dispatch(setIsConnected(false));
+      store.dispatch(setIsConnecting(false));
+      store.dispatch(setIsReconnecting(false));
+      store.dispatch(setIsHangingUp(false));
+      this.bridge = null;
+    }
+
+    if (this.inputStream && this.inputStream.id === bridge.stream.id) {
+      this.inputStream.getTracks().forEach((track) => track.stop());
+      this.inputStream = null;
+    }
   }
 
   _joinAudio(callOptions) {
     if (!this.initialized) throw new TypeError('Audio manager is not ready');
 
+    // There's a stale bridge here. Tear it down and start again.
     if (this.bridge) {
-      this.bridge.stop(true);
+      this._deattachProgressListeners(this.bridge);
+      this.bridge.stop();
       this.bridge = null;
     }
 
-    this._initializeBridge(callOptions);
+    this.bridge = this._initializeBridge(callOptions);
 
     return this.bridge.joinAudio().catch((error) => {
       throw error;
@@ -251,20 +327,6 @@ class AudioManager {
 
     store.dispatch(setIsHangingUp(true));
     this.bridge.stop();
-    this.bridge = null;
-  }
-
-  onAudioExit() {
-    store.dispatch(setIsConnected(false));
-    store.dispatch(setIsConnecting(false));
-    store.dispatch(setIsReconnecting(false));
-    store.dispatch(setIsHangingUp(false));
-
-    if (this.inputStream) {
-      this.inputStream.getTracks().forEach((track) => track.stop());
-      this.inputStream = null;
-    }
-
     this.bridge = null;
   }
 

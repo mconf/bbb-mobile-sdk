@@ -166,18 +166,29 @@ class ScreenshareBroker extends BaseBroker {
   reconnect() {
     this.stop(true);
     this._onreconnecting();
-    this.joinScreenshare().catch((error) => {
+    if (this.reconnectCondition()) {
+      this.joinScreenshare().catch((error) => {
+        this.logger.warn({
+          logCode: `${this.logCodePrefix}_reconnect_error`,
+          extraInfo: {
+            errorMessage: error.name || error.message || 'Unknown error',
+            role: this.role,
+            sfuComponent: this.sfuComponent,
+            started: this.started,
+            errorCode: error.code,
+          },
+        }, `Screenshare reconnect failed: ${error.message}`);
+      });
+    } else {
       this.logger.warn({
         logCode: `${this.logCodePrefix}_reconnect_error`,
         extraInfo: {
-          errorMessage: error.name || error.message || 'Unknown error',
-          role: this.role,
           sfuComponent: this.sfuComponent,
           started: this.started,
-          errorCode: error.code,
         },
-      }, `Screenshare reconnect failed: ${error.message}`);
-    });
+      }, 'Screenshare reconnect condition is false - schedule again');
+      this.scheduleReconnection();
+    }
   }
 
   _getScheduledReconnect() {
