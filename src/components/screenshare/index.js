@@ -11,8 +11,8 @@ const Screenshare = (props) => {
   const isConnected = useSelector((state) => state.screenshare.isConnected);
   const clientIsReady = useSelector(({ client }) => {
     return client.connectionStatus.isConnected
-      && client.connected
-      && client.loggedIn;
+      && client.sessionState.connected
+      && client.sessionState.loggedIn;
   });
 
   useEffect(() => {

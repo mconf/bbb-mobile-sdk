@@ -140,9 +140,9 @@ class VideoManager {
       this.ws.removeEventListener('error', this.onWSError);
       if (!this._preloadedWS) this.ws.close();
       this.ws = null;
+      this._onWSClosed();
     }
 
-    this._onWSClosed();
     this._wsUrl = null;
 
     if (this._pingInterval) {

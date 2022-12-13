@@ -2,11 +2,15 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import NetInfo from '@react-native-community/netinfo';
 
 const initialState = {
-  connected: false,
-  loggedIn: false,
-  loggingOut: false,
-  loggingIn: false,
-  sessionEnded: false,
+  sessionState: {
+    connected: false,
+    loggedIn: false,
+    loggingOut: false,
+    loggingIn: false,
+    ended: false,
+    endReason: null,
+    terminated: false,
+  },
   guestStatus: null, // oneof 'WAIT'|'ALLOW'|'DENY'|'FAILED'
   meetingData: {
     host: null,
@@ -35,19 +39,24 @@ const clientSlice = createSlice({
   initialState,
   reducers: {
     setConnected: (state, action) => {
-      state.connected = action.payload;
+      state.sessionState.connected = action.payload;
     },
     setLoggedIn: (state, action) => {
-      state.loggedIn = action.payload;
+      state.sessionState.loggedIn = action.payload;
     },
     setLoggingOut: (state, action) => {
-      state.loggingOut = action.payload;
+      state.sessionState.loggingOut = action.payload;
     },
     setLoggingIn: (state, action) => {
-      state.loggingIn = action.payload;
+      state.sessionState.loggingIn = action.payload;
     },
-    setSessionEnded: (state, action) => {
-      state.sessionEnded = action.payload;
+    setSessionTerminated: (state, action) => {
+      state.sessionState.terminated = action.payload;
+    },
+    sessionStateChanged: (state, action) => {
+      const { ended, endReason } = action.payload;
+      if (ended != null) state.sessionState.ended = ended;
+      if (endReason != null) state.sessionState.endReason = endReason;
     },
     setMeetingData: (state, action) => {
       state.meetingData = action.payload;
@@ -99,6 +108,12 @@ const clientSlice = createSlice({
       .addCase(join.rejected, (state) => {
         state.meetingData = initialState.meetingData;
         state.loggingIn = false;
+      })
+      .addCase(leave.pending, (state) => {
+      })
+      .addCase(leave.fulfilled, (state, action) => {
+      })
+      .addCase(leave.rejected, (state, action) => {
       });
   },
 });
@@ -120,14 +135,32 @@ const fetchGuestStatus = createAsyncThunk(
   async (_, thunkAPI) => {
     const { host, sessionToken } = thunkAPI.getState().client.meetingData;
 
-    if (!host || !sessionToken) throw new TypeError('Missing credentials');
+    if (!host || !sessionToken) {
+      thunkAPI.dispatch(guestStatusChanged('FAILED'));
+      thunkAPI.dispatch(sessionStateChanged({
+        ended: true,
+        endReason: 'guest_noSessionToken',
+      }));
+      throw new Error('Missing credentials');
+    }
 
     const url = `https://${host}${GUEST_WAIT_ENDPOINT}?sessionToken=${sessionToken}&redirect=false`;
     const response = await fetch(url, { method: 'get' });
     const responseJSON = await response.json();
-    const { guestStatus, url: joinUrl } = responseJSON.response;
+    const { guestStatus, messageKey, url: joinUrl } = responseJSON.response;
 
-    if (guestStatus === 'ALLOW') thunkAPI.dispatch(join(joinUrl));
+    switch (guestStatus) {
+      case 'ALLOW':
+        thunkAPI.dispatch(join(joinUrl));
+        break;
+      case 'WAIT':
+        break;
+      default:
+        thunkAPI.dispatch(sessionStateChanged({
+          ended: true,
+          endReason: messageKey ? `guest_${messageKey}` : `guest_${guestStatus}`,
+        }));
+    }
 
     return responseJSON;
   },
@@ -135,35 +168,144 @@ const fetchGuestStatus = createAsyncThunk(
 
 const join = createAsyncThunk(
   'client/join',
-  async (joinUrl, thunkAPI) => {
-    await thunkAPI.dispatch(refreshConnectionStatus());
-    const joinResp = await fetch(joinUrl, { method: 'GET' });
-    thunkAPI.dispatch(setJoinUrl(joinUrl));
-    const joinResponseUrl = joinResp.url;
-    const url = new URL(joinResponseUrl);
-    const { host } = url;
-    const params = new URLSearchParams(url.search);
-    const sessionToken = params.get('sessionToken');
+  async ({ url, logger }, thunkAPI) => {
+    let joinResponseUrl;
+    let host;
+    let sessionToken;
+    let parsedResponseURL;
 
-    if (!joinResponseUrl.includes('guestWait')) {
-      const enterUrl = `${url.protocol}//${url.host}/bigbluebutton/api/enter?sessionToken=${params.get('sessionToken')}`;
-      const enterResp = await fetch(enterUrl).then((r) => r.json());
+    try {
+      await thunkAPI.dispatch(refreshConnectionStatus());
+    } catch (error) {
+      logger.warn({
+        logCode: 'join_connection_status_refresh_failed',
+        extraInfo: {
+          errorCode: error.code,
+          errorMessage: error.message,
+        }
+      }, `Connection status refresh failed: ${error.message}`);
+    }
+
+    try {
+      const response = await fetch(url, { method: 'GET' });
+      joinResponseUrl = response.url;
+      parsedResponseURL = new URL(joinResponseUrl);
+      host = parsedResponseURL.host;
+      const params = new URLSearchParams(parsedResponseURL.search);
+      sessionToken = params.get('sessionToken');
+      thunkAPI.dispatch(setJoinUrl(url));
+    } catch (error) {
+      logger.error({
+        logCode: 'join_fetch_url_failed',
+        extraInfo: {
+          errorCode: error.code,
+          errorMessage: error.message,
+        }
+      }, `Fetching the join URL failed: ${error.message}`);
+      thunkAPI.dispatch(sessionStateChanged({
+        ended: true,
+        endReason: 401,
+      }));
+      throw error;
+    }
+
+    if (joinResponseUrl.includes('guestWait')) {
       return {
-        waitingForApproval: false,
+        waitingForApproval: true,
         joinUrl: joinResponseUrl,
-        ...enterResp.response,
         host,
         sessionToken,
-        enterUrl,
       };
     }
 
-    return {
-      waitingForApproval: true,
-      joinUrl: joinResponseUrl,
-      host,
-      sessionToken,
+    if (joinResponseUrl.includes('html5client/join')) {
+      try {
+        const enterUrl = `${parsedResponseURL.protocol}//${parsedResponseURL.host}/bigbluebutton/api/enter?sessionToken=${sessionToken}`;
+        const { response: enterResponse } = await fetch(enterUrl).then((r) => r.json());
+        if (enterResponse.returncode !== 'FAILED') {
+          return {
+            waitingForApproval: false,
+            joinUrl: joinResponseUrl,
+            ...enterResponse,
+            host,
+            sessionToken,
+            enterUrl,
+          };
+        }
+
+        throw new Error(
+          '/enter returncode is not SUCCESS',
+          { cause: enterResponse.message || 401 }
+        );
+      } catch (error) {
+        // Enter failure
+        logger.error({
+          logCode: 'join_enter_unexpected_failure',
+          extraInfo: {
+            errorCode: error.code,
+            errorMessage: error.message,
+            errorCause: error.cause || 401,
+          }
+        }, `Unexpected failure when calling /enter: ${error.message}`);
+        thunkAPI.dispatch(sessionStateChanged({
+          ended: true,
+          endReason: error.cause || 401,
+        }));
+
+        throw error;
+      }
+    }
+
+    // Invalid response URL - probably unauthorized guest of invalid join URL
+    thunkAPI.dispatch(sessionStateChanged({
+      ended: true,
+      endReason: 401,
+    }));
+
+    throw new Error('join failed: invalid response URL', { cause: 401 });
+  },
+);
+
+const leave = createAsyncThunk(
+  'client/leave',
+  async (api, thunkAPI) => {
+    // TODO check if already left :)
+    const forceLeave = () => {
+      const currentState = thunkAPI.getState();
+      if (!currentState.client.sessionState.ended) {
+        thunkAPI.dispatch(sessionStateChanged({
+          ended: true,
+          endReason: null,
+        }));
+      }
     };
+
+    const failOver = () => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          forceLeave();
+          resolve('failOver');
+        }, 5000);
+      });
+    };
+
+    const requestUserLeftMeeting = async () => {
+      await api.makeCall('userLeftMeeting');
+      return 'userLeftMeeting';
+    };
+
+    return Promise.race([failOver(), requestUserLeftMeeting()])
+      .catch((error) => {
+        api.logger.warn({
+          logCode: 'userLeftMeeting_failed',
+          extraInfo: {
+            errorMessage: error.message,
+            errorCode: error.code,
+          },
+        }, `Call to userLeftMeeting failed: ${error.message}`);
+        forceLeave();
+        return 'forceLeave';
+      });
   },
 );
 
@@ -171,6 +313,7 @@ export {
   refreshConnectionStatus,
   fetchGuestStatus,
   join,
+  leave,
 };
 
 export const {
@@ -178,9 +321,10 @@ export const {
   setLoggedIn,
   setLoggingOut,
   setLoggingIn,
+  setSessionTerminated,
   setMeetingData,
   setJoinUrl,
-  setSessionEnded,
+  sessionStateChanged,
   connectionStatusChanged,
   guestStatusChanged,
 } = clientSlice.actions;

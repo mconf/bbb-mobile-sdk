@@ -4,6 +4,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 // providers and store
 import { store } from './src/store/redux/store';
+import { leave, setSessionTerminated } from './src/store/redux/slices/wide-app/client';
+import * as api from './src/services/api';
 // screens
 import DrawerNavigator from './src/components/custom-drawer/drawer-navigator';
 import FullscreenWrapper from './src/components/fullscreen-wrapper';
@@ -26,10 +28,17 @@ const injectStore = () => {
   injectStoreIM(store);
 };
 
-const AppContent = ({ onLeaveSession, jUrl }) => {
+const AppContent = ({
+  _onLeaveSession,
+  jUrl,
+}) => {
   const Stack = createNativeStackNavigator();
   const dispatch = useDispatch();
   const guestStatus = useSelector((state) => state.client.guestStatus);
+  const onLeaveSession = () => {
+    dispatch(setSessionTerminated(true));
+    if (typeof _onLeaveSession === 'function') _onLeaveSession();
+  };
 
   useEffect(() => {
     injectStore();
@@ -37,6 +46,7 @@ const AppContent = ({ onLeaveSession, jUrl }) => {
 
     return () => {
       dispatch(ConnectionStatusTracker.unregisterConnectionStatusListeners());
+      dispatch(leave(api)).finally(onLeaveSession);
     };
   }, []);
 
@@ -54,7 +64,9 @@ const AppContent = ({ onLeaveSession, jUrl }) => {
           <Stack.Screen name="DrawerNavigator">
             {() => <DrawerNavigator jUrl={jUrl} onLeaveSession={onLeaveSession} />}
           </Stack.Screen>
-          <Stack.Screen name="EndSessionScreen" component={EndSessionScreen} />
+          <Stack.Screen name="EndSessionScreen">
+            {() => <EndSessionScreen onLeaveSession={onLeaveSession} />}
+          </Stack.Screen>
         </Stack.Navigator>
       </NavigationContainer>
       <FullscreenWrapper />
