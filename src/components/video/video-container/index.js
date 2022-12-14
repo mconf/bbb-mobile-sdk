@@ -20,8 +20,8 @@ const VideoContainer = (props) => {
   const dispatch = useDispatch();
   const clientIsReady = useSelector(({ client }) => {
     return client.connectionStatus.isConnected
-      && client.connected
-      && client.loggedIn;
+      && client.sessionState.connected
+      && client.sessionState.loggedIn;
   });
   const mediaStreamId = useSelector((state) => state.video.videoStreams[cameraId]);
   const signalingTransportOpen = useSelector((state) => state.video.signalingTransportOpen);

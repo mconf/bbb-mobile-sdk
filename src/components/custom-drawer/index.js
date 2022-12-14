@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   DrawerContentScrollView,
@@ -6,23 +6,12 @@ import {
 } from '@react-navigation/drawer';
 import Colors from '../../constants/colors';
 import Styled from './styles';
-import { makeCall } from '../../services/api';
-import { selectCurrentUser } from '../../store/redux/slices/current-user';
-import { setSessionEnded } from '../../store/redux/slices/wide-app/client';
+import * as api from '../../services/api';
+import { leave } from '../../store/redux/slices/wide-app/client';
 
 const CustomDrawer = (props) => {
-  const { onLeaveSession } = props;
   const dispatch = useDispatch();
   const currentUserStore = useSelector((state) => state.currentUserCollection);
-  const userLoggedOut = useSelector((state) => selectCurrentUser(state)?.loggedOut);
-  const clientLoggedIn = useSelector((state) => state.client.loggedIn);
-
-  useEffect(() => {
-    if (userLoggedOut && !clientLoggedIn) {
-      dispatch(setSessionEnded(true));
-      if (typeof onLeaveSession === 'function') onLeaveSession();
-    }
-  }, [userLoggedOut, clientLoggedIn]);
 
   // TODO Think a way to avoid this
   const currentUserObj = Object.values(
@@ -40,6 +29,10 @@ const CustomDrawer = (props) => {
       color: currentUserObj?.color,
     };
   }, [currentUserStore]);
+
+  const leaveSession = () => {
+    dispatch(leave(api));
+  };
 
   return (
     <Styled.ViewContainer>
@@ -60,7 +53,7 @@ const CustomDrawer = (props) => {
         </Styled.ContainerDrawerItemList>
       </DrawerContentScrollView>
       <Styled.ContainerCustomButtons>
-        <Styled.ButtonLeaveContainer onPress={() => { makeCall('userLeftMeeting'); }}>
+        <Styled.ButtonLeaveContainer onPress={leaveSession}>
           <Styled.ViewLeaveContainer>
             <Styled.TextLeaveContainer>
               Sair da sessão

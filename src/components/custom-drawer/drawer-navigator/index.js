@@ -2,11 +2,6 @@ import React, { useEffect } from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
-
-// providers, selectors, store
-import { selectCurrentUser } from '../../../store/redux/slices/current-user';
-import { selectMeeting } from '../../../store/redux/slices/meeting';
-
 // screens
 import UserNotesScreen from '../../../screens/user-notes-screen';
 import PollNavigator from '../../../screens/poll-screen/navigator';
@@ -25,25 +20,12 @@ import Settings from '../../../../settings.json';
 const DrawerNavigator = ({ onLeaveSession, jUrl }) => {
   const Drawer = createDrawerNavigator();
   const navigation = useNavigation();
-
-  // selectors
-  const ejected = useSelector((state) => selectCurrentUser(state)?.ejected);
-  const ejectedReason = useSelector((state) => selectCurrentUser(state)?.ejectedReason);
-  const meetingEnded = useSelector((state) => selectMeeting(state)?.meetingEnded);
-  const guestStatus = useSelector((state) => state.client.guestStatus);
+  const ended = useSelector((state) => state.client.sessionState.ended);
 
   // this effect controls the meeting ended
   useEffect(() => {
-    if (ejected) {
-      navigation.replace('EndSessionScreen', { ejectedReason });
-    } else if (meetingEnded) {
-      navigation.replace('EndSessionScreen', { ejectedReason: 'MEETING_ENDED' });
-    } else if (guestStatus === 'DENY') {
-      navigation.replace('EndSessionScreen', { ejectedReason: 'GUEST_DENIED' });
-    } else if (guestStatus === 'FAILED') {
-      navigation.replace('EndSessionScreen', { ejectedReason: 'GUEST_FAILED' });
-    }
-  }, [ejected, ejectedReason, meetingEnded, guestStatus]);
+    if (ended) navigation.navigate('EndSessionScreen');
+  }, [ended]);
 
   return (
     <Drawer.Navigator

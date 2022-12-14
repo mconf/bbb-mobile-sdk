@@ -31,6 +31,7 @@ import {
   voiceUserStateObserver,
   voiceCallStateObserver,
   joinAudioOnLogin,
+  logoutOrEjectionObserver,
 } from './middlewares';
 
 const appReducer = combineReducers({
@@ -65,7 +66,7 @@ const appReducer = combineReducers({
 
 const rootReducer = (state, action) => {
   // Reset the store on logouts
-  if (action.type === 'client/setSessionEnded' && action.payload === true) {
+  if (action.type === 'client/setSessionTerminated' && action.payload === true) {
     return appReducer(undefined, action);
   }
 
@@ -81,6 +82,7 @@ export const store = configureStore({
       voiceUserStateObserver.middleware,
       voiceCallStateObserver.middleware,
       joinAudioOnLogin.middleware,
+      logoutOrEjectionObserver.middleware,
     ]);
   },
 });

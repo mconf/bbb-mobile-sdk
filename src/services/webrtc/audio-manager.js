@@ -23,8 +23,8 @@ class AudioManager {
       if (!currentState) return false;
       const { client } = currentState;
       return client.connectionStatus.isConnected
-        && client.connected
-        && client.loggedIn;
+        && client.sessionState.connected
+        && client.sessionState.loggedIn;
     } catch (error) {
       this.logger.error({
         logCode: 'audio_reconnect_condition_exception',

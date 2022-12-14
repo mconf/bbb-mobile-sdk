@@ -50,6 +50,7 @@ import {
   setConnected,
   setMeetingData,
   setJoinUrl,
+  sessionStateChanged,
   join,
 } from '../../store/redux/slices/wide-app/client';
 
@@ -244,24 +245,27 @@ const SocketConnectionComponent = (props) => {
   // jUrl === join Url from portal
   const { jUrl } = props;
   const urlViaLinking = Linking.useURL();
-  const [websocket, setWebsocket] = useState(null);
+  const websocket = useRef(null);
   const modules = useRef({});
   const validateReqId = useRef(null);
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const online = useSelector((state) => state.client.connectionStatus.isConnected);
+  const sessionEnded = useSelector((state) => state.client.sessionState.ended);
+  const {
+    meetingData,
+    guestStatus,
+  } = useSelector((state) => state.client);
   const {
     loggedIn,
     loggingOut,
     loggingIn,
     connected,
-    meetingData,
-    guestStatus,
   } = useSelector((state) => state.client);
   const joinUrl = useSelector((state) => state.client.meetingData.joinUrl);
   const enterUrl = useSelector((state) => state.client.meetingData.enterUrl);
-  const loggedOut = useSelector((state) => {
-    return selectUserByIntId(state, meetingData.internalUserID)?.loggedOut;
+  const userLoggedOut = useSelector((state) => {
+    return selectUserByIntId(state, meetingData.internalUserID)?.userLoggedOut;
   });
   const ejected = useSelector((state) => {
     return selectUserByIntId(state, meetingData.internalUserID)?.ejected;
@@ -301,7 +305,7 @@ const SocketConnectionComponent = (props) => {
 
   useEffect(() => {
     if (connected === false) {
-      tearDownModules(websocket, modules.current);
+      tearDownModules();
       if (loggingOut) {
         dispatch(setJoinUrl(null));
         dispatch(setLoggedIn(false));
@@ -331,7 +335,7 @@ const SocketConnectionComponent = (props) => {
     // If loggingOut is true, then this is a final action (ejection, leave, ...)
     if (_loggingOut) dispatch(setLoggingOut(true));
 
-    terminate(websocket, modules.current);
+    terminate(websocket.current, modules.current);
     // This is a sure socket termination - guarantee it is set as disconnected
     // because we can't rely on onClose in scenarios like component unmounts
     dispatch(setConnected(false));
@@ -341,28 +345,33 @@ const SocketConnectionComponent = (props) => {
     }
   };
 
+  useEffect(() => {
+    if (sessionEnded) _terminate(true);
+  }, [sessionEnded]);
+
   // Login/logout tracker
   useEffect(() => {
     if (!loggingOut
-      && (loggedOut === true || ejected === true || meetingEnded === true)) {
+      && (userLoggedOut === true || ejected === true || meetingEnded === true)) {
       // User is logged in, isn't logging out yet but the server side data
       // mandates a logout -> start the logout procedure
       _terminate(true);
     } else if (!loggedIn && !joinUrl && loggingOut) {
       // Isn't logged in - clean up data.
-      setWebsocket(null);
+      // TODO check readyState and terminate if necessary
+      websocket.current = null;
       GLOBAL_WS = null;
       dispatch(setMeetingData({}));
       dispatch(setLoggingOut(false));
     }
-  }, [joinUrl, loggedIn, loggingOut, ejected, loggedOut, meetingEnded]);
+  }, [joinUrl, loggedIn, loggingOut, ejected, userLoggedOut, meetingEnded]);
 
   useEffect(() => {
     if (joinUrl?.length && !loggingOut && !loggingIn && !loggedIn) {
       // First run of the join procedure
       // If it runs into a guest lobby, it'll be run again in the guest status
       // thunk if it succeeds - see client/fetchGuestStatus
-      dispatch(join(joinUrl));
+      dispatch(join({ url: joinUrl, logger }))
     }
   }, [joinUrl, loggedIn, loggingIn, loggingOut]);
 
@@ -380,7 +389,7 @@ const SocketConnectionComponent = (props) => {
       ws.onerror = onError;
       ws.onmessage = (msg) => onMessage(ws, msg);
 
-      setWebsocket(ws);
+      websocket.current = ws;
       // TODO move this elsewhere - prlanzarin
       GLOBAL_WS = ws;
     }
@@ -417,7 +426,10 @@ const SocketConnectionComponent = (props) => {
           // Session ended
           if (msgObj?.result?.reason
             && TERMINATION_REASONS.some((reason) => reason === msgObj.result.reason)) {
-            _terminate(true);
+            dispatch(sessionStateChanged({
+              ended: true,
+              endReason: msgObj.result.reason,
+            }));
             return;
           }
 
@@ -437,7 +449,10 @@ const SocketConnectionComponent = (props) => {
           // Session ended
           if (msgObj?.result?.reason
             && TERMINATION_REASONS.some((reason) => reason === msgObj.result.reason)) {
-            _terminate(true);
+            dispatch(sessionStateChanged({
+              ended: true,
+              endReason: msgObj.result.reason,
+            }));
             return;
           }
 
