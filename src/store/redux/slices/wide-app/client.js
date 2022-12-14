@@ -275,15 +275,16 @@ const leave = createAsyncThunk(
       if (!currentState.client.sessionState.ended) {
         thunkAPI.dispatch(sessionStateChanged({
           ended: true,
-          endReason: null,
+          endReason: 'logged_out',
         }));
       }
+
+      return 'forceLeave';
     };
 
     const failOver = () => {
       return new Promise((resolve) => {
         setTimeout(() => {
-          forceLeave();
           resolve('failOver');
         }, 5000);
       });
@@ -295,6 +296,11 @@ const leave = createAsyncThunk(
     };
 
     return Promise.race([failOver(), requestUserLeftMeeting()])
+      .then((leftVia) => {
+        if (leftVia === 'failOver') forceLeave();
+
+        return leftVia;
+      })
       .catch((error) => {
         api.logger.warn({
           logCode: 'userLeftMeeting_failed',
@@ -303,8 +309,7 @@ const leave = createAsyncThunk(
             errorCode: error.code,
           },
         }, `Call to userLeftMeeting failed: ${error.message}`);
-        forceLeave();
-        return 'forceLeave';
+        return forceLeave();
       });
   },
 );

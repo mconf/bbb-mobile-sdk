@@ -1,9 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { Image } from 'react-native';
+import { CommonActions, useNavigation } from '@react-navigation/native';
 import * as Linking from 'expo-linking';
 import PrimaryButton from '../../components/button';
 import Styled from './styles';
+import usePrevious from '../../hooks/use-previous';
 
 // TODO localization
 const END_REASON_STRINGS = {
@@ -37,6 +39,7 @@ const END_REASON_STRINGS = {
   guest_guestInvalid: 'Convidado inválido', // upstream: "app.guest.guestInvalid"
   guest_meetingForciblyEnded: 'Você não pode acessar uma sessão que já foi encerrada', // upstream: "app.guest.meetingForciblyEnded"
   // Internal app strings
+  logged_out: 'Você saiu da conferência', // upstream: "app.feedback.title"
   meeting_ended: 'Esta sessão terminou', // upstream: "app.meeting.ended"
   guest_FAILED: 'Falha inesperada na entrada do convidado',
   FALLBACK_REASON: 'Fim inesperado da sessão, tente entrar novamente',
@@ -44,18 +47,48 @@ const END_REASON_STRINGS = {
 
 const EndSessionScreen = (props) => {
   const { onLeaveSession } = props;
-  const endReason = useSelector((state) => state.client.sessionState.endReason);
+  const currentEndReason = useSelector((state) => state.client.sessionState.endReason);
+  // Track previous end reason - if it transitions from a string to null, that's
+  // a bug, but we want the previous one as a fallback.
+  const previousEndReason = usePrevious(currentEndReason);
+  const endTimeout = useRef(null);
 
-  const title = END_REASON_STRINGS[endReason] || END_REASON_STRINGS.FALLBACK_REASON;
+  const title = END_REASON_STRINGS[currentEndReason]
+    || END_REASON_STRINGS[previousEndReason]
+    || END_REASON_STRINGS.FALLBACK_REASON;
   const subtitle = 'Você será redirecionado para a página inicial em seguida';
   const more = 'Quer saber mais?';
   const buttonText = 'Conheça o ConferenciaWeb';
+  const navigation = useNavigation();
 
   useEffect(() => {
-    // after 10s call onLeaveSession
-    setTimeout(() => {
-      if (typeof onLeaveSession === 'function') onLeaveSession();
+    navigation.addListener('beforeRemove', (event) => {
+      event.preventDefault();
+
+      if (endTimeout.current) {
+        clearTimeout(endTimeout.current);
+        endTimeout.current = null;
+      }
+
+      // onLeaveSession returns a boolean that indicates whether there's a custom
+      // leave session provided by and embedded application or not. If there isn't,
+      // trigger the back handler - else do nothing.
+      if (!onLeaveSession()) navigation.dispatch(event.data.action);
+    });
+
+    endTimeout.current = setTimeout(() => {
+      // onLeaveSession returns a boolean that indicates whether there's a custom
+      // leave session provided by and embedded application or not. If there isn't,
+      // trigger the back handler - else do nothing.
+      if (!onLeaveSession()) navigation.dispatch(CommonActions.goBack());
     }, 10000);
+
+    return () => {
+      if (endTimeout.current) {
+        clearTimeout(endTimeout.current);
+        endTimeout.current = null;
+      }
+    };
   }, []);
 
   const handleOpenUrl = async () => {

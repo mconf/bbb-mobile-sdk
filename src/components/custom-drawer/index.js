@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   DrawerContentScrollView,
@@ -7,21 +7,11 @@ import {
 import Colors from '../../constants/colors';
 import Styled from './styles';
 import * as api from '../../services/api';
-import { selectCurrentUser } from '../../store/redux/slices/current-user';
 import { leave } from '../../store/redux/slices/wide-app/client';
 
 const CustomDrawer = (props) => {
-  const { onLeaveSession } = props;
   const dispatch = useDispatch();
   const currentUserStore = useSelector((state) => state.currentUserCollection);
-  const userLoggedOut = useSelector((state) => selectCurrentUser(state)?.loggedOut);
-  const clientLoggedIn = useSelector((state) => state.client.sessionState.loggedIn);
-
-  useEffect(() => {
-    if (userLoggedOut && !clientLoggedIn) {
-      if (typeof onLeaveSession === 'function') onLeaveSession();
-    }
-  }, [userLoggedOut, clientLoggedIn]);
 
   // TODO Think a way to avoid this
   const currentUserObj = Object.values(

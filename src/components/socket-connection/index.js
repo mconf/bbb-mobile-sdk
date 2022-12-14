@@ -347,7 +347,7 @@ const SocketConnectionComponent = (props) => {
 
   useEffect(() => {
     if (sessionEnded) _terminate(true);
-  }, [sessionEnded])
+  }, [sessionEnded]);
 
   // Login/logout tracker
   useEffect(() => {

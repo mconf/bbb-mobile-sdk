@@ -50,18 +50,27 @@ const logoutOrEjectionPredicate = (action, currentState) => {
 };
 
 const logoutOrEjectionListener = (action, listenerApi) => {
-  if (editCurrentUser.match(action) || addCurrentUser.match(action)) {
-    const { currentUserObject } = action.payload;
-    listenerApi.dispatch(sessionStateChanged({
-      ended: true,
-      endReason: currentUserObject?.fields?.ejectedReason,
-    }));
-  }
+  const currentState = listenerApi.getState();
+  const { ended } = currentState.client.sessionState;
+  let { endReason } = currentState.client.sessionState;
 
-  if (addMeeting.match(action) || editMeeting.match(action)) {
+  if (!ended) {
+    if (editCurrentUser.match(action) || addCurrentUser.match(action)) {
+      const { currentUserObject } = action.payload;
+      if (currentUserObject?.fields?.ejected) {
+        endReason = currentUserObject?.fields?.ejectedReason || 403;
+      } else if (currentUserObject?.fields?.loggedOut) {
+        endReason = 'logged_out';
+      }
+    }
+
+    if (addMeeting.match(action) || editMeeting.match(action)) {
+      endReason = 'meeting_ended';
+    }
+
     listenerApi.dispatch(sessionStateChanged({
       ended: true,
-      endReason: 'meeting_ended'
+      endReason,
     }));
   }
 };

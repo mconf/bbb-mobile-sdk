@@ -29,7 +29,7 @@ const injectStore = () => {
 };
 
 const AppContent = ({
-  _onLeaveSession,
+  onLeaveSession: _onLeaveSession,
   jUrl,
 }) => {
   const Stack = createNativeStackNavigator();
@@ -37,7 +37,15 @@ const AppContent = ({
   const guestStatus = useSelector((state) => state.client.guestStatus);
   const onLeaveSession = () => {
     dispatch(setSessionTerminated(true));
-    if (typeof _onLeaveSession === 'function') _onLeaveSession();
+    const hasCustomLeaveSession = typeof _onLeaveSession === 'function';
+
+    if (hasCustomLeaveSession) _onLeaveSession();
+
+    // The return value of onLeaveSession determines whether there's was a custom
+    // leave callback provided by the enveloping app. This is important for the
+    // SDK itself to know what to do when the session ends (ie where to navigate
+    // from end-session-screen)
+    return hasCustomLeaveSession;
   };
 
   useEffect(() => {

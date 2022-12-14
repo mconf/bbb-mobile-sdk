@@ -20,12 +20,11 @@ import Settings from '../../../../settings.json';
 const DrawerNavigator = ({ onLeaveSession, jUrl }) => {
   const Drawer = createDrawerNavigator();
   const navigation = useNavigation();
-
   const ended = useSelector((state) => state.client.sessionState.ended);
 
   // this effect controls the meeting ended
   useEffect(() => {
-    if (ended) navigation.replace('EndSessionScreen');
+    if (ended) navigation.navigate('EndSessionScreen');
   }, [ended]);
 
   return (
