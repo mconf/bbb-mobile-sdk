@@ -245,7 +245,7 @@ const SocketConnectionComponent = (props) => {
   // jUrl === join Url from portal
   const { jUrl } = props;
   const urlViaLinking = Linking.useURL();
-  const [websocket, setWebsocket] = useState(null);
+  const websocket = useRef(null);
   const modules = useRef({});
   const validateReqId = useRef(null);
   const navigation = useNavigation();
@@ -305,7 +305,7 @@ const SocketConnectionComponent = (props) => {
 
   useEffect(() => {
     if (connected === false) {
-      tearDownModules(websocket, modules.current);
+      tearDownModules();
       if (loggingOut) {
         dispatch(setJoinUrl(null));
         dispatch(setLoggedIn(false));
@@ -335,7 +335,7 @@ const SocketConnectionComponent = (props) => {
     // If loggingOut is true, then this is a final action (ejection, leave, ...)
     if (_loggingOut) dispatch(setLoggingOut(true));
 
-    terminate(websocket, modules.current);
+    terminate(websocket.current, modules.current);
     // This is a sure socket termination - guarantee it is set as disconnected
     // because we can't rely on onClose in scenarios like component unmounts
     dispatch(setConnected(false));
@@ -358,7 +358,8 @@ const SocketConnectionComponent = (props) => {
       _terminate(true);
     } else if (!loggedIn && !joinUrl && loggingOut) {
       // Isn't logged in - clean up data.
-      setWebsocket(null);
+      // TODO check readyState and terminate if necessary
+      websocket.current = null;
       GLOBAL_WS = null;
       dispatch(setMeetingData({}));
       dispatch(setLoggingOut(false));
@@ -388,7 +389,7 @@ const SocketConnectionComponent = (props) => {
       ws.onerror = onError;
       ws.onmessage = (msg) => onMessage(ws, msg);
 
-      setWebsocket(ws);
+      websocket.current = ws;
       // TODO move this elsewhere - prlanzarin
       GLOBAL_WS = ws;
     }

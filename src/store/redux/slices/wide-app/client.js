@@ -272,7 +272,10 @@ const leave = createAsyncThunk(
     // TODO check if already left :)
     const forceLeave = () => {
       const currentState = thunkAPI.getState();
-      if (!currentState.client.sessionState.ended) {
+      if (currentState.client.sessionState.ended
+        && (currentState.client.sessionState.loggedIn
+          || currentState.client.sessionState.loggingIn
+          || currentState.client.sessionState.loggingOut)) {
         thunkAPI.dispatch(sessionStateChanged({
           ended: true,
           endReason: 'logged_out',
