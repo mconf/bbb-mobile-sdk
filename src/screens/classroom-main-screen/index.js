@@ -11,15 +11,15 @@ import { selectSortedVideoUsers } from '../../store/redux/slices/video-streams';
 const ClassroomMainScreen = () => {
   // variables
   const videoUsers = useSelector(selectSortedVideoUsers);
+  const loggingIn = useSelector((state) => state.client.sessionState.loggingIn);
   const orientation = useOrientation();
   const [switchLandscapeLayout, setSwitchLandscapeLayout] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
 
-  /* lifecycle methods */
   useEffect(() => {
-    setTimeout(() => setIsLoading(false), 500);
-  }, []);
+    setIsLoading(loggingIn);
+  }, [loggingIn]);
 
   /* view components */
   const renderPortraitOrientation = () => {

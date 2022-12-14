@@ -97,7 +97,7 @@ const clientSlice = createSlice({
         state.guestStatus = response.guestStatus;
       })
       .addCase(join.pending, (state) => {
-        state.loggingIn = true;
+        state.sessionState.loggingIn = true;
       })
       .addCase(join.fulfilled, (state, action) => {
         const { payload: joinResponse } = action;
@@ -107,7 +107,7 @@ const clientSlice = createSlice({
       })
       .addCase(join.rejected, (state) => {
         state.meetingData = initialState.meetingData;
-        state.loggingIn = false;
+        state.sessionState.loggingIn = false;
       })
       .addCase(leave.pending, (state) => {
       })
