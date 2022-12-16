@@ -10,7 +10,7 @@ export class PadsModule extends Module {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  add(msgObj) {
+  _add(msgObj) {
     return store.dispatch(
       addPad({
         padObject: msgObj,
@@ -19,16 +19,20 @@ export class PadsModule extends Module {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  remove(msgObj) {
-    return store.dispatch(
-      removePad({
-        padObject: msgObj,
-      })
-    );
+  _remove(msgObj) {
+    if (!this._ignoreDeletions) {
+      return store.dispatch(
+        removePad({
+          padObject: msgObj,
+        })
+      );
+    }
+
+    return false;
   }
 
   // eslint-disable-next-line class-methods-use-this
-  update(msgObj) {
+  _update(msgObj) {
     return store.dispatch(
       editPad({
         padObject: msgObj,

@@ -371,7 +371,7 @@ const SocketConnectionComponent = (props) => {
       // First run of the join procedure
       // If it runs into a guest lobby, it'll be run again in the guest status
       // thunk if it succeeds - see client/fetchGuestStatus
-      dispatch(join({ url: joinUrl, logger }))
+      dispatch(join({ url: joinUrl, logger }));
     }
   }, [joinUrl, loggedIn, loggingIn, loggingOut]);
 
@@ -483,7 +483,11 @@ const SocketConnectionComponent = (props) => {
       case 'added': {
         const currentModule = modules.current[msgObj.collection];
         if (currentModule) {
-          currentModule.add(msgObj);
+          if (msgObj.id !== 'publication-stop-marker') {
+            currentModule.add(msgObj);
+          } else {
+            currentModule.onPublicationStopMarker(msgObj);
+          }
         }
 
         break;
