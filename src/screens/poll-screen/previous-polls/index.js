@@ -18,7 +18,7 @@ const PreviousPollCard = (props) => {
           <Styled.AnswerContainer>
             <Styled.KeyText>{answer.key} : </Styled.KeyText>
             <Styled.KeyText>
-              {((answer.numVotes / pollObj.numResponders) * 100).toFixed(0)}%
+              {(pollObj.numResponders == 0 ? 0 : (answer.numVotes / pollObj.numResponders) * 100).toFixed(0)}%
             </Styled.KeyText>
           </Styled.AnswerContainer>
         </View>

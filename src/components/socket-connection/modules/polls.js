@@ -5,6 +5,10 @@ import {
   removePoll,
   editPoll,
 } from '../../../store/redux/slices/polls';
+import { 
+  hideNotification, 
+  setProfile 
+} from '../../../store/redux/slices/wide-app/notification-bar';
 
 const POLLS_TOPIC = 'polls';
 
@@ -15,11 +19,15 @@ export class PollsModule extends Module {
 
   // eslint-disable-next-line class-methods-use-this
   add(msgObj) {
-    return store.dispatch(
+    store.dispatch(
       addPoll({
         pollObject: msgObj,
       })
     );
+    store.dispatch(setProfile('pollStarted'));
+    setTimeout(() => {
+      store.dispatch(hideNotification());
+    }, 5000);
   }
 
   // eslint-disable-next-line class-methods-use-this

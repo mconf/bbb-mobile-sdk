@@ -27,11 +27,20 @@ const notificationBarSlice = createSlice({
 
     // notification profiles
     setProfile: (state, action) => {
-      if (action.payload === 'handsUp') {
-        state.isShow = true;
-        state.messageTitle = 'Você levantou a mão';
-        state.messageSubtitle = 'os moderadores foram notificados';
-        state.icon = 'hand';
+      switch (action.payload) {
+        case'handsUp': 
+          state.isShow = true;
+          state.messageTitle = 'Você levantou a mão';
+          state.messageSubtitle = 'os moderadores foram notificados';
+          state.icon = 'hand';
+          break
+        case'pollStarted': 
+          state.isShow = true;
+          state.messageTitle = 'Uma enquete foi iniciada';
+          state.messageSubtitle = 'Clique aqui para responder';
+          state.icon = 'poll';
+          break
+        default:
       }
     }
   },
