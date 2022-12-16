@@ -10,6 +10,7 @@ import { useChatMsgs } from '../../../hooks/selectors/chat/use-chat-msgs';
 import ChatService from '../service';
 import Colors from '../../../constants/colors';
 import Styled from './styles';
+import { useBottomSheetBackHandler } from '../../../hooks/useBottomSheetBackHandler';
 
 const BottomSheetChat = () => {
   const messages = useChatMsgs();
@@ -26,6 +27,10 @@ const BottomSheetChat = () => {
       dispatch(setBottomChatOpen(false));
     }
   }, []);
+
+  useBottomSheetBackHandler(
+    chatStore.isBottomChatOpen, sheetRef, () => {}
+  );
 
   const handleMessage = (message) => {
     if ((/^https?:/.test(message))) {

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
 import { setFocusedElement, setFocusedId, setIsFocused } from '../../../store/redux/slices/wide-app/layout';
 import IconButtonComponent from '../../icon-button';
 import VideoManager from '../../../services/webrtc/video-manager';
@@ -18,6 +19,7 @@ const VideoContainer = (props) => {
 
   const [showOptions, setShowOptions] = useState(false);
   const dispatch = useDispatch();
+  const navigation = useNavigation();
   const clientIsReady = useSelector(({ client }) => {
     return client.connectionStatus.isConnected
       && client.sessionState.connected
@@ -66,6 +68,7 @@ const VideoContainer = (props) => {
     }
 
     dispatch(setIsFocused(true));
+    navigation.navigate('FullscreenWrapper');
   };
 
   return (

@@ -3,7 +3,7 @@ import { setFocusedElement, setFocusedId, setIsFocused } from '../../store/redux
 import Colors from '../../constants/colors';
 import Styled from './styles';
 
-const FullscreenWrapper = () => {
+const FullscreenWrapper = ({ navigation }) => {
   const layoutStore = useSelector((state) => state.layout);
   const dispatch = useDispatch();
 
@@ -14,6 +14,7 @@ const FullscreenWrapper = () => {
   };
 
   if (!layoutStore.isFocused) {
+    navigation.goBack();
     return null;
   }
 
