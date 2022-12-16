@@ -14,7 +14,7 @@ export class PresentationsModule extends Module {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  add(msgObj) {
+  _add(msgObj) {
     return store.dispatch(
       addPresentation({
         presentationObject: msgObj,
@@ -23,16 +23,20 @@ export class PresentationsModule extends Module {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  remove(msgObj) {
-    return store.dispatch(
-      removePresentation({
-        presentationObject: msgObj,
-      })
-    );
+  _remove(msgObj) {
+    if (!this._ignoreDeletions) {
+      return store.dispatch(
+        removePresentation({
+          presentationObject: msgObj,
+        })
+      );
+    }
+
+    return false;
   }
 
   // eslint-disable-next-line class-methods-use-this
-  update(msgObj) {
+  _update(msgObj) {
     return store.dispatch(
       editPresentation({
         presentationObject: msgObj,

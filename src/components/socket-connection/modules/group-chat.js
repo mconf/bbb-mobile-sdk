@@ -14,7 +14,7 @@ export class GroupChatModule extends Module {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  add(msgObj) {
+  _add(msgObj) {
     return store.dispatch(
       addGroupChat({
         groupChatObject: msgObj,
@@ -23,16 +23,20 @@ export class GroupChatModule extends Module {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  remove(msgObj) {
-    return store.dispatch(
-      removeGroupChat({
-        groupChatObject: msgObj,
-      })
-    );
+  _remove(msgObj) {
+    if (!this._ignoreDeletions) {
+      return store.dispatch(
+        removeGroupChat({
+          groupChatObject: msgObj,
+        })
+      );
+    }
+
+    return false;
   }
 
   // eslint-disable-next-line class-methods-use-this
-  update(msgObj) {
+  _update(msgObj) {
     return store.dispatch(
       editGroupChat({
         groupChatObject: msgObj,

@@ -8,13 +8,13 @@ import { store } from '../../../store/redux/store';
 
 const MEETING_TOPIC = 'meetings';
 
-export class MeetingModule extends Module{
+export class MeetingModule extends Module {
   constructor(messageSender) {
     super(MEETING_TOPIC, messageSender);
   }
 
   // eslint-disable-next-line class-methods-use-this
-  add(msgObj) {
+  _add(msgObj) {
     return store.dispatch(
       addMeeting({
         meetingObject: msgObj,
@@ -23,16 +23,20 @@ export class MeetingModule extends Module{
   }
 
   // eslint-disable-next-line class-methods-use-this
-  remove(msgObj) {
-    return store.dispatch(
-      removeMeeting({
-        meetingObject: msgObj,
-      })
-    );
+  _remove(msgObj) {
+    if (!this._ignoreDeletions) {
+      return store.dispatch(
+        removeMeeting({
+          meetingObject: msgObj,
+        })
+      );
+    }
+
+    return false;
   }
 
   // eslint-disable-next-line class-methods-use-this
-  update(msgObj) {
+  _update(msgObj) {
     return store.dispatch(
       editMeeting({
         meetingObject: msgObj,

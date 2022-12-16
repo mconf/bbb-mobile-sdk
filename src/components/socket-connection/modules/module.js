@@ -16,6 +16,7 @@ export default class Module {
     this.subscriptions = new Map();
 
     this._pendingTransactions = new MethodTransactionManager();
+    this._ignoreDeletions = false;
   }
 
   subscribeToCollection(topic, ...args) {
@@ -29,11 +30,22 @@ export default class Module {
       });
       // FIXME wait for subscription to succeed
       this.subscriptions.set(topic, id);
+      this._ignoreDeletions = false;
 
       return id;
     }
 
     return this.subscriptions.get(topic);
+  }
+
+  onPublicationStopMarker(msgObj) {
+    if (msgObj?.fields?.stopped) {
+      this._ignoreDeletions = true;
+      const topic = msgObj.collection;
+      this.subscriptions.delete(topic);
+      // Force a re-subscription of affected modules
+      this.onConnected();
+    }
   }
 
   unsubscribeFromCollection(topic) {
@@ -46,7 +58,7 @@ export default class Module {
       id,
     });
 
-    return this.subscriptions.delete(id);
+    return this.subscriptions.delete(topic);
   }
 
   onConnected() {
@@ -101,5 +113,35 @@ export default class Module {
     this.messageSender.sendMessage(transaction.payload);
 
     return transaction.promise;
+  }
+
+  // Must be implemented by inherirots
+  // eslint-disable-next-line class-methods-use-this, no-unused-vars
+  _add(msgObj) {
+    return false;
+  }
+
+  add(msgObj) {
+    return this._add(msgObj);
+  }
+
+  // Must be implemented by inherirots
+  // eslint-disable-next-line class-methods-use-this, no-unused-vars
+  _remove(msgObj) {
+    return false;
+  }
+
+  remove(msgObj) {
+    return this._remove(msgObj);
+  }
+
+  // Must be implemented by inherirots
+  // eslint-disable-next-line class-methods-use-this, no-unused-vars
+  _update(msgObj) {
+    return false;
+  }
+
+  update(msgObj) {
+    return this._update(msgObj);
   }
 }
