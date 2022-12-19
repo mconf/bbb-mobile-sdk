@@ -29,6 +29,10 @@ const FullscreenWrapper = ({ navigation }) => {
     }, [layoutStore.isFocused]),
   );
 
+  if (!layoutStore.isFocused) {
+    return null;
+  }
+
   return (
     <Styled.Container>
       <Styled.Wrapper>
