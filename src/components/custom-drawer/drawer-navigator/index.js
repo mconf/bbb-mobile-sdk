@@ -63,20 +63,22 @@ const DrawerNavigator = ({ onLeaveSession, jUrl }) => {
         }}
       />
 
-      <Drawer.Screen
-        name="SharedNoteScreen"
-        component={UserNotesScreen}
-        options={{
-          title: 'Nota compartilhada',
-          drawerIcon: (config) => (
-            <IconButton
-              icon="file-document"
-              size={18}
-              iconColor={config.color}
-            />
-          ),
-        }}
-      />
+      {Settings.dev && (
+        <Drawer.Screen
+          name="SharedNoteScreen"
+          component={UserNotesScreen}
+          options={{
+            title: 'Nota compartilhada',
+            drawerIcon: (config) => (
+              <IconButton
+                icon="file-document"
+                size={18}
+                iconColor={config.color}
+              />
+            ),
+          }}
+        />
+      )}
 
       <Drawer.Screen
         name="PollScreen"
@@ -108,20 +110,22 @@ const DrawerNavigator = ({ onLeaveSession, jUrl }) => {
         }}
       />
 
-      <Drawer.Screen
-        name="WhiteboardScreen"
-        component={WhiteboardScreen}
-        options={{
-          title: 'Quadro Branco',
-          drawerIcon: (config) => (
-            <IconButton
-              icon="brush"
-              size={18}
-              iconColor={config.color}
-            />
-          ),
-        }}
-      />
+      {Settings.dev && (
+        <Drawer.Screen
+          name="WhiteboardScreen"
+          component={WhiteboardScreen}
+          options={{
+            title: 'Quadro Branco',
+            drawerIcon: (config) => (
+              <IconButton
+                icon="brush"
+                size={18}
+                iconColor={config.color}
+              />
+            ),
+          }}
+        />
+      )}
 
       {/* Put the join url by hand screen */}
       {Settings.dev && (
