@@ -6,7 +6,7 @@ const Presentation = (props) => {
   const [loading, setLoading] = useState(true);
 
   return (
-    <Styled.PresentationView>
+    <>
       {loading && <Styled.PresentationSkeleton />}
       <Styled.PresentationImage
         source={source}
@@ -14,7 +14,7 @@ const Presentation = (props) => {
         resizeMode="contain"
         onLoadEnd={() => { setLoading(false); }}
       />
-    </Styled.PresentationView>
+    </>
   );
 };
 
