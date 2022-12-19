@@ -1,5 +1,5 @@
 import { KeyboardAvoidingView, Platform } from 'react-native';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { useOrientation } from '../../hooks/use-orientation';
 import withPortal from '../../components/high-order/with-portal';
@@ -25,6 +25,7 @@ const PollScreen = () => {
   );
   const activePollObject = Object.values(pollsStore.pollsCollection)[0];
   const orientation = useOrientation();
+  const scrollViewRef = useRef();
 
   // lifecycle methods
   useEffect(() => {
@@ -77,7 +78,10 @@ const PollScreen = () => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <Styled.ContainerView orientation={orientation}>
-        <Styled.ContainerPollCard>
+        <Styled.ContainerPollCard
+          ref={scrollViewRef}
+          onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
+        >
           <Styled.ContainerViewPadding>
             {handlePollViewCurrentState()}
           </Styled.ContainerViewPadding>

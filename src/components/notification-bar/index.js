@@ -1,5 +1,6 @@
 import { Avatar } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
 import { hide } from '../../store/redux/slices/wide-app/notification-bar';
 import Styled from './styles';
 
@@ -8,14 +9,18 @@ const NotificationBar = () => {
 
   // select the UI states from the redux store
   const notificationBarStore = useSelector((state) => state.notificationBar);
+  const navigation = useNavigation();
 
   const handleIcon = () => {
-    if (notificationBarStore.icon === 'hand') {
-      return <Avatar.Icon size={36} icon="hand-back-left-outline" />;
+    switch (notificationBarStore.icon) {
+      case 'hand': 
+        return <Avatar.Icon size={36} icon="hand-back-left-outline" />;
+      case 'poll': 
+        return <Avatar.Icon size={36} icon="poll" />;
+      // other icons...
+      default:
+        return null;
     }
-    // other icons...
-
-    return null;
   };
 
   if (!notificationBarStore.isShow) {
@@ -23,7 +28,14 @@ const NotificationBar = () => {
   }
 
   return (
-    <Styled.NotificationsBarPressable onPress={() => dispatch(hide())}>
+    <Styled.NotificationsBarPressable 
+      onPress={() => {
+        if (notificationBarStore.icon === 'poll') {
+          navigation.navigate('PollScreen');
+        }
+        dispatch(hide())
+      }}
+    >
       {handleIcon()}
       <Styled.TextContainer>
         <Styled.TitleText>

@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
 import Styled from './styles';
 import { selectScreenshare } from '../../store/redux/slices/screenshare';
 import { setFocusedElement, setFocusedId, setIsFocused } from '../../store/redux/slices/wide-app/layout';
@@ -10,6 +11,7 @@ const ContentArea = (props) => {
   const presentationsStore = useSelector((state) => state.presentationsCollection);
   const screenshare = useSelector(selectScreenshare);
   const dispatch = useDispatch();
+  const navigation = useNavigation();
 
   const handleSlideAndPresentationActive = useCallback(() => {
     // TODO Review this collection after update the 2.6 code
@@ -35,6 +37,7 @@ const ContentArea = (props) => {
     dispatch(setIsFocused(true));
     dispatch(setFocusedId(handleSlideAndPresentationActive()));
     dispatch(setFocusedElement('presentation'));
+    navigation.navigate('FullscreenWrapper');
   };
 
   const onClickScreenshare = () => {
@@ -42,6 +45,7 @@ const ContentArea = (props) => {
     // Focused ID is not needed here because the Screenshare component is self contained
     dispatch(setFocusedId(''));
     dispatch(setFocusedElement('screenshare'));
+    navigation.navigate('FullscreenWrapper');
   };
 
   if (!screenshare) {

@@ -2,6 +2,8 @@ import {
   useCallback, useRef, useMemo, useState
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
+import { Pressable } from 'react-native';
 import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import { setBottomChatOpen } from '../../../store/redux/slices/wide-app/chat';
 import UserAvatar from '../../user-avatar';
@@ -10,9 +12,11 @@ import { useChatMsgs } from '../../../hooks/selectors/chat/use-chat-msgs';
 import ChatService from '../service';
 import Colors from '../../../constants/colors';
 import Styled from './styles';
+import { useBottomSheetBackHandler } from '../../../hooks/useBottomSheetBackHandler';
 
 const BottomSheetChat = () => {
   const messages = useChatMsgs();
+  const navigation = useNavigation();
 
   const sheetRef = useRef(null);
   const [messageText, setMessageText] = useState('');
@@ -26,6 +30,17 @@ const BottomSheetChat = () => {
       dispatch(setBottomChatOpen(false));
     }
   }, []);
+
+  useBottomSheetBackHandler(
+    chatStore.isBottomChatOpen, sheetRef, () => {}
+  );
+
+  const handleMessagePressed = (message) => {
+    if (message.message === 'Uma enquete foi publicada, verifique a seção destinada a enquete para observar os resultados') {
+      sheetRef.current?.close();
+      navigation.navigate('PollScreen');
+    }
+  };
 
   const handleMessage = (message) => {
     if ((/^https?:/.test(message))) {
@@ -44,20 +59,22 @@ const BottomSheetChat = () => {
   const renderItem = ({ item }) => {
     const timestamp = new Date(item.timestamp);
     return (
-      <Styled.ContainerItem>
-        <UserAvatar userName={item.author} userRole={item.role} />
-        <Styled.Card>
-          <Styled.MessageTopContainer>
-            <Styled.MessageAuthor>{item.author}</Styled.MessageAuthor>
-            <Styled.MessageTimestamp>
-              {`${String(timestamp.getHours()).padStart(2, '0')}:${String(
-                timestamp.getMinutes()
-              ).padStart(2, '0')}`}
-            </Styled.MessageTimestamp>
-          </Styled.MessageTopContainer>
-          {handleMessage(item.message)}
-        </Styled.Card>
-      </Styled.ContainerItem>
+      <Pressable onPress={() => handleMessagePressed(item)}>
+        <Styled.ContainerItem>
+          <UserAvatar userName={item.author} userRole={item.role} />
+          <Styled.Card>
+            <Styled.MessageTopContainer>
+              <Styled.MessageAuthor>{item.author}</Styled.MessageAuthor>
+              <Styled.MessageTimestamp>
+                {`${String(timestamp.getHours()).padStart(2, '0')}:${String(
+                  timestamp.getMinutes()
+                ).padStart(2, '0')}`}
+              </Styled.MessageTimestamp>
+            </Styled.MessageTopContainer>
+            {handleMessage(item.message)}
+          </Styled.Card>
+        </Styled.ContainerItem>
+      </Pressable>
     );
   };
 

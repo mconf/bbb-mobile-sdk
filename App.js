@@ -90,9 +90,9 @@ const AppContent = ({
           <Stack.Screen name="EndSessionScreen">
             {() => <EndSessionScreen onLeaveSession={onLeaveSession} />}
           </Stack.Screen>
+          <Stack.Screen name="FullscreenWrapper" component={FullscreenWrapper} />
         </Stack.Navigator>
       </NavigationContainer>
-      <FullscreenWrapper />
     </>
   );
 };

@@ -1,9 +1,12 @@
 import { useDispatch, useSelector } from 'react-redux';
+import { useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import { BackHandler } from 'react-native';
 import { setFocusedElement, setFocusedId, setIsFocused } from '../../store/redux/slices/wide-app/layout';
 import Colors from '../../constants/colors';
 import Styled from './styles';
 
-const FullscreenWrapper = () => {
+const FullscreenWrapper = ({ navigation }) => {
   const layoutStore = useSelector((state) => state.layout);
   const dispatch = useDispatch();
 
@@ -11,7 +14,20 @@ const FullscreenWrapper = () => {
     dispatch(setIsFocused(false));
     dispatch(setFocusedId(''));
     dispatch(setFocusedElement(''));
+    navigation.goBack();
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        onCloseFullscreen();
+        return true;
+      };
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [layoutStore.isFocused]),
+  );
 
   if (!layoutStore.isFocused) {
     return null;
