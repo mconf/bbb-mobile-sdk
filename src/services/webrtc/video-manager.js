@@ -427,7 +427,7 @@ class VideoManager {
       let broker = this.getBroker(cameraId);
 
       if (broker) {
-        this.broker.stop(true);
+        broker.stop(true);
         this.deleteBroker(cameraId);
       }
 
