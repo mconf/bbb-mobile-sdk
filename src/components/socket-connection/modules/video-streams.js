@@ -14,7 +14,7 @@ export class VideoStreamsModule extends Module {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  add(msgObj) {
+  _add(msgObj) {
     return store.dispatch(
       addVideoStream({
         videoStreamObject: msgObj,
@@ -23,16 +23,21 @@ export class VideoStreamsModule extends Module {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  remove(msgObj) {
-    return store.dispatch(
-      removeVideoStream({
-        videoStreamObject: msgObj,
-      })
-    );
+  _remove(msgObj) {
+    console.log("MILTON KEKENSTONE", this._ignoreDeletions);
+    if (!this._ignoreDeletions) {
+      return store.dispatch(
+        removeVideoStream({
+          videoStreamObject: msgObj,
+        })
+      );
+    }
+
+    return false;
   }
 
   // eslint-disable-next-line class-methods-use-this
-  update(msgObj) {
+  _update(msgObj) {
     return store.dispatch(
       editVideoStream({
         videoStreamObject: msgObj,

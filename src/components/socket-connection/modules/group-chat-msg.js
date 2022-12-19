@@ -91,7 +91,7 @@ export class GroupChatMsgModule extends Module {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  add(msgObj) {
+  _add(msgObj) {
     if (msgObj.fields.id.toString().includes('POLL_RESULT')) {
       store.dispatch(
         addPreviousPollPublishedViaChat({
@@ -129,12 +129,12 @@ export class GroupChatMsgModule extends Module {
   }
 
   // eslint-disable-next-line class-methods-use-this,no-unused-vars
-  remove(msgObj) {
+  _remove(msgObj) {
     // Removing this to avoid the meteor calls when clear chat
   }
 
   // eslint-disable-next-line class-methods-use-this
-  update(msgObj) {
+  _update(msgObj) {
     return store.dispatch(
       editGroupChatMsg({
         groupChatMsgObject: msgObj,

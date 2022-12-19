@@ -8,13 +8,13 @@ import {
 
 const SLIDES_TOPIC = 'slides';
 
-export class SlidesModule extends Module{
+export class SlidesModule extends Module {
   constructor(messageSender) {
     super(SLIDES_TOPIC, messageSender);
   }
 
   // eslint-disable-next-line class-methods-use-this
-  add(msgObj) {
+  _add(msgObj) {
     return store.dispatch(
       addSlide({
         slideObject: msgObj,
@@ -23,16 +23,20 @@ export class SlidesModule extends Module{
   }
 
   // eslint-disable-next-line class-methods-use-this
-  remove(msgObj) {
-    return store.dispatch(
-      removeSlide({
-        slideObject: msgObj,
-      })
-    );
+  _remove(msgObj) {
+    if (!this._ignoreDeletions) {
+      return store.dispatch(
+        removeSlide({
+          slideObject: msgObj,
+        })
+      );
+    }
+
+    return false;
   }
 
   // eslint-disable-next-line class-methods-use-this
-  update(msgObj) {
+  _update(msgObj) {
     return store.dispatch(
       editSlide({
         slideObject: msgObj,
