@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createSelector } from '@reduxjs/toolkit';
 import { addMeeting, editMeeting } from './meeting';
 import { sessionStateChanged } from './wide-app/client';
 
@@ -31,6 +31,11 @@ const currentUserSlice = createSlice({
 const selectCurrentUser = (state) => Object.values(
   state.currentUserCollection?.currentUserCollection
 )[0];
+
+const isLocked = createSelector(
+  [selectCurrentUser],
+  (currentUser) => currentUser?.role !== 'MODERATOR' && currentUser?.locked === true
+);
 
 // Middleware effects and listeners
 const logoutOrEjectionPredicate = (action, currentState) => {
@@ -83,6 +88,7 @@ export const {
 
 export {
   selectCurrentUser,
+  isLocked,
   logoutOrEjectionPredicate,
   logoutOrEjectionListener,
 };
