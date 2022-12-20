@@ -97,7 +97,6 @@ module.exports = {
     'react/jsx-props-no-spreading': 'off',
     'react/prop-types': 'off',
     'no-param-reassign': 'off',
-    'no-console': 'off',
     'react/react-in-jsx-scope': 'off',
     'arrow-body-style': 'off',
     'no-use-before-define': 'off',
