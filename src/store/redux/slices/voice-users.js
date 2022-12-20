@@ -1,7 +1,9 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import AudioManager from '../../../services/webrtc/audio-manager';
 import { setLoggedIn } from './wide-app/client';
-import { selectMeeting } from './meeting';
+import { selectMeeting, selectLockSettingsProp } from './meeting';
+import { isLocked } from './current-user';
+import { setAudioError } from './wide-app/audio';
 import logger from '../../../services/logger';
 
 const voiceUsersSlice = createSlice({
@@ -25,6 +27,18 @@ const voiceUsersSlice = createSlice({
         ...voiceUserObject.fields,
       };
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(joinAudio.pending, () => {
+        // TODO move state updates from AudioManager to here
+      })
+      .addCase(joinAudio.fulfilled, () => {
+        // TODO move state updates from AudioManager to here
+      })
+      .addCase(joinAudio.rejected, () => {
+        // TODO move state updates from AudioManager to here
+      });
   },
 });
 
@@ -62,20 +76,34 @@ const joinAudioOnLoginPredicate = (action, currentState) => {
 };
 
 const joinAudioOnLoginListener = (action, listenerApi) => {
-  const state = listenerApi.getState();
-  const muteOnStart = selectMeeting(state)?.voiceProp?.muteOnStart;
-
-  AudioManager.joinMicrophone({ muted: muteOnStart }).catch((error) => {
-    // TODO surface error via toast or chain a retry.
-    logger.error({
-      logCode: 'audio_publish_failure',
-      extraInfo: {
-        errorCode: error.code,
-        errorMessage: error.message,
-      }
-    }, `Audio published failed: ${error.message}`);
+  listenerApi.dispatch(joinAudio()).unwrap().catch((error) => {
+    listenerApi.dispatch(setAudioError(error.name));
   });
 };
+
+const joinAudio = createAsyncThunk(
+  'client/joinAudio',
+  async (_, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const muteOnStart = selectMeeting(state)?.voiceProp?.muteOnStart;
+    const micDisabled = selectLockSettingsProp(state, 'disableMic') && isLocked(state);
+
+    return AudioManager.joinMicrophone({
+      muted: muteOnStart,
+      isListenOnly: micDisabled,
+    }).catch((error) => {
+      logger.error({
+        logCode: 'audio_publish_failure',
+        extraInfo: {
+          errorCode: error.code,
+          errorMessage: error.message,
+        }
+      }, `Audio published failed: ${error.message}`);
+
+      throw error;
+    });
+  },
+);
 
 export const {
   addVoiceUser,
@@ -89,6 +117,7 @@ export {
   voiceStateChangePredicate,
   joinAudioOnLoginListener,
   joinAudioOnLoginPredicate,
+  joinAudio,
 };
 
 export default voiceUsersSlice.reducer;

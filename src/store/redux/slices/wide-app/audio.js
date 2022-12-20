@@ -8,6 +8,7 @@ const initialState = {
   isHangingUp: false,
   isListenOnly: false,
   inputStreamId: null,
+  audioError: null,
 };
 
 const audioSlice = createSlice({
@@ -35,6 +36,9 @@ const audioSlice = createSlice({
     setIsListenOnly: (state, action) => {
       state.isListenOnly = action.payload;
     },
+    setAudioError: (state, action) => {
+      state.audioError = action.payload;
+    },
   },
 });
 
@@ -46,5 +50,6 @@ export const {
   setIsConnected,
   setIsReconnecting,
   setIsListenOnly,
+  setAudioError,
 } = audioSlice.actions;
 export default audioSlice.reducer;
