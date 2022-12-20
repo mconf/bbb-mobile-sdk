@@ -1,3 +1,4 @@
+import * as Linking from 'expo-linking';
 import { useSelector } from 'react-redux';
 import { ActivityIndicator, Alert, View } from 'react-native';
 import IconButtonComponent from '../../icon-button';
@@ -17,6 +18,44 @@ const VideoControls = (props) => {
   const isActive = isConnected || isConnecting;
   const iconColor = isActive ? Colors.white : Colors.lightGray300;
   const buttonSize = isLandscape ? 24 : 32;
+
+  const publishCamera = () => {
+    VideoManager.publish().catch((error) => {
+      logger.error({
+        logCode: 'video_publish_failure',
+        extraInfo: {
+          errorCode: error.code,
+          errorMessage: error.message,
+        }
+      }, `Video published failed: ${error.message} - ${error.name}`);
+
+      if (error.name === 'NotAllowedError' || error.name === 'SecurityError') {
+        // TODO localization
+        const buttons = [
+          {
+            text: 'Cancelar',
+            style: 'cancel'
+          },
+          {
+            text: 'Configurações',
+            onPress: () => Linking.openSettings(),
+          },
+          {
+            text: 'Tentar novamente',
+            onPress: () => publishCamera(),
+          },
+        ];
+
+        Alert.alert(
+          'Permissão de webcam negada',
+          'Precisamos de sua permissão para que sua câmera possa ser compartilhada',
+          buttons,
+          { cancelable: true },
+        );
+      }
+      // FIXME surface the rest of the errors via toast or chain a retry.
+    });
+  };
 
   return (
     <View>
@@ -42,16 +81,7 @@ const VideoControls = (props) => {
           if (isActive) {
             VideoManager.unpublish(localCameraId);
           } else {
-            VideoManager.publish().catch((error) => {
-              // TODO surface error via toast or chain a retry.
-              logger.error({
-                logCode: 'video_publish_failure',
-                extraInfo: {
-                  errorCode: error.code,
-                  errorMessage: error.message,
-                }
-              }, `Video published failed: ${error.message}`);
-            });
+            publishCamera();
           }
         }}
       />
