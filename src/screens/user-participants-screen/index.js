@@ -5,6 +5,7 @@ import { Menu, Provider } from 'react-native-paper';
 import { useOrientation } from '../../hooks/use-orientation';
 import withPortal from '../../components/high-order/with-portal';
 import Styled from './styles';
+import Settings from '../../../settings.json';
 
 const UserParticipantsScreen = () => {
   const usersStore = useSelector((state) => state.usersCollection);
@@ -50,25 +51,30 @@ const UserParticipantsScreen = () => {
     );
   };
 
+  // The user-list-item Menu is disabled on production environments because
+  // its only feature is experimental - move the Settings.dev check down to
+  // menu items if more stable actions are added later
   return (
     <Provider>
       <Styled.ContainerView orientation={orientation}>
         <Styled.FlatList data={handleUsersName()} renderItem={renderItem} />
-        <Menu
-          visible={showMenu}
-          onDismiss={() => setShowMenu(false)}
-          anchor={menuAnchor}
-        >
-          <Menu.Item
-            onPress={() =>
-              Alert.alert(
-                'Currently under development',
-                'This feature will be addressed soon, please check out our github page'
-              )
-            }
-            title="Bate-papo privado"
-          />
-        </Menu>
+        {Settings.dev && (
+          <Menu
+            visible={showMenu}
+            onDismiss={() => setShowMenu(false)}
+            anchor={menuAnchor}
+          >
+            <Menu.Item
+              onPress={() => {
+                Alert.alert(
+                  'Currently under development',
+                  'This feature will be addressed soon, please check out our github page'
+                );
+              }}
+              title="Bate-papo privado"
+            />
+          </Menu>
+        )}
         <Styled.ActionsBarContainer orientation={orientation}>
           <Styled.ActionsBar orientation={orientation} />
         </Styled.ActionsBarContainer>
