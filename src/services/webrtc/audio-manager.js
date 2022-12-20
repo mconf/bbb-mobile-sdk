@@ -6,7 +6,8 @@ import {
   setIsConnected,
   setIsHangingUp,
   setIsReconnecting,
-  setAudioStream,
+  setInputStreamId,
+  setIsListenOnly,
   setMutedState
 } from '../../store/redux/slices/wide-app/audio';
 
@@ -43,6 +44,7 @@ class AudioManager {
     this.bridge = null;
     this.audioSessionNumber = Date.now();
     this.iceServers = null;
+    this.isListenOnly = false;
   }
 
   get bridge() {
@@ -54,10 +56,9 @@ class AudioManager {
   }
 
   set inputStream(stream) {
-    this._inputStream = stream;
-
-    if (stream && stream.id !== this.inputStream.id) {
-      store.dispatch(setAudioStream(stream));
+    if (stream?.id !== this.inputStream?.id) {
+      this._inputStream = stream;
+      store.dispatch(setInputStreamId(stream?.id));
     }
   }
 
@@ -111,7 +112,6 @@ class AudioManager {
       if (this.bridge.setSenderTrackEnabled(shouldEnable)) {
         const newEnabledState = this._getSenderTrackEnabled();
         store.dispatch(setMutedState(!newEnabledState));
-
       }
     }
   }
@@ -166,7 +166,7 @@ class AudioManager {
       clientSessionNumber: this.audioSessionNumber,
       iceServers: this.iceServers,
       stream: (inputStream && inputStream.active) ? inputStream : undefined,
-      offering: true,
+      offering: !isListenOnly,
       traceLogs: true,
       muted,
       logger: this.logger,
@@ -222,6 +222,7 @@ class AudioManager {
     store.dispatch(setIsConnecting(true));
     store.dispatch(setIsConnected(false));
     store.dispatch(setIsHangingUp(false));
+    store.dispatch(setIsListenOnly(this.isListenOnly));
   }
 
   // Connected, but needs acknowledgement from call states to be flagged as joined
@@ -232,8 +233,16 @@ class AudioManager {
         clientSessionNumber: bridge?.clientSessionNumber,
       },
     }, 'Audio connected');
+
+    // Listen only doesn't wait for server side confirmation to flag join, so
+    // do it once connected.
+    if (bridge?.role === 'recvonly') this.onAudioJoin(bridge?.clientSessionNumber);
   }
 
+  // This is called:
+  // a) from a voice-call-states observer when using microphone
+  // b) via this.onAudioConected when using listen only
+  // c) via this.onAudioReconnected when reconnecting
   onAudioJoin(clientSessionNumber) {
     if (clientSessionNumber == this.bridge?.clientSessionNumber) {
       store.dispatch(setIsConnected(true));
@@ -307,11 +316,12 @@ class AudioManager {
     });
   }
 
-  async joinMicrophone({ muted = false }) {
+  async joinMicrophone({ muted = false, isListenOnly = false }) {
     try {
+      this.isListenOnly = isListenOnly;
       this.onAudioJoining();
       const inputStream = await this._mediaFactory();
-      await this._joinAudio({ inputStream, isListenOnly: false, muted });
+      await this._joinAudio({ inputStream, isListenOnly, muted });
     } catch (error) {
       this.exitAudio();
       throw error;

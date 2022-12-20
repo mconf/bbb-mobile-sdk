@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createSelector } from '@reduxjs/toolkit';
 
 const meetingSlice = createSlice({
   name: 'meeting',
@@ -8,8 +8,7 @@ const meetingSlice = createSlice({
   reducers: {
     addMeeting: (state, action) => {
       const { meetingObject } = action.payload;
-      state.meetingCollection[meetingObject.id] =
-        action.payload.meetingObject.fields;
+      state.meetingCollection[meetingObject.id] = action.payload.meetingObject.fields;
     },
     removeMeeting: (state, action) => {
       const { meetingObject } = action.payload;
@@ -27,6 +26,22 @@ const meetingSlice = createSlice({
 
 const selectMeeting = (state) => Object.values(state.meetingCollection.meetingCollection)[0];
 
+const selectProp = (state, prop) => prop;
+
+const selectAllLockSettingsProps = createSelector(
+  [selectMeeting],
+  (meeting) => {
+    return meeting?.lockSettingsProps ?? {};
+  }
+);
+
+const selectLockSettingsProp = createSelector(
+  [selectAllLockSettingsProps, selectProp],
+  (lockSettings, prop) => {
+    return lockSettings[prop] ?? false;
+  }
+);
+
 export const {
   addMeeting,
   removeMeeting,
@@ -35,6 +50,8 @@ export const {
 
 export {
   selectMeeting,
+  selectAllLockSettingsProps,
+  selectLockSettingsProp,
 };
 
 export default meetingSlice.reducer;

@@ -6,7 +6,8 @@ const initialState = {
   isConnecting: false,
   isReconnecting: false,
   isHangingUp: false,
-  audioStream: null,
+  isListenOnly: false,
+  inputStreamId: null,
 };
 
 const audioSlice = createSlice({
@@ -28,18 +29,22 @@ const audioSlice = createSlice({
     setIsReconnecting: (state, action) => {
       state.isReconnecting = action.payload;
     },
-    setAudioStream: (state, action) => {
-      state.inputStream = action.payload;
+    setInputStreamId: (state, action) => {
+      state.inputStreamId = action.payload;
+    },
+    setIsListenOnly: (state, action) => {
+      state.isListenOnly = action.payload;
     },
   },
 });
 
 export const {
   setMutedState,
-  setAudioStream,
+  setInputStreamId,
   setIsConnecting,
   setIsHangingUp,
   setIsConnected,
   setIsReconnecting,
+  setIsListenOnly,
 } = audioSlice.actions;
 export default audioSlice.reducer;
