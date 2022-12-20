@@ -4,6 +4,7 @@ const presentationsSlice = createSlice({
   name: 'presentations',
   initialState: {
     presentationsCollection: {},
+    ready: false,
   },
   reducers: {
     addPresentation: (state, action) => {
@@ -22,8 +23,16 @@ const presentationsSlice = createSlice({
         ...action.payload.presentationObject.fields,
       };
     },
+    readyStateChanged: (state, action) => {
+      state.ready = action.payload;
+    },
   },
 });
-export const { addPresentation, removePresentation, editPresentation } =
-  presentationsSlice.actions;
+
+export const {
+  addPresentation,
+  removePresentation,
+  editPresentation,
+  readyStateChanged,
+} = presentationsSlice.actions;
 export default presentationsSlice.reducer;

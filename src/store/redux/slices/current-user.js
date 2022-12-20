@@ -7,6 +7,7 @@ const currentUserSlice = createSlice({
   name: 'current-user',
   initialState: {
     currentUserCollection: {},
+    ready: false,
   },
   reducers: {
     addCurrentUser: (state, action) => {
@@ -23,6 +24,9 @@ const currentUserSlice = createSlice({
         ...state.currentUserCollection[currentUserObject.id],
         ...action.payload.currentUserObject.fields,
       };
+    },
+    readyStateChanged: (state, action) => {
+      state.ready = action.payload;
     },
   },
 });
@@ -83,7 +87,8 @@ const logoutOrEjectionListener = (action, listenerApi) => {
 export const {
   addCurrentUser,
   removeCurrentUser,
-  editCurrentUser
+  editCurrentUser,
+  readyStateChanged,
 } = currentUserSlice.actions;
 
 export {

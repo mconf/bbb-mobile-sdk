@@ -4,6 +4,7 @@ const meetingSlice = createSlice({
   name: 'meeting',
   initialState: {
     meetingCollection: {},
+    ready: false,
   },
   reducers: {
     addMeeting: (state, action) => {
@@ -20,6 +21,9 @@ const meetingSlice = createSlice({
         ...state.meetingCollection[meetingObject.id],
         ...action.payload.meetingObject.fields,
       };
+    },
+    readyStateChanged: (state, action) => {
+      state.ready = action.payload;
     },
   },
 });
@@ -45,7 +49,8 @@ const selectLockSettingsProp = createSelector(
 export const {
   addMeeting,
   removeMeeting,
-  editMeeting
+  editMeeting,
+  readyStateChanged,
 } = meetingSlice.actions;
 
 export {

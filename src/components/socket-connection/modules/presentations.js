@@ -4,6 +4,7 @@ import {
   addPresentation,
   removePresentation,
   editPresentation,
+  readyStateChanged,
 } from '../../../store/redux/slices/presentations';
 
 const PRESENTATION_TOPIC = 'presentations';
@@ -42,5 +43,10 @@ export class PresentationsModule extends Module {
         presentationObject: msgObj,
       })
     );
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  _subscriptionStateChanged(newState) {
+    return store.dispatch(readyStateChanged(newState));
   }
 }

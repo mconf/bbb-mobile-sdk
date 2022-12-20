@@ -4,6 +4,7 @@ const usersSlice = createSlice({
   name: 'users',
   initialState: {
     usersCollection: {},
+    ready: false,
   },
   reducers: {
     addUser: (state, action) => {
@@ -21,6 +22,9 @@ const usersSlice = createSlice({
         ...action.payload.userObject.fields,
       };
     },
+    readyStateChanged: (state, action) => {
+      state.ready = action.payload;
+    },
   },
 });
 
@@ -36,6 +40,7 @@ export const {
   addUser,
   removeUser,
   editUser,
+  readyStateChanged,
 } = usersSlice.actions;
 
 export {

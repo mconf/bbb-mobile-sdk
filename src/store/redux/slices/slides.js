@@ -4,6 +4,7 @@ const slidesSlice = createSlice({
   name: 'slides',
   initialState: {
     slidesCollection: {},
+    ready: false,
   },
   reducers: {
     addSlide: (state, action) => {
@@ -22,7 +23,16 @@ const slidesSlice = createSlice({
         ...action.payload.slideObject.fields,
       };
     },
+    readyStateChanged: (state, action) => {
+      state.ready = action.payload;
+    },
   },
 });
-export const { addSlide, removeSlide, editSlide } = slidesSlice.actions;
+
+export const {
+  addSlide,
+  removeSlide,
+  editSlide,
+  readyStateChanged,
+} = slidesSlice.actions;
 export default slidesSlice.reducer;

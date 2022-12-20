@@ -4,6 +4,7 @@ import {
   addPoll,
   removePoll,
   editPoll,
+  readyStateChanged,
 } from '../../../store/redux/slices/polls';
 
 const POLLS_TOPIC = 'polls';
@@ -42,5 +43,10 @@ export class PollsModule extends Module {
         pollObject: msgObj,
       })
     );
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  _subscriptionStateChanged(newState) {
+    return store.dispatch(readyStateChanged(newState));
   }
 }

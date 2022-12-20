@@ -4,6 +4,7 @@ import {
   addCurrentPoll,
   editCurrentPoll,
   removeCurrentPoll,
+  readyStateChanged,
 } from '../../../store/redux/slices/current-poll';
 
 const CURRENT_POLL_TOPIC = 'current-poll';
@@ -49,5 +50,10 @@ export class CurrentPollModule extends Module {
         currentPollObject: msgObj,
       })
     );
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  _subscriptionStateChanged(newState) {
+    return store.dispatch(readyStateChanged(newState));
   }
 }

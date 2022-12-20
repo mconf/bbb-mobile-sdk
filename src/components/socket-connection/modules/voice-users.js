@@ -3,6 +3,7 @@ import {
   addVoiceUser,
   removeVoiceUser,
   editVoiceUser,
+  readyStateChanged,
 } from '../../../store/redux/slices/voice-users';
 import { store } from '../../../store/redux/store';
 
@@ -42,5 +43,10 @@ export class VoiceUsersModule extends Module {
         voiceUserObject: msgObj,
       })
     );
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  _subscriptionStateChanged(newState) {
+    return store.dispatch(readyStateChanged(newState));
   }
 }

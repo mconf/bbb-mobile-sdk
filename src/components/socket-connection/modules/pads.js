@@ -1,6 +1,11 @@
 import Module from './module';
 import { store } from '../../../store/redux/store';
-import { addPad, removePad, editPad } from '../../../store/redux/slices/pads';
+import {
+  addPad,
+  removePad,
+  editPad,
+  readyStateChanged,
+} from '../../../store/redux/slices/pads';
 
 const PADS_TOPIC = 'pads';
 
@@ -38,5 +43,10 @@ export class PadsModule extends Module {
         padObject: msgObj,
       })
     );
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  _subscriptionStateChanged(newState) {
+    return store.dispatch(readyStateChanged(newState));
   }
 }

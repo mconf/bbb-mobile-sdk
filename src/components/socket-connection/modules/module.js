@@ -1,6 +1,6 @@
-import { getRandomAlphanumeric } from '../utils';
 import MethodTransactionManager from '../method-transaction-manager';
 import MethodTransaction from '../method-transaction';
+import SubscribeTransaction from '../subscribe-transaction';
 
 export default class Module {
   constructor(topics, messageSender) {
@@ -21,18 +21,17 @@ export default class Module {
 
   subscribeToCollection(topic, ...args) {
     if (!this.subscriptions.has(topic)) {
-      const id = getRandomAlphanumeric(17);
-      this.messageSender.sendMessage({
-        msg: 'sub',
-        id,
-        name: topic,
-        params: [...args],
+      const transaction = new SubscribeTransaction(topic, args);
+      this._pendingTransactions.addTransaction(transaction);
+      this.messageSender.sendMessage(transaction.payload);
+      return transaction.promise.then(() => {
+        this.subscriptions.set(topic, transaction.transactionId);
+        this._ignoreDeletions = false;
+        this._subscriptionStateChanged(true);
+      }).catch(() => {
+        this._ignoreDeletions = false;
+        this._subscriptionStateChanged(false);
       });
-      // FIXME wait for subscription to succeed
-      this.subscriptions.set(topic, id);
-      this._ignoreDeletions = false;
-
-      return id;
     }
 
     return this.subscriptions.get(topic);
@@ -43,6 +42,7 @@ export default class Module {
       this._ignoreDeletions = true;
       const topic = msgObj.collection;
       this.subscriptions.delete(topic);
+      this._subscriptionStateChanged(false);
       // Force a re-subscription of affected modules
       this.onConnected();
     }
@@ -57,6 +57,7 @@ export default class Module {
       msg: 'unsub',
       id,
     });
+    this._subscriptionStateChanged(false);
 
     return this.subscriptions.delete(topic);
   }
@@ -97,9 +98,27 @@ export default class Module {
         break;
       }
 
-      default: {
-        // console.log('default case');
+      // Subscription accepted
+      case 'ready': {
+        const { subs } = msgObj;
+        if (subs && subs.length > 0) {
+          subs.forEach((subscriptionId) => {
+            this._pendingTransactions.resolveTransaction(subscriptionId, subscriptionId);
+          });
+        }
+        break;
       }
+
+      // Subscription refused
+      case 'nosub': {
+        if (typeof msgObj.error === 'object') {
+          this._pendingTransactions.rejectTransaction(msgObj.id, msgObj.error);
+        }
+        break;
+      }
+
+      default:
+        break;
     }
 
     // _processMessage should be implemented by inheritors
@@ -115,7 +134,7 @@ export default class Module {
     return transaction.promise;
   }
 
-  // Must be implemented by inherirots
+  // Must be implemented by inheritors
   // eslint-disable-next-line class-methods-use-this, no-unused-vars
   _add(msgObj) {
     return false;
@@ -125,7 +144,7 @@ export default class Module {
     return this._add(msgObj);
   }
 
-  // Must be implemented by inherirots
+  // Must be implemented by inheritors
   // eslint-disable-next-line class-methods-use-this, no-unused-vars
   _remove(msgObj) {
     return false;
@@ -135,7 +154,7 @@ export default class Module {
     return this._remove(msgObj);
   }
 
-  // Must be implemented by inherirots
+  // Must be implemented by inheritors
   // eslint-disable-next-line class-methods-use-this, no-unused-vars
   _update(msgObj) {
     return false;
@@ -143,5 +162,10 @@ export default class Module {
 
   update(msgObj) {
     return this._update(msgObj);
+  }
+
+  // Must be implemented by inheritors
+  // eslint-disable-next-line class-methods-use-this, no-unused-vars
+  _subscriptionStateChanged(newState) {
   }
 }

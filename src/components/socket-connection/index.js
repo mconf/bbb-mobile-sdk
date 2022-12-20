@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -257,6 +257,7 @@ const SocketConnectionComponent = (props) => {
   const validateReqId = useRef(null);
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const [authTokenValidated, setAuthTokenValidated] = useState(false);
   const online = useSelector((state) => state.client.connectionStatus.isConnected);
   const sessionEnded = useSelector((state) => state.client.sessionState.ended);
   const {
@@ -278,6 +279,11 @@ const SocketConnectionComponent = (props) => {
     return selectUserByIntId(state, meetingData.internalUserID)?.ejected;
   });
   const meetingEnded = useSelector((state) => selectMeeting(state)?.meetingEnded);
+  const basicSubscriptionsAreReady = useSelector((state) => {
+    return state.meetingCollection.ready
+      && state.currentUserCollection.ready
+      && state.usersCollection.ready;
+  });
 
   useEffect(() => {
     dispatch(setJoinUrl(jUrl));
@@ -315,10 +321,18 @@ const SocketConnectionComponent = (props) => {
       tearDownModules();
       if (loggingOut) {
         dispatch(setJoinUrl(null));
+        setAuthTokenValidated(false);
         dispatch(setLoggedIn(false));
       }
     }
   }, [connected, loggingOut]);
+
+  useEffect(() => {
+    if (authTokenValidated && basicSubscriptionsAreReady) {
+      dispatch(setLoggedIn(true));
+      dispatch(setLoggingIn(false));
+    }
+  }, [authTokenValidated, basicSubscriptionsAreReady]);
 
   const onMessage = (ws, event) => {
     let msg = event.data;
@@ -445,8 +459,7 @@ const SocketConnectionComponent = (props) => {
           // to do this. Remove when socket-connection is properly
           // refactored - prlanzarin
           initializeMediaManagers(meetingData);
-          dispatch(setLoggedIn(true));
-          dispatch(setLoggingIn(false));
+          setAuthTokenValidated(true);
           makeCall('setMobileUser').catch((error) => {
             logger.warn({
               logCode: 'set_mobile_user_failed',
@@ -514,6 +527,15 @@ const SocketConnectionComponent = (props) => {
           currentModule.update(msgObj);
         }
 
+        break;
+      }
+
+      // The following messages should be processed by the modules themselves
+      case 'ready':
+      case 'nosub': {
+        Object.values(modules.current).forEach((module) => {
+          module.processMessage(msgObj);
+        });
         break;
       }
 

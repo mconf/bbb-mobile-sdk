@@ -7,6 +7,7 @@ const screenshareSlice = createSlice({
   name: 'screenshare',
   initialState: {
     screenshareCollection: {},
+    ready: false,
   },
   reducers: {
     addScreenshare: (state, action) => {
@@ -23,6 +24,9 @@ const screenshareSlice = createSlice({
         ...state.screenshareCollection[screenshareObject.id],
         ...action.payload.screenshareObject.fields,
       };
+    },
+    readyStateChanged: (state, action) => {
+      state.ready = action.payload;
     },
   },
 });
@@ -64,6 +68,7 @@ export const {
   addScreenshare,
   removeScreenshare,
   editScreenshare,
+  readyStateChanged,
 } = screenshareSlice.actions;
 
 export {

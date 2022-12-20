@@ -4,6 +4,7 @@ const padsSlice = createSlice({
   name: 'pads',
   initialState: {
     padsCollection: {},
+    ready: false,
   },
   reducers: {
     addPad: (state, action) => {
@@ -21,7 +22,16 @@ const padsSlice = createSlice({
         ...action.payload.padObject.fields,
       };
     },
+    readyStateChanged: (state, action) => {
+      state.ready = action.payload;
+    },
   },
 });
-export const { addPad, removePad, editPad } = padsSlice.actions;
+
+export const {
+  addPad,
+  removePad,
+  editPad,
+  readyStateChanged,
+} = padsSlice.actions;
 export default padsSlice.reducer;

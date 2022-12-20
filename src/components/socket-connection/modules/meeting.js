@@ -3,6 +3,7 @@ import {
   addMeeting,
   removeMeeting,
   editMeeting,
+  readyStateChanged,
 } from '../../../store/redux/slices/meeting';
 import { store } from '../../../store/redux/store';
 
@@ -42,5 +43,10 @@ export class MeetingModule extends Module {
         meetingObject: msgObj,
       })
     );
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  _subscriptionStateChanged(newState) {
+    return store.dispatch(readyStateChanged(newState));
   }
 }
