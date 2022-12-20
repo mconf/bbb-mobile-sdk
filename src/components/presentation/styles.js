@@ -1,10 +1,6 @@
 import ContentLoader, { Rect } from 'react-content-loader/native';
 import styled from 'styled-components/native';
 
-const PresentationView = styled.View`
-  display: flex;
-`;
-
 const PresentationImage = styled.Image`
   width: 100%;
   height: 100%;
@@ -27,5 +23,4 @@ const PresentationSkeleton = () => (
 export default {
   PresentationImage,
   PresentationSkeleton,
-  PresentationView,
 };

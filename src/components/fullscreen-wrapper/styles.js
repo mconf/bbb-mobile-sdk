@@ -2,9 +2,8 @@ import styled from 'styled-components/native';
 import { RTCView } from 'react-native-webrtc';
 import button from '../button';
 import Colors from '../../constants/colors';
-import presentation from '../presentation';
 import iconButton from '../icon-button';
-import Screenshare from '../screenshare';
+import contentArea from '../content-area';
 
 const Container = styled.View`
   position: absolute;
@@ -56,9 +55,7 @@ const UserColor = styled.View`
   overflow: hidden;
 `;
 
-const Presentation = styled(presentation)``;
-
-const FullscreenScreenshare = styled(Screenshare)`
+const ContentArea = styled(contentArea)`
   background-color: none;
 `;
 
@@ -75,7 +72,6 @@ export default {
   Wrapper,
   UserAvatar,
   UserColor,
-  Presentation,
   CloseFullscreenButton,
-  FullscreenScreenshare,
+  ContentArea,
 };

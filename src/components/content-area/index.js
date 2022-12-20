@@ -6,7 +6,8 @@ import { selectScreenshare } from '../../store/redux/slices/screenshare';
 import { setFocusedElement, setFocusedId, setIsFocused } from '../../store/redux/slices/wide-app/layout';
 
 const ContentArea = (props) => {
-  const { style } = props;
+  const { style, fullscreen } = props;
+
   const slidesStore = useSelector((state) => state.slidesCollection);
   const presentationsStore = useSelector((state) => state.presentationsCollection);
   const screenshare = useSelector(selectScreenshare);
@@ -24,8 +25,8 @@ const ContentArea = (props) => {
     const currentSlideList = Object.values(slidesStore.slidesCollection).filter(
       (obj) => {
         return (
-          obj.current === true &&
-          obj.presentationId === currentPresentation[0]?.id
+          obj.current === true
+          && obj.presentationId === currentPresentation[0]?.id
         );
       }
     );
@@ -33,38 +34,42 @@ const ContentArea = (props) => {
     return imageUri?.replace('/svg/', '/png/');
   }, [presentationsStore, slidesStore]);
 
-  const onClickPresentation = () => {
+  const onClickContentArea = () => {
     dispatch(setIsFocused(true));
     dispatch(setFocusedId(handleSlideAndPresentationActive()));
-    dispatch(setFocusedElement('presentation'));
+    dispatch(setFocusedElement('contentArea'));
     navigation.navigate('FullscreenWrapper');
   };
 
-  const onClickScreenshare = () => {
-    dispatch(setIsFocused(true));
-    // Focused ID is not needed here because the Screenshare component is self contained
-    dispatch(setFocusedId(''));
-    dispatch(setFocusedElement('screenshare'));
-    navigation.navigate('FullscreenWrapper');
-  };
+  // ** Content area views methods **
+  const presentationView = () => (
+    <Styled.Presentation
+      width="100%"
+      height="100%"
+      source={{
+        uri: handleSlideAndPresentationActive(),
+      }}
+    />
+  );
 
-  if (!screenshare) {
+  const screenshareView = () => (
+    <Styled.Screenshare style={style} />
+  );
+
+  // ** return methods **
+  if (fullscreen) {
     return (
-      <Styled.ContentAreaPressable onPress={onClickPresentation}>
-        <Styled.Presentation
-          width="100%"
-          height="100%"
-          source={{
-            uri: handleSlideAndPresentationActive(),
-          }}
-        />
-      </Styled.ContentAreaPressable>
+      <>
+        {!screenshare && presentationView()}
+        {screenshare && screenshareView()}
+      </>
     );
   }
 
   return (
-    <Styled.ContentAreaPressable onPress={onClickScreenshare}>
-      <Styled.Screenshare style={style} />
+    <Styled.ContentAreaPressable onPress={onClickContentArea}>
+      {!screenshare && presentationView()}
+      {screenshare && screenshareView()}
     </Styled.ContentAreaPressable>
   );
 };

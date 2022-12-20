@@ -39,8 +39,7 @@ const FullscreenWrapper = ({ navigation }) => {
         {layoutStore.focusedElement === 'videoStream' && <Styled.VideoStream streamURL={layoutStore.focusedId} />}
         {layoutStore.focusedElement === 'avatar' && <Styled.UserAvatar source={{ uri: layoutStore.focusedId }} />}
         {layoutStore.focusedElement === 'color' && <Styled.UserColor userColor={layoutStore.focusedId} />}
-        {layoutStore.focusedElement === 'presentation' && <Styled.Presentation source={{ uri: layoutStore.focusedId }} />}
-        {layoutStore.focusedElement === 'screenshare' && <Styled.FullscreenScreenshare />}
+        {layoutStore.focusedElement === 'contentArea' && <Styled.ContentArea fullscreen />}
       </Styled.Wrapper>
       <Styled.CloseFullscreenButton
         icon="fullscreen-exit"
