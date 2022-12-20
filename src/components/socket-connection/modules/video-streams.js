@@ -24,7 +24,6 @@ export class VideoStreamsModule extends Module {
 
   // eslint-disable-next-line class-methods-use-this
   _remove(msgObj) {
-    console.log("MILTON KEKENSTONE", this._ignoreDeletions);
     if (!this._ignoreDeletions) {
       return store.dispatch(
         removeVideoStream({
