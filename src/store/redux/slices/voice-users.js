@@ -1,8 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import AudioManager from '../../../services/webrtc/audio-manager';
 import { setLoggedIn } from './wide-app/client';
-import { selectMeeting, selectLockSettingsProp } from './meeting';
-import { isLocked } from './current-user';
+import { addMeeting, selectMeeting, selectLockSettingsProp } from './meeting';
+import { addCurrentUser, selectCurrentUser, isLocked } from './current-user';
 import { setAudioError } from './wide-app/audio';
 import logger from '../../../services/logger';
 
@@ -68,15 +68,24 @@ const voiceStateChangeListener = (action, listenerApi) => {
   }
 };
 
-const joinAudioOnLoginPredicate = (action, currentState) => {
-  return setLoggedIn.match(action)
-    && action.payload === true
-    && !currentState.audio.isConnected
-    && !currentState.audio.isConnecting;
+const joinAudioOnLoginPredicate = (action, state) => {
+  return (setLoggedIn.match(action) || addMeeting.match(action) || addCurrentUser.match(action))
+    && selectMeeting(state)
+    && selectCurrentUser(state)
+    && state.client.sessionState.loggedIn
+    && !state.audio.isConnected
+    && !state.audio.isConnecting
+    && !state.audio.isReconnecting;
 };
 
 const joinAudioOnLoginListener = (action, listenerApi) => {
-  listenerApi.dispatch(joinAudio()).unwrap().catch((error) => {
+  listenerApi.dispatch(joinAudio()).unwrap().then(() => {
+    // If user joined as listen only, it means they are locked which is a soft
+    // error that needs to be surfaced
+    if (listenerApi.getState().audio.isListenOnly) {
+      listenerApi.dispatch(setAudioError('ListenOnly'));
+    }
+  }).catch((error) => {
     listenerApi.dispatch(setAudioError(error.name));
   });
 };

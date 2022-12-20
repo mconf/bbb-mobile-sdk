@@ -77,7 +77,11 @@ const AudioControls = (props) => {
   }, [audioError]);
 
   const joinMicrophone = () => {
-    dispatch(joinAudio()).unwrap().catch((error) => {
+    dispatch(joinAudio()).unwrap().then(() => {
+      // If user joined as listen only, it means they are locked which is a soft
+      // error that needs to be surfaced
+      if (AudioManager.isListenOnly) dispatch(setAudioError('ListenOnly'));
+    }).catch((error) => {
       dispatch(setAudioError(error.name));
     });
   };
