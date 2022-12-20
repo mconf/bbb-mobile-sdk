@@ -178,47 +178,54 @@ const setupModules = (ws) => {
   const messageSender = new MessageSender(ws, GLOBAL_TRANSACTIONS);
   GLOBAL_MESSAGE_SENDER = messageSender;
 
+  // Mirrors for Meteor collections that area fully implemented
   const modules = {
     users: new UsersModule(messageSender),
     meetings: new MeetingModule(messageSender),
     voiceUsers: new VoiceUsersModule(messageSender),
     polls: new PollsModule(messageSender),
-    pads: new PadsModule(messageSender),
     presentations: new PresentationsModule(messageSender),
     slides: new SlidesModule(messageSender),
     screenshare: new ScreenshareModule(messageSender),
     'current-poll': new CurrentPollModule(messageSender),
     'current-user': new CurrentUserModule(messageSender),
-    'external-video-meetings': new ExternalVideoMeetingsModule(messageSender),
     'group-chat': new GroupChatModule(messageSender),
     'group-chat-msg': new GroupChatMsgModule(messageSender),
     'video-streams': new VideoStreamsModule(messageSender),
     voiceCallStates: new VoiceCallStatesModule(messageSender),
-    // ** meteor Collections **//
-    // Screenreader-alert:
-    // annotations:
-    // audio-captions:
-    // auth-token-validation:
-    // breakouts:
-    // breakouts-history:
-    // captions:
-    // connection-status:
-    // guestUsers:
-    // layout-meetings:
-    // meeting-time-remaining:
-    // notifications:
-    // pads-sessions:
-    // pads-updates:
-    // presentation-pods:
-    // presentation-upload-token:
-    // record-meetings:
-    // slide-positions:
-    // users-infos:
-    // users-persistent-data:
-    // users-settings:
-    // users-typing:
-    // whiteboard-multi-user:
   };
+
+  /*
+   * Collections for experimental or partially implemented fetaures
+   * Pending:
+   *  Screenreader-alert:
+   *  annotations:
+   *  audio-captions:
+   *  auth-token-validation:
+   *  breakouts:
+   *  breakouts-history:
+   *  captions:
+   *  connection-status:
+   *  guestUsers:
+   *  layout-meetings:
+   *  meeting-time-remaining:
+   *  notifications:
+   *  pads-sessions:
+   *  pads-updates:
+   *  presentation-pods:
+   *  presentation-upload-token:
+   *  record-meetings:
+   *  slide-positions:
+   *  users-infos:
+   *  users-persistent-data:
+   *  users-settings:
+   *  users-typing:
+   *  whiteboard-multi-user:
+   */
+  if (Settings.dev) {
+    modules.pads = new PadsModule(messageSender);
+    modules['external-video-meetings'] = new ExternalVideoMeetingsModule(messageSender);
+  }
 
   Object.values(modules).forEach((module) => {
     if (module !== 'current-poll') {
