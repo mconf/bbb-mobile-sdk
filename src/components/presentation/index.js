@@ -7,14 +7,16 @@ const Presentation = (props) => {
 
   return (
     <>
-      {loading && <Styled.PresentationSkeleton />}
-      <Styled.PresentationImage
-        source={source}
-        style={style}
-        resizeMode="contain"
-        onLoadStart={() => { setLoading(true); }}
-        onLoadEnd={() => { setLoading(false); }}
-      />
+      {source?.uri && loading && <Styled.PresentationSkeleton />}
+      {source?.uri && (
+        <Styled.PresentationImage
+          source={source}
+          style={style}
+          resizeMode="contain"
+          onLoadStart={() => { setLoading(true); }}
+          onLoadEnd={() => { setLoading(false); }}
+        />
+      )}
     </>
   );
 };
