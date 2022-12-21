@@ -3,6 +3,7 @@ import {
   addVoiceCallState,
   removeVoiceCallState,
   editVoiceCallState,
+  readyStateChanged,
 } from '../../../store/redux/slices/voice-call-states';
 import { store } from '../../../store/redux/store';
 
@@ -42,5 +43,10 @@ export class VoiceCallStatesModule extends Module {
         voiceCallStateObject: msgObj,
       })
     );
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  _subscriptionStateChanged(newState) {
+    return store.dispatch(readyStateChanged(newState));
   }
 }

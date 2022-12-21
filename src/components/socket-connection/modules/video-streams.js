@@ -3,6 +3,7 @@ import {
   addVideoStream,
   removeVideoStream,
   editVideoStream,
+  readyStateChanged,
 } from '../../../store/redux/slices/video-streams';
 import { store } from '../../../store/redux/store';
 
@@ -42,5 +43,10 @@ export class VideoStreamsModule extends Module {
         videoStreamObject: msgObj,
       })
     );
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  _subscriptionStateChanged(newState) {
+    return store.dispatch(readyStateChanged(newState));
   }
 }

@@ -3,6 +3,7 @@ import {
   addScreenshare,
   removeScreenshare,
   editScreenshare,
+  readyStateChanged,
 } from '../../../store/redux/slices/screenshare';
 import { store } from '../../../store/redux/store';
 
@@ -42,5 +43,10 @@ export class ScreenshareModule extends Module {
         screenshareObject: msgObj,
       })
     );
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  _subscriptionStateChanged(newState) {
+    return store.dispatch(readyStateChanged(newState));
   }
 }

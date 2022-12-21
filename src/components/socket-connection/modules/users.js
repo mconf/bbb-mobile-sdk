@@ -3,6 +3,7 @@ import {
   addUser,
   removeUser,
   editUser,
+  readyStateChanged,
 } from '../../../store/redux/slices/users';
 import { store } from '../../../store/redux/store';
 
@@ -45,7 +46,7 @@ export class UsersModule extends Module {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  processMessage() {
-    // TODO
+  _subscriptionStateChanged(newState) {
+    return store.dispatch(readyStateChanged(newState));
   }
 }

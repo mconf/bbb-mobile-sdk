@@ -3,6 +3,7 @@ import {
   addExternalVideoMeeting,
   removeExternalVideoMeeting,
   editExternalVideoMeeting,
+  readyStateChanged,
 } from '../../../store/redux/slices/external-video-meetings';
 import { store } from '../../../store/redux/store';
 
@@ -42,5 +43,10 @@ export class ExternalVideoMeetingsModule extends Module {
         externalVideoMeetingObject: msgObj,
       })
     );
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  _subscriptionStateChanged(newState) {
+    return store.dispatch(readyStateChanged(newState));
   }
 }

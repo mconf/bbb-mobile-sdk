@@ -10,6 +10,7 @@ const voiceUsersSlice = createSlice({
   name: 'voiceUsers',
   initialState: {
     voiceUsersCollection: {},
+    ready: false,
   },
   reducers: {
     addVoiceUser: (state, action) => {
@@ -26,6 +27,9 @@ const voiceUsersSlice = createSlice({
         ...state.voiceUsersCollection[voiceUserObject.id],
         ...voiceUserObject.fields,
       };
+    },
+    readyStateChanged: (state, action) => {
+      state.ready = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -118,6 +122,7 @@ export const {
   addVoiceUser,
   removeVoiceUser,
   editVoiceUser,
+  readyStateChanged,
 } = voiceUsersSlice.actions;
 
 export {

@@ -4,6 +4,7 @@ const groupChatMsgSlice = createSlice({
   name: 'group-chat-msg',
   initialState: {
     groupChatMsgCollection: {},
+    ready: false,
   },
   reducers: {
     addGroupChatMsgBeforeJoin: (state, action) => {
@@ -30,13 +31,18 @@ const groupChatMsgSlice = createSlice({
         ...action.payload.groupChatMsgObject.fields,
       };
     },
+    readyStateChanged: (state, action) => {
+      state.ready = action.payload;
+    },
   },
 });
+
 export const {
   addGroupChatMsgBeforeJoin,
   addGroupChatMsg,
   removeGroupChatMsg,
   editGroupChatMsg,
   clearChatMessages,
+  readyStateChanged,
 } = groupChatMsgSlice.actions;
 export default groupChatMsgSlice.reducer;

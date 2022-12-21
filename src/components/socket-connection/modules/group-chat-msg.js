@@ -5,6 +5,7 @@ import {
   addGroupChatMsgBeforeJoin,
   clearChatMessages,
   editGroupChatMsg,
+  readyStateChanged,
 } from '../../../store/redux/slices/group-chat-msg';
 
 import {
@@ -140,5 +141,10 @@ export class GroupChatMsgModule extends Module {
         groupChatMsgObject: msgObj,
       })
     );
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  _subscriptionStateChanged(newState) {
+    return store.dispatch(readyStateChanged(newState));
   }
 }

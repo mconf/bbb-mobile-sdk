@@ -10,6 +10,7 @@ const videoStreamsSlice = createSlice({
   name: 'video-streams',
   initialState: {
     videoStreamsCollection: {},
+    ready: false,
   },
   reducers: {
     addVideoStream: (state, action) => {
@@ -26,6 +27,9 @@ const videoStreamsSlice = createSlice({
         ...state.videoStreamsCollection[videoStreamObject.id],
         ...videoStreamObject.fields,
       };
+    },
+    readyStateChanged: (state, action) => {
+      state.ready = action.payload;
     },
   },
 });
@@ -83,7 +87,8 @@ const videoStreamCleanupListener = (action, listenerApi) => {
 export const {
   addVideoStream,
   removeVideoStream,
-  editVideoStream
+  editVideoStream,
+  readyStateChanged,
 } = videoStreamsSlice.actions;
 
 export {
