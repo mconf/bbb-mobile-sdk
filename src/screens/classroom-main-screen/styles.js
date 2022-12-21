@@ -7,6 +7,7 @@ import chat from '../../components/chat';
 import chatBottomSheet from '../../components/chat/bottom-sheet-chat';
 import iconButton from '../../components/icon-button';
 import contentArea from '../../components/content-area';
+import Colors from '../../constants/colors';
 
 const ContainerView = styled.SafeAreaView`
   width: 100%;
@@ -133,8 +134,8 @@ const ActionsBarLoading = () => (
     width="100%"
     height="100%"
     viewBox="0 0 530 100"
-    backgroundColor="#6e6e6e"
-    foregroundColor="#505050"
+    backgroundColor={Colors.contentLetterboxColor}
+    foregroundColor={Colors.contentForegroundColor}
   >
     <Circle cx="55" cy="53" r="40" />
     <Circle cx="155" cy="53" r="40" />
@@ -150,8 +151,8 @@ const VideoListLoading = () => (
     width="100%"
     height="100%"
     viewBox="0 0 310 100"
-    backgroundColor="#6e6e6e"
-    foregroundColor="#505050"
+    backgroundColor={Colors.contentLetterboxColor}
+    foregroundColor={Colors.contentForegroundColor}
   >
     <Rect x="10" y="5" rx="3" ry="3" width="90" height="90" />
     <Rect x="110" y="5" rx="3" ry="3" width="90" height="90" />
@@ -165,8 +166,8 @@ const ContentAreaLoading = () => (
     width="100%"
     height="100%"
     viewBox="0 0 160 90"
-    backgroundColor="#6e6e6e"
-    foregroundColor="#505050"
+    backgroundColor={Colors.contentLetterboxColor}
+    foregroundColor={Colors.contentForegroundColor}
   >
     <Rect x="0" y="0" rx="3" ry="3" width="160" height="90" />
   </ContentLoader>
@@ -178,8 +179,8 @@ const ChatLoading = () => (
     width="100%"
     height="100%"
     viewBox="0 0 350 160"
-    backgroundColor="#6e6e6e"
-    foregroundColor="#505050"
+    backgroundColor={Colors.contentLetterboxColor}
+    foregroundColor={Colors.contentForegroundColor}
   >
     <Rect x="10" y="10" rx="3" ry="3" width="52" height="5" />
     <Rect x="10" y="20" rx="3" ry="3" width="238" height="30" />
