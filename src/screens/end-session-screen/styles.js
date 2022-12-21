@@ -35,6 +35,15 @@ const Title = styled.Text`
   padding-bottom: 10px;
 `;
 
+const ConfirmButton = styled(PrimaryButton)`
+  background-color: ${Colors.blue};
+  color: ${Colors.white};
+  font-size: 16px;
+  font-weight: 400;
+  padding: 12px;
+  border-radius: 12px;
+`;
+
 const Subtitle = styled.Text`
   font-size: 18px;
   font-weight: 500;
@@ -56,14 +65,13 @@ const ButtonContainer = styled.View`
   bottom: -25px;
   width: 100%;
 `;
-const Button = styled(PrimaryButton)``;
 
 export default {
+  ConfirmButton,
   ContainerView,
   ContainerEndSessionCard,
   Title,
   Subtitle,
   KnowMore,
   ButtonContainer,
-  Button,
 };

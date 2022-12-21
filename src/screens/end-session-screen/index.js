@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import { Image } from 'react-native';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import * as Linking from 'expo-linking';
-import PrimaryButton from '../../components/button';
 import Styled from './styles';
 import usePrevious from '../../hooks/use-previous';
 
@@ -107,7 +106,7 @@ const EndSessionScreen = (props) => {
         <Styled.Subtitle>{subtitle}</Styled.Subtitle>
         <Styled.KnowMore>{more}</Styled.KnowMore>
         <Styled.ButtonContainer>
-          <PrimaryButton onPress={handleOpenUrl}>{buttonText}</PrimaryButton>
+          <Styled.ConfirmButton onPress={handleOpenUrl}>{buttonText}</Styled.ConfirmButton>
         </Styled.ButtonContainer>
       </Styled.ContainerEndSessionCard>
     </Styled.ContainerView>
