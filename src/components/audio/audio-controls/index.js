@@ -49,8 +49,8 @@ const AudioControls = (props) => {
           ];
 
           Alert.alert(
-            'Permissão de webcam negada',
-            'Precisamos de sua permissão para que sua câmera possa ser compartilhada',
+            'Permissão de microfone negada',
+            'Precisamos de sua permissão para que seu microfone possa ser compartilhado',
             buttons,
             { cancelable: true },
           );
