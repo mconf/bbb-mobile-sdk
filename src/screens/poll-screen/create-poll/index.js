@@ -140,8 +140,6 @@ const CreatePoll = (): Node => {
   }
 
   if (hasCurrentPoll || currentUserObj?.presenter) {
-    navigation.navigate('ReceivingAnswersScreen');
-
     return <Text>Enquete em andamento</Text>;
   }
 };
