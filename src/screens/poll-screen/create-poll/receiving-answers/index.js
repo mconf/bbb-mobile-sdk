@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import {
+  BackHandler,
   Text, View
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import Styled from './styles';
 import PollService from '../../service';
 import { useOrientation } from '../../../../hooks/use-orientation';
@@ -19,11 +20,24 @@ const ReceivingAnswers = () => {
   const currentUserStore = useSelector((state) => state.currentUserCollection);
   const currentUserObj = Object.values(currentUserStore.currentUserCollection)[0];
 
+  const handleRemovePoll = async () => {
+    await PollService.handleStopPoll();
+    await navigation.navigate('PollInitialScreen');
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = async () => {
+        await handleRemovePoll();
+        return true;
+      };
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, []),
+  );
+
   useEffect(() => {
-    async function handleRemovePoll() {
-      await PollService.handleStopPoll();
-      await navigation.navigate('PollInitialScreen');
-    }
     if (!currentUserObj.presenter) {
       handleRemovePoll().then(() => {});
     }
