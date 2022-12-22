@@ -1,5 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import NetInfo from '@react-native-community/netinfo';
+import pRetry from 'p-retry';
+
+const JOIN_ENTER_RETRIES = 5;
 
 const initialState = {
   sessionState: {
@@ -174,6 +177,12 @@ const join = createAsyncThunk(
     let sessionToken;
     let parsedResponseURL;
 
+    const _fetchRetry = (_url, options) => {
+      return pRetry(() => {
+        return fetch(_url, options);
+      }, { retries: JOIN_ENTER_RETRIES });
+    };
+
     try {
       await thunkAPI.dispatch(refreshConnectionStatus());
     } catch (error) {
@@ -187,7 +196,7 @@ const join = createAsyncThunk(
     }
 
     try {
-      const response = await fetch(url, { method: 'GET' });
+      const response = await _fetchRetry(url, { method: 'GET' });
       joinResponseUrl = response.url;
       parsedResponseURL = new URL(joinResponseUrl);
       host = parsedResponseURL.host;
@@ -221,7 +230,7 @@ const join = createAsyncThunk(
     if (joinResponseUrl.includes('html5client/join')) {
       try {
         const enterUrl = `${parsedResponseURL.protocol}//${parsedResponseURL.host}/bigbluebutton/api/enter?sessionToken=${sessionToken}`;
-        const { response: enterResponse } = await fetch(enterUrl).then((r) => r.json());
+        const { response: enterResponse } = await _fetchRetry(enterUrl, { method: 'GET' }).then((r) => r.json());
         if (enterResponse.returncode !== 'FAILED') {
           return {
             waitingForApproval: false,
