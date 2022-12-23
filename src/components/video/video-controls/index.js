@@ -1,6 +1,9 @@
 import * as Linking from 'expo-linking';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { ActivityIndicator, Alert, View } from 'react-native';
+import {
+  ActivityIndicator, Alert, AppState, View
+} from 'react-native';
 import IconButtonComponent from '../../icon-button';
 import Colors from '../../../constants/colors';
 import VideoManager from '../../../services/webrtc/video-manager';
@@ -18,6 +21,41 @@ const VideoControls = (props) => {
   const isActive = isConnected || isConnecting;
   const iconColor = isActive ? Colors.white : Colors.lightGray300;
   const buttonSize = isLandscape ? 24 : 32;
+  const [appState, setAppState] = useState(AppState.currentState);
+  const [publishOnActive, setPublishOnActive] = useState(false);
+
+  useEffect(() => {
+    const appStateListener = AppState.addEventListener(
+      'change',
+      (nextAppState) => {
+        setAppState(nextAppState);
+      },
+    );
+    return () => {
+      appStateListener?.remove();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (appState.match(/inactive|background/) && isActive) {
+      setPublishOnActive(true);
+      VideoManager.unpublish(localCameraId);
+    } else if (appState === 'active' && publishOnActive) {
+      if (camDisabled) {
+        // TODO localization, programmatically dismissable Dialog that is
+        // reusable
+        Alert.alert(
+          'Compartilhamento de webcam bloqueado',
+          'Você precisa da permissão de um moderador para realizar esta ação',
+          null,
+          { cancelable: true },
+        );
+        return;
+      }
+      publishCamera();
+      setPublishOnActive(false);
+    }
+  }, [appState]);
 
   const publishCamera = () => {
     VideoManager.publish().catch((error) => {
