@@ -25,6 +25,21 @@ const padsSlice = createSlice({
     readyStateChanged: (state, action) => {
       state.ready = action.payload;
     },
+    cleanupStaleData: (state, action) => {
+      const currentSubscriptionId = action.payload;
+      if (state?.padsCollection) {
+        Object.entries(state?.padsCollection)
+          .forEach(([id, document]) => {
+            const { subscriptionId } = document;
+
+            if (typeof subscriptionId !== 'string') return;
+
+            if (subscriptionId !== currentSubscriptionId) {
+              delete state.padsCollection[id];
+            }
+          });
+      }
+    },
   },
 });
 
@@ -33,5 +48,6 @@ export const {
   removePad,
   editPad,
   readyStateChanged,
+  cleanupStaleData,
 } = padsSlice.actions;
 export default padsSlice.reducer;

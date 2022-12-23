@@ -2,6 +2,8 @@ import MethodTransactionManager from '../method-transaction-manager';
 import MethodTransaction from '../method-transaction';
 import SubscribeTransaction from '../subscribe-transaction';
 
+const STALE_DATA_DEBOUNCE = 1000;
+
 export default class Module {
   constructor(topics, messageSender) {
     this.messageSender = messageSender;
@@ -12,7 +14,7 @@ export default class Module {
       this.topics = topics;
     }
 
-    // Map<String, String>
+    // Map<topic: String, subscriptionId: String>
     this.subscriptions = new Map();
 
     this._pendingTransactions = new MethodTransactionManager();
@@ -24,13 +26,14 @@ export default class Module {
       const transaction = new SubscribeTransaction(topic, args);
       this._pendingTransactions.addTransaction(transaction);
       this.messageSender.sendMessage(transaction.payload);
+      this.subscriptions.set(topic, transaction.transactionId);
       return transaction.promise.then(() => {
-        this.subscriptions.set(topic, transaction.transactionId);
         this._ignoreDeletions = false;
-        this._subscriptionStateChanged(true);
+        this.subscriptionStateChanged(true);
       }).catch(() => {
         this._ignoreDeletions = false;
-        this._subscriptionStateChanged(false);
+        this.subscriptions.delete(topic);
+        this.subscriptionStateChanged(false);
       });
     }
 
@@ -42,7 +45,7 @@ export default class Module {
       this._ignoreDeletions = true;
       const topic = msgObj.collection;
       this.subscriptions.delete(topic);
-      this._subscriptionStateChanged(false);
+      this.subscriptionStateChanged(false);
       // Force a re-subscription of affected modules
       this.onConnected();
     }
@@ -57,7 +60,7 @@ export default class Module {
       msg: 'unsub',
       id,
     });
-    this._subscriptionStateChanged(false);
+    this.subscriptionStateChanged(false);
 
     return this.subscriptions.delete(topic);
   }
@@ -141,6 +144,10 @@ export default class Module {
   }
 
   add(msgObj) {
+    const topic = msgObj?.collection;
+    // Annotate document with subscriptionId so that we can flush stale data
+    msgObj.fields = { ...msgObj.fields, subscriptionId: this.subscriptions.get(topic) };
+
     return this._add(msgObj);
   }
 
@@ -167,5 +174,23 @@ export default class Module {
   // Must be implemented by inheritors
   // eslint-disable-next-line class-methods-use-this, no-unused-vars
   _subscriptionStateChanged(newState) {
+  }
+
+  subscriptionStateChanged(newState) {
+    if (newState === true) this._checkForStaleData();
+    this._subscriptionStateChanged(newState);
+  }
+
+  // Must be implemented by inheritors
+  // eslint-disable-next-line class-methods-use-this, no-unused-vars
+  _cleanupStaleData() {
+  }
+
+  _checkForStaleData() {
+    setTimeout(() => {
+      this.subscriptions.forEach((subscriptionId) => {
+        this._cleanupStaleData(subscriptionId);
+      });
+    }, STALE_DATA_DEBOUNCE);
   }
 }

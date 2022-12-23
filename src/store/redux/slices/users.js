@@ -25,6 +25,21 @@ const usersSlice = createSlice({
     readyStateChanged: (state, action) => {
       state.ready = action.payload;
     },
+    cleanupStaleData: (state, action) => {
+      const currentSubscriptionId = action.payload;
+      if (state?.usersCollection) {
+        Object.entries(state?.usersCollection)
+          .forEach(([id, document]) => {
+            const { subscriptionId } = document;
+
+            if (typeof subscriptionId !== 'string') return;
+
+            if (subscriptionId !== currentSubscriptionId) {
+              delete state.usersCollection[id];
+            }
+          });
+      }
+    },
   },
 });
 
@@ -41,6 +56,7 @@ export const {
   removeUser,
   editUser,
   readyStateChanged,
+  cleanupStaleData,
 } = usersSlice.actions;
 
 export {

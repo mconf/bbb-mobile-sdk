@@ -4,6 +4,7 @@ import {
   removeMeeting,
   editMeeting,
   readyStateChanged,
+  cleanupStaleData,
 } from '../../../store/redux/slices/meeting';
 import { store } from '../../../store/redux/store';
 
@@ -48,5 +49,10 @@ export class MeetingModule extends Module {
   // eslint-disable-next-line class-methods-use-this
   _subscriptionStateChanged(newState) {
     return store.dispatch(readyStateChanged(newState));
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  _cleanupStaleData(subscriptionId) {
+    return store.dispatch(cleanupStaleData(subscriptionId));
   }
 }

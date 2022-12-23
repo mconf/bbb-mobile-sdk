@@ -5,6 +5,7 @@ import {
   editGroupChat,
   removeGroupChat,
   readyStateChanged,
+  cleanupStaleData,
 } from '../../../store/redux/slices/group-chat';
 
 const GROUP_CHAT_TOPIC = 'group-chat';
@@ -48,5 +49,10 @@ export class GroupChatModule extends Module {
   // eslint-disable-next-line class-methods-use-this
   _subscriptionStateChanged(newState) {
     return store.dispatch(readyStateChanged(newState));
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  _cleanupStaleData(subscriptionId) {
+    return store.dispatch(cleanupStaleData(subscriptionId));
   }
 }

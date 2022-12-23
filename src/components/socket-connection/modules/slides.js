@@ -4,6 +4,8 @@ import {
   addSlide,
   removeSlide,
   editSlide,
+  readyStateChanged,
+  cleanupStaleData,
 } from '../../../store/redux/slices/slides';
 
 const SLIDES_TOPIC = 'slides';
@@ -42,5 +44,15 @@ export class SlidesModule extends Module {
         slideObject: msgObj,
       })
     );
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  _subscriptionStateChanged(newState) {
+    return store.dispatch(readyStateChanged(newState));
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  _cleanupStaleData(subscriptionId) {
+    return store.dispatch(cleanupStaleData(subscriptionId));
   }
 }

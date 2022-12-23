@@ -28,6 +28,21 @@ const currentUserSlice = createSlice({
     readyStateChanged: (state, action) => {
       state.ready = action.payload;
     },
+    cleanupStaleData: (state, action) => {
+      const currentSubscriptionId = action.payload;
+      if (state?.currentUserCollection) {
+        Object.entries(state?.currentUserCollection)
+          .forEach(([id, document]) => {
+            const { subscriptionId } = document;
+
+            if (typeof subscriptionId !== 'string') return;
+
+            if (subscriptionId !== currentSubscriptionId) {
+              delete state.currentUserCollection[id];
+            }
+          });
+      }
+    },
   },
 });
 
@@ -89,6 +104,7 @@ export const {
   removeCurrentUser,
   editCurrentUser,
   readyStateChanged,
+  cleanupStaleData,
 } = currentUserSlice.actions;
 
 export {

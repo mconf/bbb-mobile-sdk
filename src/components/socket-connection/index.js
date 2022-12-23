@@ -180,19 +180,19 @@ const setupModules = (ws) => {
 
   // Mirrors for Meteor collections that area fully implemented
   const modules = {
-    users: new UsersModule(messageSender),
-    meetings: new MeetingModule(messageSender),
     voiceUsers: new VoiceUsersModule(messageSender),
-    polls: new PollsModule(messageSender),
+    voiceCallStates: new VoiceCallStatesModule(messageSender),
     presentations: new PresentationsModule(messageSender),
     slides: new SlidesModule(messageSender),
-    screenshare: new ScreenshareModule(messageSender),
+    polls: new PollsModule(messageSender),
     'current-poll': new CurrentPollModule(messageSender),
-    'current-user': new CurrentUserModule(messageSender),
     'group-chat': new GroupChatModule(messageSender),
     'group-chat-msg': new GroupChatMsgModule(messageSender),
     'video-streams': new VideoStreamsModule(messageSender),
-    voiceCallStates: new VoiceCallStatesModule(messageSender),
+    screenshare: new ScreenshareModule(messageSender),
+    meetings: new MeetingModule(messageSender),
+    'current-user': new CurrentUserModule(messageSender),
+    users: new UsersModule(messageSender),
   };
 
   /*

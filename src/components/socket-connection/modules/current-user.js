@@ -5,6 +5,7 @@ import {
   editCurrentUser,
   removeCurrentUser,
   readyStateChanged,
+  cleanupStaleData,
 } from '../../../store/redux/slices/current-user';
 
 const CURRENT_USER_TOPIC = 'current-user';
@@ -48,5 +49,10 @@ export class CurrentUserModule extends Module {
   // eslint-disable-next-line class-methods-use-this
   _subscriptionStateChanged(newState) {
     return store.dispatch(readyStateChanged(newState));
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  _cleanupStaleData(subscriptionId) {
+    return store.dispatch(cleanupStaleData(subscriptionId));
   }
 }

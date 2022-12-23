@@ -4,6 +4,7 @@ import {
   removeVoiceCallState,
   editVoiceCallState,
   readyStateChanged,
+  cleanupStaleData,
 } from '../../../store/redux/slices/voice-call-states';
 import { store } from '../../../store/redux/store';
 
@@ -48,5 +49,10 @@ export class VoiceCallStatesModule extends Module {
   // eslint-disable-next-line class-methods-use-this
   _subscriptionStateChanged(newState) {
     return store.dispatch(readyStateChanged(newState));
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  _cleanupStaleData(subscriptionId) {
+    return store.dispatch(cleanupStaleData(subscriptionId));
   }
 }

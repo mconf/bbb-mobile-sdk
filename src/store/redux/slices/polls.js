@@ -25,6 +25,21 @@ const pollsSlice = createSlice({
     readyStateChanged: (state, action) => {
       state.ready = action.payload;
     },
+    cleanupStaleData: (state, action) => {
+      const currentSubscriptionId = action.payload;
+      if (state?.pollsCollection) {
+        Object.entries(state?.pollsCollection)
+          .forEach(([id, document]) => {
+            const { subscriptionId } = document;
+
+            if (typeof subscriptionId !== 'string') return;
+
+            if (subscriptionId !== currentSubscriptionId) {
+              delete state.pollsCollection[id];
+            }
+          });
+      }
+    },
   },
 });
 export const {
@@ -32,5 +47,6 @@ export const {
   removePoll,
   editPoll,
   readyStateChanged,
+  cleanupStaleData,
 } = pollsSlice.actions;
 export default pollsSlice.reducer;
