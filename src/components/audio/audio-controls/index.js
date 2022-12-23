@@ -57,7 +57,7 @@ const AudioControls = (props) => {
           break;
         }
         case 'ListenOnly':
-          if (isListenOnly) {
+          if (AudioManager.isListenOnly) {
             // TODO localization, programmatically dismissable Dialog that is reusable
             Alert.alert(
               'Microfone bloqueado',
