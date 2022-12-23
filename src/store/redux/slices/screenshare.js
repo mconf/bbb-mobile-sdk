@@ -28,6 +28,21 @@ const screenshareSlice = createSlice({
     readyStateChanged: (state, action) => {
       state.ready = action.payload;
     },
+    cleanupStaleData: (state, action) => {
+      const currentSubscriptionId = action.payload;
+      if (state?.screenshareCollection) {
+        Object.entries(state?.screenshareCollection)
+          .forEach(([id, document]) => {
+            const { subscriptionId } = document;
+
+            if (typeof subscriptionId !== 'string') return;
+
+            if (subscriptionId !== currentSubscriptionId) {
+              delete state.screenshareCollection[id];
+            }
+          });
+      }
+    },
   },
 });
 
@@ -69,6 +84,7 @@ export const {
   removeScreenshare,
   editScreenshare,
   readyStateChanged,
+  cleanupStaleData,
 } = screenshareSlice.actions;
 
 export {

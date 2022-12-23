@@ -25,6 +25,21 @@ const meetingSlice = createSlice({
     readyStateChanged: (state, action) => {
       state.ready = action.payload;
     },
+    cleanupStaleData: (state, action) => {
+      const currentSubscriptionId = action.payload;
+      if (state?.meetingCollection) {
+        Object.entries(state?.meetingCollection)
+          .forEach(([id, document]) => {
+            const { subscriptionId } = document;
+
+            if (typeof subscriptionId !== 'string') return;
+
+            if (subscriptionId !== currentSubscriptionId) {
+              delete state.meetingCollection[id];
+            }
+          });
+      }
+    },
   },
 });
 
@@ -51,6 +66,7 @@ export const {
   removeMeeting,
   editMeeting,
   readyStateChanged,
+  cleanupStaleData,
 } = meetingSlice.actions;
 
 export {

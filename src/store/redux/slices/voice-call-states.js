@@ -26,6 +26,21 @@ const voiceCallStatesSlice = createSlice({
     readyStateChanged: (state, action) => {
       state.ready = action.payload;
     },
+    cleanupStaleData: (state, action) => {
+      const currentSubscriptionId = action.payload;
+      if (state?.voiceCallStatesCollection) {
+        Object.entries(state?.voiceCallStatesCollection)
+          .forEach(([id, document]) => {
+            const { subscriptionId } = document;
+
+            if (typeof subscriptionId !== 'string') return;
+
+            if (subscriptionId !== currentSubscriptionId) {
+              delete state.voiceCallStatesCollection[id];
+            }
+          });
+      }
+    },
   },
 });
 
@@ -89,6 +104,7 @@ export const {
   removeVoiceCallState,
   editVoiceCallState,
   readyStateChanged,
+  cleanupStaleData,
 } = voiceCallStatesSlice.actions;
 
 export {

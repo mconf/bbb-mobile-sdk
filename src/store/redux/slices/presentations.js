@@ -26,6 +26,21 @@ const presentationsSlice = createSlice({
     readyStateChanged: (state, action) => {
       state.ready = action.payload;
     },
+    cleanupStaleData: (state, action) => {
+      const currentSubscriptionId = action.payload;
+      if (state?.presentationsCollection) {
+        Object.entries(state?.presentationsCollection)
+          .forEach(([id, document]) => {
+            const { subscriptionId } = document;
+
+            if (typeof subscriptionId !== 'string') return;
+
+            if (subscriptionId !== currentSubscriptionId) {
+              delete state.presentationsCollection[id];
+            }
+          });
+      }
+    },
   },
 });
 
@@ -34,5 +49,6 @@ export const {
   removePresentation,
   editPresentation,
   readyStateChanged,
+  cleanupStaleData,
 } = presentationsSlice.actions;
 export default presentationsSlice.reducer;

@@ -31,6 +31,21 @@ const voiceUsersSlice = createSlice({
     readyStateChanged: (state, action) => {
       state.ready = action.payload;
     },
+    cleanupStaleData: (state, action) => {
+      const currentSubscriptionId = action.payload;
+      if (state?.voiceUsersCollection) {
+        Object.entries(state?.voiceUsersCollection)
+          .forEach(([id, document]) => {
+            const { subscriptionId } = document;
+
+            if (typeof subscriptionId !== 'string') return;
+
+            if (subscriptionId !== currentSubscriptionId) {
+              delete state.voiceUsersCollection[id];
+            }
+          });
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -123,6 +138,7 @@ export const {
   removeVoiceUser,
   editVoiceUser,
   readyStateChanged,
+  cleanupStaleData,
 } = voiceUsersSlice.actions;
 
 export {

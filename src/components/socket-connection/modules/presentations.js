@@ -5,6 +5,7 @@ import {
   removePresentation,
   editPresentation,
   readyStateChanged,
+  cleanupStaleData,
 } from '../../../store/redux/slices/presentations';
 
 const PRESENTATION_TOPIC = 'presentations';
@@ -48,5 +49,10 @@ export class PresentationsModule extends Module {
   // eslint-disable-next-line class-methods-use-this
   _subscriptionStateChanged(newState) {
     return store.dispatch(readyStateChanged(newState));
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  _cleanupStaleData(subscriptionId) {
+    return store.dispatch(cleanupStaleData(subscriptionId));
   }
 }

@@ -26,6 +26,22 @@ const groupChatSlice = createSlice({
     readyStateChanged: (state, action) => {
       state.ready = action.payload;
     },
+    cleanupStaleData: (state, action) => {
+      const currentSubscriptionId = action.payload;
+      if (state?.groupChatCollection) {
+        Object.entries(state?.groupChatCollection)
+          .forEach(([id, document]) => {
+            const { subscriptionId } = document;
+
+            if (typeof subscriptionId !== 'string') return;
+
+            if (subscriptionId !== currentSubscriptionId) {
+              delete state.groupChatCollection[id];
+            }
+          });
+      }
+    },
+
   },
 });
 
@@ -34,5 +50,6 @@ export const {
   removeGroupChat,
   editGroupChat,
   readyStateChanged,
+  cleanupStaleData,
 } = groupChatSlice.actions;
 export default groupChatSlice.reducer;

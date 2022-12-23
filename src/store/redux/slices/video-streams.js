@@ -31,6 +31,21 @@ const videoStreamsSlice = createSlice({
     readyStateChanged: (state, action) => {
       state.ready = action.payload;
     },
+    cleanupStaleData: (state, action) => {
+      const currentSubscriptionId = action.payload;
+      if (state?.videoStreamsCollection) {
+        Object.entries(state?.videoStreamsCollection)
+          .forEach(([id, document]) => {
+            const { subscriptionId } = document;
+
+            if (typeof subscriptionId !== 'string') return;
+
+            if (subscriptionId !== currentSubscriptionId) {
+              delete state.videoStreamsCollection[id];
+            }
+          });
+      }
+    },
   },
 });
 
@@ -89,6 +104,7 @@ export const {
   removeVideoStream,
   editVideoStream,
   readyStateChanged,
+  cleanupStaleData,
 } = videoStreamsSlice.actions;
 
 export {
