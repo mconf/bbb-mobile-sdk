@@ -269,7 +269,7 @@ const SocketConnectionComponent = (props) => {
     loggingOut,
     loggingIn,
     connected,
-  } = useSelector((state) => state.client);
+  } = useSelector((state) => state.client.sessionState);
   const joinUrl = useSelector((state) => state.client.meetingData.joinUrl);
   const enterUrl = useSelector((state) => state.client.meetingData.enterUrl);
   const userLoggedOut = useSelector((state) => {
@@ -424,10 +424,8 @@ const SocketConnectionComponent = (props) => {
   }, [urlViaLinking]);
 
   useEffect(() => {
-    if (meetingData?.returncode === 'SUCCESS') {
-      navigation.navigate('Main');
-    }
-  }, [meetingData]);
+    if (loggingIn) navigation.navigate('Main');
+  }, [loggingIn]);
 
   const processMessage = (ws, msgObj) => {
     switch (msgObj.msg) {
