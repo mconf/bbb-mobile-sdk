@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
+import notifee, { EventType } from '@notifee/react-native';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 // providers and store
 import { store } from './src/store/redux/store';
@@ -22,6 +23,9 @@ import {
   setSessionTerminated,
   sessionStateChanged,
 } from './src/store/redux/slices/wide-app/client';
+import logger from './src/services/logger';
+import { toggleMuteMicrophone } from './src/components/audio/service';
+import Colors from './src/constants/colors';
 
 //  Inject store in non-component files
 const injectStore = () => {
@@ -31,6 +35,17 @@ const injectStore = () => {
   injectStoreIM(store);
 };
 
+// Create the foreground service task runner/notification
+// this will keep mic working on Android when app is in background/sleep
+notifee.registerForegroundService((notification) => {
+  return new Promise(() => {
+    logger.debug({
+      logCode: 'app_service_notification',
+      extraInfo: { notification },
+    }, 'Foreground service notification started.');
+  });
+});
+
 const AppContent = ({
   onLeaveSession: _onLeaveSession,
   jUrl,
@@ -38,7 +53,11 @@ const AppContent = ({
   const Stack = createNativeStackNavigator();
   const dispatch = useDispatch();
   const guestStatus = useSelector((state) => state.client.guestStatus);
+  const audioIsConnected = useSelector((state) => state.audio.isConnected);
+  const audioIsMuted = useSelector((state) => state.audio.isMuted);
   const ended = useSelector((state) => state.client.sessionState.ended);
+  const [notification, setNotification] = useState(null);
+  const navigationRef = useRef(null);
   const onLeaveSession = () => {
     dispatch(setSessionTerminated(true));
     const hasCustomLeaveSession = typeof _onLeaveSession === 'function';
@@ -53,8 +72,93 @@ const AppContent = ({
   };
 
   useEffect(() => {
+    if (audioIsConnected) {
+      // Start/show the notification foreground service
+      const getChannelIdAndDisplayNotification = async () => {
+        const channelId = await notifee.createChannel({
+          id: 'inconference',
+          // TODO localization
+          name: 'Em Conferência',
+          vibration: false,
+        });
+
+        // TODO localization
+        const _notification = {
+          title: 'Conferência em andamento',
+          body: 'Você está participando de uma conferência. Toque para abrir',
+          id: 'audio_foreground_notification',
+          android: {
+            channelId,
+            pressAction: {
+              id: 'default',
+            },
+            actions: [
+              {
+                title: 'Sair',
+                pressAction: {
+                  id: 'leave',
+                },
+              },
+              audioIsMuted
+                ? {
+                  title: 'Falar',
+                  pressAction: {
+                    id: 'unmute',
+                  },
+                } : {
+                  title: 'Silenciar',
+                  pressAction: {
+                    id: 'mute',
+                  },
+                }
+            ],
+            asForegroundService: true,
+            ongoing: true,
+            color: Colors.blue,
+            colorized: true,
+            smallIcon: 'ic_launcher_foreground',
+          },
+        };
+        notifee.displayNotification(_notification);
+        setNotification(_notification);
+      };
+      getChannelIdAndDisplayNotification();
+    } else {
+      // stop notification service
+      notifee.stopForegroundService();
+    }
+  }, [audioIsConnected]);
+
+  useEffect(() => {
+    if (notification) {
+      if (audioIsMuted) {
+        notification.android.actions[1].pressAction.id = 'unmute';
+        notification.android.actions[1].title = 'Falar';
+        notifee.displayNotification(notification);
+        setNotification(notification);
+      } else {
+        notification.android.actions[1].pressAction.id = 'mute';
+        notification.android.actions[1].title = 'Silenciar';
+        notifee.displayNotification(notification);
+        setNotification(notification);
+      }
+    }
+  }, [audioIsMuted]);
+
+  useEffect(() => {
     injectStore();
     dispatch(ConnectionStatusTracker.registerConnectionStatusListeners());
+    const unsubscribeForegroundEvents = notifee.onForegroundEvent(({ type, detail }) => {
+      if (type === EventType.ACTION_PRESS && detail.pressAction.id === 'leave') {
+        dispatch(leave(api));
+      }
+      if (type === EventType.ACTION_PRESS && (detail.pressAction.id === 'mute' || detail.pressAction.id === 'unmute')) {
+        toggleMuteMicrophone();
+      }
+      if (type === EventType.PRESS) {
+        navigationRef?.current?.navigate('Main');
+      }
+    });
 
     return () => {
       dispatch(ConnectionStatusTracker.unregisterConnectionStatusListeners());
@@ -70,30 +174,29 @@ const AppContent = ({
         dispatch(setSessionTerminated(true));
       });
       dispatch(setSessionTerminated(true));
+      unsubscribeForegroundEvents();
     };
   }, []);
 
   return (
-    <>
-      <NavigationContainer independent>
-        {(guestStatus === 'WAIT') && <GuestScreen />}
-        {!Settings.dev && <TestComponentsScreen jUrl={jUrl} />}
-        <Stack.Navigator
-          screenOptions={{
-            headerShown: false,
-            contentStyle: { backgroundColor: '#06172A' }
-          }}
-        >
-          <Stack.Screen name="DrawerNavigator">
-            {() => <DrawerNavigator jUrl={jUrl} onLeaveSession={onLeaveSession} />}
-          </Stack.Screen>
-          <Stack.Screen name="EndSessionScreen">
-            {() => <EndSessionScreen onLeaveSession={onLeaveSession} />}
-          </Stack.Screen>
-          <Stack.Screen name="FullscreenWrapper" component={FullscreenWrapper} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </>
+    <NavigationContainer independent ref={navigationRef}>
+      {(guestStatus === 'WAIT') && <GuestScreen />}
+      {!Settings.dev && <TestComponentsScreen jUrl={jUrl} />}
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: '#06172A' }
+        }}
+      >
+        <Stack.Screen name="DrawerNavigator">
+          {() => <DrawerNavigator jUrl={jUrl} onLeaveSession={onLeaveSession} />}
+        </Stack.Screen>
+        <Stack.Screen name="EndSessionScreen">
+          {() => <EndSessionScreen onLeaveSession={onLeaveSession} />}
+        </Stack.Screen>
+        <Stack.Screen name="FullscreenWrapper" component={FullscreenWrapper} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 

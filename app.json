@@ -27,7 +27,8 @@
     },
     "plugins": [
       "@config-plugins/react-native-webrtc",
-      ["expo-community-flipper", "0.123.0"]
+      ["expo-community-flipper", "0.123.0"],
+      "@notifee/react-native"
     ],
     "android": {
       "adaptiveIcon": {
