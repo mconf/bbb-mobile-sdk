@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
-import notifee, { AndroidColor, EventType } from '@notifee/react-native';
+import notifee, { EventType } from '@notifee/react-native';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 // providers and store
 import { store } from './src/store/redux/store';
@@ -25,6 +25,7 @@ import {
 } from './src/store/redux/slices/wide-app/client';
 import logger from './src/services/logger';
 import { toggleMuteMicrophone } from './src/components/audio/service';
+import Colors from './src/constants/colors';
 
 //  Inject store in non-component files
 const injectStore = () => {
@@ -75,8 +76,10 @@ const AppContent = ({
       // Start/show the notification foreground service
       const getChannelIdAndDisplayNotification = async () => {
         const channelId = await notifee.createChannel({
-          id: 'default',
-          name: 'Default Channel',
+          id: 'inconference',
+          // TODO localization
+          name: 'Em Conferência',
+          vibration: false,
         });
 
         // TODO localization
@@ -111,7 +114,7 @@ const AppContent = ({
             ],
             asForegroundService: true,
             ongoing: true,
-            color: AndroidColor.RED,
+            color: Colors.blue,
             colorized: true,
             smallIcon: 'ic_launcher_foreground',
           },
