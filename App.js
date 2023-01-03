@@ -146,8 +146,26 @@ const AppContent = ({
   }, [audioIsMuted]);
 
   useEffect(() => {
+    // Background event = device locked || app not in view || killed/quit
+    notifee.onBackgroundEvent(async ({ type, detail }) => {
+      if (type === EventType.ACTION_PRESS && detail.pressAction.id === 'leave') {
+        dispatch(leave(api));
+
+        // Remove the notification
+        await notifee.cancelNotification(detail.notification.id);
+      }
+
+      // Check if the user pressed the Mute/Unmute button
+      if (type === EventType.ACTION_PRESS && (detail.pressAction.id === 'mute' || detail.pressAction.id === 'unmute')) {
+        toggleMuteMicrophone();
+      }
+    });
+  }, []);
+
+  useEffect(() => {
     injectStore();
     dispatch(ConnectionStatusTracker.registerConnectionStatusListeners());
+    // Foreground event = device unlocked || app in view
     const unsubscribeForegroundEvents = notifee.onForegroundEvent(({ type, detail }) => {
       if (type === EventType.ACTION_PRESS && detail.pressAction.id === 'leave') {
         dispatch(leave(api));
