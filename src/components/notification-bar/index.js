@@ -13,9 +13,9 @@ const NotificationBar = () => {
 
   const handleIcon = () => {
     switch (notificationBarStore.icon) {
-      case 'hand': 
+      case 'hand':
         return <Avatar.Icon size={36} icon="hand-back-left-outline" />;
-      case 'poll': 
+      case 'poll':
         return <Avatar.Icon size={36} icon="poll" />;
       // other icons...
       default:
@@ -28,12 +28,12 @@ const NotificationBar = () => {
   }
 
   return (
-    <Styled.NotificationsBarPressable 
+    <Styled.NotificationsBarPressable
       onPress={() => {
         if (notificationBarStore.icon === 'poll') {
           navigation.navigate('PollScreen');
         }
-        dispatch(hide())
+        dispatch(hide());
       }}
     >
       {handleIcon()}
