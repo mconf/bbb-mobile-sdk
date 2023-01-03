@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { hideNotification, setProfile } from '../../store/redux/slices/wide-app/notification-bar';
+import { showNotificationWithTimeout } from '../../store/redux/slices/wide-app/notification-bar';
 import InteractionsService from './service';
 import IconButtonComponent from '../icon-button';
 import Colors from '../../constants/colors';
@@ -34,10 +34,7 @@ const InteractionsControls = (props) => {
             : 'raiseHand'
         );
         if (!isHandRaised) {
-          dispatch(setProfile('handsUp'));
-          setTimeout(() => {
-            dispatch(hideNotification());
-          }, 5000);
+          dispatch(showNotificationWithTimeout('handsUp'));
         }
       }}
     />

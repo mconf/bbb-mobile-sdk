@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 const initialState = {
   isShow: false,
@@ -28,23 +28,44 @@ const notificationBarSlice = createSlice({
     // notification profiles
     setProfile: (state, action) => {
       switch (action.payload) {
-        case'handsUp': 
+        case 'handsUp':
           state.isShow = true;
           state.messageTitle = 'Você levantou a mão';
           state.messageSubtitle = 'os moderadores foram notificados';
           state.icon = 'hand';
-          break
-        case'pollStarted': 
+          break;
+        case 'pollStarted':
           state.isShow = true;
           state.messageTitle = 'Uma enquete foi iniciada';
           state.messageSubtitle = 'Clique aqui para responder';
           state.icon = 'poll';
-          break
+          break;
         default:
       }
     }
   },
 });
+
+const notificationQueue = [];
+export const showNotificationWithTimeout = createAsyncThunk(
+  'notificationBar/setProfile',
+  async (profile, thunkAPI) => {
+    if (notificationQueue.length === 0) {
+      notificationQueue.push(profile);
+      while (notificationQueue.length !== 0) {
+        // eslint-disable-next-line prefer-destructuring
+        profile = notificationQueue[0];
+        thunkAPI.dispatch(setProfile(profile));
+        // eslint-disable-next-line no-await-in-loop, no-promise-executor-return
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        notificationQueue.shift();
+        thunkAPI.dispatch(hideNotification());
+      }
+    } else {
+      notificationQueue.push(profile);
+    }
+  }
+);
 
 export const {
   show,
