@@ -13,7 +13,7 @@
       "level": "debug"
     },
     "external": {
-      "enabled": false,
+      "enabled": true,
       "level": "debug",
       "route": "/html5Log",
       "method": "POST",
