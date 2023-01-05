@@ -38,7 +38,9 @@ const VideoControls = (props) => {
 
   useEffect(() => {
     if (appState.match(/inactive|background/) && isActive) {
-      setPublishOnActive(true);
+      // Only schedule a re-share if the camera was connected in the first place.
+      // If it's still connecting, just stop it.
+      setPublishOnActive(isConnected);
       VideoManager.unpublish(localCameraId);
     } else if (appState === 'active' && publishOnActive) {
       if (camDisabled) {
