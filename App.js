@@ -121,6 +121,11 @@ const AppContent = ({
             colorized: true,
             smallIcon: 'ic_launcher_foreground',
           },
+          ios: {
+            foregroundPresentationOptions: {
+              banner: false,
+            },
+          }
         };
         notifee.displayNotification(_notification);
         setNotification(_notification);
