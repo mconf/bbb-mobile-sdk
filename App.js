@@ -75,6 +75,9 @@ const AppContent = ({
     if (audioIsConnected) {
       // Start/show the notification foreground service
       const getChannelIdAndDisplayNotification = async () => {
+        // Request permissions (required for iOS)
+        await notifee.requestPermission();
+
         const channelId = await notifee.createChannel({
           id: 'inconference',
           // TODO localization
