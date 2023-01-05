@@ -45,7 +45,8 @@ export class ServerStream {
                                 if (typeof onError === 'function') {
                                     onError.call(this, recs, xhr);
                                 } else {
-                                    console.warn('Browser Bunyan: A server log write failed');
+                                    // Do nothing - muffle the logs for the time being - prlanzarin
+                                    //console.warn('Browser Bunyan: A server log write failed');
                                 }
                             }
                             this.records = {};
