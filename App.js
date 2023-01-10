@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import notifee, { EventType } from '@notifee/react-native';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 // providers and store
+import { useKeepAwake } from 'expo-keep-awake';
 import { store } from './src/store/redux/store';
 import * as api from './src/services/api';
 import DrawerNavigator from './src/components/custom-drawer/drawer-navigator';
@@ -227,6 +228,7 @@ const AppContent = ({
 };
 
 const App = (props) => {
+  useKeepAwake();
   return (
     <Provider store={store}>
       <AppContent {...props} />
