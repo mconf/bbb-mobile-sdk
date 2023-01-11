@@ -169,6 +169,9 @@ const AppContent = ({
         toggleMuteMicrophone();
       }
     });
+    return () => {
+      notifee.stopForegroundService();
+    };
   }, []);
 
   useEffect(() => {
