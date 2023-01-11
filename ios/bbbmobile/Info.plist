@@ -78,5 +78,11 @@
     <string>Dark</string>
     <key>UIViewControllerBasedStatusBarAppearance</key>
     <false/>
+    <key>UIBackgroundModes</key>
+    <array>
+      <string>audio</string>
+      <string>fetch</string>
+      <string>voip</string>
+    </array>
   </dict>
 </plist>
