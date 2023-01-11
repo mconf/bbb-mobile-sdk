@@ -19,6 +19,7 @@ import { PresentationsModule } from './modules/presentations';
 import { SlidesModule } from './modules/slides';
 import { VideoStreamsModule } from './modules/video-streams';
 import { ScreenshareModule } from './modules/screenshare';
+import { GuestUsersModule } from './modules/guest-users';
 import {
   getRandomDigits,
   getRandomAlphanumericWithCaps,
@@ -53,6 +54,7 @@ import {
   sessionStateChanged,
   join,
 } from '../../store/redux/slices/wide-app/client';
+import usePrevious from '../../hooks/use-previous';
 
 // TODO BAD - decouple, move elsewhere - everything from here to getMeetingData
 let GLOBAL_WS = null;
@@ -193,6 +195,7 @@ const setupModules = (ws) => {
     meetings: new MeetingModule(messageSender),
     'current-user': new CurrentUserModule(messageSender),
     users: new UsersModule(messageSender),
+    guestUsers: new GuestUsersModule(messageSender),
   };
 
   /*
@@ -284,6 +287,20 @@ const SocketConnectionComponent = (props) => {
       && state.currentUserCollection.ready
       && state.usersCollection.ready;
   });
+  const currentUserStore = useSelector((state) => state.currentUserCollection);
+  const currentRole = Object.values(currentUserStore?.currentUserCollection)[0]?.role;
+  const previousRole = usePrevious(currentRole);
+
+  useEffect(() => {
+    if (currentUserStore.ready && currentRole === 'MODERATOR' && previousRole === 'VIEWER') {
+      // force resubscribe on role dependent collections
+      // TODO add 'breakouts' and ''breakouts-history' when we support it
+      ['meetings', 'users', 'guestUsers'].forEach((module) => {
+        modules.current[module].onDisconnected();
+        modules.current[module].onConnected();
+      });
+    }
+  }, [currentUserStore.ready, currentRole]);
 
   useEffect(() => {
     dispatch(setJoinUrl(jUrl));
@@ -428,6 +445,10 @@ const SocketConnectionComponent = (props) => {
   }, [loggingIn]);
 
   const processMessage = (ws, msgObj) => {
+    // FIXME: different collection/subscription names
+    if (msgObj.collection === 'guestUser') {
+      msgObj.collection = 'guestUsers';
+    }
     switch (msgObj.msg) {
       case 'connected': {
         validateReqId.current = sendValidationMsg(ws, meetingData);

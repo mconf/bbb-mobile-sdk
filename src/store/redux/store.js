@@ -15,6 +15,7 @@ import slidesReducer from './slices/slides';
 import externalVideoMeetingsReducer from './slices/external-video-meetings';
 import videoStreamsReducer from './slices/video-streams';
 import screenshareReducer from './slices/screenshare';
+import guestUsersReducer from './slices/guest-users';
 // app exclusive wide state collections
 import previousPollPublishedReducer from './slices/wide-app/previous-poll-published';
 import audioReducer from './slices/wide-app/audio';
@@ -51,6 +52,7 @@ const appReducer = combineReducers({
   groupChatMsgCollection: groupChatMsgReducer,
   videoStreamsCollection: videoStreamsReducer,
   screenshareCollection: screenshareReducer,
+  guestUsersCollection: guestUsersReducer,
   // ...other collections
 
   // app exclusive wide state collections

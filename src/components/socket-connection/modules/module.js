@@ -23,7 +23,9 @@ export default class Module {
 
   subscribeToCollection(topic, ...args) {
     if (!this.subscriptions.has(topic)) {
-      const transaction = new SubscribeTransaction(topic, args);
+      // FIXME: different collection/subscription names
+      const subscriptionName = topic === 'guestUsers' ? 'guestUser' : topic;
+      const transaction = new SubscribeTransaction(subscriptionName, args);
       this._pendingTransactions.addTransaction(transaction);
       this.messageSender.sendMessage(transaction.payload);
       this.subscriptions.set(topic, transaction.transactionId);

@@ -4,6 +4,7 @@ import {
   DrawerContentScrollView,
   DrawerItemList,
 } from '@react-navigation/drawer';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Colors from '../../constants/colors';
 import Styled from './styles';
 import * as api from '../../services/api';
@@ -55,6 +56,7 @@ const CustomDrawer = (props) => {
       <Styled.ContainerCustomButtons>
         <Styled.ButtonLeaveContainer onPress={leaveSession}>
           <Styled.ViewLeaveContainer>
+            <Icon name="logout" size={24} color="#1C1B1F" />
             <Styled.TextLeaveContainer>
               Sair da sessão
             </Styled.TextLeaveContainer>

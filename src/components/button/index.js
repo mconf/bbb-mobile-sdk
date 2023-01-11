@@ -1,11 +1,16 @@
 import Styled from './styles';
 
 const PrimaryButton = (props) => {
-  const { children, onPress, style } = props;
+  const {
+    children,
+    onPress,
+    style,
+    disabled
+  } = props;
 
   return (
     <Styled.ButtonOuterContainer>
-      <Styled.ButtonInnerContainer onPress={onPress}>
+      <Styled.ButtonInnerContainer onPress={onPress} disabled={disabled}>
         <Styled.ButtonText style={style}>{children}</Styled.ButtonText>
       </Styled.ButtonInnerContainer>
     </Styled.ButtonOuterContainer>
