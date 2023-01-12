@@ -5,6 +5,9 @@ import notifee, { EventType } from '@notifee/react-native';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 // providers and store
 import { useKeepAwake } from 'expo-keep-awake';
+import HeadphoneDetection from 'react-native-headphone-detection';
+import { Audio } from 'expo-av';
+import { LogBox } from 'react-native';
 import { store } from './src/store/redux/store';
 import * as api from './src/services/api';
 import DrawerNavigator from './src/components/custom-drawer/drawer-navigator';
@@ -27,6 +30,10 @@ import {
 import logger from './src/services/logger';
 import { toggleMuteMicrophone } from './src/components/audio/service';
 import Colors from './src/constants/colors';
+
+// FIXME ignore NativeEventEmitter warnings - they stem from outdated calls
+// in HeadphoneDetection. This needs to be figured out later - prlanzarin
+LogBox.ignoreLogs(['new NativeEventEmitter()']);
 
 //  Inject store in non-component files
 const injectStore = () => {
@@ -177,6 +184,41 @@ const AppContent = ({
   useEffect(() => {
     injectStore();
     dispatch(ConnectionStatusTracker.registerConnectionStatusListeners());
+
+    const handleAudioDeviceChangeFailure = (error) => {
+      logger.error({
+        logCode: 'app_audio_device_change_failure',
+        extraInfo: {
+          errorMessage: error.message,
+          errorCode: error.code
+        },
+      }, `Failure handling audio device change: ${error.message || error.name}`);
+    };
+
+    const handleAudioDeviceChange = ({ audioJack, bluetooth }) => {
+      const hasExternalDevice = audioJack === true || bluetooth === true;
+
+      logger.debug({
+        logCode: 'app_audio_device_change_event',
+        extraInfo: {
+          audioJack,
+          bluetooth,
+        },
+      }, `Audio device change: audioJack=${audioJack} bluetooth=${bluetooth}`);
+
+      return Audio.setAudioModeAsync({
+        allowsRecordingIOS: hasExternalDevice,
+        playThroughEarpieceAndroid: hasExternalDevice,
+      }).catch(handleAudioDeviceChangeFailure);
+    };
+
+    // Define current connected device on mount
+    HeadphoneDetection.isAudioDeviceConnected()
+      .then(handleAudioDeviceChange)
+      .catch(handleAudioDeviceChangeFailure);
+    // Listen for subsequent device changes
+    HeadphoneDetection.addListener(handleAudioDeviceChange);
+
     // Foreground event = device unlocked || app in view
     const unsubscribeForegroundEvents = notifee.onForegroundEvent(({ type, detail }) => {
       if (type === EventType.ACTION_PRESS && detail.pressAction.id === 'leave') {
@@ -192,6 +234,8 @@ const AppContent = ({
 
     return () => {
       dispatch(ConnectionStatusTracker.unregisterConnectionStatusListeners());
+
+      if (HeadphoneDetection.remove) HeadphoneDetection.remove();
 
       if (!ended) {
         dispatch(sessionStateChanged({
