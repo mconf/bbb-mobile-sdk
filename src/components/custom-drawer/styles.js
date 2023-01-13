@@ -46,16 +46,20 @@ const ButtonLeaveContainer = styled(Pressable).attrs(() => ({
 `;
 
 const ViewLeaveContainer = styled.View`
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
   padding: 12px;
   background-color: ${Colors.lightGray100};
-  border-radius: 4px;
+  border-radius: 8px;
 `;
 
 const TextLeaveContainer = styled.Text`
-  color: #1c1c1ead;
-  font-weight: 500;
+  padding-left: 12px;
+  color: ${Colors.lightGray400};
+  font-size: 16px;
+  font-weight: 400;
+  text-align: left;
+  text-align-vertical: center;
 `;
 
 export default {

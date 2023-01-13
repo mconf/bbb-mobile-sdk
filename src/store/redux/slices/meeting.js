@@ -61,6 +61,20 @@ const selectLockSettingsProp = createSelector(
   }
 );
 
+const selectAllUsersProps = createSelector(
+  [selectMeeting],
+  (meeting) => {
+    return meeting?.usersProp ?? {};
+  }
+);
+
+const selectUsersProp = createSelector(
+  [selectAllUsersProps, selectProp],
+  (usersProps, prop) => {
+    return usersProps[prop] ?? false;
+  }
+);
+
 export const {
   addMeeting,
   removeMeeting,
@@ -73,6 +87,8 @@ export {
   selectMeeting,
   selectAllLockSettingsProps,
   selectLockSettingsProp,
+  selectAllUsersProps,
+  selectUsersProp,
 };
 
 export default meetingSlice.reducer;

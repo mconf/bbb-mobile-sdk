@@ -12,7 +12,7 @@ const ChatControls = (props) => {
   return (
     <IconButtonComponent
       size={isLandscape ? 24 : 32}
-      icon={chatStore.isBottomChatOpen ? 'message' : 'message-off'}
+      icon={chatStore.isBottomChatOpen ? 'message-outline' : 'message-off-outline'}
       iconColor={
         chatStore.isBottomChatOpen ? Colors.white : Colors.lightGray300
       }

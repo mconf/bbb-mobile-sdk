@@ -1,26 +1,75 @@
-import React, { useEffect } from 'react';
+import { Audio } from 'expo-av';
+import React, { useEffect, useState } from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 // screens
 import UserNotesScreen from '../../../screens/user-notes-screen';
 import PollNavigator from '../../../screens/poll-screen/navigator';
-import UserParticipantsScreen from '../../../screens/user-participants-screen';
+import UserParticipantsNavigator from '../../../screens/user-participants-screen/navigator';
 import WhiteboardScreen from '../../../screens/whiteboard-screen';
 import TestComponentsScreen from '../../../screens/test-components-screen';
 import ClassroomMainScreen from '../../../screens/classroom-main-screen';
+import Colors from '../../../constants/colors';
+import Styled from './styles';
+import usePrevious from '../../../hooks/use-previous';
+import { selectWaitingUsers } from '../../../store/redux/slices/guest-users';
+import logger from '../../../services/logger';
 
 // components
 import CustomDrawer from '../index';
-import IconButton from '../../icon-button';
 
 // configs
 import Settings from '../../../../settings.json';
 
-const DrawerNavigator = ({ onLeaveSession, jUrl }) => {
+const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
   const Drawer = createDrawerNavigator();
   const navigation = useNavigation();
   const ended = useSelector((state) => state.client.sessionState.ended);
+  const joinUrl = useSelector((state) => state.client.meetingData.joinUrl);
+  const guestUsersReady = useSelector((state) => state.guestUsersCollection.ready);
+  const pendingUsers = useSelector(selectWaitingUsers);
+  const previousPendingUsers = usePrevious(pendingUsers);
+  const [doorBellSound, setDoorBellSound] = useState();
+
+  // this effect controls the guest user waiting notification sound
+  useEffect(() => {
+    const playSound = async () => {
+      const url = new URL(joinUrl);
+      const doorbellUri = {
+        uri: `https://${url.host}/html5client/resources/sounds/doorbell.mp3`
+      };
+      try {
+        if (doorBellSound) {
+          const status = await doorBellSound.getStatusAsync();
+          if (status.isLoaded) {
+            await doorBellSound.replayAsync();
+            return;
+          }
+        }
+        const { sound } = await Audio.Sound.createAsync(doorbellUri);
+        setDoorBellSound(sound);
+        await sound.playAsync();
+      } catch (error) {
+        logger.debug({
+          logCode: 'play_sound_exception',
+          extraInfo: { error },
+        }, `Exception thrown while playing doorbell sound: ${error}`);
+      }
+    };
+
+    const currentScreen = navigationRef?.current?.getCurrentRoute()?.name;
+    if (joinUrl && currentScreen !== 'WaitingUsersScreen' && guestUsersReady && previousPendingUsers && pendingUsers.length > previousPendingUsers.length) {
+      playSound();
+    }
+  }, [guestUsersReady, previousPendingUsers, pendingUsers]);
+
+  // unload sound
+  React.useEffect(() => {
+    return () => {
+      doorBellSound?.unloadAsync();
+    };
+  }, []);
 
   // this effect controls the meeting ended
   useEffect(() => {
@@ -38,13 +87,30 @@ const DrawerNavigator = ({ onLeaveSession, jUrl }) => {
             flex: 1,
           },
         },
-
+        drawerStyle: {
+          width: '80%',
+        },
+        drawerItemStyle: {
+          borderRadius: 8,
+          height: 48,
+        },
+        drawerLabelStyle: {
+          textAlign: 'left',
+          textAlignVertical: 'center',
+          paddingLeft: 12,
+          fontSize: 16,
+          fontWeight: '400',
+          lineHeight: 18,
+        },
         sceneContainerStyle: { backgroundColor: '#06172A' },
-        drawerActiveBackgroundColor: '#003399',
-        drawerActiveTintColor: 'white',
-        headerStyle: { backgroundColor: '#003399' },
-        headerTintColor: 'white',
-        drawerBackgroundColor: '#003399',
+        drawerActiveBackgroundColor: Colors.blue,
+        drawerInactiveBackgroundColor: Colors.lightGray100,
+        drawerActiveTintColor: Colors.white,
+        drawerInactiveTintColor: Colors.lightGray400,
+        headerStyle: { backgroundColor: Colors.blue },
+        headerTitleContainerStyle: { maxWidth: '75%' },
+        headerTintColor: Colors.white,
+        drawerBackgroundColor: Colors.blue,
         headerTitleAlign: 'center',
       }}
     >
@@ -54,9 +120,9 @@ const DrawerNavigator = ({ onLeaveSession, jUrl }) => {
         options={{
           title: 'Sala de aula',
           drawerIcon: (config) => (
-            <IconButton
+            <Styled.DrawerIcon
               icon="home"
-              size={18}
+              size={24}
               iconColor={config.color}
             />
           ),
@@ -70,9 +136,9 @@ const DrawerNavigator = ({ onLeaveSession, jUrl }) => {
           options={{
             title: 'Nota compartilhada',
             drawerIcon: (config) => (
-              <IconButton
+              <Styled.DrawerIcon
                 icon="file-document"
-                size={18}
+                size={24}
                 iconColor={config.color}
               />
             ),
@@ -86,9 +152,9 @@ const DrawerNavigator = ({ onLeaveSession, jUrl }) => {
         options={{
           title: 'Enquete',
           drawerIcon: (config) => (
-            <IconButton
-              icon="chart-box"
-              size={18}
+            <Styled.DrawerIcon
+              icon="poll"
+              size={24}
               iconColor={config.color}
             />
           ),
@@ -97,15 +163,24 @@ const DrawerNavigator = ({ onLeaveSession, jUrl }) => {
 
       <Drawer.Screen
         name="UserParticipantsScreen"
-        component={UserParticipantsScreen}
+        component={UserParticipantsNavigator}
         options={{
           title: 'Lista de participantes',
           drawerIcon: (config) => (
-            <IconButton
-              icon="account-multiple"
-              size={18}
-              iconColor={config.color}
-            />
+            <>
+              <Styled.DrawerIcon
+                icon="account-multiple-outline"
+                size={24}
+                iconColor={config.color}
+              />
+              {pendingUsers.length > 0 && (
+                <Styled.NotificationIcon
+                  icon="circle"
+                  size={12}
+                  iconColor={Colors.orange}
+                />
+              )}
+            </>
           ),
         }}
       />
@@ -117,9 +192,9 @@ const DrawerNavigator = ({ onLeaveSession, jUrl }) => {
           options={{
             title: 'Quadro Branco',
             drawerIcon: (config) => (
-              <IconButton
+              <Styled.DrawerIcon
                 icon="brush"
-                size={18}
+                size={24}
                 iconColor={config.color}
               />
             ),
@@ -134,9 +209,9 @@ const DrawerNavigator = ({ onLeaveSession, jUrl }) => {
           options={{
             title: 'Test Component',
             drawerIcon: (config) => (
-              <IconButton
+              <Styled.DrawerIcon
                 icon="brush"
-                size={18}
+                size={24}
                 iconColor={config.color}
               />
             ),

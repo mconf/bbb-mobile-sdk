@@ -219,7 +219,13 @@ const AppContent = ({
         }}
       >
         <Stack.Screen name="DrawerNavigator">
-          {() => <DrawerNavigator jUrl={jUrl} onLeaveSession={onLeaveSession} />}
+          {() => (
+            <DrawerNavigator
+              navigationRef={navigationRef}
+              jUrl={jUrl}
+              onLeaveSession={onLeaveSession}
+            />
+          )}
         </Stack.Screen>
         <Stack.Screen name="EndSessionScreen">
           {() => <EndSessionScreen onLeaveSession={onLeaveSession} />}

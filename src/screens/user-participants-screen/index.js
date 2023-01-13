@@ -1,4 +1,6 @@
-import { Alert } from 'react-native';
+import { Alert, Pressable } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Menu, Provider } from 'react-native-paper';
@@ -6,22 +8,28 @@ import { useOrientation } from '../../hooks/use-orientation';
 import withPortal from '../../components/high-order/with-portal';
 import Styled from './styles';
 import Settings from '../../../settings.json';
+import Colors from '../../constants/colors';
+import { selectWaitingUsers } from '../../store/redux/slices/guest-users';
+import { isModerator } from '../../store/redux/slices/current-user';
 
 const UserParticipantsScreen = () => {
   const usersStore = useSelector((state) => state.usersCollection);
   const [showMenu, setShowMenu] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState({ x: 0, y: 0 });
+  const amIModerator = useSelector(isModerator);
+  const pendingUsers = useSelector(selectWaitingUsers);
+
+  const navigation = useNavigation();
 
   const handleUsersName = useCallback(
-    () =>
-      Object.values(usersStore.usersCollection).map((user) => {
-        return {
-          name: user.name,
-          role: user.role,
-          color: user.color,
-          // ...other properties
-        };
-      }),
+    () => Object.values(usersStore.usersCollection).map((user) => {
+      return {
+        name: user.name,
+        role: user.role,
+        color: user.color,
+        // ...other properties
+      };
+    }),
     [usersStore]
   );
 
@@ -57,24 +65,61 @@ const UserParticipantsScreen = () => {
   return (
     <Provider>
       <Styled.ContainerView orientation={orientation}>
-        <Styled.FlatList data={handleUsersName()} renderItem={renderItem} />
-        {Settings.dev && (
-          <Menu
-            visible={showMenu}
-            onDismiss={() => setShowMenu(false)}
-            anchor={menuAnchor}
-          >
-            <Menu.Item
-              onPress={() => {
-                Alert.alert(
-                  'Currently under development',
-                  'This feature will be addressed soon, please check out our github page'
-                );
-              }}
-              title="Bate-papo privado"
-            />
-          </Menu>
-        )}
+        <Styled.Block orientation={orientation}>
+          {amIModerator && (
+            <>
+              <Pressable
+                onPress={() => {
+                  navigation.navigate('GuestPolicyScreen');
+                }}
+              >
+                <Styled.GuestMenuContainer>
+                  <Icon name="account-cog-outline" size={24} color={Colors.white} />
+                  <Styled.GuestPolicyText>Política de Convidados</Styled.GuestPolicyText>
+                  <Styled.GuestPolicyIcon
+                    icon="arrow-right"
+                    iconColor={Colors.white}
+                  />
+                </Styled.GuestMenuContainer>
+              </Pressable>
+              {pendingUsers.length > 0 && (
+                <Pressable
+                  onPress={() => {
+                    navigation.navigate('WaitingUsersScreen');
+                  }}
+                >
+                  <Styled.GuestMenuContainer>
+                    <Icon name="account-multiple-outline" size={24} color={Colors.white} />
+                    <Styled.GuestPolicyText>Participantes Aguardando</Styled.GuestPolicyText>
+                    <Styled.GuestPolicyIcon
+                      icon="arrow-right"
+                      iconColor={Colors.white}
+                    />
+                  </Styled.GuestMenuContainer>
+                </Pressable>
+              )}
+              <Styled.DividerTop />
+            </>
+          )}
+          <Styled.FlatList data={handleUsersName()} renderItem={renderItem} />
+          {Settings.dev && (
+            <Menu
+              visible={showMenu}
+              onDismiss={() => setShowMenu(false)}
+              anchor={menuAnchor}
+            >
+              <Menu.Item
+                onPress={() => {
+                  Alert.alert(
+                    'Currently under development',
+                    'This feature will be addressed soon, please check out our github page'
+                  );
+                }}
+                title="Bate-papo privado"
+              />
+            </Menu>
+          )}
+        </Styled.Block>
         <Styled.ActionsBarContainer orientation={orientation}>
           <Styled.ActionsBar orientation={orientation} />
         </Styled.ActionsBarContainer>

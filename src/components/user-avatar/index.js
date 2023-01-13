@@ -5,7 +5,7 @@ const UserAvatar = (props) => {
 
   return (
     <Styled.Background userRole={userRole} userColor={userColor}>
-      <Styled.UserName>{userName.substring(0, 2)}</Styled.UserName>
+      <Styled.UserName>{userName?.substring(0, 2)}</Styled.UserName>
     </Styled.Background>
   );
 };
