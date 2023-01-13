@@ -4,6 +4,7 @@ import { useOrientation } from '../../../hooks/use-orientation';
 import withPortal from '../../../components/high-order/with-portal';
 import Styled from './styles';
 import { selectUsersProp } from '../../../store/redux/slices/meeting';
+import { isModerator } from '../../../store/redux/slices/current-user';
 import Service from './service';
 import Colors from '../../../constants/colors';
 
@@ -15,8 +16,7 @@ const guestPolicies = {
 
 const GuestPolicyScreen = ({ navigation }) => {
   const guestPolicy = useSelector((state) => selectUsersProp(state, 'guestPolicy'));
-  const currentUserStore = useSelector((state) => state.currentUserCollection);
-  const isModerator = Object.values(currentUserStore?.currentUserCollection)[0]?.role === 'MODERATOR';
+  const amIModerator = useSelector(isModerator);
 
   const orientation = useOrientation();
 
@@ -24,10 +24,10 @@ const GuestPolicyScreen = ({ navigation }) => {
   useEffect(() => {
     // user got demoted to viewer, go out of this screen as he does not have
     // permission to use it
-    if (!isModerator) {
+    if (!amIModerator) {
       navigation.goBack();
     }
-  }, [isModerator]);
+  }, [amIModerator]);
 
   return (
     <Styled.ContainerView orientation={orientation}>

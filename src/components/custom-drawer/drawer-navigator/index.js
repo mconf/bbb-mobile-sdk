@@ -13,6 +13,8 @@ import ClassroomMainScreen from '../../../screens/classroom-main-screen';
 import Colors from '../../../constants/colors';
 import Styled from './styles';
 import usePrevious from '../../../hooks/use-previous';
+import { selectWaitingUsers } from '../../../store/redux/slices/guest-users';
+import logger from '../../../services/logger';
 
 // components
 import CustomDrawer from '../index';
@@ -25,10 +27,8 @@ const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
   const navigation = useNavigation();
   const ended = useSelector((state) => state.client.sessionState.ended);
   const joinUrl = useSelector((state) => state.client.meetingData.joinUrl);
-  const guestUsersStore = useSelector((state) => state.guestUsersCollection);
-  const pendingUsers = Object.values(guestUsersStore.guestUsersCollection).filter((guest) => {
-    return !guest.approved && !guest.denied;
-  });
+  const guestUsersReady = useSelector((state) => state.guestUsersCollection.ready);
+  const pendingUsers = useSelector(selectWaitingUsers);
   const previousPendingUsers = usePrevious(pendingUsers);
   const [doorBellSound, setDoorBellSound] = useState();
 
@@ -36,28 +36,40 @@ const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
   useEffect(() => {
     const playSound = async () => {
       const url = new URL(joinUrl);
-      const doorbelUri = {
+      const doorbellUri = {
         uri: `https://${url.host}/html5client/resources/sounds/doorbell.mp3`
       };
-      const { sound } = await Audio.Sound.createAsync(doorbelUri);
-      setDoorBellSound(sound);
-      await sound.playAsync();
+      try {
+        if (doorBellSound) {
+          const status = await doorBellSound.getStatusAsync();
+          if (status.isLoaded) {
+            await doorBellSound.replayAsync();
+            return;
+          }
+        }
+        const { sound } = await Audio.Sound.createAsync(doorbellUri);
+        setDoorBellSound(sound);
+        await sound.playAsync();
+      } catch (error) {
+        logger.debug({
+          logCode: 'play_sound_exception',
+          extraInfo: { error },
+        }, `Exception thrown while playing doorbell sound: ${error}`);
+      }
     };
 
     const currentScreen = navigationRef?.current?.getCurrentRoute()?.name;
-    if (joinUrl && currentScreen !== 'WaitingUsersScreen' && guestUsersStore.ready && pendingUsers.length > previousPendingUsers.length) {
+    if (joinUrl && currentScreen !== 'WaitingUsersScreen' && guestUsersReady && previousPendingUsers && pendingUsers.length > previousPendingUsers.length) {
       playSound();
     }
-  }, [guestUsersStore.ready, pendingUsers]);
+  }, [guestUsersReady, previousPendingUsers, pendingUsers]);
 
   // unload sound
   React.useEffect(() => {
-    return doorBellSound
-      ? () => {
-        doorBellSound.unloadAsync();
-      }
-      : undefined;
-  }, [doorBellSound]);
+    return () => {
+      doorBellSound?.unloadAsync();
+    };
+  }, []);
 
   // this effect controls the meeting ended
   useEffect(() => {

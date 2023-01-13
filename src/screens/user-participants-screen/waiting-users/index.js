@@ -5,6 +5,7 @@ import withPortal from '../../../components/high-order/with-portal';
 import Styled from './styles';
 import Service from './service';
 import Colors from '../../../constants/colors';
+import { selectWaitingUsers } from '../../../store/redux/slices/guest-users';
 
 const ALLOW_STATUS = 'ALLOW';
 const DENY_STATUS = 'DENY';
@@ -12,11 +13,7 @@ const DENY_STATUS = 'DENY';
 const WaitingUsersScreen = ({ navigation }) => {
   const currentUserStore = useSelector((state) => state.currentUserCollection);
   const isModerator = Object.values(currentUserStore?.currentUserCollection)[0]?.role === 'MODERATOR';
-
-  const guestUsersStore = useSelector((state) => state.guestUsersCollection);
-  const pendingUsers = Object.values(guestUsersStore.guestUsersCollection).filter((guest) => {
-    return !guest.approved && !guest.denied;
-  });
+  const pendingUsers = useSelector(selectWaitingUsers);
 
   const handleUsersName = useCallback(
     () => pendingUsers.map((user) => {
@@ -27,7 +24,7 @@ const WaitingUsersScreen = ({ navigation }) => {
         // ...other properties
       };
     }),
-    [guestUsersStore]
+    [pendingUsers]
   );
 
   const orientation = useOrientation();

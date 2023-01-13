@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createSelector } from '@reduxjs/toolkit';
 
 const guestUsersSlice = createSlice({
   name: 'guestUsers',
@@ -48,6 +48,13 @@ const selectGuestUserByDocumentId = (state, documentId) => {
   return state.guestUsersCollection[documentId];
 };
 
+const selectWaitingUsers = createSelector(
+  (state) => state.guestUsersCollection.guestUsersCollection,
+  (guestUsersCollection) => {
+    return Object.values(guestUsersCollection).filter((guest) => !guest.approved && !guest.denied);
+  }
+);
+
 export const {
   addGuestUser,
   removeGuestUser,
@@ -58,6 +65,7 @@ export const {
 
 export {
   selectGuestUserByDocumentId,
+  selectWaitingUsers,
 };
 
 export default guestUsersSlice.reducer;

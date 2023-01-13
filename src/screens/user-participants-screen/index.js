@@ -1,7 +1,6 @@
 import { Alert, Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-// eslint-disable-next-line import/no-unresolved
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Menu, Provider } from 'react-native-paper';
@@ -10,17 +9,15 @@ import withPortal from '../../components/high-order/with-portal';
 import Styled from './styles';
 import Settings from '../../../settings.json';
 import Colors from '../../constants/colors';
+import { selectWaitingUsers } from '../../store/redux/slices/guest-users';
+import { isModerator } from '../../store/redux/slices/current-user';
 
 const UserParticipantsScreen = () => {
   const usersStore = useSelector((state) => state.usersCollection);
   const [showMenu, setShowMenu] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState({ x: 0, y: 0 });
-  const currentUserStore = useSelector((state) => state.currentUserCollection);
-  const isModerator = Object.values(currentUserStore?.currentUserCollection)[0]?.role === 'MODERATOR';
-  const guestUsersStore = useSelector((state) => state.guestUsersCollection);
-  const pendingUsers = Object.values(guestUsersStore.guestUsersCollection).filter((guest) => {
-    return !guest.approved && !guest.denied;
-  });
+  const amIModerator = useSelector(isModerator);
+  const pendingUsers = useSelector(selectWaitingUsers);
 
   const navigation = useNavigation();
 
@@ -69,7 +66,7 @@ const UserParticipantsScreen = () => {
     <Provider>
       <Styled.ContainerView orientation={orientation}>
         <Styled.Block orientation={orientation}>
-          {isModerator && (
+          {amIModerator && (
             <>
               <Pressable
                 onPress={() => {
