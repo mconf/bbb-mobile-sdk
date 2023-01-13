@@ -44,6 +44,7 @@ import ScreenshareManager from '../../services/webrtc/screenshare-manager';
 import { store } from '../../store/redux/store';
 import { selectUserByIntId } from '../../store/redux/slices/users';
 import { selectMeeting } from '../../store/redux/slices/meeting';
+import { selectCurrentUserRole } from '../../store/redux/slices/current-user';
 import {
   setLoggingIn,
   setLoggedIn,
@@ -287,12 +288,12 @@ const SocketConnectionComponent = (props) => {
       && state.currentUserCollection.ready
       && state.usersCollection.ready;
   });
-  const currentUserStore = useSelector((state) => state.currentUserCollection);
-  const currentRole = Object.values(currentUserStore?.currentUserCollection)[0]?.role;
+  const currentRole = useSelector(selectCurrentUserRole);
   const previousRole = usePrevious(currentRole);
+  const currentUserReady = useSelector((state) => state.currentUserCollection.ready);
 
   useEffect(() => {
-    if (currentUserStore.ready && currentRole === 'MODERATOR' && previousRole === 'VIEWER') {
+    if (currentUserReady && currentRole === 'MODERATOR' && previousRole === 'VIEWER') {
       // force resubscribe on role dependent collections
       // TODO add 'breakouts' and ''breakouts-history' when we support it
       ['meetings', 'users', 'guestUsers'].forEach((module) => {
@@ -300,7 +301,7 @@ const SocketConnectionComponent = (props) => {
         modules.current[module].onConnected();
       });
     }
-  }, [currentUserStore.ready, currentRole]);
+  }, [currentUserReady, currentRole]);
 
   useEffect(() => {
     dispatch(setJoinUrl(jUrl));
@@ -581,7 +582,7 @@ const SocketConnectionComponent = (props) => {
           <TextInput
             placeholder="Join URL"
             onSubmitEditing={({ nativeEvent: { text } }) => dispatch(setJoinUrl(text))}
-            defaultValue={joinUrl}
+            defaultValue={"https://live-oc002.elos.dev/bigbluebutton/api/join?fullName=User+2456894&meetingID=random-8617115&password=mp&redirect=true&checksum=36fcdd6deb41352bd85670fa8ed1bea3916e085b"}
           />
         </View>
       </View>
