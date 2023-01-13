@@ -7100,6 +7100,11 @@ react-native-gradle-plugin@^0.0.6:
   resolved "https://registry.yarnpkg.com/react-native-gradle-plugin/-/react-native-gradle-plugin-0.0.6.tgz#b61a9234ad2f61430937911003cddd7e15c72b45"
   integrity sha512-eIlgtsmDp1jLC24dRn43hB3kEcZVqx6DUQbR0N1ABXGnMEafm9I3V3dUUeD1vh+Dy5WqijSoEwLNUPLgu5zDMg==
 
+react-native-headphone-detection@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/react-native-headphone-detection/-/react-native-headphone-detection-1.3.0.tgz#e4347a9107ce77a5c7dee2ebe1a4be4d11b72e15"
+  integrity sha512-srU5VUQjsYJi8z5QUe68pZEOk8oQxrpd9fvQvdfNzREzNd9opxEjLTCTiMejt/CkCvcp7jUbk9hOd2CJcg/yXg==
+
 react-native-iphone-x-helper@^1.3.1:
   version "1.3.1"
   resolved "https://registry.npmjs.org/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.3.1.tgz"
