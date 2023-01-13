@@ -6,13 +6,13 @@ import Styled from './styles';
 import Service from './service';
 import Colors from '../../../constants/colors';
 import { selectWaitingUsers } from '../../../store/redux/slices/guest-users';
+import { isModerator } from '../../../store/redux/slices/current-user';
 
 const ALLOW_STATUS = 'ALLOW';
 const DENY_STATUS = 'DENY';
 
 const WaitingUsersScreen = ({ navigation }) => {
-  const currentUserStore = useSelector((state) => state.currentUserCollection);
-  const isModerator = Object.values(currentUserStore?.currentUserCollection)[0]?.role === 'MODERATOR';
+  const amIModerator = useSelector(isModerator);
   const pendingUsers = useSelector(selectWaitingUsers);
 
   const handleUsersName = useCallback(
@@ -60,10 +60,10 @@ const WaitingUsersScreen = ({ navigation }) => {
   useEffect(() => {
     // user got demoted to viewer, go out of this screen as he does not have
     // permission to use it
-    if (!isModerator) {
+    if (!amIModerator) {
       navigation.goBack();
     }
-  }, [isModerator]);
+  }, [amIModerator]);
 
   return (
     <Styled.ContainerView orientation={orientation}>
