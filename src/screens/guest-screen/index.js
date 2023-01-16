@@ -21,7 +21,7 @@ const GuestScreen = () => {
 
   const probeGuestStatus = async () => {
     try {
-      const { response } = await dispatch(fetchGuestStatus()).unwrap();
+      const { response } = await dispatch(fetchGuestStatus({ logger })).unwrap();
       const {
         lobbyMessage: message,
         positionInWaitingQueue: position
