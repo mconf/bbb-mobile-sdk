@@ -1,7 +1,8 @@
 import * as Linking from 'expo-linking';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { ActivityIndicator, Alert, View } from 'react-native';
+import { Alert, View } from 'react-native';
+import { ActivityIndicator } from 'react-native-paper';
 import Colors from '../../../constants/colors';
 import IconButtonComponent from '../../icon-button';
 import AudioManager from '../../../services/webrtc/audio-manager';
@@ -129,7 +130,7 @@ const AudioControls = (props) => {
         />
         <Styled.LoadingWrapper pointerEvents="none">
           <ActivityIndicator
-            size={buttonSize * 2}
+            size={buttonSize * 1.5}
             color={joinAudioIconColor}
             animating={isConnecting}
             hidesWhenStopped
