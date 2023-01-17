@@ -8,13 +8,17 @@ import Pressable from '../../pressable';
 const ContainerPressable = styled(Pressable).attrs(() => ({
   pressStyle: {
     opacity: 0.8,
-    borderColor: '#FFFFFF00',
-    borderWidth: 1,
+    borderWidth: 2,
   },
 }))`
   ${() => css`
     height: 120px;
     width: 120px;
+    border-color: ${Colors.white};
+    border-width: 2px;
+    ${({ isTalking }) => isTalking && `
+      border: 2px ${Colors.orange} solid;
+  `}
   `}
 `;
 
@@ -36,8 +40,6 @@ const VideoStream = styled(RTCView)`
 const UserColor = styled.View`
   width: 100%;
   height: 100%;
-  border: ${Colors.white} solid 2px;
-  border-radius: 8px;
   background-color: ${({ userColor }) => userColor};
   overflow: hidden;
 `;

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { setFocusedElement, setFocusedId, setIsFocused } from '../../../store/redux/slices/wide-app/layout';
+import { isTalkingByUserId } from '../../../store/redux/slices/voice-users';
 import IconButtonComponent from '../../icon-button';
 import VideoManager from '../../../services/webrtc/video-manager';
 import Styled from './styles';
@@ -9,6 +10,7 @@ import Styled from './styles';
 const VideoContainer = (props) => {
   const {
     cameraId,
+    userId,
     userAvatar,
     userColor,
     userName,
@@ -27,6 +29,7 @@ const VideoContainer = (props) => {
   });
   const mediaStreamId = useSelector((state) => state.video.videoStreams[cameraId]);
   const signalingTransportOpen = useSelector((state) => state.video.signalingTransportOpen);
+  const isTalking = useSelector((state) => isTalkingByUserId(state, userId));
 
   useEffect(() => {
     if (signalingTransportOpen && clientIsReady) {
@@ -74,6 +77,7 @@ const VideoContainer = (props) => {
   return (
     <Styled.ContainerPressable
       style={style}
+      isTalking={isTalking}
       onPress={() => setShowOptions((prevState) => !prevState)}
     >
       {renderVideo()}

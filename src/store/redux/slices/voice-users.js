@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, createSelector } from '@reduxjs/toolkit';
 import AudioManager from '../../../services/webrtc/audio-manager';
 import { setLoggedIn } from './wide-app/client';
 import { addMeeting, selectMeeting, selectLockSettingsProp } from './meeting';
@@ -77,6 +77,11 @@ const selectVoiceUserByUserId = (state, userId) => {
 const selectUserIdByDocumentId = (state, documentId) => {
   return state.voiceUsersCollection.voiceUsersCollection[documentId].intId;
 };
+
+const isTalkingByUserId = createSelector(
+  (state, userId) => selectVoiceUserByUserId(state, userId),
+  (voiceUserObj) => voiceUserObj.talking
+);
 
 // Middleware effects and listeners
 const voiceStateChangePredicate = (action, currentState) => {
@@ -161,6 +166,7 @@ export {
   joinAudioOnLoginListener,
   joinAudioOnLoginPredicate,
   joinAudio,
+  isTalkingByUserId,
 };
 
 export default voiceUsersSlice.reducer;
