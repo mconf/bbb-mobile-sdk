@@ -1,3 +1,4 @@
+import { ActivityIndicator } from 'react-native-paper';
 import styled from 'styled-components/native';
 import Colors from '../../constants/colors';
 
@@ -44,7 +45,7 @@ const GuestScreenSubtitle = styled(GuestScreenTextContent)`
   font-size: 18px;
 `;
 
-const WaitingAnimation = styled.ActivityIndicator`
+const WaitingAnimation = styled(ActivityIndicator)`
   padding-bottom: 40px;
 `;
 
