@@ -10,15 +10,18 @@ const voiceUsersSlice = createSlice({
   name: 'voiceUsers',
   initialState: {
     voiceUsersCollection: {},
+    userIdMatchDocumentId: {},
     ready: false,
   },
   reducers: {
     addVoiceUser: (state, action) => {
       const { voiceUserObject } = action.payload;
       state.voiceUsersCollection[voiceUserObject.id] = voiceUserObject.fields;
+      state.userIdMatchDocumentId[voiceUserObject.fields.intId] = voiceUserObject.id;
     },
     removeVoiceUser: (state, action) => {
       const { voiceUserObject } = action.payload;
+      delete state.userIdMatchDocumentId[selectUserIdByDocumentId(voiceUserObject.id)];
       delete state.voiceUsersCollection[voiceUserObject.id];
     },
     editVoiceUser: (state, action) => {
@@ -64,6 +67,15 @@ const voiceUsersSlice = createSlice({
 // Selectors
 const selectVoiceUserByDocumentId = (state, documentId) => {
   return state.voiceUsersCollection.voiceUsersCollection[documentId];
+};
+
+const selectVoiceUserByUserId = (state, userId) => {
+  const documentId = state.voiceUsersCollection.userIdMatchDocumentId[userId];
+  return state.voiceUsersCollection.voiceUsersCollection[documentId];
+};
+
+const selectUserIdByDocumentId = (state, documentId) => {
+  return state.voiceUsersCollection.voiceUsersCollection[documentId].intId;
 };
 
 // Middleware effects and listeners
@@ -143,6 +155,7 @@ export const {
 
 export {
   selectVoiceUserByDocumentId,
+  selectVoiceUserByUserId,
   voiceStateChangeListener,
   voiceStateChangePredicate,
   joinAudioOnLoginListener,
