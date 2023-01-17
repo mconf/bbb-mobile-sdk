@@ -281,7 +281,8 @@ const AppContent = ({
 };
 
 const App = (props) => {
-  useKeepAwake();
+  useKeepAwake('ExpoKeepAwakeTag', { suppressDeactivateWarnings: true });
+
   return (
     <Provider store={store}>
       <AppContent {...props} />
