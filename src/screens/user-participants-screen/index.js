@@ -62,6 +62,42 @@ const UserParticipantsScreen = () => {
     );
   };
 
+  const renderGuestPolicy = () => (
+    <>
+      <Pressable
+        onPress={() => {
+          navigation.navigate('GuestPolicyScreen');
+        }}
+      >
+        <Styled.GuestMenuContainer>
+          <Icon name="account-cog-outline" size={24} color={Colors.white} />
+          <Styled.GuestPolicyText>Política de Convidados</Styled.GuestPolicyText>
+          <Styled.GuestPolicyIcon
+            icon="arrow-right"
+            iconColor={Colors.white}
+          />
+        </Styled.GuestMenuContainer>
+      </Pressable>
+      {pendingUsers.length > 0 && (
+        <Pressable
+          onPress={() => {
+            navigation.navigate('WaitingUsersScreen');
+          }}
+        >
+          <Styled.GuestMenuContainer>
+            <Icon name="account-multiple-outline" size={24} color={Colors.white} />
+            <Styled.GuestPolicyText>Participantes Aguardando</Styled.GuestPolicyText>
+            <Styled.GuestPolicyIcon
+              icon="arrow-right"
+              iconColor={Colors.white}
+            />
+          </Styled.GuestMenuContainer>
+        </Pressable>
+      )}
+      <Styled.DividerTop />
+    </>
+  );
+
   const renderMenuView = () => {
     const isViewer = selectedUser.role === 'VIEWER';
 
@@ -92,41 +128,7 @@ const UserParticipantsScreen = () => {
     <Provider>
       <Styled.ContainerView orientation={orientation}>
         <Styled.Block orientation={orientation}>
-          {amIModerator && (
-            <>
-              <Pressable
-                onPress={() => {
-                  navigation.navigate('GuestPolicyScreen');
-                }}
-              >
-                <Styled.GuestMenuContainer>
-                  <Icon name="account-cog-outline" size={24} color={Colors.white} />
-                  <Styled.GuestPolicyText>Política de Convidados</Styled.GuestPolicyText>
-                  <Styled.GuestPolicyIcon
-                    icon="arrow-right"
-                    iconColor={Colors.white}
-                  />
-                </Styled.GuestMenuContainer>
-              </Pressable>
-              {pendingUsers.length > 0 && (
-                <Pressable
-                  onPress={() => {
-                    navigation.navigate('WaitingUsersScreen');
-                  }}
-                >
-                  <Styled.GuestMenuContainer>
-                    <Icon name="account-multiple-outline" size={24} color={Colors.white} />
-                    <Styled.GuestPolicyText>Participantes Aguardando</Styled.GuestPolicyText>
-                    <Styled.GuestPolicyIcon
-                      icon="arrow-right"
-                      iconColor={Colors.white}
-                    />
-                  </Styled.GuestMenuContainer>
-                </Pressable>
-              )}
-              <Styled.DividerTop />
-            </>
-          )}
+          {amIModerator && renderGuestPolicy()}
           <Styled.FlatList data={handleUsersName()} renderItem={renderItem} />
           {renderMenuView()}
         </Styled.Block>
