@@ -135,7 +135,7 @@ const refreshConnectionStatus = createAsyncThunk(
 const GUEST_WAIT_ENDPOINT = '/bigbluebutton/api/guestWait';
 const fetchGuestStatus = createAsyncThunk(
   'client/fetchGuestStatus',
-  async (_, thunkAPI) => {
+  async ({ logger }, thunkAPI) => {
     const { host, sessionToken } = thunkAPI.getState().client.meetingData;
 
     if (!host || !sessionToken) {
@@ -154,7 +154,7 @@ const fetchGuestStatus = createAsyncThunk(
 
     switch (guestStatus) {
       case 'ALLOW':
-        thunkAPI.dispatch(join(joinUrl));
+        thunkAPI.dispatch(join({ url: joinUrl, logger }));
         break;
       case 'WAIT':
         break;

@@ -1,9 +1,8 @@
 import * as Linking from 'expo-linking';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import {
-  ActivityIndicator, Alert, AppState, View
-} from 'react-native';
+import { Alert, AppState, View } from 'react-native';
+import { ActivityIndicator } from 'react-native-paper';
 import IconButtonComponent from '../../icon-button';
 import Colors from '../../../constants/colors';
 import VideoManager from '../../../services/webrtc/video-manager';
@@ -127,7 +126,7 @@ const VideoControls = (props) => {
       />
       <Styled.LoadingWrapper pointerEvents="none">
         <ActivityIndicator
-          size={buttonSize * 2}
+          size={buttonSize * 1.5}
           color={iconColor}
           animating={isConnecting}
           hidesWhenStopped

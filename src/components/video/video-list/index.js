@@ -8,6 +8,7 @@ const VideoList = (props) => {
     const { item: vuItem } = videoUser;
     const {
       cameraId,
+      userId,
       userAvatar,
       userColor,
       name,
@@ -18,6 +19,7 @@ const VideoList = (props) => {
     return (
       <Styled.VideoListItem
         cameraId={cameraId}
+        userId={userId}
         userAvatar={userAvatar}
         userColor={userColor}
         userName={name}

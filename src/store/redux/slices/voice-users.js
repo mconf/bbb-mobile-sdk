@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, createSelector } from '@reduxjs/toolkit';
 import AudioManager from '../../../services/webrtc/audio-manager';
 import { setLoggedIn } from './wide-app/client';
 import { addMeeting, selectMeeting, selectLockSettingsProp } from './meeting';
@@ -10,15 +10,18 @@ const voiceUsersSlice = createSlice({
   name: 'voiceUsers',
   initialState: {
     voiceUsersCollection: {},
+    userIdMatchDocumentId: {},
     ready: false,
   },
   reducers: {
     addVoiceUser: (state, action) => {
       const { voiceUserObject } = action.payload;
       state.voiceUsersCollection[voiceUserObject.id] = voiceUserObject.fields;
+      state.userIdMatchDocumentId[voiceUserObject.fields.intId] = voiceUserObject.id;
     },
     removeVoiceUser: (state, action) => {
       const { voiceUserObject } = action.payload;
+      delete state.userIdMatchDocumentId[selectUserIdByDocumentId(voiceUserObject.id)];
       delete state.voiceUsersCollection[voiceUserObject.id];
     },
     editVoiceUser: (state, action) => {
@@ -65,6 +68,20 @@ const voiceUsersSlice = createSlice({
 const selectVoiceUserByDocumentId = (state, documentId) => {
   return state.voiceUsersCollection.voiceUsersCollection[documentId];
 };
+
+const selectVoiceUserByUserId = (state, userId) => {
+  const documentId = state.voiceUsersCollection.userIdMatchDocumentId[userId];
+  return state.voiceUsersCollection.voiceUsersCollection[documentId];
+};
+
+const selectUserIdByDocumentId = (state, documentId) => {
+  return state.voiceUsersCollection.voiceUsersCollection[documentId].intId;
+};
+
+const isTalkingByUserId = createSelector(
+  (state, userId) => selectVoiceUserByUserId(state, userId),
+  (voiceUserObj) => voiceUserObj.talking
+);
 
 // Middleware effects and listeners
 const voiceStateChangePredicate = (action, currentState) => {
@@ -143,11 +160,13 @@ export const {
 
 export {
   selectVoiceUserByDocumentId,
+  selectVoiceUserByUserId,
   voiceStateChangeListener,
   voiceStateChangePredicate,
   joinAudioOnLoginListener,
   joinAudioOnLoginPredicate,
   joinAudio,
+  isTalkingByUserId,
 };
 
 export default voiceUsersSlice.reducer;
