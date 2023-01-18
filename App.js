@@ -5,9 +5,8 @@ import notifee, { EventType } from '@notifee/react-native';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 // providers and store
 import { useKeepAwake } from 'expo-keep-awake';
-import HeadphoneDetection from 'react-native-headphone-detection';
-import { Audio } from 'expo-av';
-import { LogBox } from 'react-native';
+import InCallManager from 'react-native-incall-manager';
+import { NativeEventEmitter } from 'react-native';
 import { store } from './src/store/redux/store';
 import * as api from './src/services/api';
 import DrawerNavigator from './src/components/custom-drawer/drawer-navigator';
@@ -30,10 +29,6 @@ import {
 import logger from './src/services/logger';
 import { toggleMuteMicrophone } from './src/components/audio/service';
 import Colors from './src/constants/colors';
-
-// FIXME ignore NativeEventEmitter warnings - they stem from outdated calls
-// in HeadphoneDetection. This needs to be figured out later - prlanzarin
-LogBox.ignoreLogs(['new NativeEventEmitter()']);
 
 //  Inject store in non-component files
 const injectStore = () => {
@@ -66,6 +61,7 @@ const AppContent = ({
   const ended = useSelector((state) => state.client.sessionState.ended);
   const [notification, setNotification] = useState(null);
   const navigationRef = useRef(null);
+  const nativeEventListeners = useRef([]);
   const onLeaveSession = () => {
     dispatch(setSessionTerminated(true));
     const hasCustomLeaveSession = typeof _onLeaveSession === 'function';
@@ -81,6 +77,7 @@ const AppContent = ({
 
   useEffect(() => {
     if (audioIsConnected) {
+      InCallManager.start({ media: 'video' });
       // Start/show the notification foreground service
       const getChannelIdAndDisplayNotification = async () => {
         // Request permissions (required for iOS)
@@ -142,6 +139,7 @@ const AppContent = ({
     } else {
       // stop notification service
       notifee.stopForegroundService();
+      InCallManager.stop({ media: 'video' });
     }
   }, [audioIsConnected]);
 
@@ -182,42 +180,24 @@ const AppContent = ({
   }, []);
 
   useEffect(() => {
+    const nativeEventEmitter = new NativeEventEmitter();
+
     injectStore();
     dispatch(ConnectionStatusTracker.registerConnectionStatusListeners());
-
-    const handleAudioDeviceChangeFailure = (error) => {
-      logger.error({
-        logCode: 'app_audio_device_change_failure',
-        extraInfo: {
-          errorMessage: error.message,
-          errorCode: error.code
-        },
-      }, `Failure handling audio device change: ${error.message || error.name}`);
-    };
-
-    const handleAudioDeviceChange = ({ audioJack, bluetooth }) => {
-      const hasExternalDevice = audioJack === true || bluetooth === true;
-
-      logger.debug({
-        logCode: 'app_audio_device_change_event',
-        extraInfo: {
-          audioJack,
-          bluetooth,
-        },
-      }, `Audio device change: audioJack=${audioJack} bluetooth=${bluetooth}`);
-
-      return Audio.setAudioModeAsync({
-        allowsRecordingIOS: hasExternalDevice,
-        playThroughEarpieceAndroid: hasExternalDevice,
-      }).catch(handleAudioDeviceChangeFailure);
-    };
-
-    // Define current connected device on mount
-    HeadphoneDetection.isAudioDeviceConnected()
-      .then(handleAudioDeviceChange)
-      .catch(handleAudioDeviceChangeFailure);
-    // Listen for subsequent device changes
-    HeadphoneDetection.addListener(handleAudioDeviceChange);
+    nativeEventListeners.current.push(
+      nativeEventEmitter.addListener('onAudioDeviceChanged', ({
+        availableAudioDeviceList,
+        selectedAudioDevice
+      }) => {
+        logger.info({
+          logCode: 'audio_devices_changed',
+          extraInfo: {
+            availableAudioDeviceList,
+            selectedAudioDevice,
+          },
+        }, `Audio devices changed: selected=${selectedAudioDevice} available=${availableAudioDeviceList}`);
+      })
+    );
 
     // Foreground event = device unlocked || app in view
     const unsubscribeForegroundEvents = notifee.onForegroundEvent(({ type, detail }) => {
@@ -234,8 +214,7 @@ const AppContent = ({
 
     return () => {
       dispatch(ConnectionStatusTracker.unregisterConnectionStatusListeners());
-
-      if (HeadphoneDetection.remove) HeadphoneDetection.remove();
+      nativeEventListeners.current.forEach((eventListener) => eventListener.remove());
 
       if (!ended) {
         dispatch(sessionStateChanged({
