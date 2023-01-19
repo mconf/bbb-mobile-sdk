@@ -23,6 +23,16 @@ const VideoControls = (props) => {
   const [appState, setAppState] = useState(AppState.currentState);
   const [publishOnActive, setPublishOnActive] = useState(false);
 
+  const fireDisabledCamAlert = () => {
+    // TODO localization, programmatically dismissable Dialog that is reusable
+    Alert.alert(
+      'Compartilhamento de webcam bloqueado',
+      'Você precisa da permissão de um moderador para realizar esta ação',
+      null,
+      { cancelable: true },
+    );
+  };
+
   useEffect(() => {
     const appStateListener = AppState.addEventListener(
       'change',
@@ -42,19 +52,12 @@ const VideoControls = (props) => {
       setPublishOnActive(isConnected);
       VideoManager.unpublish(localCameraId);
     } else if (appState === 'active' && publishOnActive) {
-      if (camDisabled) {
-        // TODO localization, programmatically dismissable Dialog that is
-        // reusable
-        Alert.alert(
-          'Compartilhamento de webcam bloqueado',
-          'Você precisa da permissão de um moderador para realizar esta ação',
-          null,
-          { cancelable: true },
-        );
-        return;
+      if (!camDisabled) {
+        publishCamera();
+        setPublishOnActive(false);
+      } else {
+        fireDisabledCamAlert();
       }
-      publishCamera();
-      setPublishOnActive(false);
     }
   }, [appState]);
 
@@ -105,22 +108,14 @@ const VideoControls = (props) => {
         containerColor={isActive ? Colors.blue : Colors.lightGray100}
         animated
         onPress={() => {
-          if (camDisabled) {
-            // TODO localization, programmatically dismissable Dialog that is
-            // reusable
-            Alert.alert(
-              'Compartilhamento de webcam bloqueado',
-              'Você precisa da permissão de um moderador para realizar esta ação',
-              null,
-              { cancelable: true },
-            );
-            return;
-          }
-
-          if (isActive) {
-            VideoManager.unpublish(localCameraId);
+          if (!camDisabled) {
+            if (isActive) {
+              VideoManager.unpublish(localCameraId);
+            } else {
+              publishCamera();
+            }
           } else {
-            publishCamera();
+            fireDisabledCamAlert();
           }
         }}
       />
