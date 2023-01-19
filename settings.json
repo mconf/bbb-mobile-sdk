@@ -1,5 +1,5 @@
 {
-  "dev": false,
+  "dev": true,
   "media": {
     "videoPageSize": 3
   },
@@ -20,6 +20,24 @@
       "throttleInterval": 400,
       "flushOnClose": false,
       "logTag": "bbb-app"
+    }
+  }, 
+  "feedback": {
+    "enabled": true,
+    "route": "/html5client/feedback",
+    "minimumScore": 0,
+    "maximumScore": 10,
+    "initialScore": 5,
+    "custom": {
+      // feedback.enabled must be true for this flag to take effect
+      "enabled": false,
+      "route": "/html5client/customFeedback",
+      "customerMetadata": {
+        "name": "mconf-institution-name",
+        "guid": "mconf-institution-guid"
+      },
+      // defines what goes in the feedback.device.type field
+      "appIdentifier": "native"
     }
   }
 }
