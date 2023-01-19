@@ -32,10 +32,15 @@ const CardPressable = styled(Pressable).attrs(() => ({
     background-color: ${Colors.white};
     min-height: 20px;
     border-radius: 12px;
-    padding: 12px;
+    border: 4px ${Colors.white} solid;
+    padding: 8px;
     flex-direction: row;
     align-items: center;
     margin-bottom: 12px;
+
+    ${({ isMe }) => isMe && `
+      border-color: ${Colors.orange};
+    `}
   `}
 `;
 
