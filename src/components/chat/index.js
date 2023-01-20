@@ -28,8 +28,7 @@ const Chat = (props) => {
 
   const messages = useChatMsgs();
 
-  // TODO review this after we get session chat
-  const messagesInverted = messages.reverse();
+  const messagesInvertedSliced = messages.reverse().slice(0, 5);
 
   const renderItem = (item) => (
     <Styled.ChatContainerPressable onPress={onPressItem}>
@@ -37,7 +36,7 @@ const Chat = (props) => {
     </Styled.ChatContainerPressable>
   );
 
-  return <Styled.FlatList data={messagesInverted} renderItem={renderItem} />;
+  return <Styled.FlatList data={messagesInvertedSliced} renderItem={renderItem} />;
 };
 
 export default Chat;
