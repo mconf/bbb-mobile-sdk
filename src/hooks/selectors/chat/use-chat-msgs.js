@@ -8,6 +8,10 @@ export function useChatMsgs() {
 
   const handleMessages = useCallback(
     () => Object.values(groupChatMsgStore.groupChatMsgCollection).map((message) => {
+      // replace html character entities || better way?
+      let filteredMsg = message?.message?.replace(/&quot;/g, '"');
+      filteredMsg = filteredMsg.replace(/&#39;/g, '"');
+
       // if is a poll result message
       if (message.id.toString().includes('PUBLIC_CHAT_POLL_RESULT')) {
         return {
@@ -45,7 +49,7 @@ export function useChatMsgs() {
       return {
         author: message.senderName,
         timestamp: message.timestamp,
-        message: message.message,
+        message: filteredMsg,
         role: message.senderRole,
         senderUserId: message.sender,
         // ...other properties
