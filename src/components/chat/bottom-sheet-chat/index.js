@@ -23,7 +23,7 @@ const BottomSheetChat = () => {
   const dispatch = useDispatch();
   const chatStore = useSelector((state) => state.chat);
 
-  const snapPoints = useMemo(() => ['25%', '95%'], []);
+  const snapPoints = useMemo(() => ['95%'], []);
 
   const handleSheetChanges = useCallback((index) => {
     if (index === -1) {
