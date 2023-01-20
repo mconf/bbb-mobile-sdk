@@ -16,6 +16,7 @@ import { useBottomSheetBackHandler } from '../../../hooks/useBottomSheetBackHand
 
 const BottomSheetChat = () => {
   const messages = useChatMsgs();
+  const reverseMessages = messages.reverse();
   const navigation = useNavigation();
 
   const sheetRef = useRef(null);
@@ -98,7 +99,7 @@ const BottomSheetChat = () => {
         enablePanDownToClose
       >
         {renderEmptyChatHandler()}
-        <BottomSheetFlatList data={messages} renderItem={renderItem} />
+        <BottomSheetFlatList data={reverseMessages} renderItem={renderItem} />
         <Styled.SendMessageContainer>
           <Styled.TextInput
             label="Escreva sua mensagem"
