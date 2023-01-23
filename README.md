@@ -1,4 +1,4 @@
-#  mconf-bbb-sdk
+#  bbb-mobile-sdk
 
 ## Code dependencies
 
@@ -10,21 +10,34 @@
     $ yarn -v
     v1.22.15
 
+    $ java -version 
+    openjdk version "11.0.16.1" 2022-08-12
+    OpenJDK Runtime Environment (build 11.0.16.1+1)
+    OpenJDK 64-Bit Server VM (build 11.0.16.1+1, mixed mode)
+
+### Extra
+
+    Clone the repo using SSH
+    --> https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key
+
+    Install Android Studio and setup a pixel 4 or a device with google play store
+    Install XCode (ios only) and ...
+  
+    Install node with Nvm
+    Install eas-cli globally (with npm or yarn) to build
+    then run eas login
+
+    Add the android sdk to your bash.rc/zsh.rc 
+    export ANDROID_SDK_ROOT='/home/{YOUR_USER}/Android/Sdk'
+    Change {YOUR_USER} to your pc user name
+    then Source your bash/zsh rc file
 
 ### To install the dependencies, run:
 
     $ yarn install
-
-## How to run
-
-    $ yarn start
-
-## About [expo](https://docs.expo.dev/)
-The fastest way to get up and running is to use the Expo Go app on your iOS or Android device. Expo Go allows you to open up apps that are being served through Expo CLI.
-
--   [Android Play Store](https://play.google.com/store/apps/details?id=host.exp.exponent)  - Android Lollipop (5) and greater.
--   [iOS App Store](https://apps.apple.com/app/expo-go/id982107779)  - iOS 11 and greater.
-
-When the Expo Go app is finished installing, open it up. If you created an account with  `expo-cli`  then you can sign in here on the "Profile" tab. This will make it easier for you to open projects in the client when you have them open in development  —  they will appear automatically in the "Projects" tab of the client app.
-
-> It's often useful to be able to run your app directly on your computer instead of on a separate physical device. If you would like to set this up, you can learn more about  [installing the iOS Simulator (macOS only)](https://docs.expo.dev/workflow/ios-simulator/)  and  [installing an Android Emulator](https://docs.expo.dev/workflow/android-studio-emulator/).
+    if it crashes with an error message with something like: ANDROID_SDK_ENVIRONMENT missing...
+      --> repeat the last 
+      or
+      --> add a file inside the /android folder
+        --> local.properties
+        --> and add --> sdk.dir=/home/{YOUR_USER}/Android/Sdk 
