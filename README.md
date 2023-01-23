@@ -41,3 +41,9 @@
       --> add a file inside the /android folder
         --> local.properties
         --> and add --> sdk.dir=/home/{YOUR_USER}/Android/Sdk 
+
+## How to run
+
+    $ expo run:android
+    $ expo run:ios
+
