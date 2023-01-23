@@ -35,7 +35,7 @@
         "foregroundImage": "./src/assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.maxfranke.bbbmobile"
+      "package": "com.bbb.bbbmobile"
     },
     "web": {
       "favicon": "./src/assets/favicon.png"

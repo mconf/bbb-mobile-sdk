@@ -1,4 +1,4 @@
-package com.maxfranke.bbbmobile;
+package com.bbb.bbbmobile;
 
 import android.os.Build;
 import android.os.Bundle;
