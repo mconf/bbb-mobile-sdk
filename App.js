@@ -6,7 +6,7 @@ import { Provider, useDispatch, useSelector } from 'react-redux';
 // providers and store
 import { useKeepAwake } from 'expo-keep-awake';
 import InCallManager from 'react-native-incall-manager';
-import { NativeEventEmitter } from 'react-native';
+import { DeviceEventEmitter } from 'react-native';
 import { store } from './src/store/redux/store';
 import * as api from './src/services/api';
 import DrawerNavigator from './src/components/custom-drawer/drawer-navigator';
@@ -180,12 +180,10 @@ const AppContent = ({
   }, []);
 
   useEffect(() => {
-    const nativeEventEmitter = new NativeEventEmitter();
-
     injectStore();
     dispatch(ConnectionStatusTracker.registerConnectionStatusListeners());
     nativeEventListeners.current.push(
-      nativeEventEmitter.addListener('onAudioDeviceChanged', ({
+      DeviceEventEmitter.addListener('onAudioDeviceChanged', ({
         availableAudioDeviceList,
         selectedAudioDevice
       }) => {
