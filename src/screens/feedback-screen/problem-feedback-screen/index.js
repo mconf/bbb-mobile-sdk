@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Platform } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useCallback, useState } from 'react';
+import { BackHandler, Platform } from 'react-native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import logger from '../../../services/logger';
 import Settings from '../../../../settings.json';
@@ -35,6 +35,19 @@ const ProblemFeedbackScreen = ({ route }) => {
   };
   const navigation = useNavigation();
   const [optionsStatus, changeStatus] = useState(initialState);
+
+  // disables android go back button
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        // do nothing
+        return true;
+      };
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, []),
+  );
 
   const flipOption = (optionCode) => {
     changeStatus((prevState) => {

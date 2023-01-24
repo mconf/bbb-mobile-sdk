@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from 'react';
-import { Image } from 'react-native';
-import { CommonActions, useNavigation } from '@react-navigation/native';
+import React, { useCallback, useEffect, useRef } from 'react';
+import { BackHandler, Image } from 'react-native';
+import { CommonActions, useFocusEffect, useNavigation } from '@react-navigation/native';
 import * as Linking from 'expo-linking';
 import useEndReason from '../../hooks/use-end-reason';
 import Styled from './styles';
@@ -44,6 +44,19 @@ const EndSessionScreen = (props) => {
       }
     };
   }, []);
+
+  // disables android go back button
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        // do nothing
+        return true;
+      };
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, []),
+  );
 
   const handleOpenUrl = async () => {
     await Linking.openURL('https://conferenciaweb.rnp.br/');

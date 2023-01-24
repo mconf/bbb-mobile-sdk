@@ -1,5 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import React, {
+  useCallback, useEffect, useRef, useState
+} from 'react';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { BackHandler } from 'react-native';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import logger from '../../services/logger';
@@ -37,6 +40,19 @@ const FeedbackScreen = () => {
     meetingData.current = currentMeetingData;
     user.current = currentUser;
   }, []);
+
+  // disables android go back button
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        // do nothing
+        return true;
+      };
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, []),
+  );
 
   const handleSendStarRating = () => {
     const { host, authToken } = meetingData.current;

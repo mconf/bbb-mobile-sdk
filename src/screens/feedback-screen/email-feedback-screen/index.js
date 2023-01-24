@@ -1,5 +1,6 @@
-import React from 'react';
-import { useNavigation } from '@react-navigation/native';
+import React, { useCallback } from 'react';
+import { BackHandler } from 'react-native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import logger from '../../../services/logger';
 import Settings from '../../../../settings.json';
@@ -16,6 +17,18 @@ const EmailFeedbackScreen = ({ route }) => {
     label: 'E-mail (opcional)', code: 'email', email: '',
   };
 
+  // disables android go back button
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        // do nothing
+        return true;
+      };
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, []),
+  );
   const setEmail = (text) => {
     optionalQuestion.email = text;
   };
