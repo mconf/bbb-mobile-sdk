@@ -1,4 +1,4 @@
-package com.bbb.bbbmobile.newarchitecture;
+package org.bigbluebutton.mobilesdk.newarchitecture;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
@@ -19,9 +19,9 @@ import com.facebook.react.fabric.CoreComponentsRegistry;
 import com.facebook.react.fabric.EmptyReactNativeConfig;
 import com.facebook.react.fabric.FabricJSIModuleProvider;
 import com.facebook.react.uimanager.ViewManagerRegistry;
-import com.bbb.bbbmobile.BuildConfig;
-import com.bbb.bbbmobile.newarchitecture.components.MainComponentsRegistry;
-import com.bbb.bbbmobile.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
+import org.bigbluebutton.mobilesdk.BuildConfig;
+import org.bigbluebutton.mobilesdk.newarchitecture.components.MainComponentsRegistry;
+import org.bigbluebutton.mobilesdk.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
 import java.util.ArrayList;
 import java.util.List;
 
