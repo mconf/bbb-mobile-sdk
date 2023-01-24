@@ -1,7 +1,8 @@
 {
-  "name": "bbbmobile",
+  "name": "mobilesdk",
   "version": "1.0.1",
   "private": true,
+  "license": "MIT",
   "description": "BigBlueButton mobile sdk",
   "main": "index.js",
   "repository": {
