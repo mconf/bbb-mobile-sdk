@@ -21,7 +21,8 @@ const voiceUsersSlice = createSlice({
     },
     removeVoiceUser: (state, action) => {
       const { voiceUserObject } = action.payload;
-      delete state.userIdMatchDocumentId[selectUserIdByDocumentId(voiceUserObject.id)];
+      const userId = selectUserIdByDocumentId(voiceUserObject.id);
+      if (userId) delete state.userIdMatchDocumentId[userId];
       delete state.voiceUsersCollection[voiceUserObject.id];
     },
     editVoiceUser: (state, action) => {
@@ -66,21 +67,23 @@ const voiceUsersSlice = createSlice({
 
 // Selectors
 const selectVoiceUserByDocumentId = (state, documentId) => {
+  if (state?.voiceUsersCollection?.voiceUsersCollection == null) return null;
   return state.voiceUsersCollection.voiceUsersCollection[documentId];
 };
 
 const selectVoiceUserByUserId = (state, userId) => {
+  if (state?.voiceUsersCollection?.voiceUsersCollection == null) return null;
   const documentId = state.voiceUsersCollection.userIdMatchDocumentId[userId];
   return state.voiceUsersCollection.voiceUsersCollection[documentId];
 };
 
 const selectUserIdByDocumentId = (state, documentId) => {
-  return state.voiceUsersCollection.voiceUsersCollection[documentId].intId;
+  return selectVoiceUserByDocumentId(state, documentId)?.intId;
 };
 
 const isTalkingByUserId = createSelector(
   (state, userId) => selectVoiceUserByUserId(state, userId),
-  (voiceUserObj) => voiceUserObj.talking
+  (voiceUserObj) => voiceUserObj?.talking
 );
 
 // Middleware effects and listeners
