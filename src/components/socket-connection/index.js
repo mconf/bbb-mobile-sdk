@@ -76,7 +76,7 @@ const TERMINATION_REASONS = [
 ];
 
 const sendMessage = (ws, msgObj) => {
-  const msg = stringifyDDP(msgObj).replace(/"/g, '\\"');
+  const msg = stringifyDDP(msgObj).replace(/\\|"/g, (match) => `\\${match}`);
 
   ws.send(`["${msg}"]`);
 };
