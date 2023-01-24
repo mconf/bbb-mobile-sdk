@@ -1,5 +1,5 @@
 {
-  "dev": true,
+  "dev": false,
   "media": {
     "videoPageSize": 3
   },
