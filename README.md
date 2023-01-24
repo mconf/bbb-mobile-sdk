@@ -47,3 +47,6 @@
     $ expo run:android
     $ expo run:ios
 
+## License
+
+bbb-mobile-sdk is released under the [MIT License](https://github.com/mconf/bbb-mobile-sdk/blob/dev/LICENSE.md).
