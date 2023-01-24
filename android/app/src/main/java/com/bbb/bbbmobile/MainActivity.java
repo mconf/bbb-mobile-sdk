@@ -1,4 +1,4 @@
-package com.bbb.bbbmobile;
+package org.bigbluebutton.mobilesdk;
 
 import android.os.Build;
 import android.os.Bundle;

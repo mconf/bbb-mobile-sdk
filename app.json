@@ -23,7 +23,7 @@
     "ios": {
       "supportsTablet": true,
       "usesIcloudStorage": true,
-      "bundleIdentifier": "com.bbb.bbbmobile"
+      "bundleIdentifier": "org.bigbluebutton.mobilesdk"
     },
     "plugins": [
       "@config-plugins/react-native-webrtc",
@@ -35,7 +35,7 @@
         "foregroundImage": "./src/assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.bbb.bbbmobile"
+      "package": "org.bigbluebutton.mobilesdk"
     },
     "web": {
       "favicon": "./src/assets/favicon.png"
