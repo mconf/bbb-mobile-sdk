@@ -22,6 +22,8 @@ import CustomDrawer from '../index';
 // configs
 import Settings from '../../../../settings.json';
 
+const FEEDBACK_ENABLED = Settings.feedback.enabled;
+
 const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
   const Drawer = createDrawerNavigator();
   const navigation = useNavigation();
@@ -73,7 +75,13 @@ const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
 
   // this effect controls the meeting ended
   useEffect(() => {
-    if (ended) navigation.navigate('EndSessionScreen');
+    if (ended) {
+      if (FEEDBACK_ENABLED) {
+        navigation.navigate('FeedbackScreen');
+      } else {
+        navigation.navigate('EndSessionScreen');
+      }
+    }
   }, [ended]);
 
   return (

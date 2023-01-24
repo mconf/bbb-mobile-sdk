@@ -12,6 +12,9 @@ import * as api from './src/services/api';
 import DrawerNavigator from './src/components/custom-drawer/drawer-navigator';
 import FullscreenWrapper from './src/components/fullscreen-wrapper';
 import EndSessionScreen from './src/screens/end-session-screen';
+import FeedbackScreen from './src/screens/feedback-screen';
+import ProblemFeedbackScreen from './src/screens/feedback-screen/problem-feedback-screen';
+import EmailFeedbackScreen from './src/screens/feedback-screen/email-feedback-screen';
 import AppStatusBar from './src/components/status-bar';
 import { injectStore as injectStoreVM } from './src/services/webrtc/video-manager';
 import { injectStore as injectStoreSM } from './src/services/webrtc/screenshare-manager';
@@ -251,6 +254,9 @@ const AppContent = ({
         <Stack.Screen name="EndSessionScreen">
           {() => <EndSessionScreen onLeaveSession={onLeaveSession} />}
         </Stack.Screen>
+        <Stack.Screen name="FeedbackScreen" component={FeedbackScreen} />
+        <Stack.Screen name="ProblemFeedbackScreen" component={ProblemFeedbackScreen} />
+        <Stack.Screen name="EmailFeedbackScreen" component={EmailFeedbackScreen} />
         <Stack.Screen name="FullscreenWrapper" component={FullscreenWrapper} />
       </Stack.Navigator>
     </NavigationContainer>
