@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "bbbmobile",
-    "slug": "bbbmobile",
+    "name": "mobilesdk",
+    "slug": "mobilesdk",
     "owner": "mconf",
     "scheme": "bigbluebutton",
     "version": "1.0.0",
