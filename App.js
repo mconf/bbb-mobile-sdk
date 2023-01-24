@@ -77,7 +77,6 @@ const AppContent = ({
 
   useEffect(() => {
     if (audioIsConnected) {
-      InCallManager.start({ media: 'video' });
       // Start/show the notification foreground service
       const getChannelIdAndDisplayNotification = async () => {
         // Request permissions (required for iOS)
@@ -139,7 +138,6 @@ const AppContent = ({
     } else {
       // stop notification service
       notifee.stopForegroundService();
-      InCallManager.stop({ media: 'video' });
     }
   }, [audioIsConnected]);
 
@@ -181,6 +179,7 @@ const AppContent = ({
 
   useEffect(() => {
     injectStore();
+    InCallManager.start({ media: 'video' });
     dispatch(ConnectionStatusTracker.registerConnectionStatusListeners());
     nativeEventListeners.current.push(
       DeviceEventEmitter.addListener('onAudioDeviceChanged', ({
@@ -226,6 +225,7 @@ const AppContent = ({
       });
       dispatch(setSessionTerminated(true));
       unsubscribeForegroundEvents();
+      InCallManager.stop({ media: 'video' });
     };
   }, []);
 
