@@ -1,10 +1,13 @@
 import { createSlice, createAsyncThunk, createSelector } from '@reduxjs/toolkit';
+import { Platform, PermissionsAndroid } from 'react-native';
 import AudioManager from '../../../services/webrtc/audio-manager';
 import { setLoggedIn } from './wide-app/client';
 import { addMeeting, selectMeeting, selectLockSettingsProp } from './meeting';
 import { addCurrentUser, selectCurrentUser, isLocked } from './current-user';
 import { setAudioError } from './wide-app/audio';
 import logger from '../../../services/logger';
+
+const ANDROID_SDK_MIN_BTCONNECT = 31;
 
 const voiceUsersSlice = createSlice({
   name: 'voiceUsers',
@@ -132,6 +135,25 @@ const joinAudio = createAsyncThunk(
     const state = thunkAPI.getState();
     const muteOnStart = selectMeeting(state)?.voiceProp?.muteOnStart;
     const micDisabled = selectLockSettingsProp(state, 'disableMic') && isLocked(state);
+
+    if (Platform.OS === 'android' && Platform.Version >= ANDROID_SDK_MIN_BTCONNECT) {
+      const checkStatus = await PermissionsAndroid.check(
+        PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT
+      );
+
+      if (checkStatus === false) {
+        const permissionStatus = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT
+        );
+        logger.info({
+          logCode: 'audio_bluetooth_permission',
+          extraInfo: {
+            checkStatus,
+            permissionStatus,
+          }
+        }, `Audio had to explicitly request BT permission, result=${permissionStatus}`);
+      }
+    }
 
     return AudioManager.joinMicrophone({
       muted: muteOnStart,
