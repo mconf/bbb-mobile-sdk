@@ -25,6 +25,7 @@ import {
   getRandomAlphanumericWithCaps,
   getRandomAlphanumeric,
   decodeMessage,
+  stringifyDDP,
 } from './utils';
 import 'react-native-url-polyfill/auto';
 import TextInput from '../text-input';
@@ -75,7 +76,7 @@ const TERMINATION_REASONS = [
 ];
 
 const sendMessage = (ws, msgObj) => {
-  const msg = JSON.stringify(msgObj).replace(/"/g, '\\"');
+  const msg = stringifyDDP(msgObj).replace(/"/g, '\\"');
 
   ws.send(`["${msg}"]`);
 };
