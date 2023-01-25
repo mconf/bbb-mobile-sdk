@@ -6,12 +6,15 @@ import { Provider, useDispatch, useSelector } from 'react-redux';
 // providers and store
 import { useKeepAwake } from 'expo-keep-awake';
 import InCallManager from 'react-native-incall-manager';
-import { NativeEventEmitter } from 'react-native';
+import { DeviceEventEmitter } from 'react-native';
 import { store } from './src/store/redux/store';
 import * as api from './src/services/api';
 import DrawerNavigator from './src/components/custom-drawer/drawer-navigator';
 import FullscreenWrapper from './src/components/fullscreen-wrapper';
 import EndSessionScreen from './src/screens/end-session-screen';
+import FeedbackScreen from './src/screens/feedback-screen';
+import ProblemFeedbackScreen from './src/screens/feedback-screen/problem-feedback-screen';
+import EmailFeedbackScreen from './src/screens/feedback-screen/email-feedback-screen';
 import AppStatusBar from './src/components/status-bar';
 import { injectStore as injectStoreVM } from './src/services/webrtc/video-manager';
 import { injectStore as injectStoreSM } from './src/services/webrtc/screenshare-manager';
@@ -77,7 +80,6 @@ const AppContent = ({
 
   useEffect(() => {
     if (audioIsConnected) {
-      InCallManager.start({ media: 'video' });
       // Start/show the notification foreground service
       const getChannelIdAndDisplayNotification = async () => {
         // Request permissions (required for iOS)
@@ -139,7 +141,6 @@ const AppContent = ({
     } else {
       // stop notification service
       notifee.stopForegroundService();
-      InCallManager.stop({ media: 'video' });
     }
   }, [audioIsConnected]);
 
@@ -180,12 +181,11 @@ const AppContent = ({
   }, []);
 
   useEffect(() => {
-    const nativeEventEmitter = new NativeEventEmitter();
-
     injectStore();
+    InCallManager.start({ media: 'video' });
     dispatch(ConnectionStatusTracker.registerConnectionStatusListeners());
     nativeEventListeners.current.push(
-      nativeEventEmitter.addListener('onAudioDeviceChanged', ({
+      DeviceEventEmitter.addListener('onAudioDeviceChanged', ({
         availableAudioDeviceList,
         selectedAudioDevice
       }) => {
@@ -228,6 +228,7 @@ const AppContent = ({
       });
       dispatch(setSessionTerminated(true));
       unsubscribeForegroundEvents();
+      InCallManager.stop({ media: 'video' });
     };
   }, []);
 
@@ -253,6 +254,9 @@ const AppContent = ({
         <Stack.Screen name="EndSessionScreen">
           {() => <EndSessionScreen onLeaveSession={onLeaveSession} />}
         </Stack.Screen>
+        <Stack.Screen name="FeedbackScreen" component={FeedbackScreen} />
+        <Stack.Screen name="ProblemFeedbackScreen" component={ProblemFeedbackScreen} />
+        <Stack.Screen name="EmailFeedbackScreen" component={EmailFeedbackScreen} />
         <Stack.Screen name="FullscreenWrapper" component={FullscreenWrapper} />
       </Stack.Navigator>
     </NavigationContainer>

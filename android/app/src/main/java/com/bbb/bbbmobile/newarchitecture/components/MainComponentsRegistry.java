@@ -1,4 +1,4 @@
-package com.maxfranke.bbbmobile.newarchitecture.components;
+package com.bbb.bbbmobile.newarchitecture.components;
 
 import com.facebook.jni.HybridData;
 import com.facebook.proguard.annotations.DoNotStrip;

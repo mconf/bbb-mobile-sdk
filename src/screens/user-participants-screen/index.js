@@ -7,7 +7,7 @@ import { Menu, Provider } from 'react-native-paper';
 import { useOrientation } from '../../hooks/use-orientation';
 import withPortal from '../../components/high-order/with-portal';
 import { selectWaitingUsers } from '../../store/redux/slices/guest-users';
-import { isModerator } from '../../store/redux/slices/current-user';
+import { isModerator, selectCurrentUserId } from '../../store/redux/slices/current-user';
 import UserParticipantsService from './service';
 import Colors from '../../constants/colors';
 import Styled from './styles';
@@ -18,6 +18,7 @@ const UserParticipantsScreen = () => {
   const [selectedUser, setSelectedUser] = useState({});
   const [menuAnchor, setMenuAnchor] = useState({ x: 0, y: 0 });
   const amIModerator = useSelector(isModerator);
+  const myUserId = useSelector(selectCurrentUserId);
   const pendingUsers = useSelector(selectWaitingUsers);
 
   const navigation = useNavigation();
@@ -37,12 +38,17 @@ const UserParticipantsScreen = () => {
 
   const orientation = useOrientation();
 
-  const onIconPress = (event, item) => {
+  const onIconPress = (event, item, isMe) => {
     const { nativeEvent } = event;
     const anchor = {
       x: nativeEvent.pageX,
       y: nativeEvent.pageY - 150,
     };
+
+    // disable dropdown if the user selected === isMe
+    if (isMe) {
+      return;
+    }
 
     setSelectedUser(item);
     setMenuAnchor(anchor);
@@ -50,8 +56,10 @@ const UserParticipantsScreen = () => {
   };
 
   const renderItem = ({ item }) => {
+    const isMe = myUserId === item.userId;
+
     return (
-      <Styled.CardPressable onPress={(e) => onIconPress(e, item)}>
+      <Styled.CardPressable onPress={(e) => onIconPress(e, item, isMe)} isMe={isMe}>
         <Styled.UserAvatar
           userName={item.name}
           userRole={item.role}
@@ -121,9 +129,6 @@ const UserParticipantsScreen = () => {
     );
   };
 
-  // The user-list-item Menu is disabled on production environments because
-  // its only feature is experimental - move the Settings.dev check down to
-  // menu items if more stable actions are added later
   return (
     <Provider>
       <Styled.ContainerView orientation={orientation}>

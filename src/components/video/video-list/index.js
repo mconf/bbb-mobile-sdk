@@ -1,8 +1,11 @@
 import { FlatList } from 'react-native';
+import { useSelector } from 'react-redux';
 import Styled from './styles';
+import { selectSortedVideoUsers } from '../../../store/redux/slices/video-streams';
 
 const VideoList = (props) => {
-  const { videoUsers, style, orientation } = props;
+  const { style, orientation } = props;
+  const videoUsers = useSelector(selectSortedVideoUsers);
 
   const renderVideoListItem = (videoUser) => {
     const { item: vuItem } = videoUser;

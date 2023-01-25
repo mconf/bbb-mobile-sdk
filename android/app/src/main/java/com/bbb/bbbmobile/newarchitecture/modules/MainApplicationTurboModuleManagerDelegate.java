@@ -1,4 +1,4 @@
-package com.maxfranke.bbbmobile.newarchitecture.modules;
+package com.bbb.bbbmobile.newarchitecture.modules;
 
 import com.facebook.jni.HybridData;
 import com.facebook.react.ReactPackage;

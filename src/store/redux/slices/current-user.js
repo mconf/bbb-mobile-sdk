@@ -53,6 +53,8 @@ const selectCurrentUser = (state) => Object.values(
 
 const selectCurrentUserRole = (state) => selectCurrentUser(state)?.role;
 
+const selectCurrentUserId = (state) => selectCurrentUser(state)?.intId;
+
 const isModerator = createSelector(
   [selectCurrentUser],
   (currentUser) => currentUser?.role === 'MODERATOR'
@@ -117,6 +119,7 @@ export const {
 export {
   selectCurrentUser,
   selectCurrentUserRole,
+  selectCurrentUserId,
   isModerator,
   isLocked,
   logoutOrEjectionPredicate,

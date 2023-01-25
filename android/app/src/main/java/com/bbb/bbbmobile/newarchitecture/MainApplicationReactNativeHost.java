@@ -1,4 +1,4 @@
-package com.maxfranke.bbbmobile.newarchitecture;
+package com.bbb.bbbmobile.newarchitecture;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
@@ -19,9 +19,9 @@ import com.facebook.react.fabric.CoreComponentsRegistry;
 import com.facebook.react.fabric.EmptyReactNativeConfig;
 import com.facebook.react.fabric.FabricJSIModuleProvider;
 import com.facebook.react.uimanager.ViewManagerRegistry;
-import com.maxfranke.bbbmobile.BuildConfig;
-import com.maxfranke.bbbmobile.newarchitecture.components.MainComponentsRegistry;
-import com.maxfranke.bbbmobile.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
+import com.bbb.bbbmobile.BuildConfig;
+import com.bbb.bbbmobile.newarchitecture.components.MainComponentsRegistry;
+import com.bbb.bbbmobile.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
 import java.util.ArrayList;
 import java.util.List;
 
