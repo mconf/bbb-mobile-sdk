@@ -1,4 +1,5 @@
 import EJSON from 'ejson';
+import logger from '../../services/logger';
 
 // FIXME review random generators - definitely not ideal prlanzarin Jan 24 2023
 const DIGITS = '1234567890';
@@ -21,18 +22,6 @@ const getRandomDigits = (n) => randomFromString(DIGITS, n);
 const getRandomAlphanumeric = (n) => randomFromString(ALPHANUMERIC, n);
 const getRandomAlphanumericWithCaps = (n) => randomFromString(ALPHANUMERIC_WITH_CAPS, n);
 const getRandomHex = (n) => randomFromString(HEX, n);
-const decodeMessage = (msg) => {
-  let msgObj = {};
-
-  try {
-    msgObj = JSON.parse(msg);
-    msgObj = JSON.parse(msgObj[0]);
-  } catch {
-    msgObj = {};
-  }
-
-  return msgObj;
-};
 
 // Ported from Meteor
 const _isEmpty = (obj) => {
@@ -45,12 +34,67 @@ const _isEmpty = (obj) => {
   }
 
   for (const key in obj) {
-    if (hasOwn.call(obj, key)) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
       return false;
     }
   }
 
   return true;
+};
+
+// Ported from Meteor
+const parseDDP = (stringMessage) => {
+  let msg;
+
+  try {
+    msg = JSON.parse(stringMessage);
+    // Our (BBB) code -> string data comes as streams (arrays), SockJS - unwrap it
+    msg = JSON.parse(msg[0]);
+  } catch (error) {
+    logger.debug({
+      logCode: 'meteor_parse_invalid_json',
+      extraInfo: {
+        errorMessage: error.message,
+        errorCode: error.code,
+        stringMessage,
+      },
+    }, `Discarding message with invalid JSON=${stringMessage}`);
+
+    return null;
+  }
+
+  // DDP messages must be objects.
+  if (msg === null || typeof msg !== 'object') {
+    logger.debug({
+      logCode: 'meteor_parse_not_an_object',
+      extraInfo: {
+        stringMessage,
+      },
+    }, `Discarding non-object DDP message=${stringMessage}`);
+
+    return null;
+  }
+
+  // massage msg to get it into "abstract ddp" rather than "wire ddp" format.
+  // switch between "cleared" rep of unsetting fields and "undefined"
+  // rep of same
+  if (Object.prototype.hasOwnProperty.call(msg, 'cleared')) {
+    if (!Object.prototype.hasOwnProperty.call(msg, 'fields')) {
+      msg.fields = {};
+    }
+    msg.cleared.forEach((clearKey) => {
+      msg.fields[clearKey] = undefined;
+    });
+    delete msg.cleared;
+  }
+
+  ['fields', 'params', 'result'].forEach((field) => {
+    if (Object.prototype.hasOwnProperty.call(msg, field)) {
+      msg[field] = EJSON._adjustTypesFromJSONValue(msg[field]);
+    }
+  });
+
+  return msg;
 };
 
 // Ported from Meteor
@@ -95,6 +139,6 @@ export {
   getRandomAlphanumeric,
   getRandomAlphanumericWithCaps,
   getRandomHex,
-  decodeMessage,
   stringifyDDP,
+  parseDDP,
 };

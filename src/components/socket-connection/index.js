@@ -24,7 +24,7 @@ import {
   getRandomDigits,
   getRandomAlphanumericWithCaps,
   getRandomAlphanumeric,
-  decodeMessage,
+  parseDDP,
   stringifyDDP,
 } from './utils';
 import 'react-native-url-polyfill/auto';
@@ -359,12 +359,11 @@ const SocketConnectionComponent = (props) => {
     if (msg === 'o') {
       sendConnectMsg(ws);
     } else {
-      if (msg.startsWith('a')) {
-        msg = msg.substring(1, msg.length);
-      }
-      const msgObj = decodeMessage(msg);
+      if (msg.startsWith('a')) msg = msg.substring(1, msg.length);
 
-      if (Object.keys(msgObj).length) {
+      const msgObj = parseDDP(msg);
+
+      if (msgObj && Object.keys(msgObj).length) {
         processMessage(ws, msgObj, meetingData, modules.current);
       }
     }
