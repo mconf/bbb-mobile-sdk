@@ -38,6 +38,7 @@
     "@reduxjs/toolkit": "^1.8.3",
     "axios": "^0.27.2",
     "browser-bunyan": "^1.8.0",
+    "ejson": "^2.2.3",
     "eventemitter2": "^6.4.7",
     "expo": "~45.0.0",
     "expo-application": "~4.1.0",
