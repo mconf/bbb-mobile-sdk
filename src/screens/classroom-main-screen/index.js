@@ -6,11 +6,9 @@ import { setBottomChatOpen } from '../../store/redux/slices/wide-app/chat';
 import { useOrientation } from '../../hooks/use-orientation';
 import Colors from '../../constants/colors';
 import Styled from './styles';
-import { selectSortedVideoUsers } from '../../store/redux/slices/video-streams';
 
 const ClassroomMainScreen = () => {
   // variables
-  const videoUsers = useSelector(selectSortedVideoUsers);
   const loggingIn = useSelector((state) => state.client.sessionState.loggingIn);
   const orientation = useOrientation();
   const [switchLandscapeLayout, setSwitchLandscapeLayout] = useState(false);
@@ -27,7 +25,9 @@ const ClassroomMainScreen = () => {
       <SafeAreaView>
         <Styled.ContainerView>
           <Styled.VideoListContainer>
-            <Styled.VideoList videoUsers={videoUsers} />
+            <Styled.VideoList
+              orientation={orientation}
+            />
           </Styled.VideoListContainer>
 
           <Styled.ContentAreaContainer>
@@ -60,7 +60,6 @@ const ClassroomMainScreen = () => {
               {!switchLandscapeLayout && (
                 <Styled.VideoListContainer orientation={orientation}>
                   <Styled.VideoList
-                    videoUsers={videoUsers}
                     orientation={orientation}
                   />
                 </Styled.VideoListContainer>
