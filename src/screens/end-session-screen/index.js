@@ -34,7 +34,7 @@ const EndSessionScreen = (props) => {
       // onLeaveSession returns a boolean that indicates whether there's a custom
       // leave session provided by and embedded application or not. If there isn't,
       // trigger the back handler - else do nothing.
-      if (!onLeaveSession()) navigation.dispatch(CommonActions.goBack());
+      if (!onLeaveSession()) navigation.navigate('DrawerNavigator');
     }, 10000);
 
     return () => {
@@ -44,19 +44,6 @@ const EndSessionScreen = (props) => {
       }
     };
   }, []);
-
-  // disables android go back button
-  useFocusEffect(
-    useCallback(() => {
-      const onBackPress = () => {
-        // do nothing
-        return true;
-      };
-      BackHandler.addEventListener('hardwareBackPress', onBackPress);
-
-      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-    }, []),
-  );
 
   const handleOpenUrl = async () => {
     await Linking.openURL('https://conferenciaweb.rnp.br/');
