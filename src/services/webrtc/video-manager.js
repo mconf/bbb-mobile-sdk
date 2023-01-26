@@ -8,10 +8,10 @@ import {
   setIsHangingUp,
   setSignalingTransportOpen,
   setLocalCameraId,
+  userRequestedHangup,
   addVideoStream,
   removeVideoStream,
 } from '../../store/redux/slices/wide-app/video';
-import { getRandomAlphanumeric } from '../../components/socket-connection/utils';
 
 const PING_INTERVAL_MS = 15000;
 
@@ -22,10 +22,18 @@ export const injectStore = (_store) => {
 };
 
 class VideoManager {
+  static getLocalCameraIdFromStore() {
+    const currentState = store.getState();
+    if (!currentState) return false;
+
+    return currentState.video?.localCameraId;
+  }
+
   constructor() {
     this.initialized = false;
     this.iceServers = null;
     this.ws = null;
+    this.publishSessionNumber = Date.now();
     this._wsQueue = [];
 
     // Map<cameraId, VideoBroker>
@@ -58,6 +66,15 @@ class VideoManager {
     return this._userId;
   }
 
+  bumpPublishSessionNumber() {
+    this.publishSessionNumber = Date.now();
+    return this.publishSessionNumber;
+  }
+
+  getCurrentPublishSessionNumber() {
+    return this.publishSessionNumber;
+  }
+
   storeBroker(cameraId, broker) {
     this.brokers.set(cameraId, broker);
   }
@@ -80,7 +97,7 @@ class VideoManager {
   deleteMediaStream(cameraId) {
     if (cameraId) {
       store.dispatch(removeVideoStream({ cameraId }));
-      return this.videoStreams.delete(cameraId)
+      return this.videoStreams.delete(cameraId);
     }
 
     return false;
@@ -375,9 +392,16 @@ class VideoManager {
     }
   }
 
-  onVideoPublishing(cameraId) {
+  onVideoPublishing() {
+    this.bumpPublishSessionNumber();
+    store.dispatch(userRequestedHangup(false));
     store.dispatch(setIsConnecting(true));
-    store.dispatch(setLocalCameraId(cameraId));
+  }
+
+  buildCameraId() {
+    if (!this.userId) return '';
+
+    return `${this.userId}_app_${this.getCurrentPublishSessionNumber()}`;
   }
 
   onVideoPublished(cameraId) {
@@ -390,25 +414,29 @@ class VideoManager {
   async publish() {
     if (!this.initialized) throw new TypeError('Video manager is not ready');
 
-    // TODO this is not ideal - redo assembly by using deviceId?
-    const cameraId = `${this.userId}_${getRandomAlphanumeric(10)}`;
+    let cameraId;
 
     try {
-      this.onVideoPublishing(cameraId);
+      this.onVideoPublishing();
       const inputStream = await this._mediaFactory();
+      cameraId = this.buildCameraId(inputStream);
+      store.dispatch(setLocalCameraId(cameraId));
       this.storeMediaStream(cameraId, inputStream);
       const broker = this._initializePublisherBroker({ cameraId, inputStream });
       await broker.joinVideo();
+
       return cameraId;
     } catch (error) {
       // Rollback and re-throw
-      this.unpublish(cameraId);
+      if (cameraId) this._unpublish(cameraId, { isUserAction: false });
       throw error;
     }
   }
 
-  unpublish(cameraId) {
+  _unpublish(cameraId, { isUserAction = false } = { }) {
     const broker = this.getBroker(cameraId);
+
+    store.dispatch(userRequestedHangup(isUserAction));
 
     if (broker) {
       store.dispatch(setIsHangingUp(true));
@@ -418,6 +446,10 @@ class VideoManager {
       store.dispatch(setIsConnected(false));
       this.onLocalVideoExit(cameraId);
     }
+  }
+
+  unpublish(cameraId) {
+    this._unpublish(cameraId, { isUserAction: true });
   }
 
   async subscribe(cameraId) {
@@ -450,11 +482,32 @@ class VideoManager {
   }
 
   stopVideo(cameraId) {
-    const broker = this.getBroker(cameraId);
-    if (broker) broker.stop();
+    // Remote camera
+    if (!cameraId.startsWith(this.userId)) {
+      this.unsubscribe(cameraId);
+      return Promise.resolve();
+    }
+
+    this._unpublish(cameraId);
+
+    return this._makeCall('userUnshareWebcam', cameraId).catch((error) => {
+      this.logger.error({
+        logCode: 'videomanager_userUnshareWebcam_failed',
+        extraInfo: {
+          cameraId,
+          errorName: error.name,
+          errorMessage: error.name
+        }
+      }, `makeCall(userUnshareWebcam) failed: ${error.message}`);
+    });
   }
 
   onLocalVideoExit(cameraId) {
+    // Reset local camera ID
+    if (VideoManager.getLocalCameraIdFromStore() === cameraId) {
+      store.dispatch(setLocalCameraId(null));
+    }
+
     store.dispatch(setIsConnected(false));
     store.dispatch(setIsConnecting(false));
     store.dispatch(setIsHangingUp(false));
