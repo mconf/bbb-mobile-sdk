@@ -61,7 +61,7 @@ const FeedbackScreen = () => {
       userId: currentUserId,
       userName: user.name,
       authToken,
-      meetingId: currentMeeting.meetingProp?.intId,
+      meetingId: currentMeeting?.meetingProp?.intId,
       comment: '',
       userRole: user.role,
     };
