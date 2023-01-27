@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import axios from 'axios';
 import logger from '../../services/logger';
 import { selectMeeting } from '../../store/redux/slices/meeting';
-import { selectCurrentUser, selectCurrentUserId } from '../../store/redux/slices/current-user';
+import { selectCurrentUser } from '../../store/redux/slices/current-user';
 import useEndReason from '../../hooks/use-end-reason';
 import Settings from '../../../settings.json';
 import Colors from '../../constants/colors';
@@ -29,7 +29,6 @@ const FeedbackScreen = () => {
   const currentMeetingData = useSelector((state) => state.client.meetingData);
   const currentMeeting = useSelector(selectMeeting);
   const currentUser = useSelector(selectCurrentUser);
-  const currentUserId = useSelector(selectCurrentUserId);
   const meetingData = useRef(null);
   const user = useRef(null);
 
@@ -56,14 +55,15 @@ const FeedbackScreen = () => {
 
   const handleSendStarRating = () => {
     const { host, authToken } = meetingData.current;
+    const { role, name, intId } = user.current;
     const payload = {
       rating,
-      userId: currentUserId,
-      userName: user.name,
+      userId: intId,
+      userName: name,
       authToken,
       meetingId: currentMeeting?.meetingProp?.intId,
       comment: '',
-      userRole: user.role,
+      userRole: role,
     };
     // sends partial feedback
     axios.post(`https://${host}${POST_ROUTE}`, payload).catch((e) => {
