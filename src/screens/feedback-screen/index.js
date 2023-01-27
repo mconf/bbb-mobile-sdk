@@ -99,10 +99,6 @@ const FeedbackScreen = () => {
         <Styled.Title>{title}</Styled.Title>
         <Styled.Subtitle>{subtitle}</Styled.Subtitle>
         <Styled.StarsRatingContainer>
-          <Styled.StarsRatingTextContainer>
-            <Styled.StarsRatingText>{SLIDER_MINIMUM_VALUE}</Styled.StarsRatingText>
-            <Styled.StarsRatingText>{SLIDER_MAXIMUM_VALUE}</Styled.StarsRatingText>
-          </Styled.StarsRatingTextContainer>
           <Styled.SliderContainer>
             <Styled.StarsRating
               minimumValue={SLIDER_MINIMUM_VALUE}
@@ -119,6 +115,10 @@ const FeedbackScreen = () => {
               onValueChange={(value) => setRating(value[0])}
             />
           </Styled.SliderContainer>
+          <Styled.StarsRatingTextContainer>
+            <Styled.StarsRatingText>{SLIDER_MINIMUM_VALUE}</Styled.StarsRatingText>
+            <Styled.StarsRatingText>{SLIDER_MAXIMUM_VALUE}</Styled.StarsRatingText>
+          </Styled.StarsRatingTextContainer>
         </Styled.StarsRatingContainer>
         <Styled.ButtonContainer>
           <Styled.ConfirmButton
