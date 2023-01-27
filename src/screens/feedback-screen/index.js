@@ -25,7 +25,7 @@ const FeedbackScreen = () => {
   const nextButton = 'Próximo';
   const quitButton = 'Sair da sessão';
   const navigation = useNavigation();
-  const [rating, setRating] = useState(SLIDER_INITIAL_VALUE);
+  const [rating, setRating] = useState(undefined);
   const currentMeetingData = useSelector((state) => state.client.meetingData);
   const currentMeeting = useSelector(selectMeeting);
   const currentUser = useSelector(selectCurrentUser);
@@ -53,7 +53,20 @@ const FeedbackScreen = () => {
     }, []),
   );
 
-  const handleSendStarRating = () => {
+  const handleNextButton = () => {
+    if (noRating()) return;
+    sendStarRating();
+  };
+
+  const nextScreen = (payload) => {
+    if (CUSTOM_FEEDBACK_ENABLED) {
+      navigation.navigate('ProblemFeedbackScreen', { payload, meetingData: meetingData.current });
+    } else {
+      navigation.navigate('EndSessionScreen');
+    }
+  };
+
+  const sendStarRating = () => {
     const { host, authToken } = meetingData.current;
     const { role, name, intId } = user.current;
     const payload = {
@@ -75,13 +88,10 @@ const FeedbackScreen = () => {
         },
       }, `Unable to send feedback: ${e.message}`);
     });
-
-    if (CUSTOM_FEEDBACK_ENABLED) {
-      navigation.navigate('ProblemFeedbackScreen', { payload, meetingData: meetingData.current });
-    } else {
-      navigation.navigate('EndSessionScreen');
-    }
+    nextScreen(payload);
   };
+
+  const noRating = () => rating === undefined;
 
   return (
     <Styled.ContainerView>
@@ -97,7 +107,7 @@ const FeedbackScreen = () => {
             <Styled.StarsRating
               minimumValue={SLIDER_MINIMUM_VALUE}
               maximumValue={SLIDER_MAXIMUM_VALUE}
-              value={rating}
+              value={rating || SLIDER_INITIAL_VALUE}
               step={1}
               animateTransitions
               thumbImage={require('../../assets/star.png')}
@@ -112,7 +122,8 @@ const FeedbackScreen = () => {
         </Styled.StarsRatingContainer>
         <Styled.ButtonContainer>
           <Styled.ConfirmButton
-            onPress={() => { handleSendStarRating(); }}
+            disabled={noRating()}
+            onPress={() => { handleNextButton(); }}
           >
             {nextButton}
           </Styled.ConfirmButton>
