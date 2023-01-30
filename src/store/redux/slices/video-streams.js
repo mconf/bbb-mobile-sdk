@@ -86,6 +86,14 @@ const selectVideoStreamByDocumentId = (state, documentId) => {
   return state.videoStreamsCollection.videoStreamsCollection[documentId];
 };
 
+const selectLocalVideoStreams = (state) => {
+  const currentUserId = state.client.meetingData?.internalUserID;
+
+  if (currentUserId == null) return [];
+
+  return selectVideoStreams(state).filter(({ userId }) => userId === currentUserId);
+};
+
 // Middleware effects and listeners
 const videoStreamCleanupListener = (action, listenerApi) => {
   const { videoStreamObject } = action.payload;
@@ -110,6 +118,7 @@ export const {
 export {
   selectSortedVideoUsers,
   selectVideoStreamByDocumentId,
+  selectLocalVideoStreams,
   videoStreamCleanupListener,
 };
 

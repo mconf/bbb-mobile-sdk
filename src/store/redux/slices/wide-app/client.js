@@ -326,11 +326,20 @@ const leave = createAsyncThunk(
   },
 );
 
+// Selectors
+
+const isClientReady = ({ client }) => {
+  return client.connectionStatus.isConnected
+    && client.sessionState.connected
+    && client.sessionState.loggedIn;
+};
+
 export {
   refreshConnectionStatus,
   fetchGuestStatus,
   join,
   leave,
+  isClientReady,
 };
 
 export const {
