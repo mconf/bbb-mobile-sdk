@@ -46,6 +46,11 @@ const ConfirmButton = styled(PrimaryButton)`
   font-weight: 400;
   padding: 12px;
   border-radius: 20px;
+
+  ${({ disabled }) => disabled
+  && `
+    background-color: ${Colors.lightGray300};
+  `}
 `;
 
 const Subtitle = styled.Text`
@@ -79,6 +84,7 @@ const StarsRatingTextContainer = styled.View`
   width: 100%;
   flex-direction: row;
   justify-content: space-between;
+  margin-bottom: 10%;
 `;
 
 const StarsRatingText = styled.Text`
@@ -97,7 +103,6 @@ const ThumbAboveContainer = styled.View`
 
 const SliderContainer = styled.View`
   width: 100%;
-  marginBottom: 10%;
 `;
 
 const ThumbStyle = {

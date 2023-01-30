@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import axios from 'axios';
 import logger from '../../services/logger';
 import { selectMeeting } from '../../store/redux/slices/meeting';
-import { selectCurrentUser, selectCurrentUserId } from '../../store/redux/slices/current-user';
+import { selectCurrentUser } from '../../store/redux/slices/current-user';
 import useEndReason from '../../hooks/use-end-reason';
 import Settings from '../../../settings.json';
 import Colors from '../../constants/colors';
@@ -25,11 +25,10 @@ const FeedbackScreen = () => {
   const nextButton = 'Próximo';
   const quitButton = 'Sair da sessão';
   const navigation = useNavigation();
-  const [rating, setRating] = useState(SLIDER_INITIAL_VALUE);
+  const [rating, setRating] = useState(undefined);
   const currentMeetingData = useSelector((state) => state.client.meetingData);
   const currentMeeting = useSelector(selectMeeting);
   const currentUser = useSelector(selectCurrentUser);
-  const currentUserId = useSelector(selectCurrentUserId);
   const meetingData = useRef(null);
   const user = useRef(null);
 
@@ -54,16 +53,30 @@ const FeedbackScreen = () => {
     }, []),
   );
 
-  const handleSendStarRating = () => {
+  const handleNextButton = () => {
+    if (noRating()) return;
+    sendStarRating();
+  };
+
+  const nextScreen = (payload) => {
+    if (CUSTOM_FEEDBACK_ENABLED) {
+      navigation.navigate('ProblemFeedbackScreen', { payload, meetingData: meetingData.current });
+    } else {
+      navigation.navigate('EndSessionScreen');
+    }
+  };
+
+  const sendStarRating = () => {
     const { host, authToken } = meetingData.current;
+    const { role, name, intId } = user.current;
     const payload = {
       rating,
-      userId: currentUserId,
-      userName: user.name,
+      userId: intId,
+      userName: name,
       authToken,
       meetingId: currentMeeting?.meetingProp?.intId,
       comment: '',
-      userRole: user.role,
+      userRole: role,
     };
     // sends partial feedback
     axios.post(`https://${host}${POST_ROUTE}`, payload).catch((e) => {
@@ -75,13 +88,10 @@ const FeedbackScreen = () => {
         },
       }, `Unable to send feedback: ${e.message}`);
     });
-
-    if (CUSTOM_FEEDBACK_ENABLED) {
-      navigation.navigate('ProblemFeedbackScreen', { payload, meetingData: meetingData.current });
-    } else {
-      navigation.navigate('EndSessionScreen');
-    }
+    nextScreen(payload);
   };
+
+  const noRating = () => rating === undefined;
 
   return (
     <Styled.ContainerView>
@@ -89,15 +99,11 @@ const FeedbackScreen = () => {
         <Styled.Title>{title}</Styled.Title>
         <Styled.Subtitle>{subtitle}</Styled.Subtitle>
         <Styled.StarsRatingContainer>
-          <Styled.StarsRatingTextContainer>
-            <Styled.StarsRatingText>{SLIDER_MINIMUM_VALUE}</Styled.StarsRatingText>
-            <Styled.StarsRatingText>{SLIDER_MAXIMUM_VALUE}</Styled.StarsRatingText>
-          </Styled.StarsRatingTextContainer>
           <Styled.SliderContainer>
             <Styled.StarsRating
               minimumValue={SLIDER_MINIMUM_VALUE}
               maximumValue={SLIDER_MAXIMUM_VALUE}
-              value={rating}
+              value={rating || SLIDER_INITIAL_VALUE}
               step={1}
               animateTransitions
               thumbImage={require('../../assets/star.png')}
@@ -109,10 +115,15 @@ const FeedbackScreen = () => {
               onValueChange={(value) => setRating(value[0])}
             />
           </Styled.SliderContainer>
+          <Styled.StarsRatingTextContainer>
+            <Styled.StarsRatingText>{SLIDER_MINIMUM_VALUE}</Styled.StarsRatingText>
+            <Styled.StarsRatingText>{SLIDER_MAXIMUM_VALUE}</Styled.StarsRatingText>
+          </Styled.StarsRatingTextContainer>
         </Styled.StarsRatingContainer>
         <Styled.ButtonContainer>
           <Styled.ConfirmButton
-            onPress={() => { handleSendStarRating(); }}
+            disabled={noRating()}
+            onPress={() => { handleNextButton(); }}
           >
             {nextButton}
           </Styled.ConfirmButton>
