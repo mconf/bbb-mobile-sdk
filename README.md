@@ -17,17 +17,15 @@
 
 ### Extra
 
-    Clone the repo using SSH
-    --> https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key
+    Clone the repo
 
     Install Android Studio and setup a pixel 4 or a device with google play store
     Install XCode (ios only) and ...
   
-    Install node with Nvm
+    Install node
     Install eas-cli globally (with npm or yarn) to build
-    then run eas login
 
-    Add the android sdk to your bash.rc/zsh.rc 
+    Add the android sdk to your bash.rc/zsh.rc
     export ANDROID_SDK_ROOT='/home/{YOUR_USER}/Android/Sdk'
     Change {YOUR_USER} to your pc user name
     then Source your bash/zsh rc file
@@ -36,11 +34,11 @@
 
     $ yarn install
     if it crashes with an error message with something like: ANDROID_SDK_ENVIRONMENT missing...
-      --> repeat the last 
+      --> repeat the last
       or
       --> add a file inside the /android folder
         --> local.properties
-        --> and add --> sdk.dir=/home/{YOUR_USER}/Android/Sdk 
+        --> and add --> sdk.dir=/home/{YOUR_USER}/Android/Sdk
 
 ## How to run
 
