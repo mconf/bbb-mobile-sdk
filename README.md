@@ -18,15 +18,14 @@
     Device info in android studio:
     Pixel 4, API 30, android 11
 
-### Extra
+### 
+    Run on android:
+        Install Android Studio and setup a device with google play store
+    Run on iOS:
+        Install XCode (ios only)
 
-    Clone the repo
-
-    Install Android Studio and setup a device with google play store
-    Install XCode (ios only)
-  
-    Install node
     Install eas-cli globally (with npm or yarn) to build
+        You can install with `npx expo`
 
 ### To install the dependencies, run:
 
@@ -34,13 +33,17 @@
 
 ## How to run
 
+    Android:
     $ expo run:android
     
     if it crashes with an error message with something like: ANDROID_SDK_ENVIRONMENT missing...
     $ export ANDROID_HOME=$HOME/Android/Sdk
     $ export PATH=$PATH:$ANDROID_HOME/tools
-          
 
+    if it results in a error with gradle:
+    $ cd android && ./gradlew clean
+          
+    iOS:
     $ expo run:ios
 
 ## License
