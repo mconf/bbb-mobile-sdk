@@ -10,17 +10,17 @@
     $ yarn -v
     v1.22.15
 
+    ## For Android only:
     $ java -version 
     openjdk version "11.0.16.1" 2022-08-12
     OpenJDK Runtime Environment (build 11.0.16.1+1)
     OpenJDK 64-Bit Server VM (build 11.0.16.1+1, mixed mode)
 
-    Device info in android studio:
-    Pixel 4, API 30, android 11
-
 ### 
     Run on android:
         Install Android Studio and setup a device with google play store
+        Device info in android studio:
+            Pixel 4, API 30, android 11
     Run on iOS:
         Install XCode (ios only)
 
