@@ -41,14 +41,14 @@ const ButtonLeaveContainer = styled(Pressable).attrs(() => ({
   },
 }))`
   ${() => css`
-    padding: 16px;
+    padding:  20px 10px;
   `}
 `;
 
 const ViewLeaveContainer = styled.View`
   flex-direction: row;
   align-items: center;
-  padding: 12px;
+  padding: 10px;
   background-color: ${Colors.lightGray100};
   border-radius: 8px;
 `;
