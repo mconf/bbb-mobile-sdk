@@ -100,7 +100,6 @@ const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
         },
         drawerItemStyle: {
           borderRadius: 8,
-          height: 48,
         },
         drawerLabelStyle: {
           textAlign: 'left',
