@@ -3,7 +3,7 @@ import {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
-import { Pressable } from 'react-native';
+import { Pressable, KeyboardAvoidingView, Platform } from 'react-native';
 import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import { setBottomChatOpen } from '../../../store/redux/slices/wide-app/chat';
 import UserAvatar from '../../user-avatar';
@@ -32,9 +32,7 @@ const BottomSheetChat = () => {
     }
   }, []);
 
-  useBottomSheetBackHandler(
-    chatStore.isBottomChatOpen, sheetRef, () => {}
-  );
+  useBottomSheetBackHandler(chatStore.isBottomChatOpen, sheetRef, () => {});
 
   const handleMessagePressed = (message) => {
     if (message.message === 'Uma enquete foi publicada, verifique a seção destinada a enquete para observar os resultados') {
@@ -99,24 +97,31 @@ const BottomSheetChat = () => {
         enablePanDownToClose
       >
         {renderEmptyChatHandler()}
+
         <BottomSheetFlatList data={reverseMessages} renderItem={renderItem} />
-        <Styled.SendMessageContainer>
-          <Styled.TextInput
-            label="Escreva sua mensagem"
-            onChangeText={(newText) => setMessageText(newText)}
-            value={messageText}
-          />
-          <IconButtonComponent
-            icon="send"
-            iconColor={Colors.white}
-            containerColor={Colors.blue}
-            animated
-            onPress={() => {
-              setMessageText('');
-              return ChatService.handleSendChatMsg(messageText);
-            }}
-          />
-        </Styled.SendMessageContainer>
+
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={135}
+        >
+          <Styled.SendMessageContainer>
+            <Styled.TextInput
+              label="Escreva sua mensagem"
+              onChangeText={(newText) => setMessageText(newText)}
+              value={messageText}
+            />
+            <IconButtonComponent
+              icon="send"
+              iconColor={Colors.white}
+              containerColor={Colors.blue}
+              animated
+              onPress={() => {
+                setMessageText('');
+                return ChatService.handleSendChatMsg(messageText);
+              }}
+            />
+          </Styled.SendMessageContainer>
+        </KeyboardAvoidingView>
       </BottomSheet>
     </Styled.Container>
   );
