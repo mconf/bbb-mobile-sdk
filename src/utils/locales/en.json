@@ -18,6 +18,12 @@
 
     "A poll has been posted, check the poll section for the results": "A poll has been posted, check the poll section for the results",
     "Chat is empty": "Chat is empty",
-    "Write your message": "Write your message"
+    "Write your message": "Write your message",
+
+    "Classroom": "Classroom",
+    "Shared notes": "Shared notes",
+    "Poll": "Poll",
+    "User list": "User list",
+    "Whiteboard": "Whiteboard"
   }
 }

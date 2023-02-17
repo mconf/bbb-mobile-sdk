@@ -18,6 +18,12 @@
 
     "A poll has been posted, check the poll section for the results": "Uma enquete foi publicada, verifique a seção destinada a enquete para observar os resultados",
     "Chat is empty": "O chat está vazio",
-    "Write your message": "Escreva sua mensagem"
+    "Write your message": "Escreva sua mensagem",
+
+    "Classroom": "Sala de aula",
+    "Shared notes": "Nota compartilhada",
+    "Poll": "Enquete",
+    "User list": "Lista de participantes",
+    "Whiteboard": "Quadro branco"
   }
 }

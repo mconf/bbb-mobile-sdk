@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 // screens
 import UserNotesScreen from '../../../screens/user-notes-screen';
 import PollNavigator from '../../../screens/poll-screen/navigator';
@@ -27,6 +28,7 @@ const FEEDBACK_ENABLED = Settings.feedback.enabled;
 const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
   const Drawer = createDrawerNavigator();
   const navigation = useNavigation();
+  const { t } = useTranslation();
   const ended = useSelector((state) => state.client.sessionState.ended);
   const joinUrl = useSelector((state) => state.client.meetingData.joinUrl);
   const guestUsersReady = useSelector((state) => state.guestUsersCollection.ready);
@@ -125,7 +127,7 @@ const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
         name="Main"
         component={ClassroomMainScreen}
         options={{
-          title: 'Sala de aula',
+          title: t('Classroom'),
           drawerIcon: (config) => (
             <Styled.DrawerIcon
               icon="home"
@@ -141,7 +143,7 @@ const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
           name="SharedNoteScreen"
           component={UserNotesScreen}
           options={{
-            title: 'Nota compartilhada',
+            title: t('Shared notes'),
             drawerIcon: (config) => (
               <Styled.DrawerIcon
                 icon="file-document"
@@ -157,7 +159,7 @@ const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
         name="PollScreen"
         component={PollNavigator}
         options={{
-          title: 'Enquete',
+          title: t('Poll'),
           drawerIcon: (config) => (
             <Styled.DrawerIcon
               icon="poll"
@@ -172,7 +174,7 @@ const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
         name="UserParticipantsScreen"
         component={UserParticipantsNavigator}
         options={{
-          title: 'Lista de participantes',
+          title: t('User list'),
           drawerIcon: (config) => (
             <>
               <Styled.DrawerIcon
@@ -197,7 +199,7 @@ const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
           name="WhiteboardScreen"
           component={WhiteboardScreen}
           options={{
-            title: 'Quadro Branco',
+            title: t('Whiteboard'),
             drawerIcon: (config) => (
               <Styled.DrawerIcon
                 icon="brush"
