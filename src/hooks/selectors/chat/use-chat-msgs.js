@@ -1,7 +1,9 @@
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 
 export function useChatMsgs() {
+  const { t } = useTranslation();
   const groupChatMsgStore = useSelector(
     (state) => state.groupChatMsgCollection
   );
@@ -15,28 +17,26 @@ export function useChatMsgs() {
       // if is a poll result message
       if (message.id.toString().includes('PUBLIC_CHAT_POLL_RESULT')) {
         return {
-          author: 'Sistema',
+          author: t('System'),
           timestamp: message.timestamp,
-          message:
-              'Uma enquete foi publicada, verifique a seção destinada a enquete para observar os resultados',
+          message: t('A poll has been posted, check the poll section for the results'),
         };
       }
       // if is a clear chat message
       if (message.id.toString().includes('PUBLIC_CHAT_CLEAR')) {
         return {
-          author: 'Sistema',
+          author: t('System'),
           timestamp: message.timestamp,
-          message:
-              'O histórico do bate-papo público foi apagado por um moderador',
+          message: t('Public chat has been cleared by a moderator'),
         };
       }
       // if is a status message
       if (message.id.toString().includes('SYSTEM_MESSAGE-PUBLIC_CHAT_STATUS')) {
         const handleMessage = () => {
           if (message.extra.status === 'away') {
-            return 'Está temporariamente ausente';
+            return t('Is temporarily away');
           }
-          return 'Está presente';
+          return t('Is present');
         };
 
         return {

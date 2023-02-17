@@ -31,6 +31,11 @@
     "Focus": "Focus",
 
     "Webcam sharing blocked": "Webcam sharing blocked",
-    "We need your permission so the webcam can be shared.": "We need your permission so the webcam can be shared."
+    "We need your permission so the webcam can be shared.": "We need your permission so the webcam can be shared.",
+
+    "System": "System",
+    "Public chat has been cleared by a moderator": "Public chat has been cleared by a moderator",
+    "Is temporarily away": "Is temporarily away",
+    "Is present": "Is present"
   }
 }

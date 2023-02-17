@@ -31,6 +31,11 @@
     "Focus": "Focar",
 
     "Webcam sharing blocked": "Compartilhamento de webcam bloqueado",
-    "We need your permission so the webcam can be shared.": "Precisamos de sua permissão para que sua câmera possa ser compartilhada."
+    "We need your permission so the webcam can be shared.": "Precisamos de sua permissão para que sua câmera possa ser compartilhada.",
+
+    "System": "Sistema",
+    "Public chat has been cleared by a moderator": "O chat público foi limpo por um moderador",
+    "Is temporarily away": "Está temporariamente ausente",
+    "Is present": "Está presente"
   }
 }
