@@ -7,6 +7,7 @@ import { Provider, useDispatch, useSelector } from 'react-redux';
 import { useKeepAwake } from 'expo-keep-awake';
 import InCallManager from 'react-native-incall-manager';
 import { DeviceEventEmitter } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { store } from './src/store/redux/store';
 import * as api from './src/services/api';
 import DrawerNavigator from './src/components/custom-drawer/drawer-navigator';
@@ -31,6 +32,7 @@ import {
 } from './src/store/redux/slices/wide-app/client';
 import logger from './src/services/logger';
 import { toggleMuteMicrophone } from './src/components/audio/service';
+import './src/utils/locales/i18n';
 import Colors from './src/constants/colors';
 
 //  Inject store in non-component files
@@ -65,6 +67,7 @@ const AppContent = ({
   const [notification, setNotification] = useState(null);
   const navigationRef = useRef(null);
   const nativeEventListeners = useRef([]);
+  const { t } = useTranslation();
   const onLeaveSession = () => {
     dispatch(setSessionTerminated(true));
     const hasCustomLeaveSession = typeof _onLeaveSession === 'function';
@@ -88,14 +91,14 @@ const AppContent = ({
         const channelId = await notifee.createChannel({
           id: 'inconference',
           // TODO localization
-          name: 'Em Conferência',
+          name: t('In conference'),
           vibration: false,
         });
 
         // TODO localization
         const _notification = {
-          title: 'Conferência em andamento',
-          body: 'Você está participando de uma conferência. Toque para abrir',
+          title: t('Conference in progress'),
+          body: t('You are attending a conference. Tap to open'),
           id: 'audio_foreground_notification',
           android: {
             channelId,
@@ -104,19 +107,19 @@ const AppContent = ({
             },
             actions: [
               {
-                title: 'Sair',
+                title: t('Leave'),
                 pressAction: {
                   id: 'leave',
                 },
               },
               audioIsMuted
                 ? {
-                  title: 'Falar',
+                  title: t('Unmute'),
                   pressAction: {
                     id: 'unmute',
                   },
                 } : {
-                  title: 'Silenciar',
+                  title: t('Mute'),
                   pressAction: {
                     id: 'mute',
                   },
@@ -148,12 +151,12 @@ const AppContent = ({
     if (notification) {
       if (audioIsMuted) {
         notification.android.actions[1].pressAction.id = 'unmute';
-        notification.android.actions[1].title = 'Falar';
+        notification.android.actions[1].title = t('Unmute');
         notifee.displayNotification(notification);
         setNotification(notification);
       } else {
         notification.android.actions[1].pressAction.id = 'mute';
-        notification.android.actions[1].title = 'Silenciar';
+        notification.android.actions[1].title = t('Mute');
         notifee.displayNotification(notification);
         setNotification(notification);
       }

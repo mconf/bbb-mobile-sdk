@@ -108,5 +108,6 @@ module.exports = {
     'no-underscore-dangle': 'off',
     'comma-dangle': 'off',
     'brace-style': 'off',
+    'import/no-extraneous-dependencies': 'off',
   },
 };
