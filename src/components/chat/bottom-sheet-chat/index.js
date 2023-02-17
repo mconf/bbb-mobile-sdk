@@ -2,6 +2,7 @@ import {
   useCallback, useRef, useMemo, useState
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 import { Pressable, KeyboardAvoidingView, Platform } from 'react-native';
 import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
@@ -18,6 +19,7 @@ const BottomSheetChat = () => {
   const messages = useChatMsgs();
   const reverseMessages = messages.reverse();
   const navigation = useNavigation();
+  const { t } = useTranslation();
 
   const sheetRef = useRef(null);
   const [messageText, setMessageText] = useState('');
@@ -35,7 +37,7 @@ const BottomSheetChat = () => {
   useBottomSheetBackHandler(chatStore.isBottomChatOpen, sheetRef, () => {});
 
   const handleMessagePressed = (message) => {
-    if (message.message === 'Uma enquete foi publicada, verifique a seção destinada a enquete para observar os resultados') {
+    if (message.message === t('A poll has been posted, check the poll section for the results')) {
       sheetRef.current?.close();
       navigation.navigate('PollScreen');
     }
@@ -81,7 +83,7 @@ const BottomSheetChat = () => {
     if (messages.length !== 0) {
       return null;
     }
-    return <Styled.NoMessageText>O chat está vazio</Styled.NoMessageText>;
+    return <Styled.NoMessageText>{t('Chat is empty')}</Styled.NoMessageText>;
   };
 
   if (!chatStore.isBottomChatOpen) {
@@ -106,7 +108,7 @@ const BottomSheetChat = () => {
         >
           <Styled.SendMessageContainer>
             <Styled.TextInput
-              label="Escreva sua mensagem"
+              label={t('Write your message')}
               onChangeText={(newText) => setMessageText(newText)}
               value={messageText}
             />

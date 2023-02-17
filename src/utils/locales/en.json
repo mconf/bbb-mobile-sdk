@@ -14,8 +14,10 @@
     "We need your permission so the microphone can be shared.": "We need your permission so the microphone can be shared.",
     "Microphone blocked": "Microphone blocked",
     "You joined as a listener due to the room's permissions policy.": "You joined as a listener due to the room's permissions policy.",
-    "You need permission from a moderator to perform this action." : "You need permission from a moderator to perform this action."
+    "You need permission from a moderator to perform this action." : "You need permission from a moderator to perform this action.",
 
-
+    "A poll has been posted, check the poll section for the results": "A poll has been posted, check the poll section for the results",
+    "Chat is empty": "Chat is empty",
+    "Write your message": "Write your message"
   }
 }
