@@ -5,7 +5,16 @@
     "You are attending a conference. Tap to open": "You are attending a conference. Tap to open",
     "Leave": "Leave",
     "Unmute": "Unmute",
-    "Mute": "Mute"
+    "Mute": "Mute",
+
+    "Cancel": "Cancel",
+    "Settings": "Settings",
+    "Try again": "Try again",
+    "Microphone permission denied": "Microphone permission denied",
+    "We need your permission so the microphone can be shared.": "We need your permission so the microphone can be shared.",
+    "Microphone blocked": "Microphone blocked",
+    "You joined as a listener due to the room's permissions policy.": "You joined as a listener due to the room's permissions policy.",
+    "You need permission from a moderator to perform this action." : "You need permission from a moderator to perform this action."
 
 
   }

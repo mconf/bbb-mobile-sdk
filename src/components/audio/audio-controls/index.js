@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Alert, View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
+import { useTranslation } from 'react-i18next';
 import Colors from '../../../constants/colors';
 import IconButtonComponent from '../../icon-button';
 import AudioManager from '../../../services/webrtc/audio-manager';
@@ -16,6 +17,7 @@ import Styled from './styles';
 const AudioControls = (props) => {
   const { isLandscape } = props;
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const isMuted = useSelector((state) => state.audio.isMuted);
   const isConnected = useSelector((state) => state.audio.isConnected);
   const isConnecting = useSelector(({ audio }) => audio.isConnecting || audio.isReconnecting);
@@ -36,22 +38,22 @@ const AudioControls = (props) => {
           // TODO localization, programmatically dismissable Dialog that is reusable
           const buttons = [
             {
-              text: 'Cancelar',
+              text: t('Cancel'),
               style: 'cancel'
             },
             {
-              text: 'Configurações',
+              text: t('Settings'),
               onPress: () => Linking.openSettings(),
             },
             {
-              text: 'Tentar novamente',
+              text: t('Try again'),
               onPress: () => joinMicrophone(),
             },
           ];
 
           Alert.alert(
-            'Permissão de microfone negada',
-            'Precisamos de sua permissão para que seu microfone possa ser compartilhado',
+            t('Microphone permission denied'),
+            t('We need your permission so the microphone can be shared'),
             buttons,
             { cancelable: true },
           );
@@ -61,8 +63,8 @@ const AudioControls = (props) => {
           if (AudioManager.isListenOnly) {
             // TODO localization, programmatically dismissable Dialog that is reusable
             Alert.alert(
-              'Microfone bloqueado',
-              'Você ingressou como ouvinte devido a política de permissões da sala.',
+              t('Microphone blocked'),
+              t('You joined as a listener due to the room\'s permissions policy.'),
               null,
               { cancelable: true },
             );
@@ -100,8 +102,8 @@ const AudioControls = (props) => {
             if (micDisabled) {
               // TODO localization, programmatically dismissable Dialog that is reusable
               Alert.alert(
-                'Microfone bloqueado',
-                'Você precisa da permissão de um moderador para realizar esta ação.',
+                t('Microphone blocked'),
+                t('You need permission from a moderator to perform this action.'),
                 null,
                 { cancelable: true },
               );

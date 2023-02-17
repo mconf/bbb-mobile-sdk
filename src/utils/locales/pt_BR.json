@@ -5,8 +5,15 @@
     "You are attending a conference. Tap to open": "Você está participando de uma conferência. Toque para abrir",
     "Leave": "Sair",
     "Unmute": "Falar",
-    "Mute": "Silenciar"
+    "Mute": "Silenciar",
 
-
+    "Cancel": "Cancelar",
+    "Settings": "Configurações",
+    "Try again": "Tentar novamente",
+    "Microphone permission denied": "Permissão de microfone negada",
+    "We need your permission so the microphone can be shared.": "Precisamos de sua permissão para que seu microfone possa ser compartilhado.",
+    "Microphone blocked": "Microfone bloqueado",
+    "You joined as a listener due to the room's permissions policy.": "Você ingressou como ouvinte devido a política de permissões da sala.",
+    "You need permission from a moderator to perform this action." : "Você precisa da permissão de um moderador para realizar esta ação."
   }
 }
