@@ -28,6 +28,9 @@
 
     "Leave session": "Leave session",
 
-    "Focus": "Focus"
+    "Focus": "Focus",
+
+    "Webcam sharing blocked": "Webcam sharing blocked",
+    "We need your permission so the webcam can be shared.": "We need your permission so the webcam can be shared."
   }
 }
