@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import {
   DrawerContentScrollView,
   DrawerItemList,
@@ -12,6 +13,7 @@ import { leave } from '../../store/redux/slices/wide-app/client';
 
 const CustomDrawer = (props) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const currentUserStore = useSelector((state) => state.currentUserCollection);
 
   // TODO Think a way to avoid this
@@ -58,7 +60,7 @@ const CustomDrawer = (props) => {
           <Styled.ViewLeaveContainer>
             <Icon name="logout" size={24} color="#1C1B1F" />
             <Styled.TextLeaveContainer>
-              Sair da sessão
+              {t('Leave session')}
             </Styled.TextLeaveContainer>
           </Styled.ViewLeaveContainer>
         </Styled.ButtonLeaveContainer>
