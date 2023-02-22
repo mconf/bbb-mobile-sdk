@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { BackHandler, Platform } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import logger from '../../../services/logger';
 import Settings from '../../../../settings.json';
@@ -12,15 +13,16 @@ const APP_IDENTIFIER = Settings.feedback.custom.appIdentifier;
 const CUSTOMER_METADATA = Settings.feedback.custom.customerMetadata;
 
 const ProblemFeedbackScreen = ({ route }) => {
-  const questionTitle = 'Se você teve algum problema, onde foi?';
-  const skipButton = 'Pular';
+  const { t } = useTranslation();
+  const questionTitle = t('Did you have any problems?');
+  const skipButton = t('Skip');
   const problems = [
-    { label: 'Áudio', code: 'audio' },
-    { label: 'Câmera', code: 'camera' },
-    { label: 'Conexão com a internet', code: 'connection' },
-    { label: 'Microfone', code: 'microphone' },
-    { label: 'Quadro Branco', code: 'whiteboard' },
-    { label: 'Outro:', code: 'other' },
+    { label: t('Audio'), code: 'audio' },
+    { label: t('Camera'), code: 'camera' },
+    { label: t('Internet connection'), code: 'connection' },
+    { label: t('Microphone'), code: 'microphone' },
+    // { label: t('Whiteboard'), code: 'whiteboard' },
+    { label: t('Other:'), code: 'other' },
   ];
   const problemDetalied = {
     text: '',
@@ -202,7 +204,7 @@ const ProblemFeedbackScreen = ({ route }) => {
             disabled={!isAnyOptionChecked()}
             onPress={handleSendProblem}
           >
-            Próximo
+            {t('Next')}
           </Styled.ConfirmButton>
         </Styled.ButtonContainer>
         <Styled.QuitSessionButtonContainer>

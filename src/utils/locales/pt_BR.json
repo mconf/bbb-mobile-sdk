@@ -45,6 +45,15 @@
     "Thanks for the answers!": "Obrigado pelas respostas!",
     "Would you like to leave your email for contact?": "Gostaria de deixar seu email para contato?",
     "End": "Finalizar",
-    "Email (optional)": "E-mail (opcional)"
+    "Email (optional)": "E-mail (opcional)",
+
+    "Did you have any problems?": "Se você teve algum problema, onde foi?",
+    "Skip": "Pular",
+    "Audio": "Áudio",
+    "Camera": "Câmera",
+    "Internet connection": "Conexão com a internet",
+    "Microphone": "Microfone",
+    "Other:": "Outro:",
+    "Next": "Próximo"
   }
 }

@@ -45,7 +45,16 @@
     "Thanks for the answers!": "Thanks for the answers!",
     "Would you like to leave your email for contact?": "Would you like to leave your email for contact?",
     "End": "End",
-    "Email (optional)": "Email (optional)"
+    "Email (optional)": "Email (optional)",
+
+    "Did you have any problems?": "Did you have any problems?",
+    "Skip": "Skip",
+    "Audio": "Audio",
+    "Camera": "Camera",
+    "Internet connection": "Internet connection",
+    "Microphone": "Microphone",
+    "Other:": "Other:",
+    "Next": "Next"
 
   }
 }
