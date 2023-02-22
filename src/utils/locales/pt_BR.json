@@ -71,6 +71,10 @@
     "Multiple choice": "Múltipla escolha",
     "One answer only": "Apenas uma resposta",
     "Your answer": "Sua resposta",
-    "Send answer": "Enviar resposta"
+    "Send answer": "Enviar resposta",
+
+    "Anonymous poll": "Enquete anônima",
+    "Poll in progress": "Enquete em progresso",
+    "Publish": "Publicar"
   }
 }

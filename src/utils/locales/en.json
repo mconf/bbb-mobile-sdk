@@ -71,6 +71,10 @@
     "Multiple choice": "Multiple choice",
     "One answer only": "One answer only",
     "Your answer": "Your answer",
-    "Send answer": "Send answer"
+    "Send answer": "Send answer",
+
+    "Anonymous poll": "Anonymous poll",
+    "Poll in progress": "Poll in progress",
+    "Publish": "Publish"
   }
 }
