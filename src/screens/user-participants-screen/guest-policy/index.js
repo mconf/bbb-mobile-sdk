@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { useOrientation } from '../../../hooks/use-orientation';
 import withPortal from '../../../components/high-order/with-portal';
 import Styled from './styles';
@@ -17,8 +18,8 @@ const guestPolicies = {
 const GuestPolicyScreen = ({ navigation }) => {
   const guestPolicy = useSelector((state) => selectUsersProp(state, 'guestPolicy'));
   const amIModerator = useSelector(isModerator);
-
   const orientation = useOrientation();
+  const { t } = useTranslation();
 
   // lifecycle methods
   useEffect(() => {
@@ -38,7 +39,7 @@ const GuestPolicyScreen = ({ navigation }) => {
             iconColor={Colors.white}
             onPress={() => { navigation.goBack(); }}
           />
-          <Styled.GuestPolicyTopText>Política de Convidados</Styled.GuestPolicyTopText>
+          <Styled.GuestPolicyTopText>{t('Guest policy')}</Styled.GuestPolicyTopText>
         </Styled.GuestPolicyTop>
         <Styled.DividerTop />
         <Styled.OptionsButtonsContainer>
@@ -49,7 +50,7 @@ const GuestPolicyScreen = ({ navigation }) => {
               Service.handleChangeGuestPolicy(guestPolicies.ASK_MODERATOR);
             }}
           >
-            Perguntar ao moderador
+            {t('Ask moderator')}
           </Styled.OptionsButton>
           <Styled.OptionsButton
             selected={guestPolicy === guestPolicies.ALWAYS_ACCEPT}
@@ -58,7 +59,7 @@ const GuestPolicyScreen = ({ navigation }) => {
               Service.handleChangeGuestPolicy(guestPolicies.ALWAYS_ACCEPT);
             }}
           >
-            Aceitar todos
+            {t('Allow everyone')}
           </Styled.OptionsButton>
           <Styled.OptionsButton
             selected={guestPolicy === guestPolicies.ALWAYS_DENY}
@@ -67,7 +68,7 @@ const GuestPolicyScreen = ({ navigation }) => {
               Service.handleChangeGuestPolicy(guestPolicies.ALWAYS_DENY);
             }}
           >
-            Rejeitar todos
+            {t('Deny everyone')}
           </Styled.OptionsButton>
         </Styled.OptionsButtonsContainer>
       </Styled.GuestPolicyView>

@@ -86,6 +86,11 @@
     "Start poll": "Iniciar enquete",
 
     "No polls have been published": "Nenhuma enquete foi publicada",
-    "When the presenter posts a poll, it will appear here": "Quando o apresentador publicar uma enquete, ela aparecerá aqui"
+    "When the presenter posts a poll, it will appear here": "Quando o apresentador publicar uma enquete, ela aparecerá aqui",
+
+    "Guest policy": "Política de convidados",
+    "Ask moderator": "Perguntar ao moderador",
+    "Allow everyone": "Permitir todos",
+    "Deny everyone": "Rejeitar todos"
   }
 }

@@ -86,6 +86,11 @@
     "Start poll": "Start poll",
 
     "No polls have been published": "No polls have been published",
-    "When the presenter posts a poll, it will appear here": "When the presenter posts a poll, it will appear here"
+    "When the presenter posts a poll, it will appear here": "When the presenter posts a poll, it will appear here",
+
+    "Guest policy": "Guest policy",
+    "Ask moderator": "Ask moderator",
+    "Allow everyone": "Allow everyone",
+    "Deny everyone": "Deny everyone"
   }
 }
