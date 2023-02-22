@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import Colors from '../../constants/colors';
 import Styled from './styles';
 import { fetchGuestStatus } from '../../store/redux/slices/wide-app/client';
@@ -9,15 +10,16 @@ const GUEST_POLL_INTERVAL = 10000;
 
 const GuestScreen = () => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const guestStatus = useSelector((state) => state.client.guestStatus);
   const guestPollInterval = useRef(null);
   const [lobbyMessage, setLobbyMessage] = useState(null);
   const [positionInWaitingQueue, setPositionInWaitingQueue] = useState(null);
   // TODO localization
-  const guestScreenTitle = 'Sala de espera dos convidados';
-  const guestScreenSubtitle = 'Aguarde até que um moderador aprove sua entrada';
-  const firstInQueueStr = 'Você é o primeiro da fila!';
-  const laterInQueueStr = 'Sua posição atual na fila de espera é:';
+  const guestScreenTitle = t('Guest waiting room');
+  const guestScreenSubtitle = t('Wait for a moderator to approve your entry');
+  const firstInQueueStr = t('You are the first in line!');
+  const laterInQueueStr = t('Your current position in the queue is:');
 
   const probeGuestStatus = async () => {
     try {

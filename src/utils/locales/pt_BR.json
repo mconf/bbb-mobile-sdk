@@ -56,6 +56,11 @@
     "Other:": "Outro:",
     "Next": "Próximo",
 
-    "We'd love to hear about your experience with the platform (optional).": "Adoraríamos saber como foi sua experiência com a plataforma (opcional)."
+    "We'd love to hear about your experience with the platform (optional).": "Adoraríamos saber como foi sua experiência com a plataforma (opcional).",
+
+    "Guest waiting room": "Sala de espera dos convidados",
+    "Wait for a moderator to approve your entry": "Aguarde até que um moderador aprove sua entrada",
+    "You are the first in line!": "Você é o primeiro da fila!",
+    "Your current position in the queue is:": "Sua posição atual na fila de espera é:"
   }
 }

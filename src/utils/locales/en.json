@@ -56,7 +56,11 @@
     "Other:": "Other:",
     "Next": "Next",
 
-    "We'd love to hear about your experience with the platform (optional).": "We'd love to hear about your experience with the platform (optional)."
+    "We'd love to hear about your experience with the platform (optional).": "We'd love to hear about your experience with the platform (optional).",
 
+    "Guest waiting room": "Guest waiting room",
+    "Wait for a moderator to approve your entry": "Wait for a moderator to approve your entry",
+    "You are the first in line!": "You are the first in line!",
+    "Your current position in the queue is:": "Your current position in the queue is:"
   }
 }
