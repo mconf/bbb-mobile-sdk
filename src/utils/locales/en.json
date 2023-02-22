@@ -97,6 +97,39 @@
     "No pending users...": "No pending users...",
 
     "Make moderator": "Make moderator",
-    "Make atendee": "Make atendee"
+    "Make atendee": "Make atendee",
+
+    "You have been disconnected": "You have been disconnected",
+    "Oops, something went wrong": "Oops, something went wrong",
+    "The conference ended": "The conference ended",
+    "Conflict": "Conflict",
+    "Authentication failure": "Authentication failure",
+    "Not found": "Not found",
+    "You have been removed from the conference": "You have been removed from the conference",
+    "Not authorized": "Not authorized",
+    "400 Bad request": "400 Bad request",
+    "Attendee has an invalid session token because they logged out": "Attendee has an invalid session token because they logged out",
+    "Attendee has an invalid session token because it was locked out": "Attendee has an invalid session token because it was locked out",
+    "Attendee has been blocked": "Attendee has been blocked",
+    "Attendee inactive for a long time": "Attendee inactive for a long time",
+    "The session has reached the maximum number of participants": "The session has reached the maximum number of participants",
+    "Duplicate user trying to join the conference": "Duplicate user trying to join the conference",
+    "Removed from the conference due to a permission violation": "Removed from the conference due to a permission violation",
+    "Please log in again": "Please log in again",
+    "No response from moderator": "No response from moderator",
+    "Session token not received": "Session token not received",
+    "Guest entry denied": "Guest entry denied",
+    "Guest without session token": "Guest without session token",
+    "Guest without session": "Guest without session",
+    "Non-existent meeting": "Non-existent meeting",
+    "Meeting ended": "Meeting ended",
+    "Guest waiting for a seat at the meeting": "Guest waiting for a seat at the meeting",
+    "Invalid guest": "Invalid guest",
+    "You cannot access a session that has already ended": "You cannot access a session that has already ended",
+
+    "You left the conference": "You left the conference",
+    "This session has ended": "This session has ended",
+    "Unexpected guest sign-in failure": "Unexpected guest sign-in failure",
+    "Unexpected end of session, try to sign in again": "Unexpected end of session, try to sign in again"
   }
 }
