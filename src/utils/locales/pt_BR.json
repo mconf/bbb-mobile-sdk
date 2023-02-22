@@ -94,6 +94,9 @@
     "Deny everyone": "Rejeitar todos",
 
     "Waiting attendees": "Participantes Aguardando",
-    "No pending users...": "Sem usuários aguardando..."
+    "No pending users...": "Sem usuários aguardando...",
+
+    "Make moderator": "Tornar moderador",
+    "Make atendee": "Tornar participante"
   }
 }

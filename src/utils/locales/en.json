@@ -94,6 +94,9 @@
     "Deny everyone": "Deny everyone",
 
     "Waiting attendees": "Waiting attendees",
-    "No pending users...": "No pending users..."
+    "No pending users...": "No pending users...",
+
+    "Make moderator": "Make moderator",
+    "Make atendee": "Make atendee"
   }
 }
