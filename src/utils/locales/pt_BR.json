@@ -64,6 +64,13 @@
     "Your current position in the queue is:": "Sua posição atual na fila de espera é:",
 
     "Presentations available": "Apresentações disponíveis",
-    "Add file": "Adicionar arquivo"
+    "Add file": "Adicionar arquivo",
+
+    "Anonymous poll - presenter cannot see your answer": "Enquete anônima - o apresentador não pode ver sua resposta",
+    "Normal poll - presenter can see your answer": "Enquete normal - o apresentador pode ver sua resposta",
+    "Multiple choice": "Múltipla escolha",
+    "One answer only": "Apenas uma resposta",
+    "Your answer": "Sua resposta",
+    "Send answer": "Enviar resposta"
   }
 }

@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import Styled from './styles';
 import PollService from '../service';
 
 const AnswerPollView = () => {
   // Answer poll states
   const [selectedAnswers, setSelectedAnswers] = useState([]);
+  const { t } = useTranslation();
   const pollsStore = useSelector((state) => state.pollsCollection);
   const activePollObject = Object.values(pollsStore.pollsCollection)[0];
 
@@ -31,16 +33,16 @@ const AnswerPollView = () => {
   const handleSecretPollLabel = () => (
     <Styled.SecretLabel>
       {activePollObject?.secretPoll
-        ? 'Enquete anônima - o apresentador não pode ver sua resposta'
-        : 'Enquete normal - o apresentador pode ver sua resposta'}
+        ? t('Anonymous poll - presenter cannot see your answer')
+        : t('Normal poll - presenter can see your answer')}
     </Styled.SecretLabel>
   );
 
   const handleIsMultipleResponseLabel = () => (
     <Styled.SecretLabel>
       {activePollObject?.isMultipleResponse
-        ? 'Multipla escolha'
-        : 'Apenas uma resposta'}
+        ? t('Multiple choice')
+        : t('One answer only')}
     </Styled.SecretLabel>
   );
 
@@ -49,7 +51,7 @@ const AnswerPollView = () => {
     if (activePollObject?.pollType === 'R-') {
       return (
         <Styled.TextInput
-          label="Sua resposta"
+          label={t('Your answer')}
           onChangeText={(text) => setSelectedAnswers(text)}
         />
       );
@@ -76,7 +78,7 @@ const AnswerPollView = () => {
       <Styled.ConfirmButton
         onPress={() => PollService.handleAnswerPoll(selectedAnswers)}
       >
-        Enviar resposta
+        {t('Send answer')}
       </Styled.ConfirmButton>
     </>
   );

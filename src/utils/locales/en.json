@@ -64,6 +64,13 @@
     "Your current position in the queue is:": "Your current position in the queue is:",
 
     "Presentations available": "Presentations available",
-    "Add file": "Add file"
+    "Add file": "Add file",
+
+    "Anonymous poll - presenter cannot see your answer": "Anonymous poll - presenter cannot see your answer",
+    "Normal poll - presenter can see your answer": "Normal poll - presenter can see your answer",
+    "Multiple choice": "Multiple choice",
+    "One answer only": "One answer only",
+    "Your answer": "Your answer",
+    "Send answer": "Send answer"
   }
 }
