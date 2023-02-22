@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useRef } from 'react';
-import { BackHandler, Image } from 'react-native';
-import { CommonActions, useFocusEffect, useNavigation } from '@react-navigation/native';
+import React, { useEffect, useRef } from 'react';
+import { Image } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import * as Linking from 'expo-linking';
 import useEndReason from '../../hooks/use-end-reason';
 import Styled from './styles';
