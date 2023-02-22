@@ -91,6 +91,9 @@
     "Guest policy": "Guest policy",
     "Ask moderator": "Ask moderator",
     "Allow everyone": "Allow everyone",
-    "Deny everyone": "Deny everyone"
+    "Deny everyone": "Deny everyone",
+
+    "Waiting attendees": "Waiting attendees",
+    "No pending users...": "No pending users..."
   }
 }

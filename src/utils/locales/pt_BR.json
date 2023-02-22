@@ -91,6 +91,9 @@
     "Guest policy": "Política de convidados",
     "Ask moderator": "Perguntar ao moderador",
     "Allow everyone": "Permitir todos",
-    "Deny everyone": "Rejeitar todos"
+    "Deny everyone": "Rejeitar todos",
+
+    "Waiting attendees": "Participantes Aguardando",
+    "No pending users...": "Sem usuários aguardando..."
   }
 }

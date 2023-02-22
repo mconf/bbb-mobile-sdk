@@ -1,5 +1,6 @@
 import { useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { useOrientation } from '../../../hooks/use-orientation';
 import withPortal from '../../../components/high-order/with-portal';
 import Styled from './styles';
@@ -14,6 +15,7 @@ const DENY_STATUS = 'DENY';
 const WaitingUsersScreen = ({ navigation }) => {
   const amIModerator = useSelector(isModerator);
   const pendingUsers = useSelector(selectWaitingUsers);
+  const { t } = useTranslation();
 
   const handleUsersName = useCallback(
     () => pendingUsers.map((user) => {
@@ -74,7 +76,7 @@ const WaitingUsersScreen = ({ navigation }) => {
             iconColor={Colors.white}
             onPress={() => { navigation.goBack(); }}
           />
-          <Styled.WaitingUsersTopText>Participantes Aguardando</Styled.WaitingUsersTopText>
+          <Styled.WaitingUsersTopText>{t('Waiting attendees')}</Styled.WaitingUsersTopText>
         </Styled.WaitingUsersTop>
         <Styled.DividerTop />
         <Styled.AccRejContainer>
@@ -86,7 +88,7 @@ const WaitingUsersScreen = ({ navigation }) => {
                 navigation.goBack();
               }}
             >
-              Aceitar Todos
+              {t('Allow everyone')}
             </Styled.AccRejButtonsText>
           </Styled.AccRejButtons>
           <Styled.AccRejButtons>
@@ -97,7 +99,7 @@ const WaitingUsersScreen = ({ navigation }) => {
                 navigation.goBack();
               }}
             >
-              Rejeitar Todos
+              {t('Deny everyone')}
             </Styled.AccRejButtonsText>
           </Styled.AccRejButtons>
         </Styled.AccRejContainer>
@@ -105,7 +107,7 @@ const WaitingUsersScreen = ({ navigation }) => {
           ? <Styled.FlatList data={handleUsersName()} renderItem={renderItem} />
           : (
             <Styled.NoPendingUsersText>
-              Sem usuários aguardando...
+              {t('No pending users...')}
             </Styled.NoPendingUsersText>
           )}
       </Styled.WaitingUsersView>
