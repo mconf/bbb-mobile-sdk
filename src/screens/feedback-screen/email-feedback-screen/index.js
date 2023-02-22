@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { BackHandler } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import logger from '../../../services/logger';
 import Settings from '../../../../settings.json';
@@ -10,11 +11,12 @@ const POST_ROUTE = Settings.feedback.custom.route;
 
 const EmailFeedbackScreen = ({ route }) => {
   const navigation = useNavigation();
-  const title = 'Obrigado pelas respostas!';
-  const subtitle = 'Gostaria de deixar seu email para contato?';
-  const concludeButton = 'Finalizar';
+  const { t } = useTranslation();
+  const title = t('Thanks for the answers!');
+  const subtitle = t('Would you like to leave your email for contact?');
+  const concludeButton = t('End');
   const optionalQuestion = {
-    label: 'E-mail (opcional)', code: 'email', email: '',
+    label: t('Email (optional)'), code: 'email', email: '',
   };
 
   // disables android go back button
