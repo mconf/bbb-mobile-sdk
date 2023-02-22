@@ -83,6 +83,9 @@
     "True / False": "Verdadeiro / Falso",
     "A / B / C / D": "A / B / C / D",
     "Yes / No / Abstention": "Sim / Não / Abstenção",
-    "Start poll": "Iniciar enquete"
+    "Start poll": "Iniciar enquete",
+
+    "No polls have been published": "Nenhuma enquete foi publicada",
+    "When the presenter posts a poll, it will appear here": "Quando o apresentador publicar uma enquete, ela aparecerá aqui"
   }
 }
