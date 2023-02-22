@@ -75,6 +75,14 @@
 
     "Anonymous poll": "Anonymous poll",
     "Poll in progress": "Poll in progress",
-    "Publish": "Publish"
+    "Publish": "Publish",
+
+    "Create poll": "Create poll",
+    "Write your question": "Write your question",
+    "Answer types": "Answer types",
+    "True / False": "True / False",
+    "A / B / C / D": "A / B / C / D",
+    "Yes / No / Abstention": "Yes / No / Abstention",
+    "Start poll": "Start poll"
   }
 }

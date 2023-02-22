@@ -3,6 +3,7 @@ import type { Node } from 'react';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import { Text } from 'react-native';
 import PollService from '../service';
 import Styled from './styles';
@@ -36,6 +37,7 @@ const CreatePoll = (): Node => {
     currentPollStore?.currentPollCollection
   )[0];
   const hasCurrentPoll = Object.keys(currentPollObj || {})?.length !== 0;
+  const { t } = useTranslation();
   const navigation = useNavigation();
 
   const handleCreatePoll = async () => {
@@ -54,14 +56,14 @@ const CreatePoll = (): Node => {
   if (!hasCurrentPoll) {
     return (
       <>
-        <Styled.Title>Criar uma enquete</Styled.Title>
+        <Styled.Title>{t('Create poll')}</Styled.Title>
         <Styled.TextInput
-          label="Escreva sua pergunta"
+          label={t('Write your question')}
           numberOfLines={3}
           multiline
           onChangeText={(text) => setQuestionTextInput(text)}
         />
-        <Styled.AnswerTitle>Tipos de Resposta</Styled.AnswerTitle>
+        <Styled.AnswerTitle>{t('Answer types')}</Styled.AnswerTitle>
         <Styled.ButtonsContainer>
           <Styled.OptionsButton
             selected={answerTypeSelected === 'TF'}
@@ -69,7 +71,7 @@ const CreatePoll = (): Node => {
               setAnswerTypeSelected('TF');
             }}
           >
-            Verdadeiro / Falso
+            {t('True / False')}
           </Styled.OptionsButton>
           <Styled.OptionsButton
             selected={answerTypeSelected === 'A-4'}
@@ -77,7 +79,7 @@ const CreatePoll = (): Node => {
               setAnswerTypeSelected('A-4');
             }}
           >
-            A / B / C / D
+            {t('A / B / C / D')}
           </Styled.OptionsButton>
           <Styled.OptionsButton
             selected={answerTypeSelected === 'YNA'}
@@ -85,7 +87,7 @@ const CreatePoll = (): Node => {
               setAnswerTypeSelected('YNA');
             }}
           >
-            Sim / Não / Abstenção
+            {t('Yes / No / Abstention')}
           </Styled.OptionsButton>
 
           {/* // leaving this to another PR */}
@@ -133,14 +135,14 @@ const CreatePoll = (): Node => {
         <Styled.ConfirmButton
           onPress={handleCreatePoll}
         >
-          Iniciar Enquete
+          {t('Start poll')}
         </Styled.ConfirmButton>
       </>
     );
   }
 
   if (hasCurrentPoll || currentUserObj?.presenter) {
-    return <Text>Enquete em andamento</Text>;
+    return <Text>{t('Poll in progress')}</Text>;
   }
 };
 

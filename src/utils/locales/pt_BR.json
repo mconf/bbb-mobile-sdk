@@ -75,6 +75,14 @@
 
     "Anonymous poll": "Enquete anônima",
     "Poll in progress": "Enquete em progresso",
-    "Publish": "Publicar"
+    "Publish": "Publicar",
+
+    "Create poll": "Criar enquete",
+    "Write your question": "Escreva sua pergunta",
+    "Answer types": "Tipos de resposta",
+    "True / False": "Verdadeiro / Falso",
+    "A / B / C / D": "A / B / C / D",
+    "Yes / No / Abstention": "Sim / Não / Abstenção",
+    "Start poll": "Iniciar enquete"
   }
 }
