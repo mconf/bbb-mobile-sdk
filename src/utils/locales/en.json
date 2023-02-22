@@ -61,6 +61,9 @@
     "Guest waiting room": "Guest waiting room",
     "Wait for a moderator to approve your entry": "Wait for a moderator to approve your entry",
     "You are the first in line!": "You are the first in line!",
-    "Your current position in the queue is:": "Your current position in the queue is:"
+    "Your current position in the queue is:": "Your current position in the queue is:",
+
+    "Presentations available": "Presentations available",
+    "Add file": "Add file"
   }
 }

@@ -61,6 +61,9 @@
     "Guest waiting room": "Sala de espera dos convidados",
     "Wait for a moderator to approve your entry": "Aguarde até que um moderador aprove sua entrada",
     "You are the first in line!": "Você é o primeiro da fila!",
-    "Your current position in the queue is:": "Sua posição atual na fila de espera é:"
+    "Your current position in the queue is:": "Sua posição atual na fila de espera é:",
+
+    "Presentations available": "Apresentações disponíveis",
+    "Add file": "Adicionar arquivo"
   }
 }
