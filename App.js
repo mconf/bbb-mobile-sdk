@@ -57,6 +57,7 @@ notifee.registerForegroundService((notification) => {
 const AppContent = ({
   onLeaveSession: _onLeaveSession,
   jUrl,
+  defaultLanguage,
 }) => {
   const Stack = createNativeStackNavigator();
   const dispatch = useDispatch();
@@ -67,7 +68,7 @@ const AppContent = ({
   const [notification, setNotification] = useState(null);
   const navigationRef = useRef(null);
   const nativeEventListeners = useRef([]);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const onLeaveSession = () => {
     dispatch(setSessionTerminated(true));
     const hasCustomLeaveSession = typeof _onLeaveSession === 'function';
@@ -80,6 +81,24 @@ const AppContent = ({
     // from end-session-screen)
     return hasCustomLeaveSession;
   };
+
+  useEffect(() => {
+    const changeLanguage = (lng: 'en') => {
+      i18n.changeLanguage(lng)
+        .then(() => {
+          logger.debug({
+            logCode: 'app_locale_change',
+          }, 'Change locale sucessfully');
+        })
+        .catch((err) => {
+          logger.debug({
+            logCode: 'app_locale_change',
+            extraInfo: err,
+          }, 'Change locale error');
+        });
+    };
+    changeLanguage(defaultLanguage);
+  }, []);
 
   useEffect(() => {
     if (audioIsConnected) {
