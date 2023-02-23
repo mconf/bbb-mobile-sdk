@@ -3,6 +3,7 @@
   "media": {
     "videoPageSize": 3
   },
+  "showLanguageScreen": true,
   "clientLog": {
     "server": {
       "enabled": false,

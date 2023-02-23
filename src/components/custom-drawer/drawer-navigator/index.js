@@ -11,6 +11,7 @@ import UserParticipantsNavigator from '../../../screens/user-participants-screen
 import WhiteboardScreen from '../../../screens/whiteboard-screen';
 import TestComponentsScreen from '../../../screens/test-components-screen';
 import ClassroomMainScreen from '../../../screens/classroom-main-screen';
+import SelectLanguageScreen from '../../../screens/select-language-screen';
 import Colors from '../../../constants/colors';
 import Styled from './styles';
 import usePrevious from '../../../hooks/use-previous';
@@ -209,6 +210,23 @@ const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
             ),
           }}
         />
+      )}
+
+      {Settings.showLanguageScreen && (
+      <Drawer.Screen
+        name="Language"
+        component={SelectLanguageScreen}
+        options={{
+          title: t('Language'),
+          drawerIcon: (config) => (
+            <Styled.DrawerIcon
+              icon="web"
+              size={24}
+              iconColor={config.color}
+            />
+          ),
+        }}
+      />
       )}
 
       {/* Put the join url by hand screen */}

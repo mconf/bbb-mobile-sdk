@@ -129,6 +129,8 @@
     "You left the conference": "Você saiu da conferência",
     "This session has ended": "Esta sessão terminou",
     "Unexpected guest sign-in failure": "Falha inesperada na entrada do convidado",
-    "Unexpected end of session, try to sign in again": "Fim inesperado da sessão, tente entrar novamente"
+    "Unexpected end of session, try to sign in again": "Fim inesperado da sessão, tente entrar novamente",
+
+    "Language": "Idiomas"
   }
 }

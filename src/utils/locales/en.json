@@ -130,6 +130,8 @@
     "You left the conference": "You left the conference",
     "This session has ended": "This session has ended",
     "Unexpected guest sign-in failure": "Unexpected guest sign-in failure",
-    "Unexpected end of session, try to sign in again": "Unexpected end of session, try to sign in again"
+    "Unexpected end of session, try to sign in again": "Unexpected end of session, try to sign in again",
+
+    "Language": "Language"
   }
 }
