@@ -55,11 +55,11 @@ const VideoControls = (props) => {
         // TODO localization
         const buttons = [
           {
-            text: t('Cancel'),
+            text: t('app.settings.main.cancel.label'),
             style: 'cancel'
           },
           {
-            text: t('Settings'),
+            text: t('app.settings.main.label'),
             onPress: () => Linking.openSettings(),
           },
           {

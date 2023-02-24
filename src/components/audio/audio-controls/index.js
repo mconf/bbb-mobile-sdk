@@ -38,11 +38,11 @@ const AudioControls = (props) => {
           // TODO localization, programmatically dismissable Dialog that is reusable
           const buttons = [
             {
-              text: t('Cancel'),
+              text: t('app.settings.main.cancel.label'),
               style: 'cancel'
             },
             {
-              text: t('Settings'),
+              text: t('app.settings.main.label'),
               onPress: () => Linking.openSettings(),
             },
             {
@@ -64,7 +64,7 @@ const AudioControls = (props) => {
             // TODO localization, programmatically dismissable Dialog that is reusable
             Alert.alert(
               t('Microphone blocked'),
-              t('You joined as a listener due to the room\'s permissions policy.'),
+              t('app.audioNotificaion.reconnectingAsListenOnly'),
               null,
               { cancelable: true },
             );

@@ -8,9 +8,9 @@ i18n.use(initReactI18next).init({
   compatibilityJSON: 'v3',
   lng: 'en',
   resources: {
-    en,
+    en: { translation: en },
     // eslint-disable-next-line camelcase
-    pt_BR,
+    pt_BR: { translation: pt_BR },
   },
   react: {
     useSuspense: false,

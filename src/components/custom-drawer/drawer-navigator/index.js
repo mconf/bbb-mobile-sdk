@@ -128,7 +128,7 @@ const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
         name="Main"
         component={ClassroomMainScreen}
         options={{
-          title: t('Classroom'),
+          title: t('Meeting'),
           drawerIcon: (config) => (
             <Styled.DrawerIcon
               icon="home"
@@ -144,7 +144,7 @@ const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
           name="SharedNoteScreen"
           component={UserNotesScreen}
           options={{
-            title: t('Shared notes'),
+            title: t('app.notes.title'),
             drawerIcon: (config) => (
               <Styled.DrawerIcon
                 icon="file-document"
@@ -175,7 +175,7 @@ const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
         name="UserParticipantsScreen"
         component={UserParticipantsNavigator}
         options={{
-          title: t('User list'),
+          title: t('app.userList.label'),
           drawerIcon: (config) => (
             <>
               <Styled.DrawerIcon

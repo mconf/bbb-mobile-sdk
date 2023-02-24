@@ -15,14 +15,14 @@ const CUSTOMER_METADATA = Settings.feedback.custom.customerMetadata;
 const ProblemFeedbackScreen = ({ route }) => {
   const { t } = useTranslation();
   const questionTitle = t('Did you have any problems?');
-  const skipButton = t('Skip');
+  const skipButton = t('app.customFeedback.defaultButtons.skip');
   const problems = [
-    { label: t('Audio'), code: 'audio' },
-    { label: t('Camera'), code: 'camera' },
-    { label: t('Internet connection'), code: 'connection' },
-    { label: t('Microphone'), code: 'microphone' },
+    { label: t('app.settings.audioTab.label'), code: 'audio' },
+    { label: t('app.settings.videoTab.label'), code: 'camera' },
+    { label: t('app.customFeedback.problem.connection'), code: 'connection' },
+    { label: t('app.customFeedback.problem.microphone'), code: 'microphone' },
     // { label: t('Whiteboard'), code: 'whiteboard' },
-    { label: t('Other:'), code: 'other' },
+    { label: t('app.customFeedback.other:'), code: 'other' },
   ];
   const problemDetalied = {
     text: '',
@@ -204,7 +204,7 @@ const ProblemFeedbackScreen = ({ route }) => {
             disabled={!isAnyOptionChecked()}
             onPress={handleSendProblem}
           >
-            {t('Next')}
+            {t('app.customFeedback.defaultButtons.next')}
           </Styled.ConfirmButton>
         </Styled.ButtonContainer>
         <Styled.QuitSessionButtonContainer>

@@ -33,8 +33,8 @@ const AnswerPollView = () => {
   const handleSecretPollLabel = () => (
     <Styled.SecretLabel>
       {activePollObject?.secretPoll
-        ? t('Anonymous poll - presenter cannot see your answer')
-        : t('Normal poll - presenter can see your answer')}
+        ? t('app.polling.responseSecret')
+        : t('app.polling.responseNotSecret')}
     </Styled.SecretLabel>
   );
 
@@ -51,7 +51,7 @@ const AnswerPollView = () => {
     if (activePollObject?.pollType === 'R-') {
       return (
         <Styled.TextInput
-          label={t('Your answer')}
+          label={t('app.questions.modal.answerLabel')}
           onChangeText={(text) => setSelectedAnswers(text)}
         />
       );

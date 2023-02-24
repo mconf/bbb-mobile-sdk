@@ -60,7 +60,7 @@ const CustomDrawer = (props) => {
           <Styled.ViewLeaveContainer>
             <Icon name="logout" size={24} color="#1C1B1F" />
             <Styled.TextLeaveContainer>
-              {t('Leave session')}
+              {t('app.navBar.settingsDropdown.leaveSessionLabel')}
             </Styled.TextLeaveContainer>
           </Styled.ViewLeaveContainer>
         </Styled.ButtonLeaveContainer>

@@ -108,7 +108,7 @@ const BottomSheetChat = () => {
         >
           <Styled.SendMessageContainer>
             <Styled.TextInput
-              label={t('Write your message')}
+              label={t('app.chat.submitLabel')}
               onChangeText={(newText) => setMessageText(newText)}
               value={messageText}
             />

@@ -39,7 +39,7 @@ const GuestPolicyScreen = ({ navigation }) => {
             iconColor={Colors.white}
             onPress={() => { navigation.goBack(); }}
           />
-          <Styled.GuestPolicyTopText>{t('Guest policy')}</Styled.GuestPolicyTopText>
+          <Styled.GuestPolicyTopText>{t('app.guest-policy.title')}</Styled.GuestPolicyTopText>
         </Styled.GuestPolicyTop>
         <Styled.DividerTop />
         <Styled.OptionsButtonsContainer>
@@ -50,7 +50,7 @@ const GuestPolicyScreen = ({ navigation }) => {
               Service.handleChangeGuestPolicy(guestPolicies.ASK_MODERATOR);
             }}
           >
-            {t('Ask moderator')}
+            {t('app.guest-policy.button.askModerator')}
           </Styled.OptionsButton>
           <Styled.OptionsButton
             selected={guestPolicy === guestPolicies.ALWAYS_ACCEPT}
@@ -59,7 +59,7 @@ const GuestPolicyScreen = ({ navigation }) => {
               Service.handleChangeGuestPolicy(guestPolicies.ALWAYS_ACCEPT);
             }}
           >
-            {t('Allow everyone')}
+            {t('app.userList.guest.allowEveryone')}
           </Styled.OptionsButton>
           <Styled.OptionsButton
             selected={guestPolicy === guestPolicies.ALWAYS_DENY}
@@ -68,7 +68,7 @@ const GuestPolicyScreen = ({ navigation }) => {
               Service.handleChangeGuestPolicy(guestPolicies.ALWAYS_DENY);
             }}
           >
-            {t('Deny everyone')}
+            {t('app.userList.guest.denyEveryone')}
           </Styled.OptionsButton>
         </Styled.OptionsButtonsContainer>
       </Styled.GuestPolicyView>

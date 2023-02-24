@@ -102,7 +102,7 @@ const VideoContainer = (props) => {
             containerColor="#00000000"
           />
           <Styled.NameLabel numberOfLines={2} style={{ flexShrink: 1 }}>
-            {t('Focus')}
+            {t('app.videoDock.webcamFocusLabel')}
           </Styled.NameLabel>
         </Styled.PressableButton>
       )}

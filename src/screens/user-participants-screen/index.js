@@ -81,7 +81,7 @@ const UserParticipantsScreen = () => {
       >
         <Styled.GuestMenuContainer>
           <Icon name="account-cog-outline" size={24} color={Colors.white} />
-          <Styled.GuestPolicyText>{t('Guest policy')}</Styled.GuestPolicyText>
+          <Styled.GuestPolicyText>{t('app.guest-policy.title')}</Styled.GuestPolicyText>
           <Styled.GuestPolicyIcon
             icon="arrow-right"
             iconColor={Colors.white}
@@ -124,7 +124,7 @@ const UserParticipantsScreen = () => {
                 UserParticipantsService.handleChangeRole(selectedUser.userId, selectedUser.role);
                 setShowMenu(false);
               }}
-              title={isViewer ? t('Make moderator') : t('Make atendee')}
+              title={isViewer ? t('app.userList.menu.promoteUser.label') : t('app.userList.menu.demoteUser.label')}
             />
           )}
       </Menu>

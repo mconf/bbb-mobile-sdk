@@ -126,19 +126,19 @@ const AppContent = ({
             },
             actions: [
               {
-                title: t('Leave'),
+                title: t('app.leaveModal.confirm'),
                 pressAction: {
                   id: 'leave',
                 },
               },
               audioIsMuted
                 ? {
-                  title: t('Unmute'),
+                  title: t('app.actionsBar.unmuteLabel'),
                   pressAction: {
                     id: 'unmute',
                   },
                 } : {
-                  title: t('Mute'),
+                  title: t('app.actionsBar.muteLabel'),
                   pressAction: {
                     id: 'mute',
                   },
@@ -170,12 +170,12 @@ const AppContent = ({
     if (notification) {
       if (audioIsMuted) {
         notification.android.actions[1].pressAction.id = 'unmute';
-        notification.android.actions[1].title = t('Unmute');
+        notification.android.actions[1].title = t('app.actionsBar.unmuteLabel');
         notifee.displayNotification(notification);
         setNotification(notification);
       } else {
         notification.android.actions[1].pressAction.id = 'mute';
-        notification.android.actions[1].title = t('Mute');
+        notification.android.actions[1].title = t('app.actionsBar.muteLabel');
         notifee.displayNotification(notification);
         setNotification(notification);
       }

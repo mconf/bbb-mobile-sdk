@@ -49,7 +49,7 @@ const ReceivingAnswers = () => {
     return (
       <>
         {currentPollObj?.isMultipleResponse && <Text>{t('Multiple choice')}</Text>}
-        {currentPollObj?.secretPoll && <Text>{t('Anonymous poll')}</Text>}
+        {currentPollObj?.secretPoll && <Text>{t('app.poll.secretPoll.label')}</Text>}
         {currentPollObj?.answers.map((answer) => {
           const calcBarSize = (((answer.numVotes || 0) / (currentPollObj?.numResponders || 1))
             * 100).toFixed(0);
@@ -82,14 +82,14 @@ const ReceivingAnswers = () => {
             await navigation.navigate('PollInitialScreen');
           }}
           >
-            {t('Publish')}
+            {t('app.poll.publishLabel')}
           </Styled.ConfirmButton>
           <Styled.CancelButton onPress={async () => {
             await PollService.handleStopPoll();
             await navigation.navigate('PollInitialScreen');
           }}
           >
-            {t('Cancel')}
+            {t('app.settings.main.cancel.label')}
           </Styled.CancelButton>
         </Styled.ContainerViewPadding>
       </Styled.ContainerPollCard>

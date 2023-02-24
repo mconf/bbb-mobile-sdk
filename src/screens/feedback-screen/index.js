@@ -24,9 +24,9 @@ const FeedbackScreen = () => {
   const title = useEndReason();
   const { t } = useTranslation();
 
-  const subtitle = t('We\'d love to hear about your experience with the platform (optional).');
-  const nextButton = t('Next');
-  const quitButton = t('Leave session');
+  const subtitle = t('app.feedback.subtitle');
+  const nextButton = t('app.customFeedback.defaultButtons.next');
+  const quitButton = t('app.navBar.settingsDropdown.leaveSessionLabel');
   const navigation = useNavigation();
   const [rating, setRating] = useState(undefined);
   const currentMeetingData = useSelector((state) => state.client.meetingData);

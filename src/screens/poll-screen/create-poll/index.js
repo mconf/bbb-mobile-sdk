@@ -58,12 +58,12 @@ const CreatePoll = (): Node => {
       <>
         <Styled.Title>{t('Create poll')}</Styled.Title>
         <Styled.TextInput
-          label={t('Write your question')}
+          label={t('app.poll.question.label')}
           numberOfLines={3}
           multiline
           onChangeText={(text) => setQuestionTextInput(text)}
         />
-        <Styled.AnswerTitle>{t('Answer types')}</Styled.AnswerTitle>
+        <Styled.AnswerTitle>{t('app.poll.responseTypes.label')}</Styled.AnswerTitle>
         <Styled.ButtonsContainer>
           <Styled.OptionsButton
             selected={answerTypeSelected === 'TF'}
@@ -71,7 +71,7 @@ const CreatePoll = (): Node => {
               setAnswerTypeSelected('TF');
             }}
           >
-            {t('True / False')}
+            {t('app.poll.tf')}
           </Styled.OptionsButton>
           <Styled.OptionsButton
             selected={answerTypeSelected === 'A-4'}
@@ -79,7 +79,7 @@ const CreatePoll = (): Node => {
               setAnswerTypeSelected('A-4');
             }}
           >
-            {t('A / B / C / D')}
+            {t('app.poll.a4')}
           </Styled.OptionsButton>
           <Styled.OptionsButton
             selected={answerTypeSelected === 'YNA'}
@@ -87,7 +87,7 @@ const CreatePoll = (): Node => {
               setAnswerTypeSelected('YNA');
             }}
           >
-            {t('Yes / No / Abstention')}
+            {t('app.poll.yna')}
           </Styled.OptionsButton>
 
           {/* // leaving this to another PR */}
@@ -135,7 +135,7 @@ const CreatePoll = (): Node => {
         <Styled.ConfirmButton
           onPress={handleCreatePoll}
         >
-          {t('Start poll')}
+          {t('app.poll.start.label')}
         </Styled.ConfirmButton>
       </>
     );

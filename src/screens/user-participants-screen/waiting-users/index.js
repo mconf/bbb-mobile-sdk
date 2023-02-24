@@ -88,7 +88,7 @@ const WaitingUsersScreen = ({ navigation }) => {
                 navigation.goBack();
               }}
             >
-              {t('Allow everyone')}
+              {t('app.userList.guest.allowEveryone')}
             </Styled.AccRejButtonsText>
           </Styled.AccRejButtons>
           <Styled.AccRejButtons>
@@ -99,7 +99,7 @@ const WaitingUsersScreen = ({ navigation }) => {
                 navigation.goBack();
               }}
             >
-              {t('Deny everyone')}
+              {t('app.userList.guest.denyEveryone')}
             </Styled.AccRejButtonsText>
           </Styled.AccRejButtons>
         </Styled.AccRejContainer>
@@ -107,7 +107,7 @@ const WaitingUsersScreen = ({ navigation }) => {
           ? <Styled.FlatList data={handleUsersName()} renderItem={renderItem} />
           : (
             <Styled.NoPendingUsersText>
-              {t('No pending users...')}
+              {t('app.userList.guest.noPendingUsers')}
             </Styled.NoPendingUsersText>
           )}
       </Styled.WaitingUsersView>

@@ -17,7 +17,7 @@ export function useChatMsgs() {
       // if is a poll result message
       if (message.id.toString().includes('PUBLIC_CHAT_POLL_RESULT')) {
         return {
-          author: t('System'),
+          author: t('app.toast.chat.system'),
           timestamp: message.timestamp,
           message: t('A poll has been posted, check the poll section for the results'),
         };
@@ -25,9 +25,9 @@ export function useChatMsgs() {
       // if is a clear chat message
       if (message.id.toString().includes('PUBLIC_CHAT_CLEAR')) {
         return {
-          author: t('System'),
+          author: t('app.toast.chat.system'),
           timestamp: message.timestamp,
-          message: t('Public chat has been cleared by a moderator'),
+          message: t('app.chat.clearPublicChatMessage'),
         };
       }
       // if is a status message

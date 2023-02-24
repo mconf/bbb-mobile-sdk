@@ -12,11 +12,11 @@ const POST_ROUTE = Settings.feedback.custom.route;
 const EmailFeedbackScreen = ({ route }) => {
   const navigation = useNavigation();
   const { t } = useTranslation();
-  const title = t('Thanks for the answers!');
-  const subtitle = t('Would you like to leave your email for contact?');
+  const title = t('app.customFeedback.email.thank');
+  const subtitle = t('app.customFeedback.email.contact');
   const concludeButton = t('End');
   const optionalQuestion = {
-    label: t('Email (optional)'), code: 'email', email: '',
+    label: t('app.customFeedback.email.placeholder'), code: 'email', email: '',
   };
 
   // disables android go back button

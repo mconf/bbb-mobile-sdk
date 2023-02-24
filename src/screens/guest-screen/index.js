@@ -17,9 +17,9 @@ const GuestScreen = () => {
   const [positionInWaitingQueue, setPositionInWaitingQueue] = useState(null);
   // TODO localization
   const guestScreenTitle = t('Guest waiting room');
-  const guestScreenSubtitle = t('Wait for a moderator to approve your entry');
-  const firstInQueueStr = t('You are the first in line!');
-  const laterInQueueStr = t('Your current position in the queue is:');
+  const guestScreenSubtitle = t('app.guest.guestWait');
+  const firstInQueueStr = t('app.guest.firstPositionInWaitingQueue');
+  const laterInQueueStr = t('app.guest.positionInWaitingQueue');
 
   const probeGuestStatus = async () => {
     try {
