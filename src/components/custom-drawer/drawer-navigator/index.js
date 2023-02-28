@@ -212,7 +212,7 @@ const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
         />
       )}
 
-      {Settings.showLanguageScreen && (
+      {Settings.locales.showLanguageScreen && (
       <Drawer.Screen
         name="Language"
         component={SelectLanguageScreen}
