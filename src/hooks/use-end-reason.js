@@ -42,8 +42,8 @@ const useEndReason = () => {
     // Internal app strings
     logged_out: t('app.feedback.title'), // upstream: "app.feedback.title"
     meeting_ended: t('app.meeting.ended'), // upstream: "app.meeting.ended"
-    guest_FAILED: t('Unexpected guest sign-in failure'),
-    FALLBACK_REASON: t('Unexpected end of session, try to sign in again'),
+    guest_FAILED: t('mobileSdk.guest.signInError'),
+    FALLBACK_REASON: t('mobileSdk.error.fallback'),
   };
 
   return END_REASON_STRINGS[currentEndReason]

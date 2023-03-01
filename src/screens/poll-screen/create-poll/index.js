@@ -56,7 +56,7 @@ const CreatePoll = (): Node => {
   if (!hasCurrentPoll) {
     return (
       <>
-        <Styled.Title>{t('Create poll')}</Styled.Title>
+        <Styled.Title>{t('mobileSdk.poll.createLabel')}</Styled.Title>
         <Styled.TextInput
           label={t('app.poll.question.label')}
           numberOfLines={3}
@@ -142,7 +142,7 @@ const CreatePoll = (): Node => {
   }
 
   if (hasCurrentPoll || currentUserObj?.presenter) {
-    return <Text>{t('Poll in progress')}</Text>;
+    return <Text>{t('mobileSdk.poll.inProgress')}</Text>;
   }
 };
 

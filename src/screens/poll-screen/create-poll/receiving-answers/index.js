@@ -48,7 +48,7 @@ const ReceivingAnswers = () => {
   const handleViewerAnswers = () => {
     return (
       <>
-        {currentPollObj?.isMultipleResponse && <Text>{t('Multiple choice')}</Text>}
+        {currentPollObj?.isMultipleResponse && <Text>{t('mobileSdk.poll.multipleChoice')}</Text>}
         {currentPollObj?.secretPoll && <Text>{t('app.poll.secretPoll.label')}</Text>}
         {currentPollObj?.answers.map((answer) => {
           const calcBarSize = (((answer.numVotes || 0) / (currentPollObj?.numResponders || 1))
@@ -72,7 +72,7 @@ const ReceivingAnswers = () => {
     <Styled.ContainerView orientation={orientation}>
       <Styled.ContainerPollCard>
         <Styled.ContainerViewPadding>
-          <Styled.Title>{t('Poll in progress')}</Styled.Title>
+          <Styled.Title>{t('mobileSdk.poll.inProgress')}</Styled.Title>
           <View style={{ width: '100%', backgroundColor: '#D4DDE4', height: 2 }} />
           <Styled.AnswerTitle>{currentPollObj?.question}</Styled.AnswerTitle>
           {handleViewerAnswers()}

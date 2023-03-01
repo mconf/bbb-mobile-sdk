@@ -46,13 +46,13 @@ const AudioControls = (props) => {
               onPress: () => Linking.openSettings(),
             },
             {
-              text: t('Try again'),
+              text: t('mobileSdk.error.tryAgain'),
               onPress: () => joinMicrophone(),
             },
           ];
 
           Alert.alert(
-            t('Microphone permission denied'),
+            t('mobileSdk.error.microphone.permissionDenied'),
             t('We need your permission so the microphone can be shared'),
             buttons,
             { cancelable: true },
@@ -63,7 +63,7 @@ const AudioControls = (props) => {
           if (AudioManager.isListenOnly) {
             // TODO localization, programmatically dismissable Dialog that is reusable
             Alert.alert(
-              t('Microphone blocked'),
+              t('mobileSdk.error.microphone.blocked'),
               t('app.audioNotificaion.reconnectingAsListenOnly'),
               null,
               { cancelable: true },
@@ -102,8 +102,8 @@ const AudioControls = (props) => {
             if (micDisabled) {
               // TODO localization, programmatically dismissable Dialog that is reusable
               Alert.alert(
-                t('Microphone blocked'),
-                t('You need permission from a moderator to perform this action.'),
+                t('mobileSdk.error.microphone.blocked'),
+                t('mobileSdk.permission.moderator'),
                 null,
                 { cancelable: true },
               );

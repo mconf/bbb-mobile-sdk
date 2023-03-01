@@ -81,10 +81,10 @@ const ManagePresentationScreen = () => {
     <SafeAreaView>
       <Styled.ContainerView orientation={orientation}>
         <Styled.ContainerPresentationCard>
-          <Styled.Title>{t('Presentations available')}</Styled.Title>
+          <Styled.Title>{t('mobileSdk.managePresentations.title')}</Styled.Title>
           <FlatList data={documents} renderItem={renderItem} />
           <Styled.ConfirmButton onPress={handlePickDocument}>
-            {t('Add file')}
+            {t('mobileSdk.managePresentations.confirmButton')}
           </Styled.ConfirmButton>
         </Styled.ContainerPresentationCard>
 

@@ -47,9 +47,9 @@ const PollScreen = () => {
     ) {
       return (
         <>
-          <Styled.Title>{t('No polls have been published')}</Styled.Title>
+          <Styled.Title>{t('mobileSdk.poll.noPollLabel')}</Styled.Title>
           <Styled.NoPollText>
-            {t('When the presenter posts a poll, it will appear here')}
+            {t('mobileSdk.poll.noPollLabelYet')}
           </Styled.NoPollText>
         </>
       );

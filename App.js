@@ -110,14 +110,14 @@ const AppContent = ({
         const channelId = await notifee.createChannel({
           id: 'inconference',
           // TODO localization
-          name: t('In conference'),
+          name: t('mobileSdk.notification.label'),
           vibration: false,
         });
 
         // TODO localization
         const _notification = {
-          title: t('Conference in progress'),
-          body: t('You are attending a conference. Tap to open'),
+          title: t('mobileSdk.notification.title'),
+          body: t('mobileSdk.notification.body'),
           id: 'audio_foreground_notification',
           android: {
             channelId,

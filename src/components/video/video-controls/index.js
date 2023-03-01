@@ -34,8 +34,8 @@ const VideoControls = (props) => {
   const fireDisabledCamAlert = () => {
     // TODO localization, programmatically dismissable Dialog that is reusable
     Alert.alert(
-      t('Webcam sharing blocked'),
-      t('You need permission from a moderator to perform this action.'),
+      t('mobileSdk.webcam.blockedLabel'),
+      t('mobileSdk.permission.moderator'),
       null,
       { cancelable: true },
     );
@@ -63,14 +63,14 @@ const VideoControls = (props) => {
             onPress: () => Linking.openSettings(),
           },
           {
-            text: t('Try again'),
+            text: t('mobileSdk.error.tryAgain'),
             onPress: () => publishCamera(),
           },
         ];
 
         Alert.alert(
-          t('Webcam sharing blocked'),
-          t('We need your permission so the webcam can be shared.'),
+          t('mobileSdk.webcam.blockedLabel'),
+          t('mobileSdk.webcam.permissionLabel'),
           buttons,
           { cancelable: true },
         );

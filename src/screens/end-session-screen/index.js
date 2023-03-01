@@ -12,9 +12,9 @@ const EndSessionScreen = (props) => {
   const { t } = useTranslation();
 
   const title = useEndReason();
-  const subtitle = t('You will be redirected to the homepage in a few seconds');
-  const more = t('Want to know more?');
-  const buttonText = t('More about ConferênciaWeb');
+  const subtitle = t('mobileSdk.endSession.subtitle');
+  const more = t('mobileSdk.endSession.more');
+  const buttonText = t('mobileSdk.endSession.buttonText');
   const navigation = useNavigation();
 
   useEffect(() => {

@@ -76,7 +76,7 @@ const WaitingUsersScreen = ({ navigation }) => {
             iconColor={Colors.white}
             onPress={() => { navigation.goBack(); }}
           />
-          <Styled.WaitingUsersTopText>{t('Waiting attendees')}</Styled.WaitingUsersTopText>
+          <Styled.WaitingUsersTopText>{t('mobileSdk.userList.waitingAtendees')}</Styled.WaitingUsersTopText>
         </Styled.WaitingUsersTop>
         <Styled.DividerTop />
         <Styled.AccRejContainer>

@@ -96,7 +96,7 @@ const UserParticipantsScreen = () => {
         >
           <Styled.GuestMenuContainer>
             <Icon name="account-multiple-outline" size={24} color={Colors.white} />
-            <Styled.GuestPolicyText>{t('Waiting attendees')}</Styled.GuestPolicyText>
+            <Styled.GuestPolicyText>{t('mobileSdk.userList.waitingAtendees')}</Styled.GuestPolicyText>
             <Styled.GuestPolicyIcon
               icon="arrow-right"
               iconColor={Colors.white}

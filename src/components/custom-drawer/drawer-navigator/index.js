@@ -128,7 +128,7 @@ const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
         name="Main"
         component={ClassroomMainScreen}
         options={{
-          title: t('Meeting'),
+          title: t('mobileSdk.meeting.label'),
           drawerIcon: (config) => (
             <Styled.DrawerIcon
               icon="home"
@@ -160,7 +160,7 @@ const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
         name="PollScreen"
         component={PollNavigator}
         options={{
-          title: t('Poll'),
+          title: t('mobileSdk.poll.label'),
           drawerIcon: (config) => (
             <Styled.DrawerIcon
               icon="poll"
@@ -200,7 +200,7 @@ const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
           name="WhiteboardScreen"
           component={WhiteboardScreen}
           options={{
-            title: t('Whiteboard'),
+            title: t('mobileSdk.whiteboard.label'),
             drawerIcon: (config) => (
               <Styled.DrawerIcon
                 icon="brush"
@@ -217,7 +217,7 @@ const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
         name="Language"
         component={SelectLanguageScreen}
         options={{
-          title: t('Language'),
+          title: t('mobileSdk.locales.label'),
           drawerIcon: (config) => (
             <Styled.DrawerIcon
               icon="web"

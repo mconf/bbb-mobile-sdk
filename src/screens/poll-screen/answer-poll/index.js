@@ -41,8 +41,8 @@ const AnswerPollView = () => {
   const handleIsMultipleResponseLabel = () => (
     <Styled.SecretLabel>
       {activePollObject?.isMultipleResponse
-        ? t('Multiple choice')
-        : t('One answer only')}
+        ? t('mobileSdk.poll.multipleChoice')
+        : t('mobileSdk.poll.oneAnswer')}
     </Styled.SecretLabel>
   );
 
@@ -78,7 +78,7 @@ const AnswerPollView = () => {
       <Styled.ConfirmButton
         onPress={() => PollService.handleAnswerPoll(selectedAnswers)}
       >
-        {t('Send answer')}
+        {t('mobileSdk.poll.sendAnswer')}
       </Styled.ConfirmButton>
     </>
   );

@@ -37,7 +37,7 @@ const BottomSheetChat = () => {
   useBottomSheetBackHandler(chatStore.isBottomChatOpen, sheetRef, () => {});
 
   const handleMessagePressed = (message) => {
-    if (message.message === t('A poll has been posted, check the poll section for the results')) {
+    if (message.message === t('mobileSdk.poll.postedMsg')) {
       sheetRef.current?.close();
       navigation.navigate('PollScreen');
     }
@@ -83,7 +83,7 @@ const BottomSheetChat = () => {
     if (messages.length !== 0) {
       return null;
     }
-    return <Styled.NoMessageText>{t('Chat is empty')}</Styled.NoMessageText>;
+    return <Styled.NoMessageText>{t('mobileSdk.chat.isEmptyLabel')}</Styled.NoMessageText>;
   };
 
   if (!chatStore.isBottomChatOpen) {

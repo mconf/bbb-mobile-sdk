@@ -19,7 +19,7 @@ export function useChatMsgs() {
         return {
           author: t('app.toast.chat.system'),
           timestamp: message.timestamp,
-          message: t('A poll has been posted, check the poll section for the results'),
+          message: t('mobileSdk.poll.postedMsg'),
         };
       }
       // if is a clear chat message
@@ -34,9 +34,9 @@ export function useChatMsgs() {
       if (message.id.toString().includes('SYSTEM_MESSAGE-PUBLIC_CHAT_STATUS')) {
         const handleMessage = () => {
           if (message.extra.status === 'away') {
-            return t('Is temporarily away');
+            return t('mobileSdk.reactions.message.away');
           }
-          return t('Is present');
+          return t('mobileSdk.reactions.message.notAway');
         };
 
         return {

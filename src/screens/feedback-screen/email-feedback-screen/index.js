@@ -14,7 +14,7 @@ const EmailFeedbackScreen = ({ route }) => {
   const { t } = useTranslation();
   const title = t('app.customFeedback.email.thank');
   const subtitle = t('app.customFeedback.email.contact');
-  const concludeButton = t('End');
+  const concludeButton = t('mobileSdk.feedback.end');
   const optionalQuestion = {
     label: t('app.customFeedback.email.placeholder'), code: 'email', email: '',
   };

@@ -14,14 +14,14 @@ const CUSTOMER_METADATA = Settings.feedback.custom.customerMetadata;
 
 const ProblemFeedbackScreen = ({ route }) => {
   const { t } = useTranslation();
-  const questionTitle = t('Did you have any problems?');
+  const questionTitle = t('mobileSdk.feedback.questionTitle');
   const skipButton = t('app.customFeedback.defaultButtons.skip');
   const problems = [
     { label: t('app.settings.audioTab.label'), code: 'audio' },
     { label: t('app.settings.videoTab.label'), code: 'camera' },
     { label: t('app.customFeedback.problem.connection'), code: 'connection' },
     { label: t('app.customFeedback.problem.microphone'), code: 'microphone' },
-    // { label: t('Whiteboard'), code: 'whiteboard' },
+    // { label: t('mobileSdk.whiteboard.label'), code: 'whiteboard' },
     { label: t('app.customFeedback.other:'), code: 'other' },
   ];
   const problemDetalied = {
