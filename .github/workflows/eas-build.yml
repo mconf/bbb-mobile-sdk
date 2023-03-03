@@ -1,9 +1,8 @@
 name: EAS Build
 on:
-  workflow_dispatch:
-  push:
+  pull_request_target:
+    types: [opened, reopened, synchronize]
     branches:
-      - github-actions
       - dev
       - master
 jobs:
@@ -32,4 +31,4 @@ jobs:
           npm i
           fi
       - name: Build on EAS
-        run: eas build --platform android --profile development --non-interactive
+        run: eas build --platform all --profile development --non-interactive
