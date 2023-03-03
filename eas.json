@@ -1,27 +1,16 @@
 {
-  "cli": {
-    "version": ">= 0.55.1"
-  },
   "build": {
-    "preview": {
+    "development": {
+      "ios": {
+        "buildConfiguration": "Release"
+      },
       "android": {
-        "buildType": "apk"
+        "buildType": "app-bundle",
+        "distribution": "internal"
+      },
+      "env": {
+        "APP_ENV": "development"
       }
-    },
-    "preview2": {
-      "android": {
-        "gradleCommand": ":app:assembleRelease"
-      }
-    },
-    "preview3": {
-      "developmentClient": true
-    },
-    "preview4": {
-      "distribution": "internal"
-    },
-    "production": {}
-  },
-  "submit": {
-    "production": {}
+    }
   }
 }
