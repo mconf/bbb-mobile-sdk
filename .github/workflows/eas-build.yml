@@ -1,11 +1,11 @@
 name: EAS Build
 on:
-  pull_request_target:
-    types: [opened, reopened, push, synchronize]
+  workflow_dispatch:
+  push:
     branches:
+      - github-actions
       - dev
       - master
-      - github-actions
 jobs:
   build:
     name: Install and build
@@ -32,4 +32,4 @@ jobs:
           npm i
           fi
       - name: Build on EAS
-        run: eas build --platform all --profile development --non-interactive
+        run: eas build --platform android --profile development --non-interactive
