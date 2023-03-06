@@ -7,6 +7,7 @@ import { Provider, useDispatch, useSelector } from 'react-redux';
 import { useKeepAwake } from 'expo-keep-awake';
 import InCallManager from 'react-native-incall-manager';
 import { DeviceEventEmitter } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { store } from './src/store/redux/store';
 import * as api from './src/services/api';
 import DrawerNavigator from './src/components/custom-drawer/drawer-navigator';
@@ -31,6 +32,7 @@ import {
 } from './src/store/redux/slices/wide-app/client';
 import logger from './src/services/logger';
 import { toggleMuteMicrophone } from './src/components/audio/service';
+import './src/utils/locales/i18n';
 import Colors from './src/constants/colors';
 
 //  Inject store in non-component files
@@ -55,6 +57,7 @@ notifee.registerForegroundService((notification) => {
 const AppContent = ({
   onLeaveSession: _onLeaveSession,
   jUrl,
+  defaultLanguage,
 }) => {
   const Stack = createNativeStackNavigator();
   const dispatch = useDispatch();
@@ -65,6 +68,7 @@ const AppContent = ({
   const [notification, setNotification] = useState(null);
   const navigationRef = useRef(null);
   const nativeEventListeners = useRef([]);
+  const { t, i18n } = useTranslation();
   const onLeaveSession = () => {
     dispatch(setSessionTerminated(true));
     const hasCustomLeaveSession = typeof _onLeaveSession === 'function';
@@ -79,6 +83,24 @@ const AppContent = ({
   };
 
   useEffect(() => {
+    const changeLanguage = (lng: 'en') => {
+      i18n.changeLanguage(lng)
+        .then(() => {
+          logger.debug({
+            logCode: 'app_locale_change',
+          }, 'Change locale sucessfully');
+        })
+        .catch((err) => {
+          logger.debug({
+            logCode: 'app_locale_change',
+            extraInfo: err,
+          }, 'Change locale error');
+        });
+    };
+    changeLanguage(defaultLanguage);
+  }, []);
+
+  useEffect(() => {
     if (audioIsConnected) {
       // Start/show the notification foreground service
       const getChannelIdAndDisplayNotification = async () => {
@@ -88,14 +110,14 @@ const AppContent = ({
         const channelId = await notifee.createChannel({
           id: 'inconference',
           // TODO localization
-          name: 'Em Conferência',
+          name: t('mobileSdk.notification.label'),
           vibration: false,
         });
 
         // TODO localization
         const _notification = {
-          title: 'Conferência em andamento',
-          body: 'Você está participando de uma conferência. Toque para abrir',
+          title: t('mobileSdk.notification.title'),
+          body: t('mobileSdk.notification.body'),
           id: 'audio_foreground_notification',
           android: {
             channelId,
@@ -104,19 +126,19 @@ const AppContent = ({
             },
             actions: [
               {
-                title: 'Sair',
+                title: t('app.leaveModal.confirm'),
                 pressAction: {
                   id: 'leave',
                 },
               },
               audioIsMuted
                 ? {
-                  title: 'Falar',
+                  title: t('app.actionsBar.unmuteLabel'),
                   pressAction: {
                     id: 'unmute',
                   },
                 } : {
-                  title: 'Silenciar',
+                  title: t('app.actionsBar.muteLabel'),
                   pressAction: {
                     id: 'mute',
                   },
@@ -148,12 +170,12 @@ const AppContent = ({
     if (notification) {
       if (audioIsMuted) {
         notification.android.actions[1].pressAction.id = 'unmute';
-        notification.android.actions[1].title = 'Falar';
+        notification.android.actions[1].title = t('app.actionsBar.unmuteLabel');
         notifee.displayNotification(notification);
         setNotification(notification);
       } else {
         notification.android.actions[1].pressAction.id = 'mute';
-        notification.android.actions[1].title = 'Silenciar';
+        notification.android.actions[1].title = t('app.actionsBar.muteLabel');
         notifee.displayNotification(notification);
         setNotification(notification);
       }

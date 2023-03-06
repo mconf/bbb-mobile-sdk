@@ -3,6 +3,10 @@
   "media": {
     "videoPageSize": 3
   },
+  "locales": {
+    "showLanguageScreen": true,
+    "localesUrl": "/{{lng}}.json"
+  },
   "clientLog": {
     "server": {
       "enabled": false,

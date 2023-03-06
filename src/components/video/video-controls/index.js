@@ -1,6 +1,7 @@
 import * as Linking from 'expo-linking';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { Alert, View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import IconButtonComponent from '../../icon-button';
@@ -16,6 +17,7 @@ import useAppState from '../../../hooks/use-app-state';
 
 const VideoControls = (props) => {
   const { isLandscape } = props;
+  const { t } = useTranslation();
   const isConnected = useSelector((state) => state.video.isConnected);
   const isConnecting = useSelector((state) => state.video.isConnecting);
   const localCameraId = useSelector((state) => state.video.localCameraId);
@@ -32,8 +34,8 @@ const VideoControls = (props) => {
   const fireDisabledCamAlert = () => {
     // TODO localization, programmatically dismissable Dialog that is reusable
     Alert.alert(
-      'Compartilhamento de webcam bloqueado',
-      'Você precisa da permissão de um moderador para realizar esta ação',
+      t('mobileSdk.webcam.blockedLabel'),
+      t('mobileSdk.permission.moderator'),
       null,
       { cancelable: true },
     );
@@ -53,22 +55,22 @@ const VideoControls = (props) => {
         // TODO localization
         const buttons = [
           {
-            text: 'Cancelar',
+            text: t('app.settings.main.cancel.label'),
             style: 'cancel'
           },
           {
-            text: 'Configurações',
+            text: t('app.settings.main.label'),
             onPress: () => Linking.openSettings(),
           },
           {
-            text: 'Tentar novamente',
+            text: t('mobileSdk.error.tryAgain'),
             onPress: () => publishCamera(),
           },
         ];
 
         Alert.alert(
-          'Permissão de webcam negada',
-          'Precisamos de sua permissão para que sua câmera possa ser compartilhada',
+          t('mobileSdk.webcam.blockedLabel'),
+          t('mobileSdk.webcam.permissionLabel'),
           buttons,
           { cancelable: true },
         );

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { FlatList, SafeAreaView, Alert } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
+import { useTranslation } from 'react-i18next';
 import { useOrientation } from '../../hooks/use-orientation';
 import IconButton from '../../components/icon-button';
 import withPortal from '../../components/high-order/with-portal';
@@ -8,6 +9,7 @@ import Styled from './styles';
 
 const ManagePresentationScreen = () => {
   const orientation = useOrientation();
+  const { t } = useTranslation();
   const [activePresentation, setActivePresentation] = useState(
     'http://www.africau.edu/images/default/sample.pdf'
   );
@@ -79,10 +81,10 @@ const ManagePresentationScreen = () => {
     <SafeAreaView>
       <Styled.ContainerView orientation={orientation}>
         <Styled.ContainerPresentationCard>
-          <Styled.Title>Apresentações disponíveis</Styled.Title>
+          <Styled.Title>{t('mobileSdk.managePresentations.title')}</Styled.Title>
           <FlatList data={documents} renderItem={renderItem} />
           <Styled.ConfirmButton onPress={handlePickDocument}>
-            Adicionar arquivo
+            {t('mobileSdk.managePresentations.confirmButton')}
           </Styled.ConfirmButton>
         </Styled.ContainerPresentationCard>
 

@@ -5,6 +5,7 @@ import {
   Text, View
 } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import Styled from './styles';
 import PollService from '../../service';
 import { useOrientation } from '../../../../hooks/use-orientation';
@@ -17,6 +18,7 @@ const ReceivingAnswers = () => {
   )[0];
   const navigation = useNavigation();
   const orientation = useOrientation();
+  const { t } = useTranslation();
   const currentUserStore = useSelector((state) => state.currentUserCollection);
   const currentUserObj = Object.values(currentUserStore.currentUserCollection)[0];
 
@@ -46,8 +48,8 @@ const ReceivingAnswers = () => {
   const handleViewerAnswers = () => {
     return (
       <>
-        {currentPollObj?.isMultipleResponse && <Text>Multipla resposta</Text>}
-        {currentPollObj?.secretPoll && <Text>Enquete anônima</Text>}
+        {currentPollObj?.isMultipleResponse && <Text>{t('mobileSdk.poll.multipleChoice')}</Text>}
+        {currentPollObj?.secretPoll && <Text>{t('app.poll.secretPoll.label')}</Text>}
         {currentPollObj?.answers.map((answer) => {
           const calcBarSize = (((answer.numVotes || 0) / (currentPollObj?.numResponders || 1))
             * 100).toFixed(0);
@@ -67,11 +69,10 @@ const ReceivingAnswers = () => {
   };
 
   return (
-
     <Styled.ContainerView orientation={orientation}>
       <Styled.ContainerPollCard>
         <Styled.ContainerViewPadding>
-          <Styled.Title>Enquete em andamento</Styled.Title>
+          <Styled.Title>{t('mobileSdk.poll.inProgress')}</Styled.Title>
           <View style={{ width: '100%', backgroundColor: '#D4DDE4', height: 2 }} />
           <Styled.AnswerTitle>{currentPollObj?.question}</Styled.AnswerTitle>
           {handleViewerAnswers()}
@@ -81,14 +82,14 @@ const ReceivingAnswers = () => {
             await navigation.navigate('PollInitialScreen');
           }}
           >
-            Publicar
+            {t('app.poll.publishLabel')}
           </Styled.ConfirmButton>
           <Styled.CancelButton onPress={async () => {
             await PollService.handleStopPoll();
             await navigation.navigate('PollInitialScreen');
           }}
           >
-            Cancelar
+            {t('app.settings.main.cancel.label')}
           </Styled.CancelButton>
         </Styled.ContainerViewPadding>
       </Styled.ContainerPollCard>

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 // screens
 import UserNotesScreen from '../../../screens/user-notes-screen';
 import PollNavigator from '../../../screens/poll-screen/navigator';
@@ -10,6 +11,7 @@ import UserParticipantsNavigator from '../../../screens/user-participants-screen
 import WhiteboardScreen from '../../../screens/whiteboard-screen';
 import TestComponentsScreen from '../../../screens/test-components-screen';
 import ClassroomMainScreen from '../../../screens/classroom-main-screen';
+import SelectLanguageScreen from '../../../screens/select-language-screen';
 import Colors from '../../../constants/colors';
 import Styled from './styles';
 import usePrevious from '../../../hooks/use-previous';
@@ -27,6 +29,7 @@ const FEEDBACK_ENABLED = Settings.feedback.enabled;
 const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
   const Drawer = createDrawerNavigator();
   const navigation = useNavigation();
+  const { t } = useTranslation();
   const ended = useSelector((state) => state.client.sessionState.ended);
   const joinUrl = useSelector((state) => state.client.meetingData.joinUrl);
   const guestUsersReady = useSelector((state) => state.guestUsersCollection.ready);
@@ -125,7 +128,7 @@ const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
         name="Main"
         component={ClassroomMainScreen}
         options={{
-          title: 'Sala de aula',
+          title: t('mobileSdk.meeting.label'),
           drawerIcon: (config) => (
             <Styled.DrawerIcon
               icon="home"
@@ -141,7 +144,7 @@ const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
           name="SharedNoteScreen"
           component={UserNotesScreen}
           options={{
-            title: 'Nota compartilhada',
+            title: t('app.notes.title'),
             drawerIcon: (config) => (
               <Styled.DrawerIcon
                 icon="file-document"
@@ -157,7 +160,7 @@ const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
         name="PollScreen"
         component={PollNavigator}
         options={{
-          title: 'Enquete',
+          title: t('mobileSdk.poll.label'),
           drawerIcon: (config) => (
             <Styled.DrawerIcon
               icon="poll"
@@ -172,7 +175,7 @@ const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
         name="UserParticipantsScreen"
         component={UserParticipantsNavigator}
         options={{
-          title: 'Lista de participantes',
+          title: t('app.userList.label'),
           drawerIcon: (config) => (
             <>
               <Styled.DrawerIcon
@@ -197,7 +200,7 @@ const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
           name="WhiteboardScreen"
           component={WhiteboardScreen}
           options={{
-            title: 'Quadro Branco',
+            title: t('mobileSdk.whiteboard.label'),
             drawerIcon: (config) => (
               <Styled.DrawerIcon
                 icon="brush"
@@ -207,6 +210,23 @@ const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
             ),
           }}
         />
+      )}
+
+      {Settings.locales.showLanguageScreen && (
+      <Drawer.Screen
+        name="Language"
+        component={SelectLanguageScreen}
+        options={{
+          title: t('mobileSdk.locales.label'),
+          drawerIcon: (config) => (
+            <Styled.DrawerIcon
+              icon="web"
+              size={24}
+              iconColor={config.color}
+            />
+          ),
+        }}
+      />
       )}
 
       {/* Put the join url by hand screen */}

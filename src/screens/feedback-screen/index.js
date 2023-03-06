@@ -2,6 +2,7 @@ import React, {
   useCallback, useEffect, useRef, useState
 } from 'react';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import { BackHandler } from 'react-native';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
@@ -21,9 +22,11 @@ const CUSTOM_FEEDBACK_ENABLED = Settings.feedback.custom.enabled;
 
 const FeedbackScreen = () => {
   const title = useEndReason();
-  const subtitle = 'Adoraríamos saber como foi sua experiência com a plataforma (opcional).';
-  const nextButton = 'Próximo';
-  const quitButton = 'Sair da sessão';
+  const { t } = useTranslation();
+
+  const subtitle = t('app.feedback.subtitle');
+  const nextButton = t('app.customFeedback.defaultButtons.next');
+  const quitButton = t('app.navBar.settingsDropdown.leaveSessionLabel');
   const navigation = useNavigation();
   const [rating, setRating] = useState(undefined);
   const currentMeetingData = useSelector((state) => state.client.meetingData);

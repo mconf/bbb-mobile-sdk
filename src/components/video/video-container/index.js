@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import { setFocusedElement, setFocusedId, setIsFocused } from '../../../store/redux/slices/wide-app/layout';
 import { isTalkingByUserId } from '../../../store/redux/slices/voice-users';
 import IconButtonComponent from '../../icon-button';
@@ -20,6 +21,7 @@ const VideoContainer = (props) => {
   } = props;
 
   const [showOptions, setShowOptions] = useState(false);
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const clientIsReady = useSelector(({ client }) => {
@@ -100,7 +102,7 @@ const VideoContainer = (props) => {
             containerColor="#00000000"
           />
           <Styled.NameLabel numberOfLines={2} style={{ flexShrink: 1 }}>
-            Focar usuário
+            {t('app.videoDock.webcamFocusLabel')}
           </Styled.NameLabel>
         </Styled.PressableButton>
       )}

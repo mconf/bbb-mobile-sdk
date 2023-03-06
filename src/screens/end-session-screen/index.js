@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useRef } from 'react';
-import { BackHandler, Image } from 'react-native';
-import { CommonActions, useFocusEffect, useNavigation } from '@react-navigation/native';
+import React, { useEffect, useRef } from 'react';
+import { Image } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import * as Linking from 'expo-linking';
 import useEndReason from '../../hooks/use-end-reason';
 import Styled from './styles';
@@ -8,11 +9,12 @@ import Styled from './styles';
 const EndSessionScreen = (props) => {
   const { onLeaveSession } = props;
   const endTimeout = useRef(null);
+  const { t } = useTranslation();
 
   const title = useEndReason();
-  const subtitle = 'Você será redirecionado para a página inicial em seguida';
-  const more = 'Quer saber mais?';
-  const buttonText = 'Conheça o ConferenciaWeb';
+  const subtitle = t('mobileSdk.endSession.subtitle');
+  const more = t('mobileSdk.endSession.more');
+  const buttonText = t('mobileSdk.endSession.buttonText');
   const navigation = useNavigation();
 
   useEffect(() => {

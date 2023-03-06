@@ -1,6 +1,7 @@
 import { Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
 import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Menu, Provider } from 'react-native-paper';
@@ -20,6 +21,7 @@ const UserParticipantsScreen = () => {
   const amIModerator = useSelector(isModerator);
   const myUserId = useSelector(selectCurrentUserId);
   const pendingUsers = useSelector(selectWaitingUsers);
+  const { t } = useTranslation();
 
   const navigation = useNavigation();
 
@@ -79,7 +81,7 @@ const UserParticipantsScreen = () => {
       >
         <Styled.GuestMenuContainer>
           <Icon name="account-cog-outline" size={24} color={Colors.white} />
-          <Styled.GuestPolicyText>Política de Convidados</Styled.GuestPolicyText>
+          <Styled.GuestPolicyText>{t('app.guest-policy.title')}</Styled.GuestPolicyText>
           <Styled.GuestPolicyIcon
             icon="arrow-right"
             iconColor={Colors.white}
@@ -94,7 +96,7 @@ const UserParticipantsScreen = () => {
         >
           <Styled.GuestMenuContainer>
             <Icon name="account-multiple-outline" size={24} color={Colors.white} />
-            <Styled.GuestPolicyText>Participantes Aguardando</Styled.GuestPolicyText>
+            <Styled.GuestPolicyText>{t('mobileSdk.userList.waitingAtendees')}</Styled.GuestPolicyText>
             <Styled.GuestPolicyIcon
               icon="arrow-right"
               iconColor={Colors.white}
@@ -122,7 +124,7 @@ const UserParticipantsScreen = () => {
                 UserParticipantsService.handleChangeRole(selectedUser.userId, selectedUser.role);
                 setShowMenu(false);
               }}
-              title={isViewer ? 'Tornar moderador' : 'Tornar espectador'}
+              title={isViewer ? t('app.userList.menu.promoteUser.label') : t('app.userList.menu.demoteUser.label')}
             />
           )}
       </Menu>

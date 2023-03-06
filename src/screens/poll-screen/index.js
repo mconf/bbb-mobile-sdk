@@ -1,5 +1,6 @@
 import { KeyboardAvoidingView, Platform } from 'react-native';
 import { useEffect, useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useOrientation } from '../../hooks/use-orientation';
 import withPortal from '../../components/high-order/with-portal';
@@ -15,6 +16,7 @@ const PollScreen = () => {
   const previousPollPublishedStore = useSelector(
     (state) => state.previousPollPublishedCollection
   );
+  const { t } = useTranslation();
 
   // ** Poll views states **
   // 0 - No poll
@@ -45,9 +47,9 @@ const PollScreen = () => {
     ) {
       return (
         <>
-          <Styled.Title> Nenhuma enquete foi publicada</Styled.Title>
+          <Styled.Title>{t('mobileSdk.poll.noPollLabel')}</Styled.Title>
           <Styled.NoPollText>
-            Quando o apresentador publicar uma enquete, ela aparecerá aqui
+            {t('mobileSdk.poll.noPollLabelYet')}
           </Styled.NoPollText>
         </>
       );
