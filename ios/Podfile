@@ -5,7 +5,7 @@ require File.join(File.dirname(`node --print "require.resolve('@react-native-com
 require 'json'
 podfile_properties = JSON.parse(File.read(File.join(__dir__, 'Podfile.properties.json'))) rescue {}
 
-platform :ios, '12.4'
+platform :ios, podfile_properties['ios.deploymentTarget'] || '12.4'
 install! 'cocoapods',
   :deterministic_uuids => false
 
@@ -20,8 +20,16 @@ target 'bbbmobile' do
 
   use_react_native!(
     :path => config[:reactNativePath],
+# @generated begin expo-community-flipper-isprod - expo prebuild (DO NOT MODIFY) sync-828c22a1a38236bf5b7c203393f474bc68356b34
+    # ENV value added to support Hermes
+    :production => ENV["PRODUCTION"] == "1" ? true : false,
+# @generated end expo-community-flipper-isprod
     :hermes_enabled => flags[:hermes_enabled] || podfile_properties['expo.jsEngine'] == 'hermes',
     :fabric_enabled => flags[:fabric_enabled],
+# @generated begin expo-community-flipper-urn - expo prebuild (DO NOT MODIFY) sync-6af597cccba7ebf79742c9653c430f029e7e1676
+    # Flipper arguments generated from app.json
+    :flipper_configuration => ENV['FLIPPER_DISABLE'] == "1" ? FlipperConfiguration.disabled : FlipperConfiguration.enabled(["Debug"], { 'Flipper' => '0.123.0' }),
+# @generated end expo-community-flipper-urn
     # An absolute path to your application root.
     :app_path => "#{Dir.pwd}/.."
   )
@@ -35,7 +43,7 @@ target 'bbbmobile' do
 
   post_install do |installer|
     react_native_post_install(installer)
-    # __apply_Xcode_12_5_M1_post_install_workaround(installer)
+    __apply_Xcode_12_5_M1_post_install_workaround(installer)
 
     # This is necessary for Xcode 14, because it signs resource bundles by default
     # when building for devices.
@@ -46,6 +54,14 @@ target 'bbbmobile' do
           config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
         end
       end
+    end
+  end
+
+  post_integrate do |installer|
+    begin
+      expo_patch_react_imports!(installer)
+    rescue => e
+      Pod::UI.warn e
     end
   end
 end

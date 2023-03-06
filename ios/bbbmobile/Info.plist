@@ -25,7 +25,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>com.bbb.bbbmobile</string>
+          <string>bigbluebutton</string>
         </array>
       </dict>
     </array>
