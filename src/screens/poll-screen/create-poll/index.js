@@ -89,49 +89,7 @@ const CreatePoll = (): Node => {
           >
             {t('app.poll.yna')}
           </Styled.OptionsButton>
-
-          {/* // leaving this to another PR */}
-         {/* <Styled.OptionsButton
-            selected={answerTypeSelected === 'R-'}
-            onPress={() => {
-              setAnswerTypeSelected('R-');
-            }}
-          >
-            Respostas do usuário
-          </Styled.OptionsButton>*/}
         </Styled.ButtonsContainer>
-
-        {/* // Leaving this to another PR */}
-        {/*<Styled.AnswerTitle>Opções de resposta</Styled.AnswerTitle>
-        <Styled.ButtonsContainer>
-          <Styled.OptionsButton
-            selected={answersOptions.isMultipleResponse}
-            onPress={() => {
-              setAnswersOptions((prevState) => {
-                return {
-                  isMultipleResponse: !prevState.isMultipleResponse,
-                  secretPoll: prevState.secretPoll,
-                };
-              });
-            }}
-          >
-            Permitir multiplas respostas por participante
-          </Styled.OptionsButton>
-          <Styled.OptionsButton
-            selected={answersOptions.secretPoll}
-            onPress={() => {
-              setAnswersOptions((prevState) => {
-                return {
-                  isMultipleResponse: prevState.isMultipleResponse,
-                  secretPoll: !prevState.secretPoll,
-                };
-              });
-            }}
-          >
-            Enquete anônima
-          </Styled.OptionsButton>
-        </Styled.ButtonsContainer>*/}
-
         <Styled.ConfirmButton
           onPress={handleCreatePoll}
         >
