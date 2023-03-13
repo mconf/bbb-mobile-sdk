@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSelector, createSlice } from '@reduxjs/toolkit';
 
 // currentPoll is a collection exclusive for the poll publisher.
 // Refers to the state after the poll was started, and before the poll has been published.
@@ -46,6 +46,16 @@ const currentPollSlice = createSlice({
   },
 });
 
+// Selectors
+const selectCurrentPoll = (state) => Object.values(
+  state.currentPollCollection?.currentPollCollection
+)[0];
+
+const hasCurrentPollSelector = createSelector(
+  [selectCurrentPoll],
+  (currentPoll) => Object.keys(currentPoll || {})?.length !== 0
+);
+
 export const {
   addCurrentPoll,
   removeCurrentPoll,
@@ -53,4 +63,10 @@ export const {
   readyStateChanged,
   cleanupStaleData,
 } = currentPollSlice.actions;
+
+export {
+  selectCurrentPoll,
+  hasCurrentPollSelector,
+};
+
 export default currentPollSlice.reducer;

@@ -1,47 +1,28 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import {
-  BackHandler,
-  Text, View
-} from 'react-native';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
+import { Text, View } from 'react-native';
+import { selectCurrentUser } from '../../../../store/redux/slices/current-user';
+import { selectCurrentPoll } from '../../../../store/redux/slices/current-poll';
 import Styled from './styles';
 import PollService from '../../service';
 import { useOrientation } from '../../../../hooks/use-orientation';
 import withPortal from '../../../../components/high-order/with-portal';
 
 const ReceivingAnswers = () => {
-  const currentPollStore = useSelector((state) => state.currentPollCollection);
-  const currentPollObj = Object?.values(
-    currentPollStore?.currentPollCollection
-  )[0];
-  const navigation = useNavigation();
+  const currentPollObj = useSelector(selectCurrentPoll);
+  const currentUserObj = useSelector(selectCurrentUser);
   const orientation = useOrientation();
   const { t } = useTranslation();
-  const currentUserStore = useSelector((state) => state.currentUserCollection);
-  const currentUserObj = Object.values(currentUserStore.currentUserCollection)[0];
 
   const handleRemovePoll = async () => {
     await PollService.handleStopPoll();
-    await navigation.navigate('PollInitialScreen');
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      const onBackPress = async () => {
-        await handleRemovePoll();
-        return true;
-      };
-      BackHandler.addEventListener('hardwareBackPress', onBackPress);
-
-      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-    }, []),
-  );
-
   useEffect(() => {
+    // If the presenter was "demoted" to non-presenter
     if (!currentUserObj.presenter) {
-      handleRemovePoll().then(() => {});
+      handleRemovePoll();
     }
   }, [currentUserObj]);
 
@@ -79,14 +60,12 @@ const ReceivingAnswers = () => {
           <Styled.ConfirmButton onPress={async () => {
             await PollService.handlePublishPoll();
             await PollService.handleStopPoll();
-            await navigation.navigate('PollInitialScreen');
           }}
           >
             {t('app.poll.publishLabel')}
           </Styled.ConfirmButton>
           <Styled.CancelButton onPress={async () => {
             await PollService.handleStopPoll();
-            await navigation.navigate('PollInitialScreen');
           }}
           >
             {t('app.settings.main.cancel.label')}

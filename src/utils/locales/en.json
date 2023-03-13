@@ -1501,5 +1501,6 @@
     "mobileSdk.poll.createLabel": "Create poll",
     "mobileSdk.poll.noPollLabel": "No polls have been published",
     "mobileSdk.poll.noPollLabelYet": "When the presenter posts a poll, it will appear here",
-    "mobileSdk.userList.waitingAtendees": "Waiting attendees"
+    "mobileSdk.userList.waitingAtendees": "Waiting attendees",
+    "mobileSdk.poll.noQuestionTextProvided": "The presenter has not defined any text for the question"
 }

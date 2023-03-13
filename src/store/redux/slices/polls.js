@@ -42,6 +42,12 @@ const pollsSlice = createSlice({
     },
   },
 });
+
+// Selectors
+const selectActivePoll = (state) => Object.values(
+  state.pollsCollection?.pollsCollection
+)[0];
+
 export const {
   addPoll,
   removePoll,
@@ -49,4 +55,9 @@ export const {
   readyStateChanged,
   cleanupStaleData,
 } = pollsSlice.actions;
+
+export {
+  selectActivePoll,
+};
+
 export default pollsSlice.reducer;

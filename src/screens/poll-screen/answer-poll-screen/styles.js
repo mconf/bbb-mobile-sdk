@@ -1,6 +1,7 @@
 import styled from 'styled-components/native';
 import button from '../../../components/button';
 import textInput from '../../../components/text-input';
+import actionsBar from '../../../components/actions-bar';
 import Colors from '../../../constants/colors';
 
 const ButtonsContainer = styled.View``;
@@ -13,9 +14,8 @@ const OptionsButton = styled(button)`
   padding: 12px;
   border-radius: 12px;
 
-  ${({ selected }) =>
-    selected &&
-    `
+  ${({ selected }) => selected
+    && `
       background-color: #003399;
       color: ${Colors.white};
   `}
@@ -48,6 +48,54 @@ const SecretLabel = styled.Text`
 
 const TextInput = styled(textInput)``;
 
+const ContainerViewPadding = styled.View`
+  padding: 12px;
+`;
+
+const ContainerPollCard = styled.ScrollView`
+  background-color: ${Colors.white};
+  width: 100%;
+  max-height: 85%;
+  border-radius: 12px;
+  display: flex;
+`;
+
+const ContainerView = styled.View`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 10px;
+
+  ${({ orientation }) => orientation === 'LANDSCAPE'
+  && `
+    flex-direction: row;
+    justify-content: center;
+  `}
+`;
+
+const ActionsBarContainer = styled.View`
+  width: 100%;
+  height: 10%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  ${({ orientation }) => orientation === 'LANDSCAPE'
+  && `
+      width: 10%;
+      height: 100%;
+  `}
+`;
+
+const ActionsBar = styled(actionsBar)`
+  ${({ orientation }) => orientation === 'LANDSCAPE'
+  && `
+      flex-direction: column;
+      display: flex;
+  `}
+`;
+
 export default {
   Title,
   OptionsButton,
@@ -55,4 +103,9 @@ export default {
   ConfirmButton,
   TextInput,
   SecretLabel,
+  ContainerViewPadding,
+  ContainerPollCard,
+  ContainerView,
+  ActionsBarContainer,
+  ActionsBar
 };
