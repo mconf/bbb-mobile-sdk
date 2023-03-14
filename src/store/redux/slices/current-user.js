@@ -60,6 +60,11 @@ const isModerator = createSelector(
   (currentUser) => currentUser?.role === 'MODERATOR'
 );
 
+const isPresenter = createSelector(
+  [selectCurrentUser],
+  (currentUser) => currentUser?.presenter === true
+);
+
 const isLocked = createSelector(
   [selectCurrentUser],
   (currentUser) => currentUser?.role !== 'MODERATOR' && currentUser?.locked === true
@@ -122,6 +127,7 @@ export {
   selectCurrentUserId,
   isModerator,
   isLocked,
+  isPresenter,
   logoutOrEjectionPredicate,
   logoutOrEjectionListener,
 };

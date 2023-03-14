@@ -1,10 +1,11 @@
 // @flow
 import type { Node } from 'react';
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useNavigation } from '@react-navigation/native';
+import { KeyboardAvoidingView, Platform } from 'react-native';
+import { Suspense, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text } from 'react-native';
+import { ActivityIndicator } from 'react-native-paper';
+import { useOrientation } from '../../../hooks/use-orientation';
+import withPortal from '../../../components/high-order/with-portal';
 import PollService from '../service';
 import Styled from './styles';
 
@@ -22,26 +23,18 @@ type AnswerOptionsObjType = {
 const CreatePoll = (): Node => {
   // Create poll states
   PollService.handleCurrentPollSubscription();
-  const currentUserStore = useSelector((state) => state.currentUserCollection);
-  const currentUserObj = Object.values(
-    currentUserStore.currentUserCollection
-  )[0];
   const [questionTextInput, setQuestionTextInput] = useState<string>('');
   const [answerTypeSelected, setAnswerTypeSelected] = useState<AnswerType>('TF');
   const [answersOptions, setAnswersOptions] = useState<AnswerOptionsObjType>({
     secretPoll: false,
     isMultipleResponse: false,
   });
-  const currentPollStore = useSelector((state) => state.currentPollCollection);
-  const currentPollObj = Object?.values(
-    currentPollStore?.currentPollCollection
-  )[0];
-  const hasCurrentPoll = Object.keys(currentPollObj || {})?.length !== 0;
+
   const { t } = useTranslation();
-  const navigation = useNavigation();
+  const orientation = useOrientation();
+  const scrollViewRef = useRef();
 
   const handleCreatePoll = async () => {
-    navigation.navigate('ReceivingAnswersScreen');
     await PollService.handleCreatePoll(
       answerTypeSelected,
       // TODO review this
@@ -53,7 +46,7 @@ const CreatePoll = (): Node => {
   };
 
   // * return logic *
-  if (!hasCurrentPoll) {
+  const renderMethod = () => {
     return (
       <>
         <Styled.Title>{t('mobileSdk.poll.createLabel')}</Styled.Title>
@@ -89,49 +82,7 @@ const CreatePoll = (): Node => {
           >
             {t('app.poll.yna')}
           </Styled.OptionsButton>
-
-          {/* // leaving this to another PR */}
-         {/* <Styled.OptionsButton
-            selected={answerTypeSelected === 'R-'}
-            onPress={() => {
-              setAnswerTypeSelected('R-');
-            }}
-          >
-            Respostas do usuário
-          </Styled.OptionsButton>*/}
         </Styled.ButtonsContainer>
-
-        {/* // Leaving this to another PR */}
-        {/*<Styled.AnswerTitle>Opções de resposta</Styled.AnswerTitle>
-        <Styled.ButtonsContainer>
-          <Styled.OptionsButton
-            selected={answersOptions.isMultipleResponse}
-            onPress={() => {
-              setAnswersOptions((prevState) => {
-                return {
-                  isMultipleResponse: !prevState.isMultipleResponse,
-                  secretPoll: prevState.secretPoll,
-                };
-              });
-            }}
-          >
-            Permitir multiplas respostas por participante
-          </Styled.OptionsButton>
-          <Styled.OptionsButton
-            selected={answersOptions.secretPoll}
-            onPress={() => {
-              setAnswersOptions((prevState) => {
-                return {
-                  isMultipleResponse: prevState.isMultipleResponse,
-                  secretPoll: !prevState.secretPoll,
-                };
-              });
-            }}
-          >
-            Enquete anônima
-          </Styled.OptionsButton>
-        </Styled.ButtonsContainer>*/}
-
         <Styled.ConfirmButton
           onPress={handleCreatePoll}
         >
@@ -139,11 +90,30 @@ const CreatePoll = (): Node => {
         </Styled.ConfirmButton>
       </>
     );
-  }
+  };
 
-  if (hasCurrentPoll || currentUserObj?.presenter) {
-    return <Text>{t('mobileSdk.poll.inProgress')}</Text>;
-  }
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <Styled.ContainerView orientation={orientation}>
+        <Styled.ContainerPollCard
+          ref={scrollViewRef}
+          onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
+        >
+          <Styled.ContainerViewPadding>
+            <Suspense fallback={<ActivityIndicator />}>
+              {renderMethod()}
+            </Suspense>
+          </Styled.ContainerViewPadding>
+        </Styled.ContainerPollCard>
+
+        <Styled.ActionsBarContainer orientation={orientation}>
+          <Styled.ActionsBar orientation={orientation} />
+        </Styled.ActionsBarContainer>
+      </Styled.ContainerView>
+    </KeyboardAvoidingView>
+  );
 };
 
-export default CreatePoll;
+export default withPortal(CreatePoll);

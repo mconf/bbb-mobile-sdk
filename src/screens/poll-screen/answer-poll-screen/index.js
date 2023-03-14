@@ -1,15 +1,19 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import Styled from './styles';
+import { KeyboardAvoidingView, Platform } from 'react-native';
+import { selectActivePoll } from '../../../store/redux/slices/polls';
+import withPortal from '../../../components/high-order/with-portal';
+import { useOrientation } from '../../../hooks/use-orientation';
 import PollService from '../service';
+import Styled from './styles';
 
-const AnswerPollView = () => {
-  // Answer poll states
+const AnswerPollScreen = () => {
   const [selectedAnswers, setSelectedAnswers] = useState([]);
+  const activePollObject = useSelector(selectActivePoll);
+  const orientation = useOrientation();
+  const scrollViewRef = useRef();
   const { t } = useTranslation();
-  const pollsStore = useSelector((state) => state.pollsCollection);
-  const activePollObject = Object.values(pollsStore.pollsCollection)[0];
 
   const handleSelectAnswers = (id) => {
     // If is custom input
@@ -68,7 +72,8 @@ const AnswerPollView = () => {
       </Styled.OptionsButton>
     ));
   };
-  return (
+
+  const renderMethod = () => (
     <>
       <Styled.Title>{activePollObject?.question}</Styled.Title>
       {handleSecretPollLabel()}
@@ -82,6 +87,27 @@ const AnswerPollView = () => {
       </Styled.ConfirmButton>
     </>
   );
+
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <Styled.ContainerView orientation={orientation}>
+        <Styled.ContainerPollCard
+          ref={scrollViewRef}
+          onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
+        >
+          <Styled.ContainerViewPadding>
+            {renderMethod()}
+          </Styled.ContainerViewPadding>
+        </Styled.ContainerPollCard>
+
+        <Styled.ActionsBarContainer orientation={orientation}>
+          <Styled.ActionsBar orientation={orientation} />
+        </Styled.ActionsBarContainer>
+      </Styled.ContainerView>
+    </KeyboardAvoidingView>
+  );
 };
 
-export default AnswerPollView;
+export default withPortal(AnswerPollScreen);
