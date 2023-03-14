@@ -1495,5 +1495,7 @@
   "mobileSdk.poll.createLabel": "Criar enquete",
   "mobileSdk.poll.noPollLabel": "Nenhuma enquete foi publicada",
   "mobileSdk.poll.noPollLabelYet": "Quando o apresentador publicar uma enquete, ela aparecerá aqui",
-  "mobileSdk.userList.waitingAtendees": "Participantes aguardando"
+  "mobileSdk.userList.waitingAtendees": "Participantes aguardando",
+  "mobileSdk.poll.noQuestionTextProvided": "O apresentador nao definiu nenhum texto para a questão",
+  "mobileSdk.poll.previousPolls.label": "Enquetes anteriores já publicadas"
 }

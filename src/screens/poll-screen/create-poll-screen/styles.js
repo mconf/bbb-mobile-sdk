@@ -27,9 +27,18 @@ const ConfirmButton = styled(button)`
   font-size: 16px;
   font-weight: 400;
   padding: 12px;
-  margin-bottom: 16px;
   border-radius: 12px;
   margin-top: 32px;
+`;
+
+const SeePublishPollsButton = styled(button)`
+  background-color: ${Colors.blue};
+  color: ${Colors.white};
+  font-size: 16px;
+  font-weight: 400;
+  padding: 12px;
+  margin-bottom: 16px;
+  border-radius: 12px;
 `;
 
 const Title = styled.Text`
@@ -117,5 +126,6 @@ export default {
   ContainerPollCard,
   ContainerView,
   ActionsBarContainer,
-  ActionsBar
+  ActionsBar,
+  SeePublishPollsButton
 };

@@ -1,9 +1,10 @@
 // @flow
 import type { Node } from 'react';
 import { KeyboardAvoidingView, Platform } from 'react-native';
-import { Suspense, useRef, useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
 import { useOrientation } from '../../../hooks/use-orientation';
 import withPortal from '../../../components/high-order/with-portal';
 import PollService from '../service';
@@ -32,7 +33,7 @@ const CreatePoll = (): Node => {
 
   const { t } = useTranslation();
   const orientation = useOrientation();
-  const scrollViewRef = useRef();
+  const navigation = useNavigation();
 
   const handleCreatePoll = async () => {
     await PollService.handleCreatePoll(
@@ -88,6 +89,11 @@ const CreatePoll = (): Node => {
         >
           {t('app.poll.start.label')}
         </Styled.ConfirmButton>
+        <Styled.SeePublishPollsButton
+          onPress={() => navigation.navigate('PreviousPollsScreen')}
+        >
+          {t('mobileSdk.poll.previousPolls.label')}
+        </Styled.SeePublishPollsButton>
       </>
     );
   };
@@ -97,10 +103,7 @@ const CreatePoll = (): Node => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <Styled.ContainerView orientation={orientation}>
-        <Styled.ContainerPollCard
-          ref={scrollViewRef}
-          onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
-        >
+        <Styled.ContainerPollCard>
           <Styled.ContainerViewPadding>
             <Suspense fallback={<ActivityIndicator />}>
               {renderMethod()}
