@@ -4,6 +4,7 @@ import { Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import * as Linking from 'expo-linking';
 import Settings from '../../../settings.json';
+import { BreakoutsModule } from './modules/breakouts';
 import { UsersModule } from './modules/users';
 import { GroupChatModule } from './modules/group-chat';
 import { GroupChatMsgModule } from './modules/group-chat-msg';
@@ -203,6 +204,7 @@ const setupModules = (ws) => {
     'current-user': new CurrentUserModule(messageSender),
     users: new UsersModule(messageSender),
     guestUsers: new GuestUsersModule(messageSender),
+    breakouts: new BreakoutsModule(messageSender),
   };
 
   /*
