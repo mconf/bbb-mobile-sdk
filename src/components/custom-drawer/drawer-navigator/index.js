@@ -10,6 +10,7 @@ import PollNavigator from '../../../screens/poll-screen/navigator';
 import UserParticipantsNavigator from '../../../screens/user-participants-screen/navigator';
 import WhiteboardScreen from '../../../screens/whiteboard-screen';
 import TestComponentsScreen from '../../../screens/test-components-screen';
+import BreakoutRoomScreen from '../../../screens/breakout-room-screen';
 import ClassroomMainScreen from '../../../screens/classroom-main-screen';
 import SelectLanguageScreen from '../../../screens/select-language-screen';
 import Colors from '../../../constants/colors';
@@ -228,6 +229,21 @@ const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
         }}
       />
       )}
+
+      <Drawer.Screen
+        name="BreakoutRoomScreen"
+        component={BreakoutRoomScreen}
+        options={{
+          title: t('app.createBreakoutRoom.title'),
+          drawerIcon: (config) => (
+            <Styled.DrawerIcon
+              icon="account-group"
+              size={24}
+              iconColor={config.color}
+            />
+          ),
+        }}
+      />
 
       {/* Put the join url by hand screen */}
       {Settings.dev && (
