@@ -598,9 +598,9 @@ const SocketConnectionComponent = (props) => {
 };
 
 // TODO refactor out - see logger.js - prlanzarin
-injectMakeCall(makeCall);
-injectAuthInfoFetcher(getAuthInfo);
-injectSessionIdFetcher(getCurrentSessionId);
+// injectMakeCall(makeCall);
+// injectAuthInfoFetcher(getAuthInfo);
+// injectSessionIdFetcher(getCurrentSessionId);
 
 export default SocketConnectionComponent;
 // General API stuff that is bound to signaling and join procedures
