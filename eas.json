@@ -5,7 +5,7 @@
         "buildConfiguration": "Release"
       },
       "android": {
-        "buildType": "app-bundle",
+        "buildType": "apk",
         "distribution": "internal"
       },
       "env": {
