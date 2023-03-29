@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import notifee, { EventType } from '@notifee/react-native';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 // providers and store
-import { activateKeepAwake } from 'expo-keep-awake';
+import { activateKeepAwakeAsync } from 'expo-keep-awake';
 import InCallManager from 'react-native-incall-manager';
 import { DeviceEventEmitter } from 'react-native';
 import { useTranslation } from 'react-i18next';
@@ -103,7 +103,7 @@ const AppContent = ({
   useEffect(() => {
     if (audioIsConnected) {
       // Activate expo-keep-awake
-      activateKeepAwake();
+      activateKeepAwakeAsync();
       // Start/show the notification foreground service
       const getChannelIdAndDisplayNotification = async () => {
         // Request permissions (required for iOS)
