@@ -1,4 +1,7 @@
 {
+  "cli": {
+    "version": ">=3.8.1"
+  },
   "build": {
     "development": {
       "ios": {
