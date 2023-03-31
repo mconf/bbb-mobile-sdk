@@ -1,26 +1,23 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import Backend from 'i18next-xhr-backend';
-import Settings from '../../../settings.json';
+import en from './en.json';
 // eslint-disable-next-line camelcase
+import pt_BR from './pt_BR.json';
 
-i18n
-  .use(Backend)
-  .use(initReactI18next)
-  .init({
-    compatibilityJSON: 'v3',
-    fallbackLng: 'en',
-    debug: false,
-    backend: {
-      crossDomain: true,
-      loadPath: Settings.locales.localesUrl,
-    },
-    react: {
-      useSuspense: false,
-    },
-    interpolation: {
-      escapeValue: false,
-    }
-  });
+i18n.use(initReactI18next).init({
+  compatibilityJSON: 'v3',
+  lng: 'en',
+  resources: {
+    en: { translation: en },
+    // eslint-disable-next-line camelcase
+    pt_BR: { translation: pt_BR },
+  },
+  react: {
+    useSuspense: false,
+  },
+  interpolation: {
+    escapeValue: false,
+  }
+});
 
 export default i18n;
