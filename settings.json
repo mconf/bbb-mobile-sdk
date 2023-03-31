@@ -22,7 +22,7 @@
       "flushOnClose": false,
       "logTag": "bbb-app"
     }
-  }, 
+  },
   "feedback": {
     "enabled": true,
     "route": "/html5client/feedback",
