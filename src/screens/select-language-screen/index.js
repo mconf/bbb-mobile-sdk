@@ -18,6 +18,10 @@ const SelectLanguageScreen = () => {
       id: 'pt_BR',
       title: 'Português (Brasil)',
     },
+    {
+      id: 'es',
+      title: 'Español',
+    },
   ];
 
   const changeLanguage = (lng) => {
