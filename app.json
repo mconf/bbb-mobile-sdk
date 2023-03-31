@@ -27,7 +27,8 @@
       "bundleIdentifier": "org.bbb.mobilesdk"
     },
     "plugins": [
-      "@config-plugins/react-native-webrtc"
+      "@config-plugins/react-native-webrtc",
+      "@notifee/react-native"
     ],
     "android": {
       "adaptiveIcon": {
