@@ -1,11 +1,11 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import HttpBackend from 'i18next-http-backend';
+import Backend from 'i18next-xhr-backend';
 import Settings from '../../../settings.json';
 // eslint-disable-next-line camelcase
 
 i18n
-  .use(HttpBackend)
+  .use(Backend)
   .use(initReactI18next)
   .init({
     compatibilityJSON: 'v3',
