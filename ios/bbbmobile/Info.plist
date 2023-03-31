@@ -26,6 +26,7 @@
         <key>CFBundleURLSchemes</key>
         <array>
           <string>bigbluebutton</string>
+          <string>org.bbb.mobilesdk</string>
         </array>
       </dict>
     </array>
@@ -78,11 +79,5 @@
     <string>Dark</string>
     <key>UIViewControllerBasedStatusBarAppearance</key>
     <false/>
-    <key>UIBackgroundModes</key>
-    <array>
-      <string>audio</string>
-      <string>fetch</string>
-      <string>voip</string>
-    </array>
   </dict>
 </plist>

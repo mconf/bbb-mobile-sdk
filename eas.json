@@ -1,11 +1,14 @@
 {
+  "cli": {
+    "version": ">=3.8.1"
+  },
   "build": {
     "development": {
       "ios": {
         "buildConfiguration": "Release"
       },
       "android": {
-        "buildType": "app-bundle",
+        "buildType": "apk",
         "distribution": "internal"
       },
       "env": {
