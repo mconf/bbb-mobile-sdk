@@ -5,10 +5,10 @@
 ### Versions
 
     $ node -v
-    v16.15.1
+    v18.15.0
 
-    $ yarn -v
-    v1.22.15
+    $ npm -v
+    v9.5.0
 
     ## For Android only:
     $ java -version 
@@ -24,17 +24,17 @@
     Run on iOS:
         Install XCode (ios only)
 
-    Install eas-cli globally (with npm or yarn) to build
+    Install eas-cli globally (with npm) to build
         You can install with `npx expo`
 
 ### To install the dependencies, run:
 
-    $ yarn install
+    $ npm install
 
 ## How to run
 
     Android:
-    $ expo run:android
+    $ npx expo run:android
     
     if it crashes with an error message with something like: ANDROID_SDK_ENVIRONMENT missing...
     $ export ANDROID_HOME=$HOME/Android/Sdk
@@ -44,7 +44,7 @@
     $ cd android && ./gradlew clean
           
     iOS:
-    $ expo run:ios
+    $ npx expo run:ios
 
 ## License
 
