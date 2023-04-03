@@ -1,22 +1,25 @@
 name: EAS Build
 on:
   pull_request_target:
-    types: [opened, reopened, synchronize]
+    types: [opened, reopened, synchronize, push]
     branches:
-      - dev
-      - master
+      - fix-workflow
 jobs:
   build:
-    name: Install and build
+    name: Install and build v3
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - name: Clear cache
+        run: |
+          echo "::cache::"
+          echo "::set-output name=clear::true"
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: 16.x
-          cache: yarn
+          node-version: 18.x
+          cache: npm
       - name: Setup Expo and EAS
-        uses: expo/expo-github-action@v7
+        uses: expo/expo-github-action@v8
         with:
           expo-version: 5.x
           eas-version: latest
