@@ -3,10 +3,7 @@
   "media": {
     "videoPageSize": 3
   },
-  "locales": {
-    "showLanguageScreen": true,
-    "localesUrl": "/{{lng}}.json"
-  },
+  "showLanguageScreen": true,
   "clientLog": {
     "server": {
       "enabled": false,
@@ -25,7 +22,7 @@
       "flushOnClose": false,
       "logTag": "bbb-app"
     }
-  }, 
+  },
   "feedback": {
     "enabled": true,
     "route": "/html5client/feedback",
