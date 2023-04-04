@@ -74,7 +74,7 @@
   "app.userList.menu.demoteUser.label": "Demote to viewer",
   "app.videoDock.webcamFocusLabel": "Focus",
   "mobileSdk.chat.isEmptyLabel": "Chat is empty",
-  "mobileSdk.endSession.buttonText": "More about ConferênciaWeb",
+  "mobileSdk.endSession.buttonText": "More about BigBlueButton",
   "mobileSdk.endSession.more": "Want to know more?",
   "mobileSdk.endSession.subtitle": "You will be redirected to the homepage in a few seconds",
   "mobileSdk.error.fallback": "Unexpected end of session, try to sign in again",

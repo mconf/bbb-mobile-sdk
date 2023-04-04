@@ -74,7 +74,7 @@
     "app.userList.menu.demoteUser.label": "Degradar a espectador",
     "app.videoDock.webcamFocusLabel": "Enfocar",
     "mobileSdk.chat.isEmptyLabel": "El chat está vacío",
-    "mobileSdk.endSession.buttonText": "Más acerca de ConferênciaWeb",
+    "mobileSdk.endSession.buttonText": "Más acerca de BigBlueButton",
     "mobileSdk.endSession.more": "¿Quieres saber más?",
     "mobileSdk.endSession.subtitle": "Serás redirigido a la página de inicio en unos segundos",
     "mobileSdk.error.fallback": "Fin inesperado de la sesión, intenta iniciar sesión de nuevo",
