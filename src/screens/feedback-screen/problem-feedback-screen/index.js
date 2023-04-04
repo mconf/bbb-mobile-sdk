@@ -21,7 +21,7 @@ const ProblemFeedbackScreen = ({ route }) => {
     { label: t('app.settings.videoTab.label'), code: 'camera' },
     { label: t('app.customFeedback.problem.connection'), code: 'connection' },
     { label: t('app.customFeedback.problem.microphone'), code: 'microphone' },
-    // { label: t('mobileSdk.whiteboard.label'), code: 'whiteboard' },
+    { label: t('mobileSdk.whiteboard.label'), code: 'whiteboard' },
     { label: t('app.customFeedback.other:'), code: 'other' },
   ];
   const problemDetalied = {
