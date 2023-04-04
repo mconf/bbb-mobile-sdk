@@ -53,7 +53,7 @@ const AudioControls = (props) => {
 
           Alert.alert(
             t('mobileSdk.error.microphone.permissionDenied'),
-            t('We need your permission so the microphone can be shared'),
+            t('mobileSdk.error.microphone.permissionLabel'),
             buttons,
             { cancelable: true },
           );
