@@ -110,5 +110,8 @@
   "mobileSdk.userList.waitingAtendees": "Waiting attendees",
   "mobileSdk.webcam.blockedLabel": "Webcam sharing blocked",
   "mobileSdk.webcam.permissionLabel": "We need your permission so the webcam can be shared.",
-  "mobileSdk.whiteboard.label": "Whiteboard"
+  "mobileSdk.whiteboard.label": "Whiteboard",
+  "app.actionsBar.actionsDropdown.desktopShareLabel": "Share your screen",
+  "app.audioModal.settingsTitle": "Change your audio settings",
+  "app.audio.leaveAudio": "Leave audio"
 }
