@@ -43,6 +43,7 @@ const BottomSheetActionsBar = () => {
       handleIndicatorStyle={Styled.styles.indicatorStyle}
       handleStyle={Styled.styles.handleStyle}
       onChange={handleSheetChanges}
+      backgroundStyle={Styled.styles.handleStyle}
     >
       <View style={Styled.styles.contentContainer}>
         <ActionsBar />
