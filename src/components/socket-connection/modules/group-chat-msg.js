@@ -12,6 +12,7 @@ import {
   addPreviousPollPublished,
   addPreviousPollPublishedViaChat,
 } from '../../../store/redux/slices/wide-app/previous-poll-published';
+import { hasUnreadMessages } from '../../../store/redux/slices/wide-app/chat';
 
 const GROUP_CHAT_MSG_TOPIC = 'group-chat-msg';
 const TIME_BETWEEN_FETCHS = 1000;
@@ -93,6 +94,9 @@ export class GroupChatMsgModule extends Module {
 
   // eslint-disable-next-line class-methods-use-this
   _add(msgObj) {
+    // add the notification to chat
+    store.dispatch(hasUnreadMessages(true));
+
     if (msgObj.fields.id.toString().includes('POLL_RESULT')) {
       store.dispatch(
         addPreviousPollPublishedViaChat({
