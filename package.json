@@ -29,7 +29,7 @@
     "@flyerhq/react-native-link-preview": "^1.6.0",
     "@gorhom/bottom-sheet": "^4.4.2",
     "@miblanchard/react-native-slider": "^2.2.0",
-    "@notifee/react-native": "^5.7.0",
+    "@notifee/react-native": "^7.7.1",
     "@react-native-community/netinfo": "9.3.7",
     "@react-navigation/drawer": "^6.4.1",
     "@react-navigation/native": "^6.0.10",
