@@ -1,10 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
-import { setFocusedElement, setFocusedId, setIsFocused } from '../../../store/redux/slices/wide-app/layout';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import {
+  setFocusedElement,
+  setFocusedId,
+  trigDetailedInfo,
+  setIsFocused
+} from '../../../store/redux/slices/wide-app/layout';
 import { isTalkingByUserId } from '../../../store/redux/slices/voice-users';
 import IconButtonComponent from '../../icon-button';
+import UserAvatar from '../../user-avatar';
 import VideoManager from '../../../services/webrtc/video-manager';
 import Styled from './styles';
 
@@ -18,12 +25,14 @@ const VideoContainer = (props) => {
     style,
     local,
     visible,
+    isGrid,
+    userRole,
   } = props;
 
-  const [showOptions, setShowOptions] = useState(false);
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const detailedInfo = useSelector((state) => state.layout.detailedInfo);
   const clientIsReady = useSelector(({ client }) => {
     return client.connectionStatus.isConnected
       && client.sessionState.connected
@@ -49,15 +58,24 @@ const VideoContainer = (props) => {
 
   const renderVideo = () => {
     if (cameraId && visible) {
-      if (typeof mediaStreamId === 'string') return <Styled.VideoStream streamURL={mediaStreamId} />;
+      if (typeof mediaStreamId === 'string') return <Styled.VideoStream streamURL={mediaStreamId} isGrid={isGrid} />;
       return <Styled.VideoSkeleton />;
     }
 
-    if (userAvatar && userAvatar.length !== 0) {
-      return <Styled.UserAvatar source={{ uri: userAvatar }} />;
-    }
+    return (
+      <Styled.UserColor userColor={userColor} isGrid={isGrid}>
+        {isGrid && (
+        <UserAvatar
+          userName={userName}
+          userColor={userColor}
+          userImage={userAvatar}
+          isTalking={isTalking}
+          userRole={userRole}
 
-    return <Styled.UserColor userColor={userColor} />;
+        />
+        )}
+      </Styled.UserColor>
+    );
   };
 
   const handleFocusClick = () => {
@@ -76,24 +94,28 @@ const VideoContainer = (props) => {
     navigation.navigate('FullscreenWrapper');
   };
 
-  return (
+  const tap = Gesture.Tap()
+    .numberOfTaps(2)
+    .onStart(handleFocusClick);
+
+  const renderDefaultVideoContainerItem = () => (
     <Styled.ContainerPressable
       style={style}
       isTalking={isTalking}
-      onPress={() => setShowOptions((prevState) => !prevState)}
+      onPress={() => { dispatch(trigDetailedInfo());
+      }}
     >
       {renderVideo()}
 
-      {!showOptions && (
+      {!detailedInfo && (
         <Styled.NameLabelContainer>
           <Styled.NameLabel numberOfLines={1}>{userName}</Styled.NameLabel>
         </Styled.NameLabelContainer>
       )}
 
-      {showOptions && (
+      {detailedInfo && (
         <Styled.PressableButton
           activeOpacity={0.6}
-          onPress={handleFocusClick}
         >
           <IconButtonComponent
             icon="fullscreen"
@@ -107,6 +129,29 @@ const VideoContainer = (props) => {
         </Styled.PressableButton>
       )}
     </Styled.ContainerPressable>
+  );
+
+  const renderGridVideoContainerItem = () => (
+    <GestureDetector gesture={tap}>
+      <Styled.ContainerPressableGrid
+        onPress={() => {
+          dispatch(trigDetailedInfo());
+        }}
+        style={style}
+        userColor={userColor}
+      >
+        {renderVideo()}
+        {detailedInfo && (
+        <Styled.NameLabelContainer>
+          <Styled.NameLabel numberOfLines={1}>{userName}</Styled.NameLabel>
+        </Styled.NameLabelContainer>
+        )}
+      </Styled.ContainerPressableGrid>
+    </GestureDetector>
+  );
+
+  return (
+    isGrid ? renderGridVideoContainerItem() : renderDefaultVideoContainerItem()
   );
 };
 

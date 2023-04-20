@@ -41,7 +41,6 @@ const UserAvatar = styled.Image`
   width: 95%;
   height: 95%;
   border-radius: 16px;
-  border: solid 2px #FFFFFF;
   overflow: hidden;
 `;
 

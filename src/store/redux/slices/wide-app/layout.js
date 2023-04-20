@@ -4,6 +4,7 @@ const initialState = {
   isFocused: false,
   focusedId: '',
   focusedElement: '',
+  detailedInfo: false,
 };
 
 const layoutSlice = createSlice({
@@ -19,12 +20,16 @@ const layoutSlice = createSlice({
     setFocusedElement: (state, action) => {
       state.focusedElement = action.payload;
     },
+    trigDetailedInfo: (state) => {
+      state.detailedInfo = !state.detailedInfo;
+    },
   },
 });
 
 export const {
   setIsFocused,
   setFocusedId,
-  setFocusedElement
+  setFocusedElement,
+  trigDetailedInfo,
 } = layoutSlice.actions;
 export default layoutSlice.reducer;

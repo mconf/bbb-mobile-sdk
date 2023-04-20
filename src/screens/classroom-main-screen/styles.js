@@ -8,6 +8,7 @@ import chatBottomSheet from '../../components/chat/bottom-sheet-chat';
 import iconButton from '../../components/icon-button';
 import contentArea from '../../components/content-area';
 import Colors from '../../constants/colors';
+import BottomSheetActionsBar from '../../components/actions-bar/bottom-sheet-actions-bar';
 
 const ContainerView = styled.SafeAreaView`
   width: 100%;
@@ -17,9 +18,8 @@ const ContainerView = styled.SafeAreaView`
   justify-content: space-around;
   padding: 10px;
 
-  ${({ orientation }) =>
-    orientation === 'LANDSCAPE' &&
-    `
+  ${({ orientation }) => orientation === 'LANDSCAPE'
+    && `
     flex-direction: row;
     justify-content: center;
   `}
@@ -32,9 +32,8 @@ const ActionsBarContainer = styled.View`
   justify-content: center;
   align-items: center;
 
-  ${({ orientation }) =>
-    orientation === 'LANDSCAPE' &&
-    `
+  ${({ orientation }) => orientation === 'LANDSCAPE'
+    && `
       width: 10%;
       height: 100%;
   `}
@@ -52,9 +51,8 @@ const VideoListContainer = styled.View`
   height: 20%;
   display: flex;
   align-items: flex-start;
-  ${({ orientation }) =>
-    orientation === 'LANDSCAPE' &&
-    `
+  ${({ orientation }) => orientation === 'LANDSCAPE'
+    && `
       width: 100%;
       height: 100%;
   `}
@@ -66,9 +64,8 @@ const ContentAreaContainer = styled.View`
   display: flex;
   align-items: flex-start;
 
-  ${({ orientation }) =>
-    orientation === 'LANDSCAPE' &&
-    `
+  ${({ orientation }) => orientation === 'LANDSCAPE'
+    && `
       width: 90%;
       height: 100%;
   `}
@@ -79,17 +76,15 @@ const ChatBottomSheetContainer = styled.View`
 `;
 
 const ActionsBar = styled(actionsBar)`
-  ${({ orientation }) =>
-    orientation === 'LANDSCAPE' &&
-    `
+  ${({ orientation }) => orientation === 'LANDSCAPE'
+    && `
       flex-direction: column;
       display: flex;
   `}
 `;
 const VideoList = styled(videoList)`
-  ${({ orientation }) =>
-    orientation === 'LANDSCAPE' &&
-    `
+  ${({ orientation }) => orientation === 'LANDSCAPE'
+    && `
       height: 100%;
       display: flex;
       align-items: center;
@@ -191,6 +186,8 @@ const ChatLoading = () => (
   </ContentLoader>
 );
 
+const ActionsBarGrid = styled(BottomSheetActionsBar)``;
+
 export default {
   ContainerView,
   ContentArea,
@@ -210,4 +207,6 @@ export default {
   ContentAreaLoading,
   ChatLoading,
   ActionsBarLoading,
+  // grid stuffs
+  ActionsBarGrid
 };

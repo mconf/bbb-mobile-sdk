@@ -6,10 +6,12 @@ import { useSelector } from 'react-redux';
 import Styled from './styles';
 import { selectSortedVideoUsers } from '../../../store/redux/slices/video-streams';
 
-const VideoGrid = () => {
+const GridView = () => {
   const numColumns = 2;
 
   const videoUsers = useSelector(selectSortedVideoUsers);
+  //const screenshareUser = useSelector(selectScreenshareUser);
+  //const presentation = useSelector(selectPresentation);
 
   const renderItem = (videoUser) => {
     const { item: vuItem } = videoUser;
@@ -23,6 +25,28 @@ const VideoGrid = () => {
       visible,
       userRole,
     } = vuItem;
+
+    if (userRole === 'MODERATOR') {
+      return (
+        <View
+          style={styles.itemPresentation}
+        >
+          <Styled.VideoListItem
+            cameraId={cameraId}
+            userId={userId}
+            userAvatar={userAvatar}
+            userColor={userColor}
+            userName={name}
+            local={local}
+            visible={visible}
+            isGrid
+            userRole={userRole}
+            columns={2}
+          />
+        </View>
+      );
+    }
+
     return (
       <View
         style={styles.item}
@@ -63,6 +87,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
+    width: '50%',
+    height: Dimensions.get('window').width / 2, // approximate a square
+  },
+  itemPresentation: {
+    backgroundColor: '#d0c4cb',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+    width: '100%',
     height: Dimensions.get('window').width / 2, // approximate a square
   },
   itemInvisible: {
@@ -73,4 +106,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default VideoGrid;
+export default GridView;

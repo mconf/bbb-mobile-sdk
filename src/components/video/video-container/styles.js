@@ -18,7 +18,10 @@ const ContainerPressable = styled(Pressable).attrs(() => ({
     border-width: 2px;
     ${({ isTalking }) => isTalking && `
       border: 2px ${Colors.orange} solid;
-  `}
+    `}
+    ${({ isGrid }) => isGrid && `
+      border-color: #06172A;
+    `}
   `}
 `;
 
@@ -32,16 +35,27 @@ const VideoStream = styled(RTCView)`
   position: relative;
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  // overflow: hidden;
   object-fit: contain;
   background-color: ${Colors.contentLetterboxColor};
+
+  ${({ isGrid }) => isGrid && `
+    object-fit: cover;
+    background-color: red;
+  `}
 `;
 
 const UserColor = styled.View`
   width: 100%;
   height: 100%;
-  background-color: ${({ userColor }) => userColor};
+  background-color: ${({ userColor, isGrid }) => userColor + (isGrid && 'AA')};
   overflow: hidden;
+
+  ${({ isGrid }) => isGrid && `
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  `}
 `;
 
 const NameLabelContainer = styled.View`
@@ -86,6 +100,22 @@ const VideoSkeleton = () => (
   </ContentLoader>
 );
 
+const ContainerPressableGrid = styled(Pressable).attrs(() => ({
+  pressStyle: {
+    borderWidth: 2,
+  },
+}))`
+  ${() => css`
+    height: 120px;
+    width: 120px;
+    border-color: #06172A;
+    border-width: 2px;
+    ${({ isTalking }) => isTalking && `
+      border: 2px ${Colors.orange} solid;
+    `}
+  `}
+`;
+
 export default {
   ContainerPressable,
   UserAvatar,
@@ -95,4 +125,5 @@ export default {
   UserColor,
   VideoStream,
   VideoSkeleton,
+  ContainerPressableGrid
 };
