@@ -587,7 +587,7 @@ const SocketConnectionComponent = (props) => {
           <TextInput
             placeholder="Join URL"
             onSubmitEditing={({ nativeEvent: { text } }) => dispatch(setJoinUrl(text))}
-            defaultValue={"https://live-oc002.elos.dev/bigbluebutton/api/join?fullName=User+2711916&meetingID=random-3571583&password=mp&redirect=true&checksum=e22da3f28d83e6eb70ef07e36d60de7a249b8708"}
+            defaultValue={"https://live-oc002.elos.dev/bigbluebutton/api/join?fullName=User+3074303&meetingID=random-4916366&password=ap&redirect=true&checksum=ce291fcdbc62cbba3eb8d13ff03bef2479cc8c8d"}
           />
         </View>
       </View>

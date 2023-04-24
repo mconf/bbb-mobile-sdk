@@ -40,11 +40,8 @@ const OptionsButton = styled(button)`
 `;
 
 const ButtonContainer = styled.View`
-  /*display: flex;
-  align-items: center;
-  justify-content: center;*/
   width: 100%;
-  padding: 5% 0;
+  padding: 10% 0;
   margin: 0 0;
   //border: solid white 2px;
   border-radius: 16px;
