@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { Share } from 'react-native';
 import {
   DrawerContentScrollView,
   DrawerItemList,
@@ -12,6 +13,7 @@ import * as api from '../../services/api';
 import { leave } from '../../store/redux/slices/wide-app/client';
 
 const CustomDrawer = (props) => {
+  const { meetingUrl } = props;
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const currentUserStore = useSelector((state) => state.currentUserCollection);
@@ -37,6 +39,25 @@ const CustomDrawer = (props) => {
     dispatch(leave(api));
   };
 
+  const onClickShare = async () => {
+    try {
+      const result = await Share.share({
+        message: meetingUrl || 'https://bigbluebutton.org/',
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      console.error('error sharing link', error);
+    }
+  };
+
   return (
     <Styled.ViewContainer>
       <DrawerContentScrollView
@@ -56,6 +77,14 @@ const CustomDrawer = (props) => {
         </Styled.ContainerDrawerItemList>
       </DrawerContentScrollView>
       <Styled.ContainerCustomButtons>
+        <Styled.ButtonLeaveContainer onPress={onClickShare}>
+          <Styled.ViewShareContainer>
+            <Icon name="share" size={24} color="#1C1B1F" />
+            <Styled.TextLeaveContainer>
+              {t('mobileSdk.drawer.shareButtonLabel')}
+            </Styled.TextLeaveContainer>
+          </Styled.ViewShareContainer>
+        </Styled.ButtonLeaveContainer>
         <Styled.ButtonLeaveContainer onPress={leaveSession}>
           <Styled.ViewLeaveContainer>
             <Icon name="logout" size={24} color="#1C1B1F" />

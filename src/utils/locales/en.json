@@ -110,5 +110,6 @@
   "mobileSdk.userList.waitingAtendees": "Waiting attendees",
   "mobileSdk.webcam.blockedLabel": "Webcam sharing blocked",
   "mobileSdk.webcam.permissionLabel": "We need your permission so the webcam can be shared.",
-  "mobileSdk.whiteboard.label": "Whiteboard"
+  "mobileSdk.whiteboard.label": "Whiteboard",
+  "mobileSdk.drawer.shareButtonLabel": "Share meeting"
 }

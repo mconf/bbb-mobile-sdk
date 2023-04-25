@@ -58,6 +58,7 @@ const AppContent = ({
   onLeaveSession: _onLeaveSession,
   jUrl,
   defaultLanguage,
+  meetingUrl,
 }) => {
   const Stack = createNativeStackNavigator();
   const dispatch = useDispatch();
@@ -272,6 +273,7 @@ const AppContent = ({
               navigationRef={navigationRef}
               jUrl={jUrl}
               onLeaveSession={onLeaveSession}
+              meetingUrl={meetingUrl}
             />
           )}
         </Stack.Screen>

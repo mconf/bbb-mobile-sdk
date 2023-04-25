@@ -110,5 +110,6 @@
   "mobileSdk.userList.waitingAtendees": "Participantes aguardando",
   "mobileSdk.webcam.blockedLabel": "Compartilhamento de webcam bloqueado",
   "mobileSdk.webcam.permissionLabel": "Precisamos de sua permissão para que sua câmera possa ser compartilhada.",
-  "mobileSdk.whiteboard.label": "Quadro branco"
+  "mobileSdk.whiteboard.label": "Quadro branco",
+  "mobileSdk.drawer.shareButtonLabel": "Compartilhar link da sala"
 }
