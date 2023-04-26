@@ -1,4 +1,4 @@
-import { SafeAreaView } from 'react-native';
+import { View } from 'react-native';
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import withPortal from '../../components/high-order/with-portal';
@@ -22,7 +22,7 @@ const ClassroomMainScreen = () => {
   /* view components */
   const renderPortraitOrientation = () => {
     return (
-      <SafeAreaView>
+      <View>
         <Styled.ContainerView>
           <Styled.VideoListContainer>
             <Styled.VideoList
@@ -44,13 +44,13 @@ const ClassroomMainScreen = () => {
             <Styled.ActionsBar />
           </Styled.ActionsBarContainer>
         </Styled.ContainerView>
-      </SafeAreaView>
+      </View>
     );
   };
 
   const renderLandscapeOrientation = () => {
     return (
-      <SafeAreaView>
+      <View>
         <Styled.ContainerView orientation={orientation}>
           <Styled.ContentAreaContainer orientation={orientation}>
             <>
@@ -77,7 +77,7 @@ const ClassroomMainScreen = () => {
             <Styled.ActionsBar orientation={orientation} />
           </Styled.ActionsBarContainer>
         </Styled.ContainerView>
-      </SafeAreaView>
+      </View>
     );
   };
 
