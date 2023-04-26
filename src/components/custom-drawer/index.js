@@ -32,6 +32,7 @@ const CustomDrawer = (props) => {
       name: currentUserObj?.name,
       role: currentUserObj?.role,
       color: currentUserObj?.color,
+      avatar: currentUserObj?.avatar
     };
   }, [currentUserStore]);
 
@@ -69,6 +70,7 @@ const CustomDrawer = (props) => {
             userName={handleUserInfo().name}
             userRole={handleUserInfo().role}
             userColor={handleUserInfo().color}
+            userImage={handleUserInfo().avatar}
           />
           <Styled.NameUserAvatar>{handleUserInfo().name}</Styled.NameUserAvatar>
         </Styled.CustomDrawerContainer>
