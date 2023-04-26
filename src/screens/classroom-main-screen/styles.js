@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
 import ContentLoader, { Rect, Circle } from 'react-content-loader/native';
-import { SafeAreaView } from 'react-native';
+import { View } from 'react-native';
 import videoList from '../../components/video/video-list';
 import actionsBar from '../../components/actions-bar';
 import chat from '../../components/chat';
@@ -9,7 +9,7 @@ import iconButton from '../../components/icon-button';
 import contentArea from '../../components/content-area';
 import Colors from '../../constants/colors';
 
-const ContainerView = styled.SafeAreaView`
+const ContainerView = styled.View`
   width: 100%;
   height: 100%;
   display: flex;
@@ -106,7 +106,7 @@ const SwitchLayoutButton = styled(iconButton)`
 // skeleton loading animations
 const renderSkeletonLoading = () => {
   return (
-    <SafeAreaView>
+    <View>
       <ContainerView>
         <VideoListContainer>
           <VideoListLoading />
@@ -124,7 +124,7 @@ const renderSkeletonLoading = () => {
           <ActionsBarLoading />
         </ActionsBarContainer>
       </ContainerView>
-    </SafeAreaView>
+    </View>
   );
 };
 

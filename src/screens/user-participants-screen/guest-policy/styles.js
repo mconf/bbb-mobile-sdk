@@ -5,7 +5,7 @@ import actionsBar from '../../../components/actions-bar';
 import button from '../../../components/button';
 import iconButton from '../../../components/icon-button';
 
-const ContainerView = styled.SafeAreaView`
+const ContainerView = styled.View`
   width: 100%;
   height: 100%;
   display: flex;

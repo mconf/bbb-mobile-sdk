@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FlatList, SafeAreaView, Alert } from 'react-native';
+import { FlatList, View, Alert } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import { useTranslation } from 'react-i18next';
 import { useOrientation } from '../../hooks/use-orientation';
@@ -78,7 +78,7 @@ const ManagePresentationScreen = () => {
   );
 
   return (
-    <SafeAreaView>
+    <View>
       <Styled.ContainerView orientation={orientation}>
         <Styled.ContainerPresentationCard>
           <Styled.Title>{t('mobileSdk.managePresentations.title')}</Styled.Title>
@@ -92,7 +92,7 @@ const ManagePresentationScreen = () => {
           <Styled.ActionsBar orientation={orientation} />
         </Styled.ActionsBarContainer>
       </Styled.ContainerView>
-    </SafeAreaView>
+    </View>
   );
 };
 

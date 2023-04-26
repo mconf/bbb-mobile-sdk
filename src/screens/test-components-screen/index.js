@@ -1,6 +1,6 @@
 import React from 'react';
 import * as Linking from 'expo-linking';
-import { SafeAreaView, Text } from 'react-native';
+import { View, Text } from 'react-native';
 import Settings from '../../../settings.json';
 import Styled from './styles';
 import SocketConnection from '../../components/socket-connection';
@@ -15,7 +15,7 @@ const TestComponentsScreen = (props) => {
   }
 
   return (
-    <SafeAreaView>
+    <View>
       <Styled.ContainerView>
         <Text>
           URL:
@@ -23,7 +23,7 @@ const TestComponentsScreen = (props) => {
         </Text>
         <SocketConnection />
       </Styled.ContainerView>
-    </SafeAreaView>
+    </View>
   );
 };
 
