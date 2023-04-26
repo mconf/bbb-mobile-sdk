@@ -4,7 +4,7 @@ import Colors from '../../../constants/colors';
 import PrimaryButton from '../../../components/button';
 import textInput from '../../../components/text-input';
 
-const ContainerView = styled.SafeAreaView`
+const ContainerView = styled.View`
   width: 100%;
   height: 100%;
   align-items: center;
