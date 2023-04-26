@@ -26,7 +26,9 @@ import Settings from '../../../../settings.json';
 
 const FEEDBACK_ENABLED = Settings.feedback.enabled;
 
-const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
+const DrawerNavigator = ({
+  onLeaveSession, jUrl, navigationRef, meetingUrl
+}) => {
   const Drawer = createDrawerNavigator();
   const navigation = useNavigation();
   const { t } = useTranslation();
@@ -90,7 +92,13 @@ const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
   return (
     <Drawer.Navigator
       independent
-      drawerContent={(props) => <CustomDrawer {...props} onLeaveSession={onLeaveSession} />}
+      drawerContent={(props) => (
+        <CustomDrawer
+          {...props}
+          onLeaveSession={onLeaveSession}
+          meetingUrl={meetingUrl}
+        />
+      )}
       screenOptions={{
         contentOptions: {
           style: {

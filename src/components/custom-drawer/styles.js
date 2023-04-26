@@ -33,7 +33,9 @@ const ContainerDrawerItemList = styled.View`
   padding-top: 10px;
 `;
 
-const ContainerCustomButtons = styled.View``;
+const ContainerCustomButtons = styled.View`
+  padding-bottom:  5%;
+`;
 
 const ButtonLeaveContainer = styled(Pressable).attrs(() => ({
   pressStyle: {
@@ -41,7 +43,7 @@ const ButtonLeaveContainer = styled(Pressable).attrs(() => ({
   },
 }))`
   ${() => css`
-    padding:  20px 10px;
+    padding:  5px 10px;
   `}
 `;
 
@@ -50,6 +52,13 @@ const ViewLeaveContainer = styled.View`
   align-items: center;
   padding: 10px;
   background-color: ${Colors.lightGray100};
+  border-radius: 8px;
+`;
+
+const ViewShareContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+  padding: 10px;
   border-radius: 8px;
 `;
 
@@ -72,4 +81,5 @@ export default {
   ButtonLeaveContainer,
   ViewLeaveContainer,
   TextLeaveContainer,
+  ViewShareContainer,
 };
