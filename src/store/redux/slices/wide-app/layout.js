@@ -23,6 +23,9 @@ const layoutSlice = createSlice({
     trigDetailedInfo: (state) => {
       state.detailedInfo = !state.detailedInfo;
     },
+    setDetailedInfo: (state, action) => {
+      state.detailedInfo = action.payload;
+    },
   },
 });
 
@@ -31,5 +34,6 @@ export const {
   setFocusedId,
   setFocusedElement,
   trigDetailedInfo,
+  setDetailedInfo,
 } = layoutSlice.actions;
 export default layoutSlice.reducer;
