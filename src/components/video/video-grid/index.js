@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   StyleSheet, View, FlatList, Dimensions
 } from 'react-native';
@@ -10,8 +10,13 @@ const GridView = () => {
   const numColumns = 2;
 
   const videoUsers = useSelector(selectSortedVideoUsers);
-  //const screenshareUser = useSelector(selectScreenshareUser);
-  //const presentation = useSelector(selectPresentation);
+
+  const contentAreaUserItem = {
+    cameraId: 'ContentArea',
+    contentArea: true,
+  };
+
+  const mescleGridItems = [contentAreaUserItem, ...videoUsers];
 
   const renderItem = (videoUser) => {
     const { item: vuItem } = videoUser;
@@ -24,25 +29,15 @@ const GridView = () => {
       local,
       visible,
       userRole,
+      contentArea,
     } = vuItem;
 
-    if (userRole === 'MODERATOR') {
+    if (contentArea) {
       return (
         <View
-          style={styles.itemPresentation}
+          style={styles.item}
         >
-          <Styled.VideoListItem
-            cameraId={cameraId}
-            userId={userId}
-            userAvatar={userAvatar}
-            userColor={userColor}
-            userName={name}
-            local={local}
-            visible={visible}
-            isGrid
-            userRole={userRole}
-            columns={2}
-          />
+          <Styled.ContentArea />
         </View>
       );
     }
@@ -68,7 +63,7 @@ const GridView = () => {
 
   return (
     <FlatList
-      data={videoUsers}
+      data={mescleGridItems}
       style={styles.container}
       renderItem={renderItem}
       numColumns={numColumns}

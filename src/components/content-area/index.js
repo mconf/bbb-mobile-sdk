@@ -1,9 +1,15 @@
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Styled from './styles';
 import { selectScreenshare } from '../../store/redux/slices/screenshare';
-import { setFocusedElement, setFocusedId, setIsFocused } from '../../store/redux/slices/wide-app/layout';
+import {
+  setFocusedElement,
+  setFocusedId,
+  setIsFocused,
+  trigDetailedInfo
+} from '../../store/redux/slices/wide-app/layout';
 
 const ContentArea = (props) => {
   const { style, fullscreen } = props;
@@ -11,6 +17,7 @@ const ContentArea = (props) => {
   const slidesStore = useSelector((state) => state.slidesCollection);
   const presentationsStore = useSelector((state) => state.presentationsCollection);
   const screenshare = useSelector(selectScreenshare);
+  const detailedInfo = useSelector((state) => state.layout.detailedInfo);
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
@@ -56,6 +63,10 @@ const ContentArea = (props) => {
     <Styled.Screenshare style={style} />
   );
 
+  const tap = Gesture.Tap()
+    .numberOfTaps(2)
+    .onStart(onClickContentArea);
+
   // ** return methods **
   if (fullscreen) {
     return (
@@ -67,10 +78,22 @@ const ContentArea = (props) => {
   }
 
   return (
-    <Styled.ContentAreaPressable onPress={onClickContentArea}>
-      {!screenshare && presentationView()}
-      {screenshare && screenshareView()}
-    </Styled.ContentAreaPressable>
+    <GestureDetector gesture={tap}>
+      <Styled.ContentAreaPressable onPress={() => dispatch(trigDetailedInfo())}>
+        {!screenshare && presentationView()}
+        {screenshare && screenshareView()}
+        {detailedInfo && (
+        <Styled.NameLabelContainer>
+          <Styled.NameLabel
+            numberOfLines={1}
+          >
+            {screenshare ? 'Screenshare' : 'Presentation'}
+          </Styled.NameLabel>
+        </Styled.NameLabelContainer>
+        )}
+      </Styled.ContentAreaPressable>
+    </GestureDetector>
+
   );
 };
 

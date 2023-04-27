@@ -186,7 +186,10 @@ const ChatLoading = () => (
   </ContentLoader>
 );
 
+// grid
 const ActionsBarGrid = styled(BottomSheetActionsBar)``;
+const ContentAreaGrid = styled(contentArea)`
+`;
 
 export default {
   ContainerView,
@@ -208,5 +211,6 @@ export default {
   ChatLoading,
   ActionsBarLoading,
   // grid stuffs
-  ActionsBarGrid
+  ActionsBarGrid,
+  ContentAreaGrid
 };
