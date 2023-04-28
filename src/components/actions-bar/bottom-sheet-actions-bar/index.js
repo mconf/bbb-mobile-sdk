@@ -22,9 +22,9 @@ const BottomSheetActionsBar = () => {
   const { t } = useTranslation();
   const snapPoints = useMemo(() => {
     if (orientation === 'PORTRAIT') {
-      return ['15%', '50%'];
+      return [110, 300];
     }
-    return ['35%', '100%'];
+    return [110, '100%'];
   }, [orientation]);
 
   // callbacks

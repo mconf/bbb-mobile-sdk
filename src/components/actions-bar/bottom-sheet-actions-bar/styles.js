@@ -41,11 +41,9 @@ const OptionsButton = styled(button)`
 
 const ButtonContainer = styled.View`
   width: 100%;
-  padding: 10% 0;
-  margin: 0 0;
-  //border: solid white 2px;
+  padding: 24px 0;
+  margin: 0;
   border-radius: 16px;
-  //background-color: ${Colors.lightGray200};
 `;
 
 export default {
