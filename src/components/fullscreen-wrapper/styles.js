@@ -60,7 +60,8 @@ const ContentArea = styled(contentArea)`
 
 const CloseFullscreenButton = styled(iconButton)`
   position: absolute;
-  right: 10px;
+  top: 12px;
+  right: 12px
   opacity: 0.7;
 `;
 
