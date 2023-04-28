@@ -41,7 +41,6 @@ const VideoStream = styled(RTCView)`
 
   ${({ isGrid }) => isGrid && `
     object-fit: cover;
-    background-color: red;
   `}
 `;
 
