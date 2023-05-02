@@ -107,7 +107,7 @@ const AppContent = ({
   );
 
   useEffect(() => {
-    const changeLanguage = (lng: 'en') => {
+    const changeLanguage = (lng = 'en') => {
       i18n.changeLanguage(lng)
         .then(() => {
           logger.debug({
