@@ -1,12 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
+import {
+  useEffect, useRef, useState, useCallback
+} from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useFocusEffect } from '@react-navigation/native';
 import notifee, { EventType } from '@notifee/react-native';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 // providers and store
 import { activateKeepAwakeAsync } from 'expo-keep-awake';
 import InCallManager from 'react-native-incall-manager';
-import { DeviceEventEmitter } from 'react-native';
+import { BackHandler, DeviceEventEmitter } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { store } from './src/store/redux/store';
 import * as api from './src/services/api';
@@ -70,6 +72,7 @@ const AppContent = ({
   const navigationRef = useRef(null);
   const nativeEventListeners = useRef([]);
   const { t, i18n } = useTranslation();
+
   const onLeaveSession = () => {
     dispatch(setSessionTerminated(true));
     const hasCustomLeaveSession = typeof _onLeaveSession === 'function';
@@ -83,8 +86,28 @@ const AppContent = ({
     return hasCustomLeaveSession;
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        dispatch(leave(api));
+        return true;
+      };
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, []),
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        dispatch(leave(api));
+      };
+    }, []),
+  );
+
   useEffect(() => {
-    const changeLanguage = (lng: 'en') => {
+    const changeLanguage = (lng = 'en') => {
       i18n.changeLanguage(lng)
         .then(() => {
           logger.debug({
