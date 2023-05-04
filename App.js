@@ -2,7 +2,7 @@ import {
   useEffect, useRef, useState, useCallback
 } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NavigationContainer, useFocusEffect } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import notifee, { EventType } from '@notifee/react-native';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 // providers and store
@@ -10,7 +10,7 @@ import { activateKeepAwakeAsync } from 'expo-keep-awake';
 import InCallManager from 'react-native-incall-manager';
 import { BackHandler, DeviceEventEmitter } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { store } from './src/store/redux/store';
+import { store, injectStoreFlushCallback} from './src/store/redux/store';
 import * as api from './src/services/api';
 import DrawerNavigator from './src/components/custom-drawer/drawer-navigator';
 import FullscreenWrapper from './src/components/fullscreen-wrapper';
@@ -31,6 +31,7 @@ import {
   leave,
   setSessionTerminated,
   sessionStateChanged,
+  setFeedbackEnabled,
 } from './src/store/redux/slices/wide-app/client';
 import logger from './src/services/logger';
 import { toggleMuteMicrophone } from './src/components/audio/service';
@@ -68,6 +69,7 @@ const AppContent = ({
   const audioIsConnected = useSelector((state) => state.audio.isConnected);
   const audioIsMuted = useSelector((state) => state.audio.isMuted);
   const ended = useSelector((state) => state.client.sessionState.ended);
+  const sessionState = useSelector((state) => state.client.sessionState);
   const [notification, setNotification] = useState(null);
   const navigationRef = useRef(null);
   const nativeEventListeners = useRef([]);
@@ -75,10 +77,8 @@ const AppContent = ({
 
   const onLeaveSession = () => {
     dispatch(setSessionTerminated(true));
+    // Custom _onLeaveSession will be called on Redux's store flush @ store.js
     const hasCustomLeaveSession = typeof _onLeaveSession === 'function';
-
-    if (hasCustomLeaveSession) _onLeaveSession();
-
     // The return value of onLeaveSession determines whether there's was a custom
     // leave callback provided by the enveloping app. This is important for the
     // SDK itself to know what to do when the session ends (ie where to navigate
@@ -86,25 +86,18 @@ const AppContent = ({
     return hasCustomLeaveSession;
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      const onBackPress = () => {
-        dispatch(leave(api));
-        return true;
-      };
-      BackHandler.addEventListener('hardwareBackPress', onBackPress);
-
-      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-    }, []),
-  );
-
-  useFocusEffect(
-    useCallback(() => {
-      return () => {
-        dispatch(leave(api));
-      };
-    }, []),
-  );
+  useEffect(() => {
+    console.log("FOCUS MOUNTED")
+    const onBackPress = () => {
+      dispatch(leave(api));
+      return true;
+    };
+    BackHandler.addEventListener('hardwareBackPress', onBackPress);
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+      console.log("FOCUS UNMOUNTED");
+    }
+  }, []);
 
   useEffect(() => {
     const changeLanguage = (lng = 'en') => {
@@ -229,6 +222,9 @@ const AppContent = ({
   }, []);
 
   useEffect(() => {
+    // Inject custom provided onLeaveSession callback into the store so it's called
+    // once the store's about to be flushed
+    if (typeof _onLeaveSession === 'function') injectStoreFlushCallback(_onLeaveSession);
     injectStore();
     InCallManager.start({ media: 'video' });
     dispatch(ConnectionStatusTracker.registerConnectionStatusListeners());
@@ -260,23 +256,28 @@ const AppContent = ({
       }
     });
 
+    console.log("REGULAR APP MOUNT");
+
     return () => {
+      console.log("REGULAR APP UNMOUNT", ended, sessionState);
       dispatch(ConnectionStatusTracker.unregisterConnectionStatusListeners());
       nativeEventListeners.current.forEach((eventListener) => eventListener.remove());
 
-      if (!ended) {
-        dispatch(sessionStateChanged({
-          ended: true,
-          endReason: 'logged_out',
-        }));
-      }
-
-      dispatch(leave(api)).unwrap().catch(() => {
-        dispatch(setSessionTerminated(true));
-      });
-      dispatch(setSessionTerminated(true));
       unsubscribeForegroundEvents();
       InCallManager.stop({ media: 'video' });
+
+      if (!ended && (sessionState.connected
+          || sessionState.loggedIn
+          || sessionState.loggingIn
+          || sessionState.loggingOut)) {
+        dispatch(leave(api)).unwrap().finally(() => {
+          dispatch(sessionStateChanged({
+            ended: true,
+            endReason: 'logged_out',
+          }));
+          onLeaveSession();
+        });
+      }
     };
   }, []);
 

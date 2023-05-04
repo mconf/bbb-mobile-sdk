@@ -101,7 +101,7 @@ const ProblemFeedbackScreen = ({ route }) => {
     } = route.params.payload;
     const {
       confname,
-      metadata,
+      metadata = {},
     } = route.params.meetingData;
 
     const getDeviceType = () => {
