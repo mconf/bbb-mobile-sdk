@@ -68,11 +68,19 @@ const AppContent = ({
   const guestStatus = useSelector((state) => state.client.guestStatus);
   const audioIsConnected = useSelector((state) => state.audio.isConnected);
   const audioIsMuted = useSelector((state) => state.audio.isMuted);
-  const ended = useSelector((state) => state.client.sessionState.ended);
-  const sessionState = useSelector((state) => state.client.sessionState);
+  const leaveOnUnmount = useSelector((state) => {
+    const { sessionState } = state.client;
+    return !sessionState.ended
+      && (sessionState.connected
+        || sessionState.loggedIn
+        || sessionState.loggingIn
+        || sessionState.loggingOut);
+  });
   const [notification, setNotification] = useState(null);
   const navigationRef = useRef(null);
   const nativeEventListeners = useRef([]);
+  const leaveOnUnmountRef = useRef();
+
   const { t, i18n } = useTranslation();
 
   const onLeaveSession = () => {
@@ -85,6 +93,11 @@ const AppContent = ({
     // from end-session-screen)
     return hasCustomLeaveSession;
   };
+
+  // Store leaveOnUnmount in a ref so we can use it in the unmount function
+  useEffect(() => {
+    leaveOnUnmountRef.current = leaveOnUnmount;
+  }, [leaveOnUnmount]);
 
   useEffect(() => {
     console.log("FOCUS MOUNTED")
@@ -259,17 +272,14 @@ const AppContent = ({
     console.log("REGULAR APP MOUNT");
 
     return () => {
-      console.log("REGULAR APP UNMOUNT", ended, sessionState);
+      console.log("REGULAR APP UNMOUNT - leave?", leaveOnUnmountRef.current);
       dispatch(ConnectionStatusTracker.unregisterConnectionStatusListeners());
       nativeEventListeners.current.forEach((eventListener) => eventListener.remove());
 
       unsubscribeForegroundEvents();
       InCallManager.stop({ media: 'video' });
 
-      if (!ended && (sessionState.connected
-          || sessionState.loggedIn
-          || sessionState.loggingIn
-          || sessionState.loggingOut)) {
+      if (leaveOnUnmountRef.current) {
         dispatch(leave(api)).unwrap().finally(() => {
           dispatch(sessionStateChanged({
             ended: true,
