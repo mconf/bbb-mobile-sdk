@@ -86,26 +86,6 @@ const AppContent = ({
     return hasCustomLeaveSession;
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      const onBackPress = () => {
-        dispatch(leave(api));
-        return true;
-      };
-      BackHandler.addEventListener('hardwareBackPress', onBackPress);
-
-      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-    }, []),
-  );
-
-  useFocusEffect(
-    useCallback(() => {
-      return () => {
-        dispatch(leave(api));
-      };
-    }, []),
-  );
-
   useEffect(() => {
     const changeLanguage = (lng = 'en') => {
       i18n.changeLanguage(lng)
