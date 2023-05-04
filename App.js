@@ -96,7 +96,7 @@ const AppContent = ({
     return () => {
       BackHandler.removeEventListener('hardwareBackPress', onBackPress);
       console.log("FOCUS UNMOUNTED");
-    }
+    };
   }, []);
 
   useEffect(() => {
