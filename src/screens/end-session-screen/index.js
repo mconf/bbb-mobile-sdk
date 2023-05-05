@@ -15,11 +15,12 @@ const EndSessionScreen = (props) => {
   const subtitle = t('mobileSdk.endSession.subtitle');
   const more = t('mobileSdk.endSession.more');
   const buttonText = t('mobileSdk.endSession.buttonText');
+  const leaveText = t('app.leaveModal.confirm')
   const navigation = useNavigation();
 
   useEffect(() => {
     console.log("END SCREEN MOUNT")
-    navigation.addListener('beforeRemove', (event) => {
+    /* navigation.addListener('beforeRemove', (event) => {
       event.preventDefault();
 
       if (endTimeout.current) {
@@ -32,24 +33,29 @@ const EndSessionScreen = (props) => {
       // trigger the back handler - else do nothing.
       console.log("calling onLeaveSession before remove");
       if (!onLeaveSession()) navigation.dispatch(event.data.action);
-    });
+    }); */
 
-    endTimeout.current = setTimeout(() => {
+    /* endTimeout.current = setTimeout(() => {
       // onLeaveSession returns a boolean that indicates whether there's a custom
       // leave session provided by and embedded application or not. If there isn't,
       // trigger the back handler - else do nothing.
       console.log("calling onLeaveSession timeout")
       if (!onLeaveSession()) navigation.navigate('DrawerNavigator');
-    }, 10000);
+    }, 10000); */
 
     return () => {
       console.log("END SCREEN UNMOUNT")
-      if (endTimeout.current) {
+      /* if (endTimeout.current) {
         clearTimeout(endTimeout.current);
         endTimeout.current = null;
-      }
+      } */
     };
   }, []);
+
+  const handleLeaveSessionButtonPress = () => {
+    console.log("calling onLeaveSession BUTTON")
+    if (!onLeaveSession()) navigation.navigate('DrawerNavigator');
+  };
 
   const handleOpenUrl = async () => {
     await Linking.openURL('https://bigbluebutton.org/');
@@ -70,6 +76,9 @@ const EndSessionScreen = (props) => {
           <Styled.ConfirmButton onPress={handleOpenUrl}>{buttonText}</Styled.ConfirmButton>
         </Styled.ButtonContainer>
       </Styled.ContainerEndSessionCard>
+      <Styled.ButtonLeaveContainer>
+          <Styled.ConfirmButton onPress={handleLeaveSessionButtonPress}>{leaveText}</Styled.ConfirmButton>
+        </Styled.ButtonLeaveContainer>
     </Styled.ContainerView>
   );
 };
