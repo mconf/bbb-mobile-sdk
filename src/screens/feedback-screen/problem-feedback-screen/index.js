@@ -83,7 +83,7 @@ const ProblemFeedbackScreen = ({ route }) => {
       if (value === true) {
         answer.problem = key;
         if (key === 'other') {
-          answer.problem_detailed = problemDetalied.text;
+          answer.problem_described = problemDetalied.text;
         }
       }
     });
@@ -101,7 +101,7 @@ const ProblemFeedbackScreen = ({ route }) => {
     } = route.params.payload;
     const {
       confname,
-      metadata,
+      metadata = {},
     } = route.params.meetingData;
 
     const getDeviceType = () => {
