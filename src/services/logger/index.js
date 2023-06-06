@@ -1,5 +1,6 @@
 /* eslint max-classes-per-file: 0 */
 import { nativeApplicationVersion, nativeBuildVersion } from 'expo-application';
+import * as Device from 'expo-device';
 import NetInfo from '@react-native-community/netinfo';
 import { createLogger, stdSerializers } from 'browser-bunyan';
 import { ConsoleFormattedStream } from '@browser-bunyan/console-formatted-stream';
@@ -10,6 +11,23 @@ import Settings from '../../../settings.json';
 
 const APP_VERSION = nativeApplicationVersion;
 const BUILD_NUMBER = parseInt(nativeBuildVersion, 10) || 0;
+const DEVICE_INFORMATION = {
+  brand: Device.brand,
+  designName: Device.designName,
+  name: Device.deviceName,
+  yearClass: Device.deviceYearClass,
+  manufacturer: Device.manufacturer,
+  modelId: Device.modelId,
+  modelName: Device.modelName,
+  osBuildId: Device.osBuildId,
+  osInternalBuildId: Device.osInternalBuildId,
+  osName: Device.osName,
+  osVersion: Device.osVersion,
+  platformApiLevel: Device.platformApiLevel,
+  productName: Device.productName,
+  suppCpuArch: Device.supportedCpuArchitectures,
+  totalMemory: Device.totalMemory
+};
 
 // TODO pull configuration from server
 const LOG_CONFIG = Settings.clientLog || {
@@ -85,6 +103,7 @@ class ServerLoggerStream extends ServerStream {
     }
     this.rec.appVersion = APP_VERSION;
     this.rec.clientBuild = BUILD_NUMBER;
+    this.rec.deviceInformation = DEVICE_INFORMATION;
     this.rec.connectionId = getCurrentSessionId();
     if (this.logTagString) {
       this.rec.logTag = this.logTagString;
