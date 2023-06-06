@@ -8,7 +8,7 @@ import { Provider, useDispatch, useSelector } from 'react-redux';
 // providers and store
 import { activateKeepAwakeAsync } from 'expo-keep-awake';
 import InCallManager from 'react-native-incall-manager';
-import { BackHandler, DeviceEventEmitter } from 'react-native';
+import { BackHandler, DeviceEventEmitter, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { store, injectStoreFlushCallback} from './src/store/redux/store';
 import * as api from './src/services/api';
@@ -102,7 +102,15 @@ const AppContent = ({
   useEffect(() => {
     console.log("FOCUS MOUNTED")
     const onBackPress = () => {
-      dispatch(leave(api));
+      Alert.alert(t('app.leaveModal.title'), t('app.leaveModal.desc'), [
+        {
+          text: t('app.settings.main.cancel.label'),
+          onPress: () => {},
+          style: 'cancel',
+        },
+        { text: 'OK', onPress: () => dispatch(leave(api)) },
+      ]);
+
       return true;
     };
     BackHandler.addEventListener('hardwareBackPress', onBackPress);

@@ -43,6 +43,8 @@
   "app.guest.positionInWaitingQueue": "Your current position in waiting queue: ",
   "app.guest.seatWait": "Guest waiting for a seat in the meeting.",
   "app.leaveModal.confirm": "Leave",
+  "app.leaveModal.desc": "Are you sure you want to quit?",
+  "app.leaveModal.title": "Leave the conference",
   "app.meeting.ended": "This session has ended",
   "app.meeting.logout.duplicateUserEjectReason": "Duplicate user trying to join meeting",
   "app.meeting.logout.ejectedFromMeeting": "You have been removed from the meeting",
