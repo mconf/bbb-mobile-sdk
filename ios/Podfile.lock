@@ -14,6 +14,8 @@ PODS:
     - ExpoModulesCore
   - Expo (48.0.16):
     - ExpoModulesCore
+  - ExpoDevice (5.2.1):
+    - ExpoModulesCore
   - ExpoKeepAwake (12.0.1):
     - ExpoModulesCore
   - ExpoModulesCore (1.2.7):
@@ -425,7 +427,7 @@ PODS:
   - RNScreens (3.20.0):
     - React-Core
     - React-RCTImage
-  - RNSVG (13.4.0):
+  - RNSVG (13.5.0):
     - React-Core
   - Yoga (1.14.0)
 
@@ -438,6 +440,7 @@ DEPENDENCIES:
   - EXFileSystem (from `../node_modules/expo-file-system/ios`)
   - EXFont (from `../node_modules/expo-font/ios`)
   - Expo (from `../node_modules/expo`)
+  - ExpoDevice (from `../node_modules/expo-device/ios`)
   - ExpoKeepAwake (from `../node_modules/expo-keep-awake/ios`)
   - ExpoModulesCore (from `../node_modules/expo-modules-core`)
   - EXSplashScreen (from `../node_modules/expo-splash-screen/ios`)
@@ -509,6 +512,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-font/ios"
   Expo:
     :path: "../node_modules/expo"
+  ExpoDevice:
+    :path: "../node_modules/expo-device/ios"
   ExpoKeepAwake:
     :path: "../node_modules/expo-keep-awake/ios"
   ExpoModulesCore:
@@ -609,6 +614,7 @@ SPEC CHECKSUMS:
   EXFileSystem: 844e86ca9b5375486ecc4ef06d3838d5597d895d
   EXFont: 6ea3800df746be7233208d80fe379b8ed74f4272
   Expo: b1457fbd549c00d17b62c402bc98c8229aace6d8
+  ExpoDevice: e0bebf68f978b3d353377ce42e73c20c0a070215
   ExpoKeepAwake: 69f5f627670d62318410392d03e0b5db0f85759a
   ExpoModulesCore: 653958063a301098b541ae4dfed1ac0b98db607b
   EXSplashScreen: 0e0a9ba0cf7553094e93213099bd7b42e6e237e9
@@ -655,7 +661,7 @@ SPEC CHECKSUMS:
   RNNotifee: 05692d7bb42b6c718a3906aeb8431c48ff2e8097
   RNReanimated: cc5e3aa479cb9170bcccf8204291a6950a3be128
   RNScreens: 218801c16a2782546d30bd2026bb625c0302d70f
-  RNSVG: 07dbd870b0dcdecc99b3a202fa37c8ca163caec2
+  RNSVG: 38ca962c970dbce1ca38991a5aebf26d163f9efb
   Yoga: d56980c8914db0b51692f55533409e844b66133c
 
 PODFILE CHECKSUM: 2150a475300a6ab8ed132d21f86d021d893dd86c
