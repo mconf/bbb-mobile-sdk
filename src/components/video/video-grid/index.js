@@ -1,14 +1,11 @@
-import React from 'react';
-import {
-  StyleSheet, View, FlatList, Dimensions
-} from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
-import Styled from './styles';
+import { useFocusEffect } from '@react-navigation/native';
 import { selectSortedVideoUsers } from '../../../store/redux/slices/video-streams';
+import Styled from './styles';
 
 const GridView = () => {
-  const numColumns = 2;
-
   const videoUsers = useSelector(selectSortedVideoUsers);
 
   const contentAreaUserItem = {
@@ -17,6 +14,13 @@ const GridView = () => {
   };
 
   const mescleGridItems = [contentAreaUserItem, ...videoUsers];
+  const [numOfColumns, setNumOfColumns] = useState(1);
+
+  useFocusEffect(
+    useCallback(() => {
+      setNumOfColumns(mescleGridItems.length > 2 ? 2 : 1);
+    }, [mescleGridItems])
+  );
 
   const renderItem = (videoUser) => {
     const { item: vuItem } = videoUser;
@@ -34,18 +38,14 @@ const GridView = () => {
 
     if (contentArea) {
       return (
-        <View
-          style={styles.item}
-        >
+        <Styled.Item usersCount={mescleGridItems.length}>
           <Styled.ContentArea />
-        </View>
+        </Styled.Item>
       );
     }
 
     return (
-      <View
-        style={styles.item}
-      >
+      <Styled.Item usersCount={mescleGridItems.length}>
         <Styled.VideoListItem
           cameraId={cameraId}
           userId={userId}
@@ -55,50 +55,24 @@ const GridView = () => {
           local={local}
           visible={visible}
           isGrid
+          usersCount={mescleGridItems.length}
           userRole={userRole}
         />
-      </View>
+      </Styled.Item>
     );
   };
 
   return (
     <FlatList
       data={mescleGridItems}
-      style={styles.container}
+      style={Styled.styles.container}
       renderItem={renderItem}
-      numColumns={numColumns}
-      initialNumToRender={4}
+      numColumns={numOfColumns}
+      initialNumToRender={2}
+      key={numOfColumns}
       disableIntervalMomentum
     />
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-  },
-  item: {
-    backgroundColor: '#d0c4cb',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    width: '50%',
-    height: Dimensions.get('window').width / 2, // approximate a square
-  },
-  itemPresentation: {
-    backgroundColor: '#d0c4cb',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    width: '100%',
-    height: Dimensions.get('window').width / 2, // approximate a square
-  },
-  itemInvisible: {
-    backgroundColor: 'transparent',
-  },
-  itemText: {
-    color: '#fff',
-  },
-});
 
 export default GridView;
