@@ -1,4 +1,3 @@
-import { View } from 'react-native';
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import withPortal from '../../components/high-order/with-portal';

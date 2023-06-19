@@ -43,6 +43,8 @@
     "app.guest.positionInWaitingQueue": "Tu posición actual en la lista de espera: ",
     "app.guest.seatWait": "Invitado esperando un asiento en la reunión.",
     "app.leaveModal.confirm": "Salir",
+    "app.leaveModal.desc": "¿Seguro que quieres salir?",
+    "app.leaveModal.title": "Dejar la conferencia",
     "app.meeting.ended": "La sesión ha finalizado",
     "app.meeting.logout.duplicateUserEjectReason": "Usuario duplicado intentando unirse a la reunión",
     "app.meeting.logout.ejectedFromMeeting": "Usted ha sido expulsado/a de la reunión",

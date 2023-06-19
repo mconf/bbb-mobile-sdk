@@ -7,7 +7,7 @@ const ContainerView = styled.View`
   height: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: center;
   padding: 10px;
 
   ${({ orientation }) => orientation === 'LANDSCAPE'
@@ -66,6 +66,12 @@ const ButtonContainer = styled.View`
   width: 100%;
 `;
 
+const ButtonLeaveContainer = styled.View`
+  width: 100%;
+  padding: 60px 0 0 0;
+  //background-color: red;
+`;
+
 export default {
   ConfirmButton,
   ContainerView,
@@ -74,4 +80,5 @@ export default {
   Subtitle,
   KnowMore,
   ButtonContainer,
+  ButtonLeaveContainer,
 };

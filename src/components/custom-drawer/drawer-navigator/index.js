@@ -4,6 +4,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
+import { selectCurrentUser } from '../../../store/redux/slices/current-user';
 // screens
 import UserNotesScreen from '../../../screens/user-notes-screen';
 import PollNavigator from '../../../screens/poll-screen/navigator';
@@ -24,14 +25,19 @@ import CustomDrawer from '../index';
 // configs
 import Settings from '../../../../settings.json';
 
-const FEEDBACK_ENABLED = Settings.feedback.enabled;
 
-const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
+const DrawerNavigator = ({
+  onLeaveSession, jUrl, navigationRef, meetingUrl
+}) => {
   const Drawer = createDrawerNavigator();
   const navigation = useNavigation();
   const { t } = useTranslation();
   const ended = useSelector((state) => state.client.sessionState.ended);
   const joinUrl = useSelector((state) => state.client.meetingData.joinUrl);
+  const meetingData = useSelector((state) => state.client.meetingData);
+  const currentUser = useSelector(selectCurrentUser);
+  const feedbackEnabled = useSelector((state) => state.client.feedbackEnabled);
+
   const guestUsersReady = useSelector((state) => state.guestUsersCollection.ready);
   const pendingUsers = useSelector(selectWaitingUsers);
   const previousPendingUsers = usePrevious(pendingUsers);
@@ -79,7 +85,8 @@ const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
   // this effect controls the meeting ended
   useEffect(() => {
     if (ended) {
-      if (FEEDBACK_ENABLED) {
+      console.log("END SCREEN -> RENDER FEEDBACK =", feedbackEnabled)
+      if (feedbackEnabled && currentUser && meetingData) {
         navigation.navigate('FeedbackScreen');
       } else {
         navigation.navigate('EndSessionScreen');
@@ -90,7 +97,13 @@ const DrawerNavigator = ({ onLeaveSession, jUrl, navigationRef }) => {
   return (
     <Drawer.Navigator
       independent
-      drawerContent={(props) => <CustomDrawer {...props} onLeaveSession={onLeaveSession} />}
+      drawerContent={(props) => (
+        <CustomDrawer
+          {...props}
+          onLeaveSession={onLeaveSession}
+          meetingUrl={meetingUrl}
+        />
+      )}
       screenOptions={{
         contentOptions: {
           style: {
