@@ -38,13 +38,7 @@ const Item = styled.View`
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-  },
-  itemInvisible: {
-    backgroundColor: 'transparent',
-  },
-  itemText: {
-    color: '#fff',
-  },
+  }
 });
 
 export default {
