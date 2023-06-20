@@ -16,7 +16,6 @@ const BottomSheetActionsBar = () => {
   const detailedInfo = useSelector((state) => state.layout.detailedInfo);
 
   // variables
-
   const dispatch = useDispatch();
   const snapPoints = useMemo(() => {
     if (orientation === 'PORTRAIT') {

@@ -17,7 +17,7 @@ const Item = styled.View`
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: ${parseInt(Dimensions.get('window').height / 2, 10)}px;
+  height: ${parseInt(Dimensions.get('window').height / 2.2, 10)}px;
 
   ${({ usersCount }) => usersCount % 2 === 0 && usersCount > 2
   && `
