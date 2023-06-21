@@ -44,16 +44,6 @@ const UserAvatar = styled.Image`
   overflow: hidden;
 `;
 
-const UserColor = styled.View`
-  width: 95%;
-  height: 95%;
-  margin: 16px;
-  border: ${Colors.white} solid 2px;
-  border-radius: 8px;
-  background-color: ${({ userColor }) => userColor};
-  overflow: hidden;
-`;
-
 const ContentArea = styled(contentArea)`
   background-color: none;
 `;
@@ -65,6 +55,18 @@ const CloseFullscreenButton = styled(iconButton)`
   opacity: 0.7;
 `;
 
+const UserAvatarComponent = styled(UserAvatar)``;
+
+const UserColor = styled.View`
+  width: 100%;
+  height: 100%;
+  background-color: ${({ userColor }) => `${userColor}AA`};
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 export default {
   VideoStream,
   ConfirmButton,
@@ -74,4 +76,5 @@ export default {
   UserColor,
   CloseFullscreenButton,
   ContentArea,
+  UserAvatarComponent,
 };

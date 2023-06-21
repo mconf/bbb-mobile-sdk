@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
-import { useTranslation } from 'react-i18next';
 import {
   setFocusedElement,
   setFocusedId,
@@ -27,7 +26,6 @@ const VideoContainer = (props) => {
     userRole,
   } = props;
 
-  const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const detailedInfo = useSelector((state) => state.layout.detailedInfo);
@@ -69,7 +67,6 @@ const VideoContainer = (props) => {
           userImage={userAvatar}
           isTalking={isTalking}
           userRole={userRole}
-
         />
         )}
       </Styled.UserColor>
@@ -84,7 +81,9 @@ const VideoContainer = (props) => {
       dispatch(setFocusedId(userAvatar));
       dispatch(setFocusedElement('avatar'));
     } else {
-      dispatch(setFocusedId(userColor));
+      dispatch(setFocusedId({
+        userName, userColor, isTalking, userRole
+      }));
       dispatch(setFocusedElement('color'));
     }
 
