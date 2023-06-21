@@ -1,6 +1,7 @@
 import withPortal from '../../components/high-order/with-portal';
 import VideoGrid from '../../components/video/video-grid';
 import BottomSheetActionsBar from '../../components/actions-bar/bottom-sheet-actions-bar';
+import ChatPopupList from '../../components/chat/chat-popup';
 import Styled from './styles';
 
 const ClassroomMainScreen = () => {
@@ -10,6 +11,7 @@ const ClassroomMainScreen = () => {
       <Styled.ContainerView>
         <VideoGrid />
         <BottomSheetActionsBar />
+        <ChatPopupList />
       </Styled.ContainerView>
     );
   };

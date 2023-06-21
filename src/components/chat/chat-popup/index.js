@@ -1,20 +1,36 @@
-import Styled from './styles';
+import { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { setBottomChatOpen } from '../../../store/redux/slices/wide-app/chat';
+import { useChatMsgs } from '../../../hooks/selectors/chat/use-chat-msgs';
+import ChatPopupItem from './chat-popout-item';
 
-const ChatPopup = (props) => {
-  const { userName, userText, onPress } = props;
+const ChatPopupList = () => {
+  const dispatch = useDispatch();
+  const messages = useChatMsgs();
 
-  return (
-    <Styled.ContainerPressable onPress={onPress}>
-      <Styled.TextContainer>
-        <Styled.UserNameText>
-          {userName}
-        </Styled.UserNameText>
-        <Styled.UserMessage>
-          {userText}
-        </Styled.UserMessage>
-      </Styled.TextContainer>
-    </Styled.ContainerPressable>
-  );
+  const [showMessage, setShowMessage] = useState(false);
+  const lastMessage = messages[messages.length - 1];
+
+  useEffect(() => {
+    setShowMessage(true);
+    const timer = setTimeout(() => {
+      setShowMessage(false);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [messages.length]);
+
+  if (showMessage) {
+    return (
+      <ChatPopupItem
+        userName={lastMessage?.author}
+        userText={lastMessage?.message}
+        onPress={() => dispatch(setBottomChatOpen(true))}
+      />
+    );
+  }
+
+  return null;
 };
 
-export default ChatPopup;
+export default ChatPopupList;
