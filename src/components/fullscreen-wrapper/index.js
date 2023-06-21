@@ -53,13 +53,17 @@ const FullscreenWrapper = ({ navigation }) => {
             </Styled.UserColor>
           )}
       </Styled.Wrapper>
-      <Styled.CloseFullscreenButton
-        icon="fullscreen-exit"
-        iconColor={Colors.lightGray300}
-        containerColor={Colors.lightGray100}
-        animated
+      <Styled.PressableButton
+        activeOpacity={0.6}
         onPress={onCloseFullscreen}
-      />
+      >
+        <Styled.FullscreenIcon
+          icon="fullscreen"
+          iconColor="white"
+          size={16}
+          containerColor="#00000000"
+        />
+      </Styled.PressableButton>
     </Styled.Container>
   );
 };
