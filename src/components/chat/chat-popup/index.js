@@ -12,6 +12,9 @@ const ChatPopupList = () => {
   const lastMessage = messages[messages.length - 1];
 
   useEffect(() => {
+    if (!lastMessage?.message) {
+      return undefined;
+    }
     setShowMessage(true);
     const timer = setTimeout(() => {
       setShowMessage(false);
