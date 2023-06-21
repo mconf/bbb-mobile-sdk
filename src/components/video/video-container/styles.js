@@ -2,6 +2,7 @@ import styled from 'styled-components/native';
 import { css } from 'styled-components';
 import { RTCView } from 'react-native-webrtc';
 import ContentLoader, { Rect } from 'react-content-loader/native';
+import IconButtonComponent from '../../icon-button';
 import Colors from '../../../constants/colors';
 import Pressable from '../../pressable';
 
@@ -70,22 +71,6 @@ const NameLabel = styled.Text`
   color: ${Colors.white};
 `;
 
-const PressableButton = styled(Pressable).attrs(() => ({
-  pressStyle: {
-    opacity: 0.8,
-  },
-}))`
-  ${() => css`
-    flex-direction: row;
-    width: 100%;
-    border: 6px solid #ffffff00;
-    background-color: #28282d99;
-    border-radius: 8px;
-    position: absolute;
-    align-items: center;
-  `}
-`;
-
 const VideoSkeleton = () => (
   <ContentLoader
     speed={1}
@@ -115,6 +100,25 @@ const ContainerPressableGrid = styled(Pressable).attrs(() => ({
   `}
 `;
 
+const PressableButton = styled(Pressable).attrs(() => ({
+  pressStyle: {
+    opacity: 0.8,
+  },
+}))`
+  ${() => css`
+    background-color: #28282d99;
+    margin: 5px;
+    border-radius: 4px;
+    position: absolute;
+    right: 0;
+  `}
+`;
+
+const FullscreenIcon = styled(IconButtonComponent)`
+  padding: 0;
+  margin: 0;
+`;
+
 export default {
   ContainerPressable,
   UserAvatar,
@@ -124,5 +128,6 @@ export default {
   UserColor,
   VideoStream,
   VideoSkeleton,
-  ContainerPressableGrid
+  ContainerPressableGrid,
+  FullscreenIcon
 };

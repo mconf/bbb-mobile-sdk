@@ -1,8 +1,6 @@
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Styled from './styles';
 import { selectScreenshare } from '../../store/redux/slices/screenshare';
 import {
   setFocusedElement,
@@ -10,6 +8,7 @@ import {
   setIsFocused,
   trigDetailedInfo
 } from '../../store/redux/slices/wide-app/layout';
+import Styled from './styles';
 
 const ContentArea = (props) => {
   const { style, fullscreen } = props;
@@ -41,7 +40,7 @@ const ContentArea = (props) => {
     return imageUri?.replace('/svg/', '/png/');
   }, [presentationsStore, slidesStore]);
 
-  const onClickContentArea = () => {
+  const handleFullscreenClick = () => {
     dispatch(setIsFocused(true));
     dispatch(setFocusedId(handleSlideAndPresentationActive()));
     dispatch(setFocusedElement('contentArea'));
@@ -63,10 +62,6 @@ const ContentArea = (props) => {
     <Styled.Screenshare style={style} />
   );
 
-  const tap = Gesture.Tap()
-    .numberOfTaps(2)
-    .onStart(onClickContentArea);
-
   // ** return methods **
   if (fullscreen) {
     return (
@@ -78,21 +73,33 @@ const ContentArea = (props) => {
   }
 
   return (
-    <GestureDetector gesture={tap}>
-      <Styled.ContentAreaPressable onPress={() => dispatch(trigDetailedInfo())}>
-        {!screenshare && presentationView()}
-        {screenshare && screenshareView()}
-        {detailedInfo && (
-        <Styled.NameLabelContainer>
-          <Styled.NameLabel
-            numberOfLines={1}
+    <Styled.ContentAreaPressable onPress={() => dispatch(trigDetailedInfo())}>
+      {!screenshare && presentationView()}
+      {screenshare && screenshareView()}
+      {detailedInfo && (
+        <>
+          <Styled.NameLabelContainer>
+            <Styled.NameLabel
+              numberOfLines={1}
+            >
+              {screenshare ? 'Screenshare' : 'Presentation'}
+            </Styled.NameLabel>
+          </Styled.NameLabelContainer>
+
+          <Styled.PressableButton
+            activeOpacity={0.6}
+            onPress={handleFullscreenClick}
           >
-            {screenshare ? 'Screenshare' : 'Presentation'}
-          </Styled.NameLabel>
-        </Styled.NameLabelContainer>
-        )}
-      </Styled.ContentAreaPressable>
-    </GestureDetector>
+            <Styled.FullscreenIcon
+              icon="fullscreen"
+              iconColor="white"
+              size={16}
+              containerColor="#00000000"
+            />
+          </Styled.PressableButton>
+        </>
+      )}
+    </Styled.ContentAreaPressable>
 
   );
 };

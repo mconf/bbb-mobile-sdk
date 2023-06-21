@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import {
   setFocusedElement,
   setFocusedId,
@@ -10,7 +9,6 @@ import {
   setIsFocused
 } from '../../../store/redux/slices/wide-app/layout';
 import { isTalkingByUserId } from '../../../store/redux/slices/voice-users';
-import IconButtonComponent from '../../icon-button';
 import UserAvatar from '../../user-avatar';
 import VideoManager from '../../../services/webrtc/video-manager';
 import Styled from './styles';
@@ -78,7 +76,7 @@ const VideoContainer = (props) => {
     );
   };
 
-  const handleFocusClick = () => {
+  const handleFullscreenClick = () => {
     if (typeof mediaStreamId === 'string') {
       dispatch(setFocusedId(mediaStreamId));
       dispatch(setFocusedElement('videoStream'));
@@ -94,64 +92,39 @@ const VideoContainer = (props) => {
     navigation.navigate('FullscreenWrapper');
   };
 
-  const tap = Gesture.Tap()
-    .numberOfTaps(2)
-    .onStart(handleFocusClick);
-
-  const renderDefaultVideoContainerItem = () => (
-    <Styled.ContainerPressable
-      style={style}
-      isTalking={isTalking}
-      onPress={() => { dispatch(trigDetailedInfo());
+  const renderGridVideoContainerItem = () => (
+    <Styled.ContainerPressableGrid
+      onPress={() => {
+        dispatch(trigDetailedInfo());
       }}
+      style={style}
+      userColor={userColor}
     >
       {renderVideo()}
-
-      {!detailedInfo && (
-        <Styled.NameLabelContainer>
-          <Styled.NameLabel numberOfLines={1}>{userName}</Styled.NameLabel>
-        </Styled.NameLabelContainer>
-      )}
-
       {detailedInfo && (
-        <Styled.PressableButton
-          activeOpacity={0.6}
-        >
-          <IconButtonComponent
-            icon="fullscreen"
-            iconColor="white"
-            size={16}
-            containerColor="#00000000"
-          />
-          <Styled.NameLabel numberOfLines={2} style={{ flexShrink: 1 }}>
-            {t('app.videoDock.webcamFocusLabel')}
-          </Styled.NameLabel>
-        </Styled.PressableButton>
-      )}
-    </Styled.ContainerPressable>
-  );
+        <>
+          <Styled.NameLabelContainer>
+            <Styled.NameLabel numberOfLines={1}>{userName}</Styled.NameLabel>
+          </Styled.NameLabelContainer>
 
-  const renderGridVideoContainerItem = () => (
-    <GestureDetector gesture={tap}>
-      <Styled.ContainerPressableGrid
-        onPress={() => {
-          dispatch(trigDetailedInfo());
-        }}
-        style={style}
-        userColor={userColor}
-      >
-        {renderVideo()}
-        {detailedInfo && (
-        <Styled.NameLabelContainer>
-          <Styled.NameLabel numberOfLines={1}>{userName}</Styled.NameLabel>
-        </Styled.NameLabelContainer>
-        )}
-      </Styled.ContainerPressableGrid>
-    </GestureDetector>
+          <Styled.PressableButton
+            activeOpacity={0.6}
+            onPress={handleFullscreenClick}
+          >
+            <Styled.FullscreenIcon
+              icon="fullscreen"
+              iconColor="white"
+              size={16}
+              containerColor="#00000000"
+            />
+          </Styled.PressableButton>
+        </>
+      )}
+    </Styled.ContainerPressableGrid>
   );
 
   return (
-    isGrid ? renderGridVideoContainerItem() : renderDefaultVideoContainerItem()
+    renderGridVideoContainerItem()
   );
 };
 

@@ -4,6 +4,7 @@ import presentation from '../presentation';
 import screenshare from '../screenshare';
 import Colors from '../../constants/colors';
 import Pressable from '../pressable';
+import IconButtonComponent from '../icon-button';
 
 const Presentation = styled(presentation)``;
 const Screenshare = styled(screenshare)``;
@@ -27,8 +28,28 @@ const NameLabelContainer = styled.View`
   margin: 5px;
   border-radius: 4px;
 `;
+
 const NameLabel = styled.Text`
   color: ${Colors.white};
+`;
+
+const PressableButton = styled(Pressable).attrs(() => ({
+  pressStyle: {
+    opacity: 0.8,
+  },
+}))`
+  ${() => css`
+    background-color: #28282d99;
+    margin: 5px;
+    border-radius: 4px;
+    position: absolute;
+    right: 0;
+  `}
+`;
+
+const FullscreenIcon = styled(IconButtonComponent)`
+  padding: 0;
+  margin: 0;
 `;
 
 export default {
@@ -37,4 +58,6 @@ export default {
   ContentAreaPressable,
   NameLabel,
   NameLabelContainer,
+  PressableButton,
+  FullscreenIcon
 };
