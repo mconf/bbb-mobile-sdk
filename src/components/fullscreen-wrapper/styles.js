@@ -39,9 +39,8 @@ const ConfirmButton = styled(button)`
 `;
 
 const UserAvatar = styled.Image`
-  width: 95%;
-  height: 95%;
-  border-radius: 16px;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
 `;
 
