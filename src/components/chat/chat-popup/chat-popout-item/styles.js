@@ -10,14 +10,10 @@ const ContainerPressable = styled(Pressable).attrs(() => ({
       position: absolute;
       background-color: #000000aa;
       padding: 12px;
+      margin-right: 12px;
+      left: 20px;
       border-radius: 8px;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
-      bottom: 25%;
-      left: 16px;
-      max-width: 90%;
+      bottom: 20%;
     `}
   `;
 
