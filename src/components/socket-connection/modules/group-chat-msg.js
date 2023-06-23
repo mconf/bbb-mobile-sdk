@@ -49,6 +49,7 @@ export class GroupChatMsgModule extends Module {
 
       if (messagesFromPage.length) {
         messagesFromPage.map((msgObj) => {
+          // TODO This is causing a deep update in state, review
           if (msgObj.id.toString().includes('POLL_RESULT')) {
             store.dispatch(
               addPreviousPollPublished({
