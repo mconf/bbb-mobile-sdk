@@ -1,5 +1,6 @@
 import { store } from '../../../store/redux/store';
 import Module from './module';
+import { setInitialChatMsgsFetched } from '../../../store/redux/slices/wide-app/client';
 import {
   addGroupChatMsg,
   addGroupChatMsgBeforeJoin,
@@ -7,7 +8,6 @@ import {
   editGroupChatMsg,
   readyStateChanged,
 } from '../../../store/redux/slices/group-chat-msg';
-
 import {
   addPreviousPollPublished,
   addPreviousPollPublishedViaChat,
@@ -90,6 +90,7 @@ export class GroupChatMsgModule extends Module {
       this.subscribeToCollection(topic, 0);
     });
     await this.startSyncMessagesbeforeJoin();
+    store.dispatch(setInitialChatMsgsFetched(true));
   }
 
   // eslint-disable-next-line class-methods-use-this

@@ -15,6 +15,7 @@ const initialState = {
     ended: false,
     endReason: null,
     terminated: false,
+    initialChatMsgsFetched: false,
   },
   guestStatus: null, // oneof 'WAIT'|'ALLOW'|'DENY'|'FAILED'
   meetingData: {
@@ -72,6 +73,9 @@ const clientSlice = createSlice({
     },
     setFeedbackEnabled: (state, action) => {
       state.feedbackEnabled = action.payload;
+    },
+    setInitialChatMsgsFetched: (state, action) => {
+      state.initialChatMsgsFetched = action.payload;
     },
     guestStatusChanged: (state, action) => {
       state.guestStatus = action.payload;
@@ -352,6 +356,7 @@ export const {
   setLoggedIn,
   setLoggingOut,
   setLoggingIn,
+  setInitialChatMsgsFetched,
   setSessionTerminated,
   setMeetingData,
   setJoinUrl,
