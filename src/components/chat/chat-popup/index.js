@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setBottomChatOpen } from '../../../store/redux/slices/wide-app/chat';
 import { useChatMsgs } from '../../../hooks/selectors/chat/use-chat-msgs';
 import ChatPopupItem from './chat-popout-item';
@@ -10,12 +10,12 @@ const ChatPopupList = () => {
 
   const [showMessage, setShowMessage] = useState(false);
   const lastMessage = messages[messages.length - 1];
+  const detailedInfo = useSelector((state) => state.layout.detailedInfo);
 
   useEffect(() => {
-    if (!lastMessage?.message) {
-      return undefined;
+    if (lastMessage?.message && !detailedInfo) {
+      setShowMessage(true);
     }
-    setShowMessage(true);
     const timer = setTimeout(() => {
       setShowMessage(false);
     }, 3000);

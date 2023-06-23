@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import withPortal from '../../components/high-order/with-portal';
 import VideoGrid from '../../components/video/video-grid';
@@ -8,11 +9,16 @@ import Styled from './styles';
 
 const MainConferenceScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const loggingIn = useSelector((state) => state.client.sessionState.loggingIn);
+  const initialChatMsgsFetched = useSelector((state) => state.client.initialChatMsgsFetched);
 
-  useEffect(() => {
-    setIsLoading(loggingIn);
-  }, [loggingIn]);
+  useFocusEffect(
+    useCallback(() => {
+      setIsLoading(true);
+      if (initialChatMsgsFetched) {
+        setIsLoading(false);
+      }
+    }, [initialChatMsgsFetched])
+  );
 
   /* view components */
   const renderGridLayout = () => {
@@ -20,7 +26,7 @@ const MainConferenceScreen = () => {
       <Styled.ContainerView>
         <VideoGrid />
         <BottomSheetActionsBar />
-        <ChatPopupList />
+        {initialChatMsgsFetched && <ChatPopupList />}
       </Styled.ContainerView>
     );
   };
