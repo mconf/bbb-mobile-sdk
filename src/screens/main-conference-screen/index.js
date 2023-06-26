@@ -26,7 +26,7 @@ const MainConferenceScreen = () => {
       <Styled.ContainerView>
         <VideoGrid />
         <BottomSheetActionsBar />
-        {initialChatMsgsFetched && <ChatPopupList />}
+        <ChatPopupList />
       </Styled.ContainerView>
     );
   };

@@ -11,9 +11,10 @@ const ChatPopupList = () => {
   const [showMessage, setShowMessage] = useState(false);
   const lastMessage = messages[messages.length - 1];
   const detailedInfo = useSelector((state) => state.layout.detailedInfo);
+  const hasUnreadMessages = useSelector((state) => state.chat.hasUnreadMessages);
 
   useEffect(() => {
-    if (lastMessage?.message && !detailedInfo) {
+    if (lastMessage?.message && !detailedInfo && hasUnreadMessages) {
       setShowMessage(true);
     }
     const timer = setTimeout(() => {
