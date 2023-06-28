@@ -2,6 +2,7 @@ import styled from 'styled-components/native';
 import { css } from 'styled-components';
 import { RTCView } from 'react-native-webrtc';
 import ContentLoader, { Rect } from 'react-content-loader/native';
+import IconButtonComponent from '../../icon-button';
 import Colors from '../../../constants/colors';
 import Pressable from '../../pressable';
 
@@ -18,7 +19,10 @@ const ContainerPressable = styled(Pressable).attrs(() => ({
     border-width: 2px;
     ${({ isTalking }) => isTalking && `
       border: 2px ${Colors.orange} solid;
-  `}
+    `}
+    ${({ isGrid }) => isGrid && `
+      border-color: #06172A;
+    `}
   `}
 `;
 
@@ -32,16 +36,26 @@ const VideoStream = styled(RTCView)`
   position: relative;
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  // overflow: hidden;
   object-fit: contain;
   background-color: ${Colors.contentLetterboxColor};
+
+  ${({ isGrid }) => isGrid && `
+    object-fit: cover;
+  `}
 `;
 
 const UserColor = styled.View`
   width: 100%;
   height: 100%;
-  background-color: ${({ userColor }) => userColor};
+  background-color: ${({ userColor, isGrid }) => userColor + (isGrid && 'AA')};
   overflow: hidden;
+
+  ${({ isGrid }) => isGrid && `
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  `}
 `;
 
 const NameLabelContainer = styled.View`
@@ -57,22 +71,6 @@ const NameLabel = styled.Text`
   color: ${Colors.white};
 `;
 
-const PressableButton = styled(Pressable).attrs(() => ({
-  pressStyle: {
-    opacity: 0.8,
-  },
-}))`
-  ${() => css`
-    flex-direction: row;
-    width: 100%;
-    border: 6px solid #ffffff00;
-    background-color: #28282d99;
-    border-radius: 8px;
-    position: absolute;
-    align-items: center;
-  `}
-`;
-
 const VideoSkeleton = () => (
   <ContentLoader
     speed={1}
@@ -86,6 +84,41 @@ const VideoSkeleton = () => (
   </ContentLoader>
 );
 
+const ContainerPressableGrid = styled(Pressable).attrs(() => ({
+  pressStyle: {
+    borderWidth: 2,
+  },
+}))`
+  ${() => css`
+    height: 120px;
+    width: 120px;
+    border-color: #06172A;
+    border-width: 2px;
+    ${({ isTalking }) => isTalking && `
+      border: 2px ${Colors.orange} solid;
+    `}
+  `}
+`;
+
+const PressableButton = styled(Pressable).attrs(() => ({
+  pressStyle: {
+    opacity: 0.8,
+  },
+}))`
+  ${() => css`
+    background-color: #28282d99;
+    margin: 5px;
+    border-radius: 4px;
+    position: absolute;
+    right: 0;
+  `}
+`;
+
+const FullscreenIcon = styled(IconButtonComponent)`
+  padding: 0;
+  margin: 0;
+`;
+
 export default {
   ContainerPressable,
   UserAvatar,
@@ -95,4 +128,6 @@ export default {
   UserColor,
   VideoStream,
   VideoSkeleton,
+  ContainerPressableGrid,
+  FullscreenIcon
 };

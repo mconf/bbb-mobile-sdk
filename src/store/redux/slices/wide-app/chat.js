@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   isBottomChatOpen: false,
   isFastChatOpen: true,
+  hasUnreadMessages: false,
 };
 
 const chatSlice = createSlice({
@@ -15,8 +16,16 @@ const chatSlice = createSlice({
     setFastChatOpen: (state, action) => {
       state.isFastChatOpen = action.payload;
     },
+    hasUnreadMessages: (state, action) => {
+      state.hasUnreadMessages = action.payload;
+    }
   },
 });
 
-export const { setBottomChatOpen, setFastChatOpen } = chatSlice.actions;
+export const {
+  setBottomChatOpen,
+  setFastChatOpen,
+  hasUnreadMessages
+} = chatSlice.actions;
+
 export default chatSlice.reducer;

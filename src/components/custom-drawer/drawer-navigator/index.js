@@ -11,7 +11,7 @@ import PollNavigator from '../../../screens/poll-screen/navigator';
 import UserParticipantsNavigator from '../../../screens/user-participants-screen/navigator';
 import WhiteboardScreen from '../../../screens/whiteboard-screen';
 import TestComponentsScreen from '../../../screens/test-components-screen';
-import ClassroomMainScreen from '../../../screens/classroom-main-screen';
+import MainConferenceScreen from '../../../screens/main-conference-screen';
 import SelectLanguageScreen from '../../../screens/select-language-screen';
 import Colors from '../../../constants/colors';
 import Styled from './styles';
@@ -24,7 +24,6 @@ import CustomDrawer from '../index';
 
 // configs
 import Settings from '../../../../settings.json';
-
 
 const DrawerNavigator = ({
   onLeaveSession, jUrl, navigationRef, meetingUrl
@@ -139,7 +138,7 @@ const DrawerNavigator = ({
     >
       <Drawer.Screen
         name="Main"
-        component={ClassroomMainScreen}
+        component={MainConferenceScreen}
         options={{
           title: t('mobileSdk.meeting.label'),
           drawerIcon: (config) => (
