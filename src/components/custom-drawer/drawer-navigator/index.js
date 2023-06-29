@@ -140,7 +140,7 @@ const DrawerNavigator = ({
         name="Main"
         component={MainConferenceScreen}
         options={{
-          title: t('mobileSdk.meeting.label'),
+          title: meetingData?.confname || t('mobileSdk.meeting.label'),
           drawerIcon: (config) => (
             <Styled.DrawerIcon
               icon="home"
