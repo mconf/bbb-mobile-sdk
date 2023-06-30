@@ -84,16 +84,19 @@ const CreatePoll = (): Node => {
             {t('app.poll.yna')}
           </Styled.OptionsButton>
         </Styled.ButtonsContainer>
-        <Styled.ConfirmButton
-          onPress={handleCreatePoll}
-        >
-          {t('app.poll.start.label')}
-        </Styled.ConfirmButton>
-        <Styled.SeePublishPollsButton
-          onPress={() => navigation.navigate('PreviousPollsScreen')}
-        >
-          {t('mobileSdk.poll.previousPolls.label')}
-        </Styled.SeePublishPollsButton>
+
+        <Styled.ButtonsContainer>
+          <Styled.ConfirmButton
+            onPress={handleCreatePoll}
+          >
+            {t('app.poll.start.label')}
+          </Styled.ConfirmButton>
+          <Styled.SeePublishPollsButton
+            onPress={() => navigation.navigate('PreviousPollsScreen')}
+          >
+            {t('mobileSdk.poll.previousPolls.label')}
+          </Styled.SeePublishPollsButton>
+        </Styled.ButtonsContainer>
       </>
     );
   };

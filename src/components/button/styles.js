@@ -5,7 +5,6 @@ import Pressable from '../pressable';
 
 const ButtonOuterContainer = styled.View`
   display: flex;
-  margin: 4px;
 `;
 
 const ButtonInnerContainer = styled(Pressable).attrs(() => ({
@@ -18,6 +17,7 @@ const ButtonInnerContainer = styled(Pressable).attrs(() => ({
     display: flex;
     border-radius: 40px;
     min-height: 40px;
+    border: red solid 2px;
   `}
 `;
 

@@ -40,8 +40,8 @@ const ConfirmButton = styled(PrimaryButton)`
   color: ${Colors.white};
   font-size: 16px;
   font-weight: 400;
-  padding: 12px;
   border-radius: 12px;
+  margin:  4px 0;
 `;
 
 const Subtitle = styled.Text`

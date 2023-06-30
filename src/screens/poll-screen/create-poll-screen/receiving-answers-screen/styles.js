@@ -8,10 +8,8 @@ const ConfirmButton = styled(button)`
   color: ${Colors.white};
   font-size: 16px;
   font-weight: 400;
-  padding: 12px;
-  margin-bottom: 16px;
   border-radius: 12px;
-  margin-top: 32px;
+  margin:  4px 0;
 `;
 
 const CancelButton = styled(button)`
@@ -19,8 +17,8 @@ const CancelButton = styled(button)`
   color: ${Colors.white};
   font-size: 16px;
   font-weight: 400;
-  padding: 12px;
   border-radius: 12px;
+  margin:  4px 0;
 `;
 
 const Title = styled.Text`

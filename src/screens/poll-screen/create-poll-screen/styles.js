@@ -4,15 +4,16 @@ import textInput from '../../../components/text-input';
 import actionsBar from '../../../components/actions-bar';
 import Colors from '../../../constants/colors';
 
-const ButtonsContainer = styled.View``;
+const ButtonsContainer = styled.View`
+  margin-top: 16px;
+`;
 
 const OptionsButton = styled(button)`
   background-color: ${Colors.lightGray200}
   color: ${Colors.lightGray400};
   font-size: 16px;
-  font-weight: 400;
-  padding: 12px;
   border-radius: 12px;
+  margin:  4px 0;
 
   ${({ selected }) => selected
     && `
@@ -25,10 +26,8 @@ const ConfirmButton = styled(button)`
   background-color: ${Colors.orange};
   color: ${Colors.white};
   font-size: 16px;
-  font-weight: 400;
-  padding: 12px;
   border-radius: 12px;
-  margin-top: 32px;
+  margin:  4px 0;
 `;
 
 const SeePublishPollsButton = styled(button)`
@@ -36,9 +35,8 @@ const SeePublishPollsButton = styled(button)`
   color: ${Colors.white};
   font-size: 16px;
   font-weight: 400;
-  padding: 12px;
-  margin-bottom: 16px;
   border-radius: 12px;
+  margin:  4px 0;
 `;
 
 const Title = styled.Text`
@@ -51,8 +49,8 @@ const Title = styled.Text`
 const AnswerTitle = styled.Text`
   font-weight: 500;
   font-size: 18px;
-  padding: 24px 0;
   text-align: center;
+  padding-top: 16px;
 `;
 
 const TextInput = styled(textInput)``;
@@ -61,8 +59,6 @@ const PreviousPollsButton = styled(button)`
   background-color: ${Colors.blue}
   color: ${Colors.white};
   font-size: 16px;
-  font-weight: 400;
-  padding: 12px;
   border-radius: 12px;
 `;
 
