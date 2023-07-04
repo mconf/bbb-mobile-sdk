@@ -65,6 +65,8 @@ const OptionsButton = styled(button)`
   font-weight: 400;
   padding: 12px;
   border-radius: 12px;
+  padding: 8px;
+  margin: 4px 0;
 
   ${({ selected }) => selected
   && `
