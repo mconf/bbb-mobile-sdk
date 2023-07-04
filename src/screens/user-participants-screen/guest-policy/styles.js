@@ -82,7 +82,8 @@ const OptionsButton = styled(button)`
   color: ${Colors.lightGray400};
   font-size: 16px;
   font-weight: 500;
-  padding: 12px;
+  padding: 8px;
+  margin: 4px 0;
   border-radius: 12px;
 
   ${({ selected }) => selected
