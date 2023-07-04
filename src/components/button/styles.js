@@ -17,7 +17,6 @@ const ButtonInnerContainer = styled(Pressable).attrs(() => ({
     display: flex;
     border-radius: 40px;
     min-height: 40px;
-    border: red solid 2px;
   `}
 `;
 
