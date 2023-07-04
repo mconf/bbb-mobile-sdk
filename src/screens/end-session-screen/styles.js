@@ -52,24 +52,10 @@ const Subtitle = styled.Text`
   padding-bottom: 40px;
 `;
 
-const KnowMore = styled.Text`
-  font-size: 16px;
-  font-weight: 500;
-  text-align: center;
-  color: #667080;
-  padding-bottom: 10px;
-`;
-
 const ButtonContainer = styled.View`
   position: absolute;
   bottom: -25px;
   width: 100%;
-`;
-
-const ButtonLeaveContainer = styled.View`
-  width: 100%;
-  padding: 60px 0 0 0;
-  //background-color: red;
 `;
 
 export default {
@@ -78,7 +64,5 @@ export default {
   ContainerEndSessionCard,
   Title,
   Subtitle,
-  KnowMore,
   ButtonContainer,
-  ButtonLeaveContainer,
 };
