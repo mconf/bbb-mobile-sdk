@@ -1,12 +1,12 @@
 {
-  "dev": true,
+  "dev": false,
   "media": {
     "videoPageSize": 3
   },
   "showLanguageScreen": true,
   "clientLog": {
     "server": {
-      "enabled": false,
+      "enabled": true,
       "level": "debug"
     },
     "console": {
