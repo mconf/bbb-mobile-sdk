@@ -1,9 +1,14 @@
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
-import Styled from './styles';
 import { selectScreenshare } from '../../store/redux/slices/screenshare';
-import { setFocusedElement, setFocusedId, setIsFocused } from '../../store/redux/slices/wide-app/layout';
+import {
+  setFocusedElement,
+  setFocusedId,
+  setIsFocused,
+  trigDetailedInfo
+} from '../../store/redux/slices/wide-app/layout';
+import Styled from './styles';
 
 const ContentArea = (props) => {
   const { style, fullscreen } = props;
@@ -11,6 +16,7 @@ const ContentArea = (props) => {
   const slidesStore = useSelector((state) => state.slidesCollection);
   const presentationsStore = useSelector((state) => state.presentationsCollection);
   const screenshare = useSelector(selectScreenshare);
+  const detailedInfo = useSelector((state) => state.layout.detailedInfo);
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
@@ -34,7 +40,7 @@ const ContentArea = (props) => {
     return imageUri?.replace('/svg/', '/png/');
   }, [presentationsStore, slidesStore]);
 
-  const onClickContentArea = () => {
+  const handleFullscreenClick = () => {
     dispatch(setIsFocused(true));
     dispatch(setFocusedId(handleSlideAndPresentationActive()));
     dispatch(setFocusedElement('contentArea'));
@@ -67,10 +73,34 @@ const ContentArea = (props) => {
   }
 
   return (
-    <Styled.ContentAreaPressable onPress={onClickContentArea}>
+    <Styled.ContentAreaPressable onPress={() => dispatch(trigDetailedInfo())}>
       {!screenshare && presentationView()}
       {screenshare && screenshareView()}
+      {detailedInfo && (
+        <>
+          <Styled.NameLabelContainer>
+            <Styled.NameLabel
+              numberOfLines={1}
+            >
+              {screenshare ? 'Screenshare' : 'Presentation'}
+            </Styled.NameLabel>
+          </Styled.NameLabelContainer>
+
+          <Styled.PressableButton
+            activeOpacity={0.6}
+            onPress={handleFullscreenClick}
+          >
+            <Styled.FullscreenIcon
+              icon="fullscreen"
+              iconColor="white"
+              size={16}
+              containerColor="#00000000"
+            />
+          </Styled.PressableButton>
+        </>
+      )}
     </Styled.ContentAreaPressable>
+
   );
 };
 

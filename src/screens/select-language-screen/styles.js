@@ -3,7 +3,7 @@ import Colors from '../../constants/colors';
 import actionsBar from '../../components/actions-bar';
 import button from '../../components/button';
 
-const ContainerView = styled.SafeAreaView`
+const ContainerView = styled.View`
   width: 100%;
   height: 100%;
   display: flex;
@@ -46,7 +46,7 @@ const ActionsBarContainer = styled.View`
   `}
 `;
 
-const Block = styled.SafeAreaView`
+const Block = styled.View`
   display: flex;
   flex-direction: column;
   max-height: 87%;

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Text, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import * as Linking from 'expo-linking';
 import Settings from '../../../settings.json';
 import { BreakoutsModule } from './modules/breakouts';
@@ -121,12 +121,22 @@ const sendValidationMsg = (ws, meetingData) => {
   return validateReqId;
 };
 
-const getAuthInfo = (meetingData = store.getState().client.meetingData) => {
+const getAuthInfo = (meetingData) => {
+  let _meetingData = meetingData;
+
+  if (_meetingData == null) {
+    try {
+      _meetingData = store.getState().client.meetingData;
+    } catch (error) {
+      return null;
+    }
+  }
+
   const {
     meetingID, sessionToken, internalUserID,
     fullname, externUserID, confname, host,
     joinUrl,
-  } = meetingData;
+  } = _meetingData;
 
   return {
     sessionToken,
@@ -312,7 +322,12 @@ const SocketConnectionComponent = (props) => {
   }, [currentUserReady, currentRole]);
 
   useEffect(() => {
-    dispatch(setJoinUrl(jUrl));
+    if (jUrl && typeof jUrl === 'string' && jUrl !== joinUrl) {
+      dispatch(setJoinUrl(jUrl));
+    }
+  }, [jUrl]);
+
+  useEffect(() => {
     return () => {
       _terminate(false);
     };
@@ -397,7 +412,7 @@ const SocketConnectionComponent = (props) => {
 
   // Login/logout tracker
   useEffect(() => {
-    if (!loggingOut
+    if ((!loggingOut && loggedIn)
       && (userLoggedOut === true || ejected === true || meetingEnded === true)) {
       // User is logged in, isn't logging out yet but the server side data
       // mandates a logout -> start the logout procedure
@@ -417,7 +432,8 @@ const SocketConnectionComponent = (props) => {
       // First run of the join procedure
       // If it runs into a guest lobby, it'll be run again in the guest status
       // thunk if it succeeds - see client/fetchGuestStatus
-      dispatch(join({ url: joinUrl, logger }));
+      dispatch(join({ url: joinUrl, logger })).unwrap()
+        .catch(console.debug);
     }
   }, [joinUrl, loggedIn, loggingIn, loggingOut]);
 
@@ -440,13 +456,6 @@ const SocketConnectionComponent = (props) => {
       GLOBAL_WS = ws;
     }
   }, [enterUrl, online, connected, loggingOut, guestStatus]);
-
-  useEffect(() => {
-    if (urlViaLinking?.includes('/bigbluebutton/api/join?')) {
-      const joinUrlFiltered = urlViaLinking.replace('bigbluebutton://', 'https://');
-      dispatch(setJoinUrl(joinUrlFiltered));
-    }
-  }, [urlViaLinking]);
 
   useEffect(() => {
     if (loggingIn) navigation.navigate('Main');
@@ -589,7 +598,7 @@ const SocketConnectionComponent = (props) => {
           <TextInput
             placeholder="Join URL"
             onSubmitEditing={({ nativeEvent: { text } }) => dispatch(setJoinUrl(text))}
-            defaultValue={joinUrl}
+            defaultValue={"https://live-oc002.elos.dev/bigbluebutton/api/join?fullName=User+3074303&meetingID=random-4916366&password=ap&redirect=true&checksum=ce291fcdbc62cbba3eb8d13ff03bef2479cc8c8d"}
           />
         </View>
       </View>

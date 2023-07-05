@@ -11,16 +11,39 @@ const Background = styled.View`
   justify-content: center;
   align-items: center;
 
-  ${({ userRole }) =>
-    userRole === 'MODERATOR' &&
-    `
+  ${({ userRole }) => userRole === 'MODERATOR' && `
      border-radius: 12px;
   `}
 
-  ${({ userColor }) =>
-    userColor &&
-    `
+  ${({ isTalking }) => isTalking
+    && `
+      border: ${Colors.green} solid 3px;
+  `}
+
+  ${({ userColor }) => userColor
+          && `
      background-color: ${userColor};
+  `}
+`;
+
+const ImageBackground = styled.Image`
+  width: 45px;
+  height: 45px;
+  border-radius: 45px;
+  object-fit: cover;
+  overflow: hidden;
+
+  ${({ userRole }) => userRole === 'MODERATOR' && `
+     border-radius: 8px;
+  `}
+`;
+
+const ImageContainer = styled.View`
+  border-radius: 50px;
+  overflow: hidden;
+
+  ${({ userRole }) => userRole === 'MODERATOR' && `
+     border-radius: 8px;
   `}
 `;
 
@@ -32,4 +55,6 @@ const UserName = styled.Text`
 export default {
   Background,
   UserName,
+  ImageBackground,
+  ImageContainer,
 };

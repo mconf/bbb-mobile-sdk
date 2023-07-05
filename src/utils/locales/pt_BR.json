@@ -43,6 +43,8 @@
   "app.guest.positionInWaitingQueue": "Sua posição atual na fila de espera é:",
   "app.guest.seatWait": "Convidado aguardando uma vaga na reunião.",
   "app.leaveModal.confirm": "Sair",
+  "app.leaveModal.desc": "Você tem certeza que deseja sair?",
+  "app.leaveModal.title": "Sair da conferência",
   "app.meeting.ended": "Esta sessão terminou",
   "app.meeting.logout.duplicateUserEjectReason": "Usuário duplicado tentando ingressar na conferência",
   "app.meeting.logout.ejectedFromMeeting": "Você foi removido da conferência",
@@ -74,9 +76,7 @@
   "app.userList.menu.demoteUser.label": "Tornar espectador",
   "app.videoDock.webcamFocusLabel": "Focar",
   "mobileSdk.chat.isEmptyLabel": "O chat está vazio",
-  "mobileSdk.endSession.buttonText": "Conheça o BigBlueButton",
-  "mobileSdk.endSession.more": "Deseja saber mais?",
-  "mobileSdk.endSession.subtitle": "Você será redirecionado para a página inicial em seguida",
+  "mobileSdk.endSession.subtitle": "Clique abaixo para ser redirecionado para a página inicial",
   "mobileSdk.error.fallback": "Fim de sessão inesperado, tente conectar-se novamente",
   "mobileSdk.error.microphone.blocked": "Microfone bloqueado",
   "mobileSdk.error.microphone.permissionDenied": "Permissão de microfone não concedida",
@@ -110,5 +110,6 @@
   "mobileSdk.userList.waitingAtendees": "Participantes aguardando",
   "mobileSdk.webcam.blockedLabel": "Compartilhamento de webcam bloqueado",
   "mobileSdk.webcam.permissionLabel": "Precisamos de sua permissão para que sua câmera possa ser compartilhada.",
-  "mobileSdk.whiteboard.label": "Quadro branco"
+  "mobileSdk.whiteboard.label": "Quadro branco",
+  "mobileSdk.drawer.shareButtonLabel": "Compartilhar link da sala"
 }

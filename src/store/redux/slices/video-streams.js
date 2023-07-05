@@ -74,6 +74,7 @@ const selectSortedVideoUsers = createSelector(
         floor,
         lastFloorTime,
         pin,
+        userRole: user.role,
         userAvatar: user.avatar,
         userColor: user.color,
         local,

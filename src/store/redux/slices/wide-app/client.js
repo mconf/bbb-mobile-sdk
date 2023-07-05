@@ -1,8 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import NetInfo from '@react-native-community/netinfo';
 import pRetry from 'p-retry';
+import Settings from '../../../../../settings.json';
 
 const JOIN_ENTER_RETRIES = 5;
+const FEEDBACK_ENABLED = Settings.feedback.enabled;
 
 const initialState = {
   sessionState: {
@@ -13,6 +15,7 @@ const initialState = {
     ended: false,
     endReason: null,
     terminated: false,
+    initialChatMsgsFetched: false,
   },
   guestStatus: null, // oneof 'WAIT'|'ALLOW'|'DENY'|'FAILED'
   meetingData: {
@@ -35,6 +38,7 @@ const initialState = {
     isConnectionExpensive: null,
     strength: null,
   },
+  feedbackEnabled: FEEDBACK_ENABLED,
 };
 
 const clientSlice = createSlice({
@@ -66,6 +70,12 @@ const clientSlice = createSlice({
     },
     setJoinUrl: (state, action) => {
       state.meetingData.joinUrl = action.payload;
+    },
+    setFeedbackEnabled: (state, action) => {
+      state.feedbackEnabled = action.payload;
+    },
+    setInitialChatMsgsFetched: (state, action) => {
+      state.initialChatMsgsFetched = action.payload;
     },
     guestStatusChanged: (state, action) => {
       state.guestStatus = action.payload;
@@ -202,7 +212,6 @@ const join = createAsyncThunk(
       host = parsedResponseURL.host;
       const params = new URLSearchParams(parsedResponseURL.search);
       sessionToken = params.get('sessionToken');
-      thunkAPI.dispatch(setJoinUrl(url));
     } catch (error) {
       logger.error({
         logCode: 'join_fetch_url_failed',
@@ -347,9 +356,11 @@ export const {
   setLoggedIn,
   setLoggingOut,
   setLoggingIn,
+  setInitialChatMsgsFetched,
   setSessionTerminated,
   setMeetingData,
   setJoinUrl,
+  setFeedbackEnabled,
   sessionStateChanged,
   connectionStatusChanged,
   guestStatusChanged,

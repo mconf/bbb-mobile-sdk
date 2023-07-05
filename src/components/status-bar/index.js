@@ -1,5 +1,6 @@
 import { useSelector } from 'react-redux';
 import { StatusBar } from 'expo-status-bar';
+import { Platform } from 'react-native';
 import Colors from '../../constants/colors';
 
 const AppStatusBar = () => {
@@ -15,7 +16,7 @@ const AppStatusBar = () => {
   });
   const statusBarConnected = audioIsConnected && !clientIsDisconnected;
   const statusBarConnecting = audioIsConnecting || clientIsDisconnected;
-  const style = statusBarConnecting ? 'dark' : 'light';
+  const style = Platform.OS === 'ios' ? 'light' : statusBarConnecting ? 'dark' : 'light';
   const backgroundColor = statusBarConnected
     ? Colors.statusBarConnected
     : statusBarConnecting

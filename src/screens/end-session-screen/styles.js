@@ -2,12 +2,12 @@ import styled from 'styled-components/native';
 import Colors from '../../constants/colors';
 import PrimaryButton from '../../components/button';
 
-const ContainerView = styled.SafeAreaView`
+const ContainerView = styled.View`
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: center;
   padding: 10px;
 
   ${({ orientation }) => orientation === 'LANDSCAPE'
@@ -52,14 +52,6 @@ const Subtitle = styled.Text`
   padding-bottom: 40px;
 `;
 
-const KnowMore = styled.Text`
-  font-size: 16px;
-  font-weight: 500;
-  text-align: center;
-  color: #667080;
-  padding-bottom: 10px;
-`;
-
 const ButtonContainer = styled.View`
   position: absolute;
   bottom: -25px;
@@ -72,6 +64,5 @@ export default {
   ContainerEndSessionCard,
   Title,
   Subtitle,
-  KnowMore,
   ButtonContainer,
 };

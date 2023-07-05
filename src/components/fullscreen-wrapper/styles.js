@@ -1,9 +1,10 @@
-import styled from 'styled-components/native';
+import styled, { css } from 'styled-components/native';
 import { RTCView } from 'react-native-webrtc';
 import button from '../button';
 import Colors from '../../constants/colors';
-import iconButton from '../icon-button';
 import contentArea from '../content-area';
+import Pressable from '../pressable';
+import IconButtonComponent from '../icon-button';
 
 const Container = styled.View`
   position: absolute;
@@ -38,20 +39,8 @@ const ConfirmButton = styled(button)`
 `;
 
 const UserAvatar = styled.Image`
-  width: 95%;
-  height: 95%;
-  border-radius: 16px;
-  border: solid 2px #FFFFFF;
-  overflow: hidden;
-`;
-
-const UserColor = styled.View`
-  width: 95%;
-  height: 95%;
-  margin: 16px;
-  border: ${Colors.white} solid 2px;
-  border-radius: 8px;
-  background-color: ${({ userColor }) => userColor};
+  width: 100%;
+  height: 100%;
   overflow: hidden;
 `;
 
@@ -59,10 +48,35 @@ const ContentArea = styled(contentArea)`
   background-color: none;
 `;
 
-const CloseFullscreenButton = styled(iconButton)`
-  position: absolute;
-  right: 10px;
-  opacity: 0.7;
+const UserAvatarComponent = styled(UserAvatar)``;
+
+const UserColor = styled.View`
+  width: 100%;
+  height: 100%;
+  background-color: ${({ userColor }) => `${userColor}AA`};
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const PressableButton = styled(Pressable).attrs(() => ({
+  pressStyle: {
+    opacity: 0.8,
+  },
+}))`
+  ${() => css`
+    background-color: #28282d99;
+    margin: 5px;
+    border-radius: 4px;
+    position: absolute;
+    right: 0;
+  `}
+`;
+
+const FullscreenIcon = styled(IconButtonComponent)`
+  padding: 0;
+  margin: 0;
 `;
 
 export default {
@@ -72,6 +86,8 @@ export default {
   Wrapper,
   UserAvatar,
   UserColor,
-  CloseFullscreenButton,
   ContentArea,
+  UserAvatarComponent,
+  PressableButton,
+  FullscreenIcon
 };

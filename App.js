@@ -1,4 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import {
+  useEffect, useRef, useState, useCallback
+} from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import notifee, { EventType } from '@notifee/react-native';
@@ -6,9 +8,9 @@ import { Provider, useDispatch, useSelector } from 'react-redux';
 // providers and store
 import { activateKeepAwakeAsync } from 'expo-keep-awake';
 import InCallManager from 'react-native-incall-manager';
-import { DeviceEventEmitter } from 'react-native';
+import { BackHandler, DeviceEventEmitter, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { store } from './src/store/redux/store';
+import { store, injectStoreFlushCallback} from './src/store/redux/store';
 import * as api from './src/services/api';
 import DrawerNavigator from './src/components/custom-drawer/drawer-navigator';
 import FullscreenWrapper from './src/components/fullscreen-wrapper';
@@ -29,6 +31,7 @@ import {
   leave,
   setSessionTerminated,
   sessionStateChanged,
+  setFeedbackEnabled,
 } from './src/store/redux/slices/wide-app/client';
 import logger from './src/services/logger';
 import { toggleMuteMicrophone } from './src/components/audio/service';
@@ -58,23 +61,32 @@ const AppContent = ({
   onLeaveSession: _onLeaveSession,
   jUrl,
   defaultLanguage,
+  meetingUrl,
 }) => {
   const Stack = createNativeStackNavigator();
   const dispatch = useDispatch();
   const guestStatus = useSelector((state) => state.client.guestStatus);
   const audioIsConnected = useSelector((state) => state.audio.isConnected);
   const audioIsMuted = useSelector((state) => state.audio.isMuted);
-  const ended = useSelector((state) => state.client.sessionState.ended);
+  const leaveOnUnmount = useSelector((state) => {
+    const { sessionState } = state.client;
+    return !sessionState.ended
+      && (sessionState.connected
+        || sessionState.loggedIn
+        || sessionState.loggingIn
+        || sessionState.loggingOut);
+  });
   const [notification, setNotification] = useState(null);
   const navigationRef = useRef(null);
   const nativeEventListeners = useRef([]);
+  const leaveOnUnmountRef = useRef();
+
   const { t, i18n } = useTranslation();
+
   const onLeaveSession = () => {
     dispatch(setSessionTerminated(true));
+    // Custom _onLeaveSession will be called on Redux's store flush @ store.js
     const hasCustomLeaveSession = typeof _onLeaveSession === 'function';
-
-    if (hasCustomLeaveSession) _onLeaveSession();
-
     // The return value of onLeaveSession determines whether there's was a custom
     // leave callback provided by the enveloping app. This is important for the
     // SDK itself to know what to do when the session ends (ie where to navigate
@@ -82,8 +94,34 @@ const AppContent = ({
     return hasCustomLeaveSession;
   };
 
+  // Store leaveOnUnmount in a ref so we can use it in the unmount function
   useEffect(() => {
-    const changeLanguage = (lng: 'en') => {
+    leaveOnUnmountRef.current = leaveOnUnmount;
+  }, [leaveOnUnmount]);
+
+  useEffect(() => {
+    console.log("FOCUS MOUNTED")
+    const onBackPress = () => {
+      Alert.alert(t('app.leaveModal.title'), t('app.leaveModal.desc'), [
+        {
+          text: t('app.settings.main.cancel.label'),
+          onPress: () => {},
+          style: 'cancel',
+        },
+        { text: 'OK', onPress: () => dispatch(leave(api)) },
+      ]);
+
+      return true;
+    };
+    BackHandler.addEventListener('hardwareBackPress', onBackPress);
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+      console.log("FOCUS UNMOUNTED");
+    };
+  }, []);
+
+  useEffect(() => {
+    const changeLanguage = (lng = 'en') => {
       i18n.changeLanguage(lng)
         .then(() => {
           logger.debug({
@@ -205,6 +243,9 @@ const AppContent = ({
   }, []);
 
   useEffect(() => {
+    // Inject custom provided onLeaveSession callback into the store so it's called
+    // once the store's about to be flushed
+    if (typeof _onLeaveSession === 'function') injectStoreFlushCallback(_onLeaveSession);
     injectStore();
     InCallManager.start({ media: 'video' });
     dispatch(ConnectionStatusTracker.registerConnectionStatusListeners());
@@ -236,23 +277,25 @@ const AppContent = ({
       }
     });
 
+    console.log("REGULAR APP MOUNT");
+
     return () => {
+      console.log("REGULAR APP UNMOUNT - leave?", leaveOnUnmountRef.current);
       dispatch(ConnectionStatusTracker.unregisterConnectionStatusListeners());
       nativeEventListeners.current.forEach((eventListener) => eventListener.remove());
 
-      if (!ended) {
-        dispatch(sessionStateChanged({
-          ended: true,
-          endReason: 'logged_out',
-        }));
-      }
-
-      dispatch(leave(api)).unwrap().catch(() => {
-        dispatch(setSessionTerminated(true));
-      });
-      dispatch(setSessionTerminated(true));
       unsubscribeForegroundEvents();
       InCallManager.stop({ media: 'video' });
+
+      if (leaveOnUnmountRef.current) {
+        dispatch(leave(api)).unwrap().finally(() => {
+          dispatch(sessionStateChanged({
+            ended: true,
+            endReason: 'logged_out',
+          }));
+          onLeaveSession();
+        });
+      }
     };
   }, []);
 
@@ -272,6 +315,7 @@ const AppContent = ({
               navigationRef={navigationRef}
               jUrl={jUrl}
               onLeaveSession={onLeaveSession}
+              meetingUrl={meetingUrl}
             />
           )}
         </Stack.Screen>
