@@ -114,5 +114,6 @@
   "app.actionsBar.actionsDropdown.desktopShareLabel": "Share your screen",
   "app.audioModal.settingsTitle": "Change your audio settings",
   "app.audio.leaveAudio": "Leave audio",
-  "mobileSdk.drawer.shareButtonLabel": "Share meeting"
+  "mobileSdk.drawer.shareButtonLabel": "Share meeting",
+  "mobileSdk.breakout.leave": "Leave breakout room"
 }

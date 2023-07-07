@@ -110,5 +110,6 @@
     "mobileSdk.userList.waitingAtendees": "Asistentes en espera",
     "mobileSdk.webcam.blockedLabel": "Compartir cámara web bloqueado",
     "mobileSdk.webcam.permissionLabel": "Necesitamos tu permiso para compartir la cámara web.",
-    "mobileSdk.whiteboard.label": "Pizarra"
+    "mobileSdk.whiteboard.label": "Pizarra",
+    "mobileSdk.breakout.leave": "Salir grupo de trabajo"
 }

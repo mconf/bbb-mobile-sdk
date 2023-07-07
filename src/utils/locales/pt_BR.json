@@ -111,5 +111,6 @@
   "mobileSdk.webcam.blockedLabel": "Compartilhamento de webcam bloqueado",
   "mobileSdk.webcam.permissionLabel": "Precisamos de sua permissão para que sua câmera possa ser compartilhada.",
   "mobileSdk.whiteboard.label": "Quadro branco",
-  "mobileSdk.drawer.shareButtonLabel": "Compartilhar link da sala"
+  "mobileSdk.drawer.shareButtonLabel": "Compartilhar link da sala",
+  "mobileSdk.breakout.leave": "Sair da sala de apoio"
 }
