@@ -75,6 +75,9 @@
     "app.userList.label": "Lista de usuarios",
     "app.userList.menu.demoteUser.label": "Degradar a espectador",
     "app.videoDock.webcamFocusLabel": "Enfocar",
+    "app.createBreakoutRoom.title": "Grupos de trabajo",
+    "app.createBreakoutRoom.askToJoin": "Solicitar unirte",
+    "app.createBreakoutRoom.join": "Unirte",
     "mobileSdk.chat.isEmptyLabel": "El chat está vacío",
     "mobileSdk.endSession.subtitle": "Serás redirigido a la página de inicio en unos segundos",
     "mobileSdk.error.fallback": "Fin inesperado de la sesión, intenta iniciar sesión de nuevo",
@@ -111,5 +114,6 @@
     "mobileSdk.webcam.blockedLabel": "Compartir cámara web bloqueado",
     "mobileSdk.webcam.permissionLabel": "Necesitamos tu permiso para compartir la cámara web.",
     "mobileSdk.whiteboard.label": "Pizarra",
-    "mobileSdk.breakout.leave": "Salir grupo de trabajo"
+    "mobileSdk.breakout.leave": "Salir grupo de trabajo",
+    
 }
