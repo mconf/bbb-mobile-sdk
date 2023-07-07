@@ -43,6 +43,7 @@ const DrawerNavigator = ({
   const pendingUsers = useSelector(selectWaitingUsers);
   const previousPendingUsers = usePrevious(pendingUsers);
   const [doorBellSound, setDoorBellSound] = useState();
+  const { isBreakout } = meetingData;
 
   // this effect controls the guest user waiting notification sound
   useEffect(() => {
@@ -170,6 +171,7 @@ const DrawerNavigator = ({
         />
       )}
 
+      { !isBreakout && (
       <Drawer.Screen
         name="PollScreen"
         component={PollNavigator}
@@ -184,6 +186,7 @@ const DrawerNavigator = ({
           ),
         }}
       />
+      )}
 
       <Drawer.Screen
         name="UserParticipantsScreen"
@@ -243,6 +246,7 @@ const DrawerNavigator = ({
       />
       )}
 
+      {!isBreakout && (
       <Drawer.Screen
         name="BreakoutRoomScreen"
         component={BreakoutRoomScreen}
@@ -257,6 +261,7 @@ const DrawerNavigator = ({
           ),
         }}
       />
+      )}
 
       <Drawer.Screen
         name="InsideBreakoutRoomScreen"
