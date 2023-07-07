@@ -14,6 +14,7 @@ import TestComponentsScreen from '../../../screens/test-components-screen';
 import BreakoutRoomScreen from '../../../screens/breakout-room-screen';
 import MainConferenceScreen from '../../../screens/main-conference-screen';
 import SelectLanguageScreen from '../../../screens/select-language-screen';
+import InsideBreakoutRoomScreen from '../../../screens/inside-breakout-room-screen';
 import Colors from '../../../constants/colors';
 import Styled from './styles';
 import usePrevious from '../../../hooks/use-previous';
@@ -85,7 +86,7 @@ const DrawerNavigator = ({
   // this effect controls the meeting ended
   useEffect(() => {
     if (ended) {
-      console.log("END SCREEN -> RENDER FEEDBACK =", feedbackEnabled)
+      console.log('END SCREEN -> RENDER FEEDBACK =', feedbackEnabled);
       if (feedbackEnabled && currentUser && meetingData) {
         navigation.navigate('FeedbackScreen');
       } else {
@@ -247,6 +248,23 @@ const DrawerNavigator = ({
         component={BreakoutRoomScreen}
         options={{
           title: t('app.createBreakoutRoom.title'),
+          drawerIcon: (config) => (
+            <Styled.DrawerIcon
+              icon="account-group"
+              size={24}
+              iconColor={config.color}
+            />
+          ),
+        }}
+      />
+
+      <Drawer.Screen
+        name="InsideBreakoutRoomScreen"
+        component={InsideBreakoutRoomScreen}
+        options={{
+          title: 'InsideBreakoutScreen',
+          headerShown: false,
+          drawerItemStyle: { display: 'none' },
           drawerIcon: (config) => (
             <Styled.DrawerIcon
               icon="account-group"

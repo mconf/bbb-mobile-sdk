@@ -1,11 +1,13 @@
-import * as Linking from 'expo-linking';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
 import { useCallback, useState } from 'react';
 import { Menu, Provider } from 'react-native-paper';
 import { selectCurrentUserId } from '../../store/redux/slices/current-user';
-import withPortal from '../../components/high-order/with-portal';
+import { setBreakoutData } from '../../store/redux/slices/wide-app/client';
 import { useOrientation } from '../../hooks/use-orientation';
+import AudioManager from '../../services/webrtc/audio-manager';
+import withPortal from '../../components/high-order/with-portal';
 import BreakoutRoomService from './service';
 import Styled from './styles';
 
@@ -16,8 +18,12 @@ const BreakoutRoomScreen = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [selectedBreakout, setSelectedBreakout] = useState({});
   const [menuAnchor, setMenuAnchor] = useState({ x: 0, y: 0 });
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
 
   const { t } = useTranslation();
+
+  const meetingData = useSelector((state) => state.client.meetingData);
 
   const handleBreakoutsData = useCallback(
     () => Object.values(breakoutsStore.breakoutsCollection).map((breakout) => {
@@ -32,6 +38,7 @@ const BreakoutRoomScreen = () => {
     }),
     [breakoutsStore]
   );
+
   const onIconPress = (event, item) => {
     const { nativeEvent } = event;
     const anchor = {
@@ -44,6 +51,13 @@ const BreakoutRoomScreen = () => {
     setShowMenu(true);
   };
 
+  const onClickJoinSession = () => {
+    setShowMenu(false);
+    AudioManager.exitAudio();
+    dispatch(setBreakoutData({ parentMeetingJoinUrl: meetingData.joinUrl }));
+    navigation.navigate('InsideBreakoutRoomScreen', { joinUrl: selectedBreakout.breakoutRoomJoinUrl });
+  };
+
   const renderMenuView = () => {
     return (
       <Menu
@@ -53,10 +67,7 @@ const BreakoutRoomScreen = () => {
       >
         {selectedBreakout.breakoutRoomJoinUrl && (
         <Menu.Item
-          onPress={() => {
-            setShowMenu(false);
-            Linking.openURL(selectedBreakout.breakoutRoomJoinUrl);
-          }}
+          onPress={onClickJoinSession}
           title={t('app.createBreakoutRoom.join')}
         />
         )}
