@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useCallback, useState } from 'react';
 import { Menu, Provider } from 'react-native-paper';
 import { selectCurrentUserId } from '../../store/redux/slices/current-user';
@@ -15,28 +15,47 @@ const BreakoutRoomScreen = () => {
   const orientation = useOrientation();
   const breakoutsStore = useSelector((state) => state.breakoutsCollection);
   const currentUserId = useSelector(selectCurrentUserId);
+  const meetingData = useSelector((state) => state.client.meetingData);
   const [showMenu, setShowMenu] = useState(false);
   const [selectedBreakout, setSelectedBreakout] = useState({});
   const [menuAnchor, setMenuAnchor] = useState({ x: 0, y: 0 });
+  const [joinedBreakouts, setJoinedBreakouts] = useState();
+  const [notJoinedBreakouts, setNotJoinedBreakouts] = useState();
   const dispatch = useDispatch();
   const navigation = useNavigation();
-
   const { t } = useTranslation();
 
-  const meetingData = useSelector((state) => state.client.meetingData);
+  useFocusEffect(
+    useCallback(() => {
+      setJoinedBreakouts(Object.values(breakoutsStore.breakoutsCollection)
+        .filter((item) => Object.keys(item)
+          .some((key) => key.includes('url_')))
+        .map((filteredItem) => {
+          return {
+            shortName: filteredItem.shortName,
+            breakoutId: filteredItem.breakoutId,
+            joinedUsers: filteredItem.joinedUsers,
+            timeRemaining: filteredItem.timeRemaining,
+            breakoutRoomJoinUrl: filteredItem[`url_${currentUserId}`]?.redirectToHtml5JoinURL
+          };
+        }));
+    }, [breakoutsStore]),
+  );
 
-  const handleBreakoutsData = useCallback(
-    () => Object.values(breakoutsStore.breakoutsCollection).map((breakout) => {
-      return {
-        shortName: breakout.shortName,
-        breakoutId: breakout.breakoutId,
-        joinedUsers: breakout.joinedUsers,
-        timeRemaining: breakout.timeRemaining,
-        breakoutRoomJoinUrl: breakout[`url_${currentUserId}`]?.redirectToHtml5JoinURL
-        // ...other properties
-      };
-    }),
-    [breakoutsStore]
+  useFocusEffect(
+    useCallback(() => {
+      setNotJoinedBreakouts(Object.values(breakoutsStore.breakoutsCollection)
+        .filter((item) => !Object.keys(item)
+          .some((key) => key.includes('url_')))
+        .map((filteredItem) => {
+          return {
+            shortName: filteredItem.shortName,
+            breakoutId: filteredItem.breakoutId,
+            joinedUsers: filteredItem.joinedUsers,
+            timeRemaining: filteredItem.timeRemaining
+          };
+        }));
+    }, [breakoutsStore]),
   );
 
   const onIconPress = (event, item) => {
@@ -93,12 +112,39 @@ const BreakoutRoomScreen = () => {
     );
   };
 
+  const renderJoinedRoomsView = () => {
+    return (
+      <>
+        <Styled.TitleText>Joined rooms</Styled.TitleText>
+        <Styled.FlatList data={joinedBreakouts} renderItem={renderItem} />
+      </>
+    );
+  };
+
+  const renderNotJoinedRoomsView = () => {
+    return (
+      <>
+        <Styled.TitleText>Remaning rooms</Styled.TitleText>
+        <Styled.FlatList data={notJoinedBreakouts} renderItem={renderItem} />
+      </>
+    );
+  };
+
+  if (joinedBreakouts.length === 0 && notJoinedBreakouts.length === 0) {
+    return (
+      <Styled.TitleText>
+        No breakout rooms avaiable
+      </Styled.TitleText>
+    );
+  }
+
   return (
     <Provider>
       <Styled.ContainerView orientation={orientation}>
         <Styled.Block orientation={orientation}>
           {renderMenuView()}
-          <Styled.FlatList data={handleBreakoutsData()} renderItem={renderItem} />
+          {renderJoinedRoomsView()}
+          {renderNotJoinedRoomsView()}
         </Styled.Block>
         <Styled.ActionsBarContainer orientation={orientation}>
           <Styled.ActionsBar orientation={orientation} />

@@ -87,6 +87,12 @@ const Block = styled.SafeAreaView`
   `}
 `;
 
+const TitleText = styled.Text`
+  color: white;
+  font-size: 18px;
+  text-align: center;
+`;
+
 export default {
   ShortName,
   CardPressable,
@@ -96,4 +102,5 @@ export default {
   ContainerView,
   Block,
   TimeRemaining,
+  TitleText,
 };
