@@ -299,7 +299,6 @@ const SocketConnectionComponent = (props) => {
     return selectUserByIntId(state, meetingData.internalUserID)?.ejected;
   });
   const meetingEnded = useSelector((state) => selectMeeting(state)?.meetingEnded);
-  const meetingEndReason = useSelector((state) => selectMeeting(state)?.meetingEndedReason);
   const basicSubscriptionsAreReady = useSelector((state) => {
     return state.meetingCollection.ready
       && state.currentUserCollection.ready
@@ -412,7 +411,7 @@ const SocketConnectionComponent = (props) => {
   // Login/logout tracker
   useEffect(() => {
     if ((!loggingOut && loggedIn)
-      && (userLoggedOut === true || ejected === true || (meetingEnded === true && meetingEndReason !== 'BREAKOUT_ENDED_BY_MOD'))) {
+      && (userLoggedOut === true || ejected === true || meetingEnded === true)) {
       // User is logged in, isn't logging out yet but the server side data
       // mandates a logout -> start the logout procedure
       _terminate(true);
