@@ -73,6 +73,9 @@ const isLocked = createSelector(
 // Middleware effects and listeners
 const logoutOrEjectionPredicate = (action, currentState) => {
   if (currentState.client.sessionState.ended) return false;
+  const isBreakoutUser = Object.values(
+    Object.values(currentState.currentUserCollection)[0]
+  )[0]?.breakoutProps?.isBreakoutUser;
 
   if (editCurrentUser.match(action) || addCurrentUser.match(action)) {
     const { currentUserObject } = action.payload;
@@ -81,6 +84,13 @@ const logoutOrEjectionPredicate = (action, currentState) => {
 
   if (addMeeting.match(action) || editMeeting.match(action)) {
     const { meetingObject } = action.payload;
+    if (meetingObject.fields.meetingEndedReason === 'BREAKOUT_ENDED_BY_MOD' && isBreakoutUser) {
+      return true;
+    }
+    if (meetingObject.fields.meetingEndedReason === 'BREAKOUT_ENDED_BY_MOD' && !isBreakoutUser) {
+      return false;
+    }
+
     return meetingObject?.fields?.meetingEnded;
   }
 
