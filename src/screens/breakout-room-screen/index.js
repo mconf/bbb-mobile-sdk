@@ -130,7 +130,7 @@ const BreakoutRoomScreen = () => {
     );
   };
 
-  if (joinedBreakouts.length === 0 && notJoinedBreakouts.length === 0) {
+  if (joinedBreakouts?.length === 0 && notJoinedBreakouts?.length === 0) {
     return (
       <Styled.TitleText>
         No breakout rooms avaiable
