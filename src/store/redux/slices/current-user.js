@@ -84,10 +84,11 @@ const logoutOrEjectionPredicate = (action, currentState) => {
 
   if (addMeeting.match(action) || editMeeting.match(action)) {
     const { meetingObject } = action.payload;
-    if (meetingObject.fields.meetingEndedReason === 'BREAKOUT_ENDED_BY_MOD' && isBreakoutUser) {
-      return true;
-    }
-    if (meetingObject.fields.meetingEndedReason === 'BREAKOUT_ENDED_BY_MOD' && !isBreakoutUser) {
+    const { meetingEndedReason } = meetingObject.fields;
+    if (meetingEndedReason === 'BREAKOUT_ENDED_BY_MOD' || meetingEndedReason === 'BREAKOUT_ENDED_EXCEEDING_DURATION') {
+      if (isBreakoutUser) {
+        return true;
+      }
       return false;
     }
 
