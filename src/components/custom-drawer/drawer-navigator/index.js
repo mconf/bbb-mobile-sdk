@@ -268,6 +268,7 @@ const DrawerNavigator = ({
         component={InsideBreakoutRoomScreen}
         options={{
           title: 'InsideBreakoutScreen',
+          unmountOnBlur: true,
           headerShown: false,
           drawerItemStyle: { display: 'none' },
           drawerIcon: (config) => (
