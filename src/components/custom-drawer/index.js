@@ -17,6 +17,7 @@ const CustomDrawer = (props) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const currentUserStore = useSelector((state) => state.currentUserCollection);
+  const isBreakout = useSelector((state) => state.client.meetingData.isBreakout);
 
   // TODO Think a way to avoid this
   const currentUserObj = Object.values(
@@ -91,7 +92,7 @@ const CustomDrawer = (props) => {
           <Styled.ViewLeaveContainer>
             <Icon name="logout" size={24} color="#1C1B1F" />
             <Styled.TextLeaveContainer>
-              {t('app.navBar.settingsDropdown.leaveSessionLabel')}
+              {isBreakout ? t('mobileSdk.breakout.leave') : t('app.navBar.settingsDropdown.leaveSessionLabel')}
             </Styled.TextLeaveContainer>
           </Styled.ViewLeaveContainer>
         </Styled.ButtonLeaveContainer>

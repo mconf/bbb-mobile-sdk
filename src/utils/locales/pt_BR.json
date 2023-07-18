@@ -75,6 +75,9 @@
   "app.userList.label": "Lista de participantes",
   "app.userList.menu.demoteUser.label": "Tornar espectador",
   "app.videoDock.webcamFocusLabel": "Focar",
+  "app.createBreakoutRoom.title": "Salas de apoio",
+  "app.createBreakoutRoom.askToJoin": "Pedir para entrar",
+  "app.createBreakoutRoom.join": "Entrar",
   "mobileSdk.chat.isEmptyLabel": "O chat está vazio",
   "mobileSdk.endSession.subtitle": "Clique abaixo para ser redirecionado para a página inicial",
   "mobileSdk.error.fallback": "Fim de sessão inesperado, tente conectar-se novamente",
@@ -111,5 +114,9 @@
   "mobileSdk.webcam.blockedLabel": "Compartilhamento de webcam bloqueado",
   "mobileSdk.webcam.permissionLabel": "Precisamos de sua permissão para que sua câmera possa ser compartilhada.",
   "mobileSdk.whiteboard.label": "Quadro branco",
-  "mobileSdk.drawer.shareButtonLabel": "Compartilhar link da sala"
+  "mobileSdk.drawer.shareButtonLabel": "Compartilhar link da sala",
+  "mobileSdk.breakout.leave": "Sair da sala de apoio",
+  "mobileSdk.breakout.joinedRoomsLabel": "Participante das salas de grupo",
+  "mobileSdk.breakout.remainingRoomsLabel": "Outras salas de grupo",
+  "mobileSdk.breakout.noBreakouts": "Salas de grupo não foram iniciadas"
 }

@@ -28,6 +28,10 @@ const initialState = {
     fullname: null,
     externUserID: null,
     confname: null,
+    isBreakout: null,
+  },
+  breakoutData: {
+    parentMeetingJoinUrl: null,
   },
   connectionStatus: {
     isConnected: null,
@@ -67,6 +71,9 @@ const clientSlice = createSlice({
     },
     setMeetingData: (state, action) => {
       state.meetingData = action.payload;
+    },
+    setBreakoutData: (state, action) => {
+      state.breakoutData = action.payload;
     },
     setJoinUrl: (state, action) => {
       state.meetingData.joinUrl = action.payload;
@@ -359,6 +366,7 @@ export const {
   setInitialChatMsgsFetched,
   setSessionTerminated,
   setMeetingData,
+  setBreakoutData,
   setJoinUrl,
   setFeedbackEnabled,
   sessionStateChanged,
