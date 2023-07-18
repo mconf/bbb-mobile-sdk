@@ -118,5 +118,8 @@
   "app.audioModal.settingsTitle": "Change your audio settings",
   "app.audio.leaveAudio": "Leave audio",
   "mobileSdk.drawer.shareButtonLabel": "Share meeting",
-  "mobileSdk.breakout.leave": "Leave breakout room"
+  "mobileSdk.breakout.leave": "Leave breakout room",
+  "mobileSdk.breakout.joinedRoomsLabel": "Joined rooms",
+  "mobileSdk.breakout.remainingRoomsLabel": "Remaining rooms",
+  "mobileSdk.breakout.noBreakouts": "No breakouts available"
 }

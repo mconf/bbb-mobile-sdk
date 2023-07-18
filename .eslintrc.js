@@ -109,5 +109,6 @@ module.exports = {
     'comma-dangle': 'off',
     'brace-style': 'off',
     'import/no-extraneous-dependencies': 'off',
+    'consistent-return': 'off',
   },
 };

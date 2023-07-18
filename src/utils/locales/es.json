@@ -115,5 +115,7 @@
     "mobileSdk.webcam.permissionLabel": "Necesitamos tu permiso para compartir la cámara web.",
     "mobileSdk.whiteboard.label": "Pizarra",
     "mobileSdk.breakout.leave": "Salir grupo de trabajo",
-    
+    "mobileSdk.breakout.joinedRoomsLabel": "Grupos de trabajo participantes",
+    "mobileSdk.breakout.remainingRoomsLabel": "Otros grupos de trabajo",
+    "mobileSdk.breakout.noBreakouts": "Grupos de trabajo no disponibles"
 }

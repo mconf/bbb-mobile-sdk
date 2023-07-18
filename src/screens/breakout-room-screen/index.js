@@ -113,18 +113,25 @@ const BreakoutRoomScreen = () => {
   };
 
   const renderJoinedRoomsView = () => {
+    if (joinedBreakouts?.length === 0) {
+      return;
+    }
+
     return (
       <>
-        <Styled.TitleText>Joined rooms</Styled.TitleText>
+        <Styled.TitleText>{t('mobileSdk.breakout.joinedRoomsLabel')}</Styled.TitleText>
         <Styled.FlatList data={joinedBreakouts} renderItem={renderItem} />
       </>
     );
   };
 
   const renderNotJoinedRoomsView = () => {
+    if (notJoinedBreakouts?.length === 0) {
+      return;
+    }
     return (
       <>
-        <Styled.TitleText>Remaning rooms</Styled.TitleText>
+        <Styled.TitleText>{t('mobileSdk.breakout.remainingRoomsLabel')}</Styled.TitleText>
         <Styled.FlatList data={notJoinedBreakouts} renderItem={renderItem} />
       </>
     );
@@ -133,7 +140,7 @@ const BreakoutRoomScreen = () => {
   if (joinedBreakouts?.length === 0 && notJoinedBreakouts?.length === 0) {
     return (
       <Styled.TitleText>
-        No breakout rooms avaiable
+        {t('mobileSdk.breakout.noBreakouts')}
       </Styled.TitleText>
     );
   }
