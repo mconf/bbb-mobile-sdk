@@ -1,16 +1,10 @@
 import React from 'react';
-import BbbSdk from 'bbb-mobile-sdk';
-import { useNavigation } from '@react-navigation/native';
+import { View } from 'react-native';
 
-const InsideBreakoutRoomScreen = (props) => {
-  const { route } = props;
-  const navigation = useNavigation();
-
+// this is a breakout fork. no need to implement breakout inside breakout
+const InsideBreakoutRoomScreen = () => {
   return (
-    <BbbSdk
-      jUrl={route.params.joinUrl}
-      onLeaveSession={() => navigation.goBack()}
-    />
+    <View />
   );
 };
 
