@@ -1,5 +1,5 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit';
-import { selectMainUsers } from './users';
+import { selectUsers } from './users';
 import { sortVideoUsers } from '../../../services/sorts/video';
 import { selectLocalCameraId } from './wide-app/video';
 import VideoManager from '../../../services/webrtc/video-manager';
@@ -55,7 +55,7 @@ const selectVideoStreams = (state) => Object.values(
 );
 
 const selectSortedVideoUsers = createSelector(
-  [selectVideoStreams, selectMainUsers, selectLocalCameraId],
+  [selectVideoStreams, selectUsers, selectLocalCameraId],
   (videoStreams, users, localCameraId) => {
     return sortVideoUsers(users.map((user) => {
       const {
