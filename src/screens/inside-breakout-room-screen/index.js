@@ -1,5 +1,5 @@
 import React from 'react';
-import BbbSdk from 'bbb-mobile-sdk';
+import BbbBreakoutSdk from 'bbb-breakout-sdk';
 import { useNavigation } from '@react-navigation/native';
 
 const InsideBreakoutRoomScreen = (props) => {
@@ -7,7 +7,7 @@ const InsideBreakoutRoomScreen = (props) => {
   const navigation = useNavigation();
 
   return (
-    <BbbSdk
+    <BbbBreakoutSdk
       jUrl={route.params.joinUrl}
       onLeaveSession={() => navigation.goBack()}
     />
