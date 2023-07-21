@@ -73,7 +73,7 @@ const CustomDrawer = (props) => {
             userColor={handleUserInfo().color}
             userImage={handleUserInfo().avatar}
           />
-          <Styled.NameUserAvatar>{handleUserInfo().name}</Styled.NameUserAvatar>
+          <Styled.NameUserAvatar numberOfLines={1}>{currentUserObj?.name}</Styled.NameUserAvatar>
         </Styled.CustomDrawerContainer>
         <Styled.ContainerDrawerItemList>
           <DrawerItemList {...props} />
