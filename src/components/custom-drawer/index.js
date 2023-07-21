@@ -80,6 +80,7 @@ const CustomDrawer = (props) => {
         </Styled.ContainerDrawerItemList>
       </DrawerContentScrollView>
       <Styled.ContainerCustomButtons>
+        {!isBreakout && (
         <Styled.ButtonLeaveContainer onPress={onClickShare}>
           <Styled.ViewShareContainer>
             <Icon name="share" size={24} color="#1C1B1F" />
@@ -88,6 +89,7 @@ const CustomDrawer = (props) => {
             </Styled.TextLeaveContainer>
           </Styled.ViewShareContainer>
         </Styled.ButtonLeaveContainer>
+        )}
         <Styled.ButtonLeaveContainer onPress={leaveSession}>
           <Styled.ViewLeaveContainer>
             <Icon name="logout" size={24} color="#1C1B1F" />
