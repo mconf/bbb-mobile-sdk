@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { Share } from 'react-native';
@@ -8,6 +7,7 @@ import {
 } from '@react-navigation/drawer';
 import Icon from '@expo/vector-icons/MaterialIcons';
 import Colors from '../../constants/colors';
+import { selectCurrentUser } from '../../store/redux/slices/current-user';
 import Styled from './styles';
 import * as api from '../../services/api';
 import { leave } from '../../store/redux/slices/wide-app/client';
@@ -16,25 +16,7 @@ const CustomDrawer = (props) => {
   const { meetingUrl } = props;
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const currentUserStore = useSelector((state) => state.currentUserCollection);
-
-  // TODO Think a way to avoid this
-  const currentUserObj = Object.values(
-    currentUserStore.currentUserCollection
-  )[0] || {
-    name: 'User not logged in',
-    role: 'VIEWER',
-    color: '#FFFFFF',
-  };
-
-  const handleUserInfo = useCallback(() => {
-    return {
-      name: currentUserObj?.name,
-      role: currentUserObj?.role,
-      color: currentUserObj?.color,
-      avatar: currentUserObj?.avatar
-    };
-  }, [currentUserStore]);
+  const currentUserObj = useSelector(selectCurrentUser);
 
   const leaveSession = () => {
     dispatch(leave(api));
@@ -67,10 +49,10 @@ const CustomDrawer = (props) => {
       >
         <Styled.CustomDrawerContainer>
           <Styled.UserAvatar
-            userName={handleUserInfo().name}
-            userRole={handleUserInfo().role}
-            userColor={handleUserInfo().color}
-            userImage={handleUserInfo().avatar}
+            userName={currentUserObj?.name}
+            userRole={currentUserObj?.role}
+            userColor={currentUserObj?.color}
+            userImage={currentUserObj?.avatar}
           />
           <Styled.NameUserAvatar numberOfLines={1}>{currentUserObj?.name}</Styled.NameUserAvatar>
         </Styled.CustomDrawerContainer>
