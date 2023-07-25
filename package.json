@@ -46,7 +46,6 @@
     "expo-application": "~5.1.1",
     "expo-av": "~13.2.1",
     "expo-device": "~5.2.1",
-    "expo-keep-awake": "^12.0.1",
     "expo-linking": "~4.0.1",
     "expo-splash-screen": "~0.18.2",
     "expo-status-bar": "~1.4.0",
