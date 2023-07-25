@@ -7,6 +7,7 @@ import { selectCurrentUserId } from '../../store/redux/slices/current-user';
 import { setBreakoutData } from '../../store/redux/slices/wide-app/client';
 import { useOrientation } from '../../hooks/use-orientation';
 import AudioManager from '../../services/webrtc/audio-manager';
+import VideoManager from '../../services/webrtc/video-manager';
 import withPortal from '../../components/high-order/with-portal';
 import BreakoutRoomService from './service';
 import Styled from './styles';
@@ -15,6 +16,7 @@ const BreakoutRoomScreen = () => {
   const orientation = useOrientation();
   const breakoutsStore = useSelector((state) => state.breakoutsCollection);
   const currentUserId = useSelector(selectCurrentUserId);
+  const localCameraId = useSelector((state) => state.video.localCameraId);
   const meetingData = useSelector((state) => state.client.meetingData);
   const [showMenu, setShowMenu] = useState(false);
   const [selectedBreakout, setSelectedBreakout] = useState({});
@@ -73,6 +75,7 @@ const BreakoutRoomScreen = () => {
   const onClickJoinSession = () => {
     setShowMenu(false);
     AudioManager.exitAudio();
+    VideoManager.unpublish(localCameraId);
     dispatch(setBreakoutData({ parentMeetingJoinUrl: meetingData.joinUrl }));
     navigation.navigate('InsideBreakoutRoomScreen', { joinUrl: selectedBreakout.breakoutRoomJoinUrl });
   };
