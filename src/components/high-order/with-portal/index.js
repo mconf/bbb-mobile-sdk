@@ -1,4 +1,5 @@
 import BottomSheetChat from '../../chat/bottom-sheet-chat';
+import LowConnectionModal from '../../low-connection-modal';
 import NotificationBar from '../../notification-bar';
 
 const withPortal = (Component) => {
@@ -7,7 +8,7 @@ const withPortal = (Component) => {
       <Component {...props} />
       <NotificationBar />
       <BottomSheetChat />
-      {/* ActionsBar */}
+      <LowConnectionModal />
     </>
   );
 };
