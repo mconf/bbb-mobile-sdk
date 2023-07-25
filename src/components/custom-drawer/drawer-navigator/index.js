@@ -87,8 +87,7 @@ const DrawerNavigator = ({
   // this effect controls the meeting ended
   useEffect(() => {
     if (ended) {
-      console.log('END SCREEN -> RENDER FEEDBACK =', feedbackEnabled);
-      if (feedbackEnabled && currentUser && meetingData) {
+      if (feedbackEnabled && currentUser && meetingData && !isBreakout) {
         navigation.navigate('FeedbackScreen');
       } else {
         navigation.navigate('EndSessionScreen');
