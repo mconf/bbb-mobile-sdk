@@ -269,9 +269,6 @@ const AppContent = ({
       if (type === EventType.ACTION_PRESS && (detail.pressAction.id === 'mute' || detail.pressAction.id === 'unmute')) {
         toggleMuteMicrophone();
       }
-      if (type === EventType.PRESS) {
-        navigationRef?.current?.navigate('Main');
-      }
     });
 
     console.log("REGULAR APP MOUNT");
