@@ -6,7 +6,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import notifee, { EventType } from '@notifee/react-native';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 // providers and store
-import { BackHandler, DeviceEventEmitter, Alert } from 'react-native';
+import { BackHandler, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { store, injectStoreFlushCallback} from './src/store/redux/store';
 import * as api from './src/services/api';
@@ -76,7 +76,6 @@ const AppContent = ({
   });
   const [notification, setNotification] = useState(null);
   const navigationRef = useRef(null);
-  const nativeEventListeners = useRef([]);
   const leaveOnUnmountRef = useRef();
 
   const { t, i18n } = useTranslation();
@@ -249,20 +248,6 @@ const AppContent = ({
     if (typeof _onLeaveSession === 'function') injectStoreFlushCallback(_onLeaveSession);
     injectStore();
     dispatch(ConnectionStatusTracker.registerConnectionStatusListeners());
-    nativeEventListeners.current.push(
-      DeviceEventEmitter.addListener('onAudioDeviceChanged', ({
-        availableAudioDeviceList,
-        selectedAudioDevice
-      }) => {
-        logger.info({
-          logCode: 'audio_devices_changed',
-          extraInfo: {
-            availableAudioDeviceList,
-            selectedAudioDevice,
-          },
-        }, `Audio devices changed: selected=${selectedAudioDevice} available=${availableAudioDeviceList}`);
-      })
-    );
 
     // Foreground event = device unlocked || app in view
     const unsubscribeForegroundEvents = notifee.onForegroundEvent((event) => {
@@ -286,8 +271,6 @@ const AppContent = ({
     return () => {
       console.log("REGULAR APP UNMOUNT - leave?", leaveOnUnmountRef.current);
       dispatch(ConnectionStatusTracker.unregisterConnectionStatusListeners());
-      nativeEventListeners.current.forEach((eventListener) => eventListener.remove());
-
       unsubscribeForegroundEvents();
 
       if (leaveOnUnmountRef.current) {
