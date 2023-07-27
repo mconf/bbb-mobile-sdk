@@ -235,7 +235,7 @@ class VideoManager {
     return `https://${this._host}/bigbluebutton/api/stuns?sessionToken=${this._sessionToken}`;
   }
 
-  _initializePublisherBroker({ cameraId, inputStream }) {
+  _initializePublisherBroker({ cameraId, inputStream, mediaServer = 'mediasoup' }) {
     const brokerOptions = {
       ws: this.ws,
       cameraId,
@@ -244,6 +244,7 @@ class VideoManager {
       offering: true,
       traceLogs: true,
       logger: this.logger,
+      mediaServer,
     };
     const broker = new VideoBroker('share', brokerOptions);
     broker.onended = () => {
@@ -290,7 +291,7 @@ class VideoManager {
     return broker;
   }
 
-  _initializeSubscriberBroker({ cameraId }) {
+  _initializeSubscriberBroker({ cameraId, mediaServer = 'mediasoup' }) {
     const brokerOptions = {
       ws: this.ws,
       cameraId,
@@ -298,6 +299,7 @@ class VideoManager {
       offering: false,
       traceLogs: true,
       logger: this.logger,
+      mediaServer,
     };
     const broker = new VideoBroker('viewer', brokerOptions);
     broker.onended = () => {
@@ -411,7 +413,7 @@ class VideoManager {
     this.logger.info({ logCode: 'video_joined' }, 'Video Joined');
   }
 
-  async publish() {
+  async publish(options = {}) {
     if (!this.initialized) throw new TypeError('Video manager is not ready');
 
     let cameraId;
@@ -422,7 +424,7 @@ class VideoManager {
       cameraId = this.buildCameraId(inputStream);
       store.dispatch(setLocalCameraId(cameraId));
       this.storeMediaStream(cameraId, inputStream);
-      const broker = this._initializePublisherBroker({ cameraId, inputStream });
+      const broker = this._initializePublisherBroker({ cameraId, inputStream, ...options });
       await broker.joinVideo();
 
       return cameraId;
@@ -452,7 +454,7 @@ class VideoManager {
     this._unpublish(cameraId, { isUserAction: true });
   }
 
-  async subscribe(cameraId) {
+  async subscribe(cameraId, options = {}) {
     if (!this.initialized) throw new TypeError('Video manager is not ready');
 
     try {
@@ -463,7 +465,7 @@ class VideoManager {
         this.deleteBroker(cameraId);
       }
 
-      broker = this._initializeSubscriberBroker({ cameraId });
+      broker = this._initializeSubscriberBroker({ cameraId, ...options });
       await broker.joinVideo();
     } catch (error) {
       // Rollback and re-throw
