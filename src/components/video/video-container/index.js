@@ -8,6 +8,7 @@ import {
   setIsFocused
 } from '../../../store/redux/slices/wide-app/layout';
 import { isTalkingByUserId } from '../../../store/redux/slices/voice-users';
+import { selectMetadata } from '../../../store/redux/slices/meeting';
 import UserAvatar from '../../user-avatar';
 import VideoManager from '../../../services/webrtc/video-manager';
 import Styled from './styles';
@@ -37,12 +38,13 @@ const VideoContainer = (props) => {
   const mediaStreamId = useSelector((state) => state.video.videoStreams[cameraId]);
   const signalingTransportOpen = useSelector((state) => state.video.signalingTransportOpen);
   const isTalking = useSelector((state) => isTalkingByUserId(state, userId));
+  const mediaServer = useSelector((state) => selectMetadata(state, 'media-server-video'));
 
   useEffect(() => {
     if (signalingTransportOpen && clientIsReady) {
       if (cameraId && !local) {
         if (!mediaStreamId && visible) {
-          VideoManager.subscribe(cameraId);
+          VideoManager.subscribe(cameraId, { mediaServer });
         }
 
         if (mediaStreamId && !visible) {

@@ -75,6 +75,20 @@ const selectUsersProp = createSelector(
   }
 );
 
+const selectAllMetadata = createSelector(
+  [selectMeeting],
+  (meeting) => {
+    return meeting?.metadataProp ?? { metadata: {} };
+  }
+);
+
+const selectMetadata = createSelector(
+  [selectAllMetadata, selectProp],
+  (metadataProp, prop) => {
+    return metadataProp.metadata[prop];
+  }
+);
+
 export const {
   addMeeting,
   removeMeeting,
@@ -89,6 +103,8 @@ export {
   selectLockSettingsProp,
   selectAllUsersProps,
   selectUsersProp,
+  selectAllMetadata,
+  selectMetadata,
 };
 
 export default meetingSlice.reducer;

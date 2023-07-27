@@ -4,6 +4,7 @@ import Styled from './styles';
 import ScreenshareManager from '../../services/webrtc/screenshare-manager';
 import { selectScreenshare } from '../../store/redux/slices/screenshare';
 import { isClientReady } from '../../store/redux/slices/wide-app/client';
+import { selectMetadata } from '../../store/redux/slices/meeting';
 
 const Screenshare = (props) => {
   const { style } = props;
@@ -11,10 +12,11 @@ const Screenshare = (props) => {
   const mediaStreamId = useSelector((state) => state.screenshare.screenshareStream);
   const isConnected = useSelector((state) => state.screenshare.isConnected);
   const clientIsReady = useSelector(isClientReady);
+  const mediaServer = useSelector((state) => selectMetadata(state, 'media-server-screenshare'));
 
   useEffect(() => {
     if (clientIsReady && !mediaStreamId && screenshare) {
-      ScreenshareManager.subscribe();
+      ScreenshareManager.subscribe({ mediaServer });
     }
   }, [clientIsReady, mediaStreamId, screenshare]);
 
