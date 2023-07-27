@@ -139,6 +139,7 @@ const AppContent = ({
 
   useEffect(() => {
     if (audioIsConnected) {
+      InCallManager.start({ media: 'video' });
       // Start/show the notification foreground service
       const getChannelIdAndDisplayNotification = async () => {
         // Request permissions (required for iOS)
@@ -249,7 +250,6 @@ const AppContent = ({
     // once the store's about to be flushed
     if (typeof _onLeaveSession === 'function') injectStoreFlushCallback(_onLeaveSession);
     injectStore();
-    InCallManager.start({ media: 'video' });
     dispatch(ConnectionStatusTracker.registerConnectionStatusListeners());
     nativeEventListeners.current.push(
       DeviceEventEmitter.addListener('onAudioDeviceChanged', ({
