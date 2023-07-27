@@ -6,7 +6,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import notifee, { EventType } from '@notifee/react-native';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 // providers and store
-import InCallManager from 'react-native-incall-manager';
 import { BackHandler, DeviceEventEmitter, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { store, injectStoreFlushCallback} from './src/store/redux/store';
@@ -249,7 +248,6 @@ const AppContent = ({
     // once the store's about to be flushed
     if (typeof _onLeaveSession === 'function') injectStoreFlushCallback(_onLeaveSession);
     injectStore();
-    InCallManager.start({ media: 'video' });
     dispatch(ConnectionStatusTracker.registerConnectionStatusListeners());
     nativeEventListeners.current.push(
       DeviceEventEmitter.addListener('onAudioDeviceChanged', ({
@@ -291,7 +289,6 @@ const AppContent = ({
       nativeEventListeners.current.forEach((eventListener) => eventListener.remove());
 
       unsubscribeForegroundEvents();
-      InCallManager.stop({ media: 'video' });
 
       if (leaveOnUnmountRef.current) {
         dispatch(leave(api)).unwrap().finally(() => {
