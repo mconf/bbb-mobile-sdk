@@ -350,12 +350,15 @@ const isClientReady = ({ client }) => {
     && client.sessionState.loggedIn;
 };
 
+const isBreakout = (state) => state?.client?.meetingData?.isBreakout;
+
 export {
   refreshConnectionStatus,
   fetchGuestStatus,
   join,
   leave,
   isClientReady,
+  isBreakout,
 };
 
 export const {
