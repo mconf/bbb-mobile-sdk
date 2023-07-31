@@ -128,5 +128,6 @@
   "mobileSdk.breakout.leave": "Sair da sala de apoio",
   "mobileSdk.breakout.joinedRoomsLabel": "Participante das salas de grupo",
   "mobileSdk.breakout.remainingRoomsLabel": "Outras salas de grupo",
-  "mobileSdk.breakout.noBreakouts": "Salas de grupo não foram iniciadas"
+  "mobileSdk.breakout.noBreakouts": "Salas de grupo não foram iniciadas",
+  "mobileSdk.chat.breakoutDurationUpdated": "Tempo das salas de apoio agora é de {{minutes}} minutos"
 }
