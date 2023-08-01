@@ -42,8 +42,8 @@ const notificationBarSlice = createSlice({
           break;
         case 'breakoutsStarted':
           state.isShow = true;
-          state.messageTitle = 'As salas de grupo foram iniciadas';
-          state.messageSubtitle = 'Clique aqui ir para a lista de salas de grupo';
+          state.messageTitle = 'mobileSdk.notification.breakoutsStarted.title';
+          state.messageSubtitle = 'mobileSdk.notification.breakoutsStarted.subtitle';
           state.icon = 'breakout-room';
           break;
         default:

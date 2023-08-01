@@ -136,5 +136,7 @@
   "mobileSdk.notification.handsUp.title": "You raised your hand",
   "mobileSdk.notification.handsUp.subtitle": "Moderators have been notified",
   "mobileSdk.notification.pollStarted.title": "A poll has been started",
-  "mobileSdk.notification.pollStarted.subtitle": "Click here to answer"
+  "mobileSdk.notification.pollStarted.subtitle": "Click here to answer",
+  "mobileSdk.notification.breakoutsStarted.title": "Group rooms started",
+  "mobileSdk.notification.breakoutsStarted.subtitle": "Click here to go to the group rooms list"
 }
