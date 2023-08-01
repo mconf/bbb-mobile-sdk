@@ -132,5 +132,9 @@
   "mobileSdk.breakout.joinedRoomsLabel": "Joined rooms",
   "mobileSdk.breakout.remainingRoomsLabel": "Remaining rooms",
   "mobileSdk.breakout.noBreakouts": "No breakouts available",
-  "mobileSdk.chat.breakoutDurationUpdated": "Breakout time is now {{minutes}} minutes"
+  "mobileSdk.chat.breakoutDurationUpdated": "Breakout time is now {{minutes}} minutes",
+  "mobileSdk.notification.handsUp.title": "You raised your hand",
+  "mobileSdk.notification.handsUp.subtitle": "Moderators have been notified",
+  "mobileSdk.notification.pollStarted.title": "A poll has been started",
+  "mobileSdk.notification.pollStarted.subtitle": "Click here to answer"
 }

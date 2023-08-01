@@ -1,5 +1,6 @@
 import { Avatar } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 import { hide } from '../../store/redux/slices/wide-app/notification-bar';
 import Styled from './styles';
@@ -10,6 +11,7 @@ const NotificationBar = () => {
   // select the UI states from the redux store
   const notificationBarStore = useSelector((state) => state.notificationBar);
   const navigation = useNavigation();
+  const { t } = useTranslation();
 
   const handleIcon = () => {
     switch (notificationBarStore.icon) {
@@ -44,10 +46,10 @@ const NotificationBar = () => {
       {handleIcon()}
       <Styled.TextContainer>
         <Styled.TitleText>
-          {notificationBarStore.messageTitle}
+          {t(notificationBarStore.messageTitle)}
         </Styled.TitleText>
         <Styled.SubtitleText>
-          {notificationBarStore.messageSubtitle}
+          {t(notificationBarStore.messageSubtitle)}
         </Styled.SubtitleText>
       </Styled.TextContainer>
     </Styled.NotificationsBarPressable>
