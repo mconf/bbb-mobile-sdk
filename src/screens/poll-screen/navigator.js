@@ -42,7 +42,7 @@ const PollNavigator = () => {
         routes: [{ name: 'AnswerPollScreen' }]
       });
     }
-  }, [activePollObject, amIPresenter, hasCurrentPoll]);
+  }, [Boolean(activePollObject), amIPresenter, hasCurrentPoll]);
 
   return (
     <Stack.Navigator
