@@ -62,11 +62,17 @@ const FeedbackScreen = () => {
   };
 
   const nextScreen = (payload) => {
+    if (rating === 10) {
+      navigation.navigate('EndSessionScreen');
+      return;
+    }
+
     if (CUSTOM_FEEDBACK_ENABLED) {
       navigation.navigate('ProblemFeedbackScreen', { payload, meetingData: meetingData.current });
-    } else {
-      navigation.navigate('EndSessionScreen');
+      return;
     }
+
+    navigation.navigate('EndSessionScreen');
   };
 
   const sendStarRating = () => {
@@ -126,7 +132,7 @@ const FeedbackScreen = () => {
         <Styled.ButtonContainer>
           <Styled.ConfirmButton
             disabled={noRating()}
-            onPress={() => { handleNextButton(); }}
+            onPress={handleNextButton}
           >
             {nextButton}
           </Styled.ConfirmButton>

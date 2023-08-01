@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 
 export function useChatMsgs() {
   const { t } = useTranslation();
@@ -44,6 +44,19 @@ export function useChatMsgs() {
           author: message.extra.senderName,
           timestamp: message.timestamp,
           message: handleMessage(),
+        };
+      }
+      // if is a breakout set duration message
+      if (message.message.toString().includes('breakoutDurationUpdated') && message.sender.toString().includes('SYSTEM_MESSAGE')) {
+        const minutes = message.messageValues[0];
+        return {
+          author: t('app.toast.chat.system'),
+          timestamp: message.timestamp,
+          message: (
+            <Trans i18nKey="mobileSdk.chat.breakoutDurationUpdated" values={minutes}>
+              {{ minutes }}
+            </Trans>
+          ),
         };
       }
       return {

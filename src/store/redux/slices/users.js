@@ -51,7 +51,7 @@ const selectUsers = (state) => Object.values(
 // exclude the users from breakouts
 const selectMainUsers = (state) => {
   const allUsers = Object.values(state.usersCollection.usersCollection);
-  return allUsers.filter((user) => user.breakoutProps.isBreakoutUser === false);
+  return allUsers.filter((user) => user?.breakoutProps?.isBreakoutUser === false);
 };
 
 const selectUserByIntId = (state, userId) => selectUsers(state)

@@ -10,6 +10,7 @@ import withPortal from '../../components/high-order/with-portal';
 import { selectWaitingUsers } from '../../store/redux/slices/guest-users';
 import { selectUsers } from '../../store/redux/slices/users';
 import { isModerator, selectCurrentUserId } from '../../store/redux/slices/current-user';
+import { isBreakout } from '../../store/redux/slices/wide-app/client';
 import UserParticipantsService from './service';
 import Colors from '../../constants/colors';
 import Styled from './styles';
@@ -23,6 +24,7 @@ const UserParticipantsScreen = () => {
   const mainUsers = useSelector(selectUsers);
   const myUserId = useSelector(selectCurrentUserId);
   const pendingUsers = useSelector(selectWaitingUsers);
+  const meetingIsBreakout = useSelector(isBreakout);
   const { t } = useTranslation();
   const navigation = useNavigation();
 
@@ -136,7 +138,7 @@ const UserParticipantsScreen = () => {
     <Provider>
       <Styled.ContainerView orientation={orientation}>
         <Styled.Block orientation={orientation}>
-          {amIModerator && renderGuestPolicy()}
+          {amIModerator && !meetingIsBreakout && renderGuestPolicy()}
           <Styled.FlatList data={handleUsersName()} renderItem={renderItem} />
           {renderMenuView()}
         </Styled.Block>
