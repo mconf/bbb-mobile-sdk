@@ -40,6 +40,12 @@ const notificationBarSlice = createSlice({
           state.messageSubtitle = 'Clique aqui para responder';
           state.icon = 'poll';
           break;
+        case 'breakoutsStarted':
+          state.isShow = true;
+          state.messageTitle = 'As salas de grupo foram iniciadas';
+          state.messageSubtitle = 'Clique aqui ir para a lista de salas de grupo';
+          state.icon = 'breakout-room';
+          break;
         default:
       }
     }
