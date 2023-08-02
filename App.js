@@ -220,7 +220,7 @@ const AppContent = ({
     notifee.onBackgroundEvent(async (event) => {
       const { type, detail } = event;
 
-      if (detail.notification.android.channelId !== 'breakout_meeting_channel') {
+      if (detail.notification?.android?.channelId !== 'breakout_meeting_channel') {
         return;
       }
 
@@ -253,7 +253,7 @@ const AppContent = ({
     const unsubscribeForegroundEvents = notifee.onForegroundEvent((event) => {
       const { type, detail } = event;
 
-      if (detail.notification.android.channelId !== 'breakout_meeting_channel') {
+      if (detail.notification?.android?.channelId !== 'breakout_meeting_channel') {
         return;
       }
 
