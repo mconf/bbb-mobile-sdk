@@ -313,8 +313,7 @@ const SocketConnectionComponent = (props) => {
   useEffect(() => {
     if (currentUserReady && currentRole === 'MODERATOR' && previousRole === 'VIEWER') {
       // force resubscribe on role dependent collections
-      // TODO add 'breakouts' and ''breakouts-history' when we support it
-      ['meetings', 'users', 'guestUsers'].forEach((module) => {
+      ['meetings', 'users', 'guestUsers', 'breakouts'].forEach((module) => {
         modules.current[module].onDisconnected();
         modules.current[module].onConnected();
       });
