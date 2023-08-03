@@ -77,7 +77,7 @@ const QuitSessionButton = styled(PrimaryButton)`
 `;
 
 const StarsRatingContainer = styled.View`
-  width: 100%;
+  width: 80%;
 `;
 
 const StarsRatingTextContainer = styled.View`
@@ -96,6 +96,8 @@ const StarsRating = styled(Slider)`
 
 const ThumbLabel = styled.Text`
   fontSize: 30px;
+  right: 8px;
+  text-align: center;
 `;
 
 const ThumbAboveContainer = styled.View`
@@ -115,7 +117,7 @@ const ThumbStyle = {
 const TrackStyle = {
   backgroundColor: Colors.lightGray400,
   borderRadius: 5,
-  height: 15,
+  height: 8,
 };
 
 export default {
