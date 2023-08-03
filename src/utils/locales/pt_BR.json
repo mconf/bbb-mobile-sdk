@@ -121,5 +121,14 @@
   "mobileSdk.webcam.blockedLabel": "Compartilhamento de webcam bloqueado",
   "mobileSdk.webcam.permissionLabel": "Precisamos de sua permissão para que sua câmera possa ser compartilhada.",
   "mobileSdk.whiteboard.label": "Quadro branco",
-  "mobileSdk.drawer.shareButtonLabel": "Compartilhar link da sala"
+  "mobileSdk.drawer.shareButtonLabel": "Compartilhar link da sala",
+  "mobileSdk.breakout.leave": "Sair da sala de apoio",
+  "mobileSdk.breakout.joinedRoomsLabel": "Participante das salas de grupo",
+  "mobileSdk.breakout.remainingRoomsLabel": "Outras salas de grupo",
+  "mobileSdk.breakout.noBreakouts": "Salas de grupo não foram iniciadas",
+  "mobileSdk.chat.breakoutDurationUpdated": "Tempo das salas de apoio agora é de {{minutes}} minutos",
+  "mobileSdk.notification.handsUp.title": "Você levantou a mão",
+  "mobileSdk.notification.handsUp.subtitle": "Os moderadores foram notificados",
+  "mobileSdk.notification.pollStarted.title": "Uma enquete foi iniciada",
+  "mobileSdk.notification.pollStarted.subtitle": "Clique aqui para responder"
 }

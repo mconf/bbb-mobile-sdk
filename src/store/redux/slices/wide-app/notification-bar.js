@@ -30,14 +30,14 @@ const notificationBarSlice = createSlice({
       switch (action.payload) {
         case 'handsUp':
           state.isShow = true;
-          state.messageTitle = 'Você levantou a mão';
-          state.messageSubtitle = 'os moderadores foram notificados';
+          state.messageTitle = 'mobileSdk.notification.handsUp.title';
+          state.messageSubtitle = 'mobileSdk.notification.handsUp.subtitle';
           state.icon = 'hand';
           break;
         case 'pollStarted':
           state.isShow = true;
-          state.messageTitle = 'Uma enquete foi iniciada';
-          state.messageSubtitle = 'Clique aqui para responder';
+          state.messageTitle = 'mobileSdk.notification.pollStarted.title';
+          state.messageSubtitle = 'mobileSdk.notification.pollStarted.subtitle';
           state.icon = 'poll';
           break;
         default:
