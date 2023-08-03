@@ -9,7 +9,10 @@ import Colors from '../../../constants/colors';
 import VideoManager from '../../../services/webrtc/video-manager';
 import Styled from './styles';
 import logger from '../../../services/logger';
-import { selectLockSettingsProp } from '../../../store/redux/slices/meeting';
+import {
+  selectLockSettingsProp,
+  selectMetadata,
+} from '../../../store/redux/slices/meeting';
 import { isLocked } from '../../../store/redux/slices/current-user';
 import { selectLocalVideoStreams } from '../../../store/redux/slices/video-streams';
 import { isClientReady } from '../../../store/redux/slices/wide-app/client';
@@ -30,6 +33,7 @@ const VideoControls = (props) => {
   const buttonSize = isLandscape ? 24 : 32;
   const appState = useAppState();
   const [publishOnActive, setPublishOnActive] = useState(false);
+  const mediaServer = useSelector((state) => selectMetadata(state, 'media-server-video'));
 
   const fireDisabledCamAlert = () => {
     // TODO localization, programmatically dismissable Dialog that is reusable
@@ -42,7 +46,7 @@ const VideoControls = (props) => {
   };
 
   const publishCamera = () => {
-    VideoManager.publish().catch((error) => {
+    VideoManager.publish({ mediaServer }).catch((error) => {
       logger.error({
         logCode: 'video_publish_failure',
         extraInfo: {

@@ -78,13 +78,14 @@ class ScreenshareManager {
     return `https://${this._host}/bigbluebutton/api/stuns?sessionToken=${this._sessionToken}`;
   }
 
-  _initializeSubscriberBroker() {
+  _initializeSubscriberBroker({ mediaServer = 'mediasoup' }) {
     this.broker = new ScreenshareBroker(this._getSFUAddr(), 'recv', {
       iceServers: this.iceServers,
       offering: false,
       traceLogs: true,
       logger: this.logger,
       reconnectCondition: ScreenshareManager.reconnectCondition,
+      mediaServer,
     });
 
     this.broker.onended = () => {
@@ -200,7 +201,7 @@ class ScreenshareManager {
     }
   }
 
-  async subscribe() {
+  async subscribe(options = {}) {
     if (!this.initialized) throw new TypeError('Screenshare manager is not ready');
 
     try {
@@ -208,7 +209,7 @@ class ScreenshareManager {
         this.broker.stop(true);
         this.broker = null;
       }
-      const broker = this._initializeSubscriberBroker();
+      const broker = this._initializeSubscriberBroker(options);
       await broker.joinScreenshare();
     } catch (error) {
       // Rollback and re-throw
