@@ -68,7 +68,7 @@ const AnswerPollScreen = () => {
           handleSelectAnswers(question.id);
         }}
       >
-        {question.key}
+        {t(`app.poll.answer.${question.key}`.toLowerCase())}
       </Styled.OptionsButton>
     ));
   };
