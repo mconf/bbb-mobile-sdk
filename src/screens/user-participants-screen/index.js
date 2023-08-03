@@ -67,7 +67,7 @@ const UserParticipantsScreen = () => {
           userRole={item.role}
           userColor={item.color}
         />
-        <Styled.UserName>{item.name}</Styled.UserName>
+        <Styled.UserName numberOfLines={1}>{item.name}</Styled.UserName>
       </Styled.CardPressable>
     );
   };
