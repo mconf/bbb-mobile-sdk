@@ -29,9 +29,6 @@ const BottomSheetActionsBar = () => {
     if (index === -1) {
       dispatch(setDetailedInfo(false));
     }
-    if (index === 0 || index === 1) {
-      dispatch(setDetailedInfo(true));
-    }
   }, []);
 
   useEffect(() => {
