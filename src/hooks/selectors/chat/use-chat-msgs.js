@@ -1,3 +1,4 @@
+import he from 'he';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -10,9 +11,8 @@ export function useChatMsgs() {
 
   const handleMessages = useCallback(
     () => Object.values(groupChatMsgStore.groupChatMsgCollection).map((message) => {
-      // replace html character entities || better way?
-      let filteredMsg = message?.message?.replace(/&quot;/g, '"');
-      filteredMsg = filteredMsg.replace(/&#39;/g, '"');
+      // replace html character entities
+      const filteredMsg = he.decode(message?.message).replaceAll('<br/>', '');
 
       // if is a poll result message
       if (message.id.toString().includes('PUBLIC_CHAT_POLL_RESULT')) {
