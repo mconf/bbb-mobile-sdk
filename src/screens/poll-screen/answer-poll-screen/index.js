@@ -51,6 +51,8 @@ const AnswerPollScreen = () => {
   );
 
   const handleTypeOfAnswer = () => {
+    const isCustomPoll = activePollObject?.pollType === 'CUSTOM';
+
     // 'R-' === custom input
     if (activePollObject?.pollType === 'R-') {
       return (
@@ -68,7 +70,7 @@ const AnswerPollScreen = () => {
           handleSelectAnswers(question.id);
         }}
       >
-        {t(`app.poll.answer.${question.key}`.toLowerCase())}
+        {isCustomPoll ? question.key : t(`app.poll.answer.${question.key}`.toLowerCase())}
       </Styled.OptionsButton>
     ));
   };
