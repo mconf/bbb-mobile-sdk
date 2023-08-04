@@ -130,5 +130,7 @@
   "mobileSdk.notification.handsUp.title": "Você levantou a mão",
   "mobileSdk.notification.handsUp.subtitle": "Os moderadores foram notificados",
   "mobileSdk.notification.pollStarted.title": "Uma enquete foi iniciada",
-  "mobileSdk.notification.pollStarted.subtitle": "Clique aqui para responder"
+  "mobileSdk.notification.pollStarted.subtitle": "Clique aqui para responder",
+  "mobileSdk.question.answering": "Essa pergunta foi respondida por áudio...",
+  "mobileSdk.question.answer": "Resposta:"
 }

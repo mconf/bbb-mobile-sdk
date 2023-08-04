@@ -133,5 +133,7 @@
   "mobileSdk.notification.handsUp.title": "You raised your hand",
   "mobileSdk.notification.handsUp.subtitle": "Moderators have been notified",
   "mobileSdk.notification.pollStarted.title": "A poll has been started",
-  "mobileSdk.notification.pollStarted.subtitle": "Click here to answer"
+  "mobileSdk.notification.pollStarted.subtitle": "Click here to answer",
+  "mobileSdk.question.answering": "This question was answered by audio...",
+  "mobileSdk.question.answer": "Answer:"
 }

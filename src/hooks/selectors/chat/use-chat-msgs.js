@@ -14,6 +14,15 @@ export function useChatMsgs() {
       let filteredMsg = message?.message?.replace(/&quot;/g, '"');
       filteredMsg = filteredMsg.replace(/&#39;/g, '"');
 
+      // if is a 'question' message - MCONF EXCLUSIVE
+      if (message.id.toString().includes('SYSTEM_MESSAGE-PUBLIC_CHAT_QUESTION')) {
+        return {
+          timestamp: message.timestamp,
+          author: message?.extra?.question?.text,
+          message: `${t('mobileSdk.question.answer')} ${message?.extra?.question?.answerText}` || t('mobileSdk.question.answering'),
+        };
+      }
+
       // if is a poll result message
       if (message.id.toString().includes('PUBLIC_CHAT_POLL_RESULT')) {
         return {
