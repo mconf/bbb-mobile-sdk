@@ -111,6 +111,10 @@ const voiceStateChangeListener = (action, listenerApi) => {
 };
 
 const joinAudioOnLoginPredicate = (action, state) => {
+  // disables audio join when breakout started
+  if (addMeeting.match(action) && action.payload?.meetingObject?.fields?.meetingProp?.isBreakout) {
+    return false;
+  }
   return (setLoggedIn.match(action) || addMeeting.match(action) || addCurrentUser.match(action))
     && selectMeeting(state)
     && selectCurrentUser(state)
