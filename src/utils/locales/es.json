@@ -133,6 +133,8 @@
     "mobileSdk.notification.handsUp.subtitle": "Los moderadores han sido notificados",
     "mobileSdk.notification.pollStarted.title": "Se ha iniciado una encuesta.",
     "mobileSdk.notification.pollStarted.subtitle": "Haga clic aquí para responder",
+    "mobileSdk.question.answering": "Esta pregunta fue respondida por audio...",
+    "mobileSdk.question.answer": "Respuesta:",
     "mobileSdk.notification.breakoutsStarted.title": "Iniciaron grupos de trabajo",
     "mobileSdk.notification.breakoutsStarted.subtitle": "Clic aquí para ir grupos de trabajo"
 }

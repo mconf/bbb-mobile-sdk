@@ -17,21 +17,46 @@ const Item = styled.View`
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: ${parseInt(Dimensions.get('window').height / 2.2, 10)}px;
+  height: ${parseInt(Dimensions.get('window').height / 2.3, 10)}px;
 
-  ${({ usersCount }) => usersCount % 2 === 0 && usersCount > 2
+
+  ${({ usersCount, orientation }) => usersCount % 2 === 0 && usersCount > 2
   && `
       width: 50%;
-      height: ${parseInt(Dimensions.get('window').height / 2.2, 10)}px;
+      height: ${parseInt(
+    Dimensions.get('window').height
+      / ((orientation === 'LANDSCAPE')
+        ? 2.3
+        : (usersCount > 2 && usersCount < 5)
+          ? 2.3
+          : (usersCount > 4 && usersCount < 7)
+            ? 3.4
+            : (usersCount > 6)
+              ? 4.5
+              : 0.00),
+    10
+  )}px;
   `}
 
-  ${({ usersCount }) => usersCount % 2 === 1 && usersCount > 2
+  ${({ usersCount, orientation }) => usersCount % 2 === 1 && usersCount > 2
   && `
       width: 50%;
       flex-grow: 1;
       flex-shrink: 1;
       flex-basis: 0;
-      height: ${parseInt(Dimensions.get('window').height / 2.2, 10)}px;
+      height: ${parseInt(
+    Dimensions.get('window').height
+    / ((orientation === 'LANDSCAPE')
+      ? 2.3
+      : (usersCount > 2 && usersCount < 5)
+        ? 2.3
+        : (usersCount > 4 && usersCount < 7)
+          ? 3.4
+          : (usersCount > 6)
+            ? 4.5
+            : 0.00),
+    10
+  )}px;
   `}
 `;
 
