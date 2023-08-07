@@ -19,6 +19,8 @@ const NotificationBar = () => {
         return <Avatar.Icon size={36} icon="hand-back-left-outline" />;
       case 'poll':
         return <Avatar.Icon size={36} icon="poll" />;
+      case 'breakout-room':
+        return <Avatar.Icon size={36} icon="account-group" />;
       // other icons...
       default:
         return null;
@@ -34,6 +36,9 @@ const NotificationBar = () => {
       onPress={() => {
         if (notificationBarStore.icon === 'poll') {
           navigation.navigate('PollScreen');
+        }
+        if (notificationBarStore.icon === 'breakout-room') {
+          navigation.navigate('BreakoutRoomScreen');
         }
         dispatch(hide());
       }}

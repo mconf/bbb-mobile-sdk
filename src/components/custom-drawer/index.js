@@ -17,6 +17,7 @@ const CustomDrawer = (props) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const currentUserObj = useSelector(selectCurrentUser);
+  const isBreakout = useSelector((state) => state.client.meetingData.isBreakout);
 
   const leaveSession = () => {
     dispatch(leave(api));
@@ -61,6 +62,7 @@ const CustomDrawer = (props) => {
         </Styled.ContainerDrawerItemList>
       </DrawerContentScrollView>
       <Styled.ContainerCustomButtons>
+        {!isBreakout && (
         <Styled.ButtonLeaveContainer onPress={onClickShare}>
           <Styled.ViewShareContainer>
             <Icon name="share" size={24} color="#1C1B1F" />
@@ -69,11 +71,12 @@ const CustomDrawer = (props) => {
             </Styled.TextLeaveContainer>
           </Styled.ViewShareContainer>
         </Styled.ButtonLeaveContainer>
+        )}
         <Styled.ButtonLeaveContainer onPress={leaveSession}>
           <Styled.ViewLeaveContainer>
             <Icon name="logout" size={24} color="#1C1B1F" />
             <Styled.TextLeaveContainer>
-              {t('app.navBar.settingsDropdown.leaveSessionLabel')}
+              {isBreakout ? t('mobileSdk.breakout.leave') : t('app.navBar.settingsDropdown.leaveSessionLabel')}
             </Styled.TextLeaveContainer>
           </Styled.ViewLeaveContainer>
         </Styled.ButtonLeaveContainer>

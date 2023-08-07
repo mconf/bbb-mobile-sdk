@@ -1,12 +1,11 @@
 import {
-  useEffect, useRef, useState, useCallback
+  useEffect, useRef, useState
 } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import notifee, { EventType } from '@notifee/react-native';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 // providers and store
-import { activateKeepAwakeAsync } from 'expo-keep-awake';
 import InCallManager from 'react-native-incall-manager';
 import { BackHandler, DeviceEventEmitter, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
@@ -140,21 +139,18 @@ const AppContent = ({
 
   useEffect(() => {
     if (audioIsConnected) {
-      // Activate expo-keep-awake
-      activateKeepAwakeAsync();
+      InCallManager.start({ media: 'video' });
       // Start/show the notification foreground service
       const getChannelIdAndDisplayNotification = async () => {
         // Request permissions (required for iOS)
         await notifee.requestPermission();
 
         const channelId = await notifee.createChannel({
-          id: 'inconference',
-          // TODO localization
+          id: 'main_meeting_channel',
           name: t('mobileSdk.notification.label'),
           vibration: false,
         });
 
-        // TODO localization
         const _notification = {
           title: t('mobileSdk.notification.title'),
           body: t('mobileSdk.notification.body'),
@@ -224,12 +220,19 @@ const AppContent = ({
 
   useEffect(() => {
     // Background event = device locked || app not in view || killed/quit
-    notifee.onBackgroundEvent(async ({ type, detail }) => {
+    notifee.onBackgroundEvent(async (event) => {
+      const { type, detail } = event;
+
+      if (detail.notification?.android?.channelId !== 'main_meeting_channel') {
+        return;
+      }
+
       if (type === EventType.ACTION_PRESS && detail.pressAction.id === 'leave') {
         dispatch(leave(api));
 
         // Remove the notification
         await notifee.cancelNotification(detail.notification.id);
+        return;
       }
 
       // Check if the user pressed the Mute/Unmute button
@@ -247,7 +250,6 @@ const AppContent = ({
     // once the store's about to be flushed
     if (typeof _onLeaveSession === 'function') injectStoreFlushCallback(_onLeaveSession);
     injectStore();
-    InCallManager.start({ media: 'video' });
     dispatch(ConnectionStatusTracker.registerConnectionStatusListeners());
     nativeEventListeners.current.push(
       DeviceEventEmitter.addListener('onAudioDeviceChanged', ({
@@ -265,15 +267,19 @@ const AppContent = ({
     );
 
     // Foreground event = device unlocked || app in view
-    const unsubscribeForegroundEvents = notifee.onForegroundEvent(({ type, detail }) => {
+    const unsubscribeForegroundEvents = notifee.onForegroundEvent((event) => {
+      const { type, detail } = event;
+
+      if (detail.notification?.android?.channelId !== 'main_meeting_channel') {
+        return;
+      }
+
       if (type === EventType.ACTION_PRESS && detail.pressAction.id === 'leave') {
         dispatch(leave(api));
+        return;
       }
       if (type === EventType.ACTION_PRESS && (detail.pressAction.id === 'mute' || detail.pressAction.id === 'unmute')) {
         toggleMuteMicrophone();
-      }
-      if (type === EventType.PRESS) {
-        navigationRef?.current?.navigate('Main');
       }
     });
 

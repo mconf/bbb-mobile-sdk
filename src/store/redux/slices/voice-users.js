@@ -125,6 +125,9 @@ const joinAudioOnLoginPredicate = (action, state) => {
 };
 
 const joinAudioOnLoginListener = (action, listenerApi) => {
+  if (action.type !== 'client/setLoggedIn') {
+    return;
+  }
   listenerApi.dispatch(joinAudio()).unwrap().then(() => {
     // If user joined as listen only, it means they are locked which is a soft
     // error that needs to be surfaced

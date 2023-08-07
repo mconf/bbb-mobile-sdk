@@ -11,8 +11,10 @@ import PollNavigator from '../../../screens/poll-screen/navigator';
 import UserParticipantsNavigator from '../../../screens/user-participants-screen/navigator';
 import WhiteboardScreen from '../../../screens/whiteboard-screen';
 import TestComponentsScreen from '../../../screens/test-components-screen';
+import BreakoutRoomScreen from '../../../screens/breakout-room-screen';
 import MainConferenceScreen from '../../../screens/main-conference-screen';
 import SelectLanguageScreen from '../../../screens/select-language-screen';
+import InsideBreakoutRoomScreen from '../../../screens/inside-breakout-room-screen';
 import Colors from '../../../constants/colors';
 import Styled from './styles';
 import usePrevious from '../../../hooks/use-previous';
@@ -41,6 +43,7 @@ const DrawerNavigator = ({
   const pendingUsers = useSelector(selectWaitingUsers);
   const previousPendingUsers = usePrevious(pendingUsers);
   const [doorBellSound, setDoorBellSound] = useState();
+  const { isBreakout } = meetingData;
 
   // this effect controls the guest user waiting notification sound
   useEffect(() => {
@@ -84,8 +87,7 @@ const DrawerNavigator = ({
   // this effect controls the meeting ended
   useEffect(() => {
     if (ended) {
-      console.log("END SCREEN -> RENDER FEEDBACK =", feedbackEnabled)
-      if (feedbackEnabled && currentUser && meetingData) {
+      if (feedbackEnabled && currentUser && meetingData && !isBreakout) {
         navigation.navigate('FeedbackScreen');
       } else {
         navigation.navigate('EndSessionScreen');
@@ -168,6 +170,7 @@ const DrawerNavigator = ({
         />
       )}
 
+      { !isBreakout && (
       <Drawer.Screen
         name="PollScreen"
         component={PollNavigator}
@@ -182,6 +185,7 @@ const DrawerNavigator = ({
           ),
         }}
       />
+      )}
 
       <Drawer.Screen
         name="UserParticipantsScreen"
@@ -240,6 +244,41 @@ const DrawerNavigator = ({
         }}
       />
       )}
+
+      {!isBreakout && (
+      <Drawer.Screen
+        name="BreakoutRoomScreen"
+        component={BreakoutRoomScreen}
+        options={{
+          title: t('app.createBreakoutRoom.title'),
+          drawerIcon: (config) => (
+            <Styled.DrawerIcon
+              icon="account-group"
+              size={24}
+              iconColor={config.color}
+            />
+          ),
+        }}
+      />
+      )}
+
+      <Drawer.Screen
+        name="InsideBreakoutRoomScreen"
+        component={InsideBreakoutRoomScreen}
+        options={{
+          title: 'InsideBreakoutScreen',
+          unmountOnBlur: true,
+          headerShown: false,
+          drawerItemStyle: { display: 'none' },
+          drawerIcon: (config) => (
+            <Styled.DrawerIcon
+              icon="account-group"
+              size={24}
+              iconColor={config.color}
+            />
+          ),
+        }}
+      />
 
       {/* Put the join url by hand screen */}
       {Settings.dev && (

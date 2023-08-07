@@ -8,25 +8,27 @@ import { Menu, Provider } from 'react-native-paper';
 import { useOrientation } from '../../hooks/use-orientation';
 import withPortal from '../../components/high-order/with-portal';
 import { selectWaitingUsers } from '../../store/redux/slices/guest-users';
+import { selectMainUsers } from '../../store/redux/slices/users';
 import { isModerator, selectCurrentUserId } from '../../store/redux/slices/current-user';
+import { isBreakout } from '../../store/redux/slices/wide-app/client';
 import UserParticipantsService from './service';
 import Colors from '../../constants/colors';
 import Styled from './styles';
 
 const UserParticipantsScreen = () => {
-  const usersStore = useSelector((state) => state.usersCollection);
   const [showMenu, setShowMenu] = useState(false);
   const [selectedUser, setSelectedUser] = useState({});
   const [menuAnchor, setMenuAnchor] = useState({ x: 0, y: 0 });
   const amIModerator = useSelector(isModerator);
+  const mainUsers = useSelector(selectMainUsers);
   const myUserId = useSelector(selectCurrentUserId);
   const pendingUsers = useSelector(selectWaitingUsers);
+  const meetingIsBreakout = useSelector(isBreakout);
   const { t } = useTranslation();
-
   const navigation = useNavigation();
 
   const handleUsersName = useCallback(
-    () => Object.values(usersStore.usersCollection).map((user) => {
+    () => mainUsers.map((user) => {
       return {
         name: user.name,
         role: user.role,
@@ -35,7 +37,7 @@ const UserParticipantsScreen = () => {
         // ...other properties
       };
     }),
-    [usersStore]
+    [mainUsers]
   );
 
   const orientation = useOrientation();
@@ -135,7 +137,7 @@ const UserParticipantsScreen = () => {
     <Provider>
       <Styled.ContainerView orientation={orientation}>
         <Styled.Block orientation={orientation}>
-          {amIModerator && renderGuestPolicy()}
+          {amIModerator && !meetingIsBreakout && renderGuestPolicy()}
           <Styled.FlatList data={handleUsersName()} renderItem={renderItem} />
           {renderMenuView()}
         </Styled.Block>
