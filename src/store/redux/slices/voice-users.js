@@ -2,7 +2,12 @@ import { createSlice, createAsyncThunk, createSelector } from '@reduxjs/toolkit'
 import { Platform, PermissionsAndroid } from 'react-native';
 import AudioManager from '../../../services/webrtc/audio-manager';
 import { setLoggedIn } from './wide-app/client';
-import { addMeeting, selectMeeting, selectLockSettingsProp } from './meeting';
+import {
+  addMeeting,
+  selectMeeting,
+  selectLockSettingsProp,
+  selectMetadata,
+} from './meeting';
 import { addCurrentUser, selectCurrentUser, isLocked } from './current-user';
 import { setAudioError } from './wide-app/audio';
 import logger from '../../../services/logger';
@@ -145,6 +150,7 @@ const joinAudio = createAsyncThunk(
     const state = thunkAPI.getState();
     const muteOnStart = selectMeeting(state)?.voiceProp?.muteOnStart;
     const micDisabled = selectLockSettingsProp(state, 'disableMic') && isLocked(state);
+    const transparentListenOnly = selectMetadata(state, 'transparent-listen-only');
 
     if (Platform.OS === 'android' && Platform.Version >= ANDROID_SDK_MIN_BTCONNECT) {
       const checkStatus = await PermissionsAndroid.check(
@@ -168,6 +174,7 @@ const joinAudio = createAsyncThunk(
     return AudioManager.joinMicrophone({
       muted: muteOnStart,
       isListenOnly: micDisabled,
+      transparentListenOnly,
     }).catch((error) => {
       logger.error({
         logCode: 'audio_publish_failure',
