@@ -6,6 +6,7 @@ const PreviousPollCard = (props) => {
   const { pollObj } = props;
   const timestamp = new Date(parseInt(pollObj.id.split('/')[2], 10));
   const { t } = useTranslation();
+  const isCustomPoll = pollObj.questionType === 'CUSTOM';
 
   return (
     <Styled.ContainerPollCard>
@@ -23,7 +24,7 @@ const PreviousPollCard = (props) => {
         <View key={answer.id}>
           <Styled.AnswerContainer>
             <Styled.KeyText>
-              {answer.key}
+              {isCustomPoll ? answer.key : t(`app.poll.answer.${answer.key}`.toLowerCase())}
               {' '}
               :
               {' '}

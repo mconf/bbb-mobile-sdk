@@ -138,5 +138,7 @@
   "mobileSdk.notification.pollStarted.title": "A poll has been started",
   "mobileSdk.notification.pollStarted.subtitle": "Click here to answer",
   "mobileSdk.notification.breakoutsStarted.title": "Group rooms started",
-  "mobileSdk.notification.breakoutsStarted.subtitle": "Click here to go to the group rooms list"
+  "mobileSdk.notification.breakoutsStarted.subtitle": "Click here to go to the group rooms list",
+  "mobileSdk.question.answering": "This question was answered by audio...",
+  "mobileSdk.question.answer": "Answer:"
 }

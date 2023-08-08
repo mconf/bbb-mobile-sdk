@@ -49,6 +49,7 @@
     "expo-linking": "~4.0.1",
     "expo-splash-screen": "~0.18.2",
     "expo-status-bar": "~1.4.0",
+    "he": "^1.2.0",
     "i18next": "^22.4.10",
     "p-retry": "5.1.2",
     "react": "18.2.0",
