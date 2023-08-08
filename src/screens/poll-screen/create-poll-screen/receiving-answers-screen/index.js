@@ -27,6 +27,8 @@ const ReceivingAnswers = () => {
   }, [currentUserObj]);
 
   const handleViewerAnswers = () => {
+    const isCustomPoll = currentPollObj?.questionType === 'CUSTOM';
+
     return (
       <>
         {currentPollObj?.isMultipleResponse && <Text>{t('mobileSdk.poll.multipleChoice')}</Text>}
@@ -36,7 +38,7 @@ const ReceivingAnswers = () => {
             * 100).toFixed(0);
           return (
             <Styled.AnswerContainer key={answer.id}>
-              <Styled.Answer>{answer.key}</Styled.Answer>
+              <Styled.Answer>{isCustomPoll ? answer.key : t(`app.poll.answer.${answer.key}`.toLowerCase())}</Styled.Answer>
               <Styled.BarContainer style={{ justifyContent: 'center' }}>
                 <Styled.Bar style={{ width: `${calcBarSize}%` }} />
                 <Styled.InsideBarText style={{ left: `${calcBarSize / 2}%` }}>{answer.numVotes}</Styled.InsideBarText>
