@@ -292,10 +292,10 @@ export default class WebRtcPeer extends EventEmitter2 {
     switch (this.mode) {
       case 'recvonly': {
         const useAudio = this.mediaConstraints
-        && ((typeof this.mediaConstraints.audio === 'boolean')
+        && ((typeof this.mediaConstraints.audio === 'boolean' && this.mediaConstraints.audio)
           || (typeof this.mediaConstraints.audio === 'object'));
         const useVideo = this.mediaConstraints
-        && ((typeof this.mediaConstraints.video === 'boolean')
+        && ((typeof this.mediaConstraints.video === 'boolean' && this.mediaConstraints.video)
           || (typeof this.mediaConstraints.video === 'object'));
 
         sessionConstraints = {
@@ -399,12 +399,25 @@ export default class WebRtcPeer extends EventEmitter2 {
     }
 
     return this.peerConnection.setRemoteDescription(offer)
+      .then(async () => {
+        if (this.mode === 'sendonly' || this.mode === 'sendrecv') {
+          await this.mediaStreamFactory();
+
+          if (this.videoStream) {
+            this.peerConnection.addStream(this.videoStream);
+          }
+
+          if (this.audioStream) {
+            this.peerConnection.addStream(this.audioStream);
+          }
+        }
+      })
       .then(() => {
         this.logger.debug({
           logCode: 'BBB::WebRtcPeer::processOffer::setRemoteDescription',
           extraInfo: this._logMetadata,
         }, 'BBB::WebRtcPeer::processOffer - Remote description set');
-        return this.peerConnection.createAnswer()
+        return this.peerConnection.createAnswer();
       })
       .then((answer) => {
         this.logger.debug({
