@@ -3,10 +3,12 @@ import { FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
 import { selectSortedVideoUsers } from '../../../store/redux/slices/video-streams';
+import { useOrientation } from '../../../hooks/use-orientation';
 import Styled from './styles';
 
 const GridView = () => {
   const videoUsers = useSelector(selectSortedVideoUsers);
+  const orientation = useOrientation();
 
   const contentAreaUserItem = {
     cameraId: 'ContentArea',
@@ -38,14 +40,14 @@ const GridView = () => {
 
     if (contentArea) {
       return (
-        <Styled.Item usersCount={mescleGridItems.length}>
+        <Styled.Item usersCount={mescleGridItems.length} orientation={orientation}>
           <Styled.ContentArea />
         </Styled.Item>
       );
     }
 
     return (
-      <Styled.Item usersCount={mescleGridItems.length}>
+      <Styled.Item usersCount={mescleGridItems.length} orientation={orientation}>
         <Styled.VideoListItem
           cameraId={cameraId}
           userId={userId}
