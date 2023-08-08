@@ -399,6 +399,19 @@ export default class WebRtcPeer extends EventEmitter2 {
     }
 
     return this.peerConnection.setRemoteDescription(offer)
+      .then(async () => {
+        if (this.mode === 'sendonly' || this.mode === 'sendrecv') {
+          await this.mediaStreamFactory();
+
+          if (this.videoStream) {
+            this.peerConnection.addStream(this.videoStream);
+          }
+
+          if (this.audioStream) {
+            this.peerConnection.addStream(this.audioStream);
+          }
+        }
+      })
       .then(() => {
         this.logger.debug({
           logCode: 'BBB::WebRtcPeer::processOffer::setRemoteDescription',
