@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { BackHandler, Platform } from 'react-native';
+import { BackHandler, KeyboardAvoidingView, Platform } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
@@ -172,13 +172,18 @@ const ProblemFeedbackScreen = ({ route }) => {
 
   return (
     <Styled.ContainerView>
-      <Styled.ContainerFeedbackCard contentContainerStyle={Styled.ContentContainerStyle}>
-        <Styled.ContainerTitle>
-          <Styled.Title>{questionTitle}</Styled.Title>
-          <Styled.Progress>1/2</Styled.Progress>
-        </Styled.ContainerTitle>
-        <Styled.OptionsContainer>
-          {
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+        enabled
+      >
+        <Styled.ContainerFeedbackCard contentContainerStyle={Styled.ContentContainerStyle}>
+          <Styled.ContainerTitle>
+            <Styled.Title>{questionTitle}</Styled.Title>
+            <Styled.Progress>1/2</Styled.Progress>
+          </Styled.ContainerTitle>
+          <Styled.OptionsContainer>
+            {
             problems.map((option) => {
               return (
                 <Styled.Option
@@ -192,29 +197,30 @@ const ProblemFeedbackScreen = ({ route }) => {
               );
             })
           }
-          <Styled.TextInputContainer>
-            <Styled.TextInput
-              onFocus={() => checkOption('other')}
-              onChangeText={(newText) => setMessageText(newText)}
-            />
-          </Styled.TextInputContainer>
-        </Styled.OptionsContainer>
-        <Styled.ButtonContainer>
-          <Styled.ConfirmButton
-            disabled={!isAnyOptionChecked()}
-            onPress={handleSendProblem}
-          >
-            {t('app.customFeedback.defaultButtons.next')}
-          </Styled.ConfirmButton>
-        </Styled.ButtonContainer>
-        <Styled.QuitSessionButtonContainer>
-          <Styled.QuitSessionButton
-            onPress={handleSkip}
-          >
-            {skipButton}
-          </Styled.QuitSessionButton>
-        </Styled.QuitSessionButtonContainer>
-      </Styled.ContainerFeedbackCard>
+            <Styled.TextInputContainer>
+              <Styled.TextInput
+                onFocus={() => checkOption('other')}
+                onChangeText={(newText) => setMessageText(newText)}
+              />
+            </Styled.TextInputContainer>
+          </Styled.OptionsContainer>
+          <Styled.ButtonContainer>
+            <Styled.ConfirmButton
+              disabled={!isAnyOptionChecked()}
+              onPress={handleSendProblem}
+            >
+              {t('app.customFeedback.defaultButtons.next')}
+            </Styled.ConfirmButton>
+          </Styled.ButtonContainer>
+          <Styled.QuitSessionButtonContainer>
+            <Styled.QuitSessionButton
+              onPress={handleSkip}
+            >
+              {skipButton}
+            </Styled.QuitSessionButton>
+          </Styled.QuitSessionButtonContainer>
+        </Styled.ContainerFeedbackCard>
+      </KeyboardAvoidingView>
     </Styled.ContainerView>
   );
 };
