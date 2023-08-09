@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { BackHandler, KeyboardAvoidingView, Platform } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useHeaderHeight } from '@react-navigation/elements';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import logger from '../../../services/logger';
@@ -14,6 +15,10 @@ const CUSTOMER_METADATA = Settings.feedback.custom.customerMetadata;
 
 const ProblemFeedbackScreen = ({ route }) => {
   const { t } = useTranslation();
+  const height = useHeaderHeight();
+  const navigation = useNavigation();
+  const [optionsStatus, changeStatus] = useState(initialState);
+
   const questionTitle = t('mobileSdk.feedback.questionTitle');
   const skipButton = t('app.customFeedback.defaultButtons.skip');
   const problems = [
@@ -35,8 +40,6 @@ const ProblemFeedbackScreen = ({ route }) => {
     [problems[4].code]: false,
     [problems[5].code]: false,
   };
-  const navigation = useNavigation();
-  const [optionsStatus, changeStatus] = useState(initialState);
 
   // disables android go back button
   useFocusEffect(
@@ -175,6 +178,7 @@ const ProblemFeedbackScreen = ({ route }) => {
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
+        keyboardVerticalOffset={height + 47}
         enabled
       >
         <Styled.ContainerFeedbackCard contentContainerStyle={Styled.ContentContainerStyle}>
