@@ -90,7 +90,7 @@ const VideoContainer = (props) => {
     }
 
     dispatch(setIsFocused(true));
-    navigation.navigate('FullscreenWrapper');
+    navigation.navigate('FullscreenWrapperScreen');
   };
 
   const renderGridVideoContainerItem = () => (

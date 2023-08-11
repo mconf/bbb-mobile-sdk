@@ -5,11 +5,11 @@ import { BackHandler } from 'react-native';
 import {
   setFocusedElement, setFocusedId, setIsFocused
 } from '../../store/redux/slices/wide-app/layout';
-import withPortal from '../high-order/with-portal';
-import UserAvatar from '../user-avatar';
+import withPortal from '../../components/high-order/with-portal';
+import UserAvatar from '../../components/user-avatar';
 import Styled from './styles';
 
-const FullscreenWrapper = ({ navigation }) => {
+const FullscreenWrapperScreen = ({ navigation }) => {
   const layoutStore = useSelector((state) => state.layout);
   const dispatch = useDispatch();
 
@@ -70,4 +70,4 @@ const FullscreenWrapper = ({ navigation }) => {
   );
 };
 
-export default withPortal(FullscreenWrapper);
+export default withPortal(FullscreenWrapperScreen);

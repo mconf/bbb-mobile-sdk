@@ -43,7 +43,7 @@ const ContentArea = (props) => {
     dispatch(setIsFocused(true));
     dispatch(setFocusedId(handleSlideAndPresentationActive()));
     dispatch(setFocusedElement('contentArea'));
-    navigation.navigate('FullscreenWrapper');
+    navigation.navigate('FullscreenWrapperScreen');
   };
 
   // ** Content area views methods **
