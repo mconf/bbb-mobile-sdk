@@ -3,27 +3,39 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Menu, Provider } from 'react-native-paper';
 import { useOrientation } from '../../hooks/use-orientation';
 import withPortal from '../../components/high-order/with-portal';
 import { selectWaitingUsers } from '../../store/redux/slices/guest-users';
 import { isModerator, selectCurrentUserId } from '../../store/redux/slices/current-user';
+import { setDetailedInfo } from '../../store/redux/slices/wide-app/layout';
 import UserParticipantsService from './service';
 import Colors from '../../constants/colors';
 import Styled from './styles';
 
 const UserParticipantsScreen = () => {
   const usersStore = useSelector((state) => state.usersCollection);
-  const [showMenu, setShowMenu] = useState(false);
-  const [selectedUser, setSelectedUser] = useState({});
-  const [menuAnchor, setMenuAnchor] = useState({ x: 0, y: 0 });
+  const detailedInfo = useSelector((state) => state.layout.detailedInfo);
   const amIModerator = useSelector(isModerator);
   const myUserId = useSelector(selectCurrentUserId);
   const pendingUsers = useSelector(selectWaitingUsers);
-  const { t } = useTranslation();
 
+  const [showMenu, setShowMenu] = useState(false);
+  const [selectedUser, setSelectedUser] = useState({});
+  const [menuAnchor, setMenuAnchor] = useState({ x: 0, y: 0 });
+
+  const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const orientation = useOrientation();
   const navigation = useNavigation();
+
+  const handleDispatchDetailedInfo = () => {
+    if (detailedInfo) {
+      return dispatch(setDetailedInfo(false));
+    }
+    return dispatch(setDetailedInfo(true));
+  };
 
   const handleUsersName = useCallback(
     () => Object.values(usersStore.usersCollection).map((user) => {
@@ -37,8 +49,6 @@ const UserParticipantsScreen = () => {
     }),
     [usersStore]
   );
-
-  const orientation = useOrientation();
 
   const onIconPress = (event, item, isMe) => {
     const { nativeEvent } = event;
@@ -133,15 +143,12 @@ const UserParticipantsScreen = () => {
 
   return (
     <Provider>
-      <Styled.ContainerView orientation={orientation}>
+      <Styled.ContainerView orientation={orientation} onPress={handleDispatchDetailedInfo}>
         <Styled.Block orientation={orientation}>
           {amIModerator && renderGuestPolicy()}
           <Styled.FlatList data={handleUsersName()} renderItem={renderItem} />
           {renderMenuView()}
         </Styled.Block>
-        <Styled.ActionsBarContainer orientation={orientation}>
-          <Styled.ActionsBar orientation={orientation} />
-        </Styled.ActionsBarContainer>
       </Styled.ContainerView>
     </Provider>
   );

@@ -3,11 +3,10 @@ import { Divider } from 'react-native-paper';
 import { css } from 'styled-components';
 import userAvatar from '../../components/user-avatar';
 import Colors from '../../constants/colors';
-import actionsBar from '../../components/actions-bar';
 import Pressable from '../../components/pressable';
 import iconButton from '../../components/icon-button';
 
-const ContainerView = styled.View`
+const ContainerView = styled.Pressable`
   width: 100%;
   height: 100%;
   display: flex;
@@ -59,28 +58,6 @@ const FlatList = styled.FlatList`
   display: flex;
 `;
 
-const ActionsBar = styled(actionsBar)`
-  ${({ orientation }) => orientation === 'LANDSCAPE'
-  && `
-      flex-direction: column;
-      display: flex;
-  `}
-`;
-
-const ActionsBarContainer = styled.View`
-  width: 100%;
-  height: 10%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  ${({ orientation }) => orientation === 'LANDSCAPE'
-    && `
-      width: 10%;
-      height: 100%;
-  `}
-`;
-
 const Block = styled.View`
   display: flex;
   flex-direction: column;
@@ -127,8 +104,6 @@ export default {
   UserName,
   CardPressable,
   FlatList,
-  ActionsBar,
-  ActionsBarContainer,
   ContainerView,
   GuestMenuContainer,
   GuestPolicyText,
