@@ -8,16 +8,12 @@ import IconButtonComponent from '../icon-button';
 
 const Presentation = styled(presentation)``;
 const Screenshare = styled(screenshare)``;
-const ContentAreaPressable = styled(Pressable).attrs(() => ({
-  pressStyle: {},
-}))`
-  ${() => css`
+const ContentAreaPressable = styled.View`
   height: 100%;
   width: 100%;
   border-color: #06172A;
   border-width: 2px;
-  `}
-`;
+  `;
 
 const NameLabelContainer = styled.View`
   position: absolute;
