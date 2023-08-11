@@ -4,7 +4,6 @@ import Colors from '../../../../constants/colors';
 const ContainerPollCard = styled.ScrollView`
   background-color: ${Colors.white};
   width: 100%;
-  max-height: 85%;
   border-radius: 12px;
   border: ${Colors.blue} solid 2px;
   margin: 16px 0;
