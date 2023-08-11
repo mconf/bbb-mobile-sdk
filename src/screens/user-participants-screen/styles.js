@@ -6,14 +6,12 @@ import Colors from '../../constants/colors';
 import Pressable from '../../components/pressable';
 import iconButton from '../../components/icon-button';
 
-const ContainerView = styled.Pressable`
+const ContainerView = styled.View`
   width: 100%;
   height: 100%;
   display: flex;
   justify-content: space-between;
-  padding: 10px;
-  padding-top: 20px;
-  padding-bottom: 20px;
+  padding: 20px 10px;
 
   ${({ orientation }) => orientation === 'LANDSCAPE'
     && `
@@ -61,7 +59,6 @@ const FlatList = styled.FlatList`
 const Block = styled.View`
   display: flex;
   flex-direction: column;
-  max-height: 87%;
 
   ${({ orientation }) => orientation === 'LANDSCAPE'
   && `
