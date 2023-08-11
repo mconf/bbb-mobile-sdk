@@ -103,10 +103,6 @@ const AnswerPollScreen = () => {
             {renderMethod()}
           </Styled.ContainerViewPadding>
         </Styled.ContainerPollCard>
-
-        <Styled.ActionsBarContainer orientation={orientation}>
-          <Styled.ActionsBar orientation={orientation} />
-        </Styled.ActionsBarContainer>
       </Styled.ContainerView>
     </KeyboardAvoidingView>
   );

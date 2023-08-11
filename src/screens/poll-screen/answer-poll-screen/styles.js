@@ -1,7 +1,6 @@
 import styled from 'styled-components/native';
 import button from '../../../components/button';
 import textInput from '../../../components/text-input';
-import actionsBar from '../../../components/actions-bar';
 import Colors from '../../../constants/colors';
 
 const ButtonsContainer = styled.View``;
@@ -55,7 +54,6 @@ const ContainerViewPadding = styled.View`
 const ContainerPollCard = styled.ScrollView`
   background-color: ${Colors.white};
   width: 100%;
-  max-height: 85%;
   border-radius: 12px;
   display: flex;
 `;
@@ -75,27 +73,6 @@ const ContainerView = styled.View`
   `}
 `;
 
-const ActionsBarContainer = styled.View`
-  width: 100%;
-  height: 10%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  ${({ orientation }) => orientation === 'LANDSCAPE'
-  && `
-      width: 10%;
-      height: 100%;
-  `}
-`;
-
-const ActionsBar = styled(actionsBar)`
-  ${({ orientation }) => orientation === 'LANDSCAPE'
-  && `
-      flex-direction: column;
-      display: flex;
-  `}
-`;
-
 export default {
   Title,
   OptionsButton,
@@ -106,6 +83,4 @@ export default {
   ContainerViewPadding,
   ContainerPollCard,
   ContainerView,
-  ActionsBarContainer,
-  ActionsBar
 };
