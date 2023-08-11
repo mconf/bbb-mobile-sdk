@@ -75,6 +75,10 @@ const PressableButton = styled(Pressable).attrs(() => ({
     border-radius: 4px;
     position: absolute;
     right: 0;
+    ${({ detailedInfo }) => !detailedInfo && `
+      display: none;
+    `}
+
   `}
 `;
 
