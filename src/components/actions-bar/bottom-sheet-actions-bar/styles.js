@@ -3,6 +3,24 @@ import styled from 'styled-components/native';
 import button from '../../button';
 import Colors from '../../../constants/colors';
 
+const fullscreenStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 24,
+  },
+  contentContainer: {
+    flex: 1,
+    alignItems: 'center',
+    padding: 8,
+  },
+  indicatorStyle: {
+    backgroundColor: 'white',
+  },
+  handleStyle: {
+    opacity: 0.05,
+  }
+});
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -48,6 +66,7 @@ const ButtonContainer = styled.View`
 
 export default {
   styles,
+  fullscreenStyles,
   OptionsButton,
   ButtonContainer,
 };
