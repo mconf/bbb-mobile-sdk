@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { BackHandler } from 'react-native';
 import {
-  setFocusedElement, setFocusedId, setIsFocused, setDetailedInfo
+  setFocusedElement, setFocusedId, setIsFocused
 } from '../../store/redux/slices/wide-app/layout';
 import withPortal from '../high-order/with-portal';
 import UserAvatar from '../user-avatar';
@@ -12,13 +12,6 @@ import Styled from './styles';
 const FullscreenWrapper = ({ navigation }) => {
   const layoutStore = useSelector((state) => state.layout);
   const dispatch = useDispatch();
-
-  const handleDispatchDetailedInfo = () => {
-    if (layoutStore.detailedInfo) {
-      return dispatch(setDetailedInfo(false));
-    }
-    return dispatch(setDetailedInfo(true));
-  };
 
   const onCloseFullscreen = () => {
     dispatch(setIsFocused(false));
@@ -44,7 +37,7 @@ const FullscreenWrapper = ({ navigation }) => {
   }
 
   return (
-    <Styled.Container onPress={handleDispatchDetailedInfo}>
+    <Styled.Container>
       <Styled.Wrapper>
         {layoutStore.focusedElement === 'videoStream' && <Styled.VideoStream streamURL={layoutStore.focusedId} />}
         {layoutStore.focusedElement === 'avatar' && <Styled.UserAvatar source={{ uri: layoutStore.focusedId }} />}

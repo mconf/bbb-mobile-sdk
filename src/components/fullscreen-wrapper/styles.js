@@ -6,7 +6,7 @@ import contentArea from '../content-area';
 import Pressable from '../pressable';
 import IconButtonComponent from '../icon-button';
 
-const Container = styled.Pressable`
+const Container = styled.View`
   position: absolute;
   top: 0;
   bottom: 0;
