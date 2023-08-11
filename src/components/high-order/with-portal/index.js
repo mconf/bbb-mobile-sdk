@@ -12,7 +12,7 @@ const withPortal = (Component) => {
 
   return (props) => (
     <>
-      <Pressable onPress={handleDispatchDetailedInfo}>
+      <Pressable onPress={handleDispatchDetailedInfo} style={{ flex: 1 }}>
         <Component {...props} />
       </Pressable>
       <BottomSheetActionsBar />
