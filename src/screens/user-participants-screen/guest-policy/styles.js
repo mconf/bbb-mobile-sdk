@@ -1,7 +1,6 @@
 import styled from 'styled-components/native';
 import { Divider } from 'react-native-paper';
 import Colors from '../../../constants/colors';
-import actionsBar from '../../../components/actions-bar';
 import button from '../../../components/button';
 import iconButton from '../../../components/icon-button';
 
@@ -19,28 +18,6 @@ const ContainerView = styled.View`
     && `
     flex-direction: row;
     justify-content: center;
-  `}
-`;
-
-const ActionsBar = styled(actionsBar)`
-  ${({ orientation }) => orientation === 'LANDSCAPE'
-  && `
-      flex-direction: column;
-      display: flex;
-  `}
-`;
-
-const ActionsBarContainer = styled.View`
-  width: 100%;
-  height: 10%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  ${({ orientation }) => orientation === 'LANDSCAPE'
-    && `
-      width: 10%;
-      height: 100%;
   `}
 `;
 
@@ -103,8 +80,6 @@ const BackIcon = styled(iconButton)`
 `;
 
 export default {
-  ActionsBar,
-  ActionsBarContainer,
   ContainerView,
   GuestPolicyView,
   GuestPolicyTop,
