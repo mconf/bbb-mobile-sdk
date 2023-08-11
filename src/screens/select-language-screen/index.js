@@ -55,9 +55,6 @@ const SelectLanguageScreen = () => {
       <Styled.Block orientation={orientation}>
         <Styled.FlatList data={languages} renderItem={renderItem} />
       </Styled.Block>
-      <Styled.ActionsBarContainer orientation={orientation}>
-        <Styled.ActionsBar orientation={orientation} />
-      </Styled.ActionsBarContainer>
     </Styled.ContainerView>
   );
 };
