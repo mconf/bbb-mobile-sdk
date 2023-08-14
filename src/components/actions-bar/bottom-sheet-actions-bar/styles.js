@@ -17,7 +17,12 @@ const fullscreenStyles = StyleSheet.create({
     backgroundColor: 'white',
   },
   handleStyle: {
-    opacity: 0.05,
+  },
+  backgroundStyle: {
+    backgroundColor: 'black',
+    opacity: 0.5,
+  },
+  style: {
   }
 });
 
@@ -38,6 +43,13 @@ const styles = StyleSheet.create({
   },
   handleStyle: {
     backgroundColor: '#0e2a50',
+    borderTopStartRadius: 20,
+    borderTopEndRadius: 20,
+  },
+  backgroundStyle: {
+    backgroundColor: '#0e2a50',
+  },
+  style: {
   }
 });
 

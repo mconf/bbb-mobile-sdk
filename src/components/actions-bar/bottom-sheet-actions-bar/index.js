@@ -51,8 +51,9 @@ const BottomSheetActionsBar = () => {
       enablePanDownToClose
       snapPoints={snapPoints}
       handleIndicatorStyle={Styled[isFullscreen ? 'fullscreenStyles' : 'styles'].indicatorStyle}
+      style={Styled[isFullscreen ? 'fullscreenStyles' : 'styles'].style}
       handleStyle={Styled[isFullscreen ? 'fullscreenStyles' : 'styles'].handleStyle}
-      backgroundStyle={Styled[isFullscreen ? 'fullscreenStyles' : 'styles'].handleStyle}
+      backgroundStyle={Styled[isFullscreen ? 'fullscreenStyles' : 'styles'].backgroundStyle}
       onChange={handleSheetChanges}
     >
       <View style={Styled[isFullscreen ? 'fullscreenStyles' : 'styles'].contentContainer}>
