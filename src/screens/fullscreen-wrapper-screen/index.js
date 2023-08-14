@@ -1,9 +1,10 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
+import { ReactNativeZoomableView } from '@openspacelabs/react-native-zoomable-view';
 import { BackHandler } from 'react-native';
 import {
-  setFocusedElement, setFocusedId, setIsFocused
+  setFocusedElement, setFocusedId, setIsFocused, trigDetailedInfo
 } from '../../store/redux/slices/wide-app/layout';
 import withPortal from '../../components/high-order/with-portal';
 import UserAvatar from '../../components/user-avatar';
@@ -39,10 +40,16 @@ const FullscreenWrapperScreen = ({ navigation }) => {
   return (
     <Styled.Container>
       <Styled.Wrapper>
-        {layoutStore.focusedElement === 'videoStream' && <Styled.VideoStream streamURL={layoutStore.focusedId} />}
-        {layoutStore.focusedElement === 'avatar' && <Styled.UserAvatar source={{ uri: layoutStore.focusedId }} />}
-        {layoutStore.focusedElement === 'contentArea' && <Styled.ContentArea fullscreen />}
-        {layoutStore.focusedElement === 'color'
+        <ReactNativeZoomableView
+          maxZoom={5.0}
+          minZoom={1}
+          zoomStep={0.5}
+          bindToBorders
+          onLongPress={() => dispatch(trigDetailedInfo())}
+        >
+          {layoutStore.focusedElement === 'avatar' && <Styled.UserAvatar source={{ uri: layoutStore.focusedId }} />}
+          {layoutStore.focusedElement === 'contentArea' && <Styled.ContentArea fullscreen />}
+          {layoutStore.focusedElement === 'color'
           && (
             <Styled.UserColor userColor={layoutStore.focusedId.userColor} isGrid>
               <UserAvatar
@@ -54,6 +61,8 @@ const FullscreenWrapperScreen = ({ navigation }) => {
               />
             </Styled.UserColor>
           )}
+        </ReactNativeZoomableView>
+
       </Styled.Wrapper>
       <Styled.PressableButton
         activeOpacity={0.6}
