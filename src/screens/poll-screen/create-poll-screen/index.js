@@ -1,5 +1,3 @@
-// @flow
-import type { Node } from 'react';
 import { KeyboardAvoidingView, Platform } from 'react-native';
 import { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -10,23 +8,12 @@ import withPortal from '../../../components/high-order/with-portal';
 import PollService from '../service';
 import Styled from './styles';
 
-type AnswerType =
-  | 'TF'
-  | 'A-4'
-  | 'YNA'
-  | 'R-';
-
-type AnswerOptionsObjType = {
-  secretPoll: boolean,
-  isMultipleResponse: boolean
-  };
-
-const CreatePoll = (): Node => {
+const CreatePoll = () => {
   // Create poll states
   PollService.handleCurrentPollSubscription();
-  const [questionTextInput, setQuestionTextInput] = useState<string>('');
-  const [answerTypeSelected, setAnswerTypeSelected] = useState<AnswerType>('TF');
-  const [answersOptions, setAnswersOptions] = useState<AnswerOptionsObjType>({
+  const [questionTextInput, setQuestionTextInput] = useState('');
+  const [answerTypeSelected, setAnswerTypeSelected] = useState('TF');
+  const [answersOptions, setAnswersOptions] = useState({
     secretPoll: false,
     isMultipleResponse: false,
   });
@@ -110,10 +97,6 @@ const CreatePoll = (): Node => {
             </Suspense>
           </Styled.ContainerViewPadding>
         </Styled.ContainerPollCard>
-
-        <Styled.ActionsBarContainer orientation={orientation}>
-          <Styled.ActionsBar orientation={orientation} />
-        </Styled.ActionsBarContainer>
       </Styled.ContainerView>
     </KeyboardAvoidingView>
   );

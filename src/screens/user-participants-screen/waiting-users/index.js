@@ -111,9 +111,6 @@ const WaitingUsersScreen = ({ navigation }) => {
             </Styled.NoPendingUsersText>
           )}
       </Styled.WaitingUsersView>
-      <Styled.ActionsBarContainer orientation={orientation}>
-        <Styled.ActionsBar orientation={orientation} />
-      </Styled.ActionsBarContainer>
     </Styled.ContainerView>
   );
 };

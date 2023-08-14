@@ -3,7 +3,6 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import withPortal from '../../components/high-order/with-portal';
 import VideoGrid from '../../components/video/video-grid';
-import BottomSheetActionsBar from '../../components/actions-bar/bottom-sheet-actions-bar';
 import ChatPopupList from '../../components/chat/chat-popup';
 import Styled from './styles';
 
@@ -25,7 +24,6 @@ const MainConferenceScreen = () => {
     return (
       <Styled.ContainerView>
         <VideoGrid />
-        <BottomSheetActionsBar />
         <ChatPopupList />
       </Styled.ContainerView>
     );

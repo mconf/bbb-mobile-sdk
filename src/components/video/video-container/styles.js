@@ -84,12 +84,7 @@ const VideoSkeleton = () => (
   </ContentLoader>
 );
 
-const ContainerPressableGrid = styled(Pressable).attrs(() => ({
-  pressStyle: {
-    borderWidth: 2,
-  },
-}))`
-  ${() => css`
+const ContainerPressableGrid = styled.Pressable`
     height: 120px;
     width: 120px;
     border-color: #06172A;
@@ -97,8 +92,7 @@ const ContainerPressableGrid = styled(Pressable).attrs(() => ({
     ${({ isTalking }) => isTalking && `
       border: 2px ${Colors.orange} solid;
     `}
-  `}
-`;
+  `;
 
 const PressableButton = styled(Pressable).attrs(() => ({
   pressStyle: {

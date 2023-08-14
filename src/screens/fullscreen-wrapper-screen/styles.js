@@ -1,18 +1,22 @@
 import styled, { css } from 'styled-components/native';
 import { RTCView } from 'react-native-webrtc';
-import button from '../button';
+import button from '../../components/button';
 import Colors from '../../constants/colors';
-import contentArea from '../content-area';
-import Pressable from '../pressable';
-import IconButtonComponent from '../icon-button';
+import contentArea from '../../components/content-area';
+import Pressable from '../../components/pressable';
+import IconButtonComponent from '../../components/icon-button';
 
 const Container = styled.View`
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  background-color: #000000;
+width: 100%;
+height: 100%;
+display: flex;
+justify-content: space-between;
+
+${({ orientation }) => orientation === 'LANDSCAPE'
+  && `
+  flex-direction: row;
+  justify-content: center;
+`}
 `;
 
 const Wrapper = styled.View`
@@ -71,6 +75,10 @@ const PressableButton = styled(Pressable).attrs(() => ({
     border-radius: 4px;
     position: absolute;
     right: 0;
+    ${({ detailedInfo }) => !detailedInfo && `
+      display: none;
+    `}
+
   `}
 `;
 

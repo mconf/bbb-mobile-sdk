@@ -2,12 +2,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { BackHandler } from 'react-native';
-import { setFocusedElement, setFocusedId, setIsFocused } from '../../store/redux/slices/wide-app/layout';
-import UserAvatar from '../user-avatar';
-import Colors from '../../constants/colors';
+import {
+  setFocusedElement, setFocusedId, setIsFocused
+} from '../../store/redux/slices/wide-app/layout';
+import withPortal from '../../components/high-order/with-portal';
+import UserAvatar from '../../components/user-avatar';
 import Styled from './styles';
 
-const FullscreenWrapper = ({ navigation }) => {
+const FullscreenWrapperScreen = ({ navigation }) => {
   const layoutStore = useSelector((state) => state.layout);
   const dispatch = useDispatch();
 
@@ -56,6 +58,7 @@ const FullscreenWrapper = ({ navigation }) => {
       <Styled.PressableButton
         activeOpacity={0.6}
         onPress={onCloseFullscreen}
+        detailedInfo={layoutStore.detailedInfo}
       >
         <Styled.FullscreenIcon
           icon="fullscreen"
@@ -68,4 +71,4 @@ const FullscreenWrapper = ({ navigation }) => {
   );
 };
 
-export default FullscreenWrapper;
+export default withPortal(FullscreenWrapperScreen);

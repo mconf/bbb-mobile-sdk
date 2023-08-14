@@ -3,6 +3,7 @@ import React, {
 } from 'react';
 import { View } from 'react-native';
 import BottomSheet from '@gorhom/bottom-sheet';
+import { useRoute } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useOrientation } from '../../../hooks/use-orientation';
 import ActionsBar from '../index';
@@ -12,8 +13,11 @@ import Styled from './styles';
 const BottomSheetActionsBar = () => {
   // ref
   const bottomSheetRef = useRef(null);
+  const route = useRoute();
   const orientation = useOrientation();
   const detailedInfo = useSelector((state) => state.layout.detailedInfo);
+
+  const isFullscreen = route.name === 'FullscreenWrapperScreen';
 
   // variables
   const dispatch = useDispatch();
@@ -46,12 +50,13 @@ const BottomSheetActionsBar = () => {
       index={0}
       enablePanDownToClose
       snapPoints={snapPoints}
-      handleIndicatorStyle={Styled.styles.indicatorStyle}
-      handleStyle={Styled.styles.handleStyle}
+      handleIndicatorStyle={Styled[isFullscreen ? 'fullscreenStyles' : 'styles'].indicatorStyle}
+      style={Styled[isFullscreen ? 'fullscreenStyles' : 'styles'].style}
+      handleStyle={Styled[isFullscreen ? 'fullscreenStyles' : 'styles'].handleStyle}
+      backgroundStyle={Styled[isFullscreen ? 'fullscreenStyles' : 'styles'].backgroundStyle}
       onChange={handleSheetChanges}
-      backgroundStyle={Styled.styles.handleStyle}
     >
-      <View style={Styled.styles.contentContainer}>
+      <View style={Styled[isFullscreen ? 'fullscreenStyles' : 'styles'].contentContainer}>
         <ActionsBar />
       </View>
     </BottomSheet>

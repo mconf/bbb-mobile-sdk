@@ -72,9 +72,6 @@ const GuestPolicyScreen = ({ navigation }) => {
           </Styled.OptionsButton>
         </Styled.OptionsButtonsContainer>
       </Styled.GuestPolicyView>
-      <Styled.ActionsBarContainer orientation={orientation}>
-        <Styled.ActionsBar orientation={orientation} />
-      </Styled.ActionsBarContainer>
     </Styled.ContainerView>
   );
 };

@@ -13,6 +13,7 @@ import WhiteboardScreen from '../../../screens/whiteboard-screen';
 import TestComponentsScreen from '../../../screens/test-components-screen';
 import MainConferenceScreen from '../../../screens/main-conference-screen';
 import SelectLanguageScreen from '../../../screens/select-language-screen';
+import FullscreenWrapperScreen from '../../../screens/fullscreen-wrapper-screen';
 import Colors from '../../../constants/colors';
 import Styled from './styles';
 import usePrevious from '../../../hooks/use-previous';
@@ -240,6 +241,15 @@ const DrawerNavigator = ({
         }}
       />
       )}
+
+      <Drawer.Screen
+        name="FullscreenWrapperScreen"
+        component={FullscreenWrapperScreen}
+        options={{
+          headerShown: false,
+          drawerItemStyle: { display: 'none' },
+        }}
+      />
 
       {/* Put the join url by hand screen */}
       {Settings.dev && (

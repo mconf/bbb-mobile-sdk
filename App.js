@@ -1,5 +1,5 @@
 import {
-  useEffect, useRef, useState, useCallback
+  useEffect, useRef, useState
 } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
@@ -13,7 +13,6 @@ import { useTranslation } from 'react-i18next';
 import { store, injectStoreFlushCallback} from './src/store/redux/store';
 import * as api from './src/services/api';
 import DrawerNavigator from './src/components/custom-drawer/drawer-navigator';
-import FullscreenWrapper from './src/components/fullscreen-wrapper';
 import EndSessionScreen from './src/screens/end-session-screen';
 import FeedbackScreen from './src/screens/feedback-screen';
 import ProblemFeedbackScreen from './src/screens/feedback-screen/problem-feedback-screen';
@@ -31,7 +30,6 @@ import {
   leave,
   setSessionTerminated,
   sessionStateChanged,
-  setFeedbackEnabled,
 } from './src/store/redux/slices/wide-app/client';
 import logger from './src/services/logger';
 import { toggleMuteMicrophone } from './src/components/audio/service';
@@ -325,7 +323,6 @@ const AppContent = ({
         <Stack.Screen name="FeedbackScreen" component={FeedbackScreen} />
         <Stack.Screen name="ProblemFeedbackScreen" component={ProblemFeedbackScreen} />
         <Stack.Screen name="EmailFeedbackScreen" component={EmailFeedbackScreen} />
-        <Stack.Screen name="FullscreenWrapper" component={FullscreenWrapper} />
       </Stack.Navigator>
     </NavigationContainer>
   );

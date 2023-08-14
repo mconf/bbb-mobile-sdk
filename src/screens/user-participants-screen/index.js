@@ -15,14 +15,16 @@ import Styled from './styles';
 
 const UserParticipantsScreen = () => {
   const usersStore = useSelector((state) => state.usersCollection);
-  const [showMenu, setShowMenu] = useState(false);
-  const [selectedUser, setSelectedUser] = useState({});
-  const [menuAnchor, setMenuAnchor] = useState({ x: 0, y: 0 });
   const amIModerator = useSelector(isModerator);
   const myUserId = useSelector(selectCurrentUserId);
   const pendingUsers = useSelector(selectWaitingUsers);
-  const { t } = useTranslation();
 
+  const [showMenu, setShowMenu] = useState(false);
+  const [selectedUser, setSelectedUser] = useState({});
+  const [menuAnchor, setMenuAnchor] = useState({ x: 0, y: 0 });
+
+  const { t } = useTranslation();
+  const orientation = useOrientation();
   const navigation = useNavigation();
 
   const handleUsersName = useCallback(
@@ -37,8 +39,6 @@ const UserParticipantsScreen = () => {
     }),
     [usersStore]
   );
-
-  const orientation = useOrientation();
 
   const onIconPress = (event, item, isMe) => {
     const { nativeEvent } = event;
@@ -139,9 +139,6 @@ const UserParticipantsScreen = () => {
           <Styled.FlatList data={handleUsersName()} renderItem={renderItem} />
           {renderMenuView()}
         </Styled.Block>
-        <Styled.ActionsBarContainer orientation={orientation}>
-          <Styled.ActionsBar orientation={orientation} />
-        </Styled.ActionsBarContainer>
       </Styled.ContainerView>
     </Provider>
   );
