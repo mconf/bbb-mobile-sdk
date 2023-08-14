@@ -108,6 +108,14 @@ const PressableButton = styled(Pressable).attrs(() => ({
   `}
 `;
 
+const TalkingIndicatorContainer = styled.View`
+    background-color: #28282d99;
+    margin: 5px;
+    border-radius: 20px;
+    position: absolute;
+    left: 0;
+`;
+
 const FullscreenIcon = styled(IconButtonComponent)`
   padding: 0;
   margin: 0;
@@ -123,5 +131,6 @@ export default {
   VideoStream,
   VideoSkeleton,
   ContainerPressableGrid,
-  FullscreenIcon
+  FullscreenIcon,
+  TalkingIndicatorContainer,
 };
