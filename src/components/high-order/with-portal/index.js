@@ -2,6 +2,7 @@ import { Pressable } from 'react-native';
 import BottomSheetChat from '../../chat/bottom-sheet-chat';
 import NotificationBar from '../../notification-bar';
 import BottomSheetActionsBar from '../../actions-bar/bottom-sheet-actions-bar';
+import ChatPopupList from '../../chat/chat-popup';
 import { trigDetailedInfo } from '../../../store/redux/slices/wide-app/layout';
 import { store } from '../../../store/redux/store';
 
@@ -18,6 +19,7 @@ const withPortal = (Component) => {
       <BottomSheetActionsBar />
       <NotificationBar />
       <BottomSheetChat />
+      <ChatPopupList />
     </>
   );
 };

@@ -24,7 +24,6 @@ const MainConferenceScreen = () => {
     return (
       <Styled.ContainerView>
         <VideoGrid />
-        <ChatPopupList />
       </Styled.ContainerView>
     );
   };
