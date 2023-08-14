@@ -9,6 +9,7 @@ import {
 } from '../../../store/redux/slices/wide-app/layout';
 import { isTalkingByUserId } from '../../../store/redux/slices/voice-users';
 import { selectMetadata } from '../../../store/redux/slices/meeting';
+import SoundWaveAnimation from '../../animations/sound-wave-animation';
 import UserAvatar from '../../user-avatar';
 import VideoManager from '../../../services/webrtc/video-manager';
 import Styled from './styles';
@@ -102,6 +103,14 @@ const VideoContainer = (props) => {
       userColor={userColor}
     >
       {renderVideo()}
+
+      {/* always show talking indicator */}
+      {isTalking && (
+      <Styled.TalkingIndicatorContainer>
+        <SoundWaveAnimation />
+      </Styled.TalkingIndicatorContainer>
+      )}
+
       {detailedInfo && (
         <>
           <Styled.NameLabelContainer>
