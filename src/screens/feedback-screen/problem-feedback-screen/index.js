@@ -17,7 +17,6 @@ const ProblemFeedbackScreen = ({ route }) => {
   const { t } = useTranslation();
   const height = useHeaderHeight();
   const navigation = useNavigation();
-  const [optionsStatus, changeStatus] = useState(initialState);
 
   const questionTitle = t('mobileSdk.feedback.questionTitle');
   const skipButton = t('app.customFeedback.defaultButtons.skip');
@@ -29,9 +28,7 @@ const ProblemFeedbackScreen = ({ route }) => {
     { label: t('mobileSdk.whiteboard.label'), code: 'whiteboard' },
     { label: t('app.customFeedback.other'), code: 'other' },
   ];
-  const problemDetalied = {
-    text: '',
-  };
+  const problemDetalied = { text: '' };
   const initialState = {
     [problems[0].code]: false,
     [problems[1].code]: false,
@@ -40,6 +37,8 @@ const ProblemFeedbackScreen = ({ route }) => {
     [problems[4].code]: false,
     [problems[5].code]: false,
   };
+
+  const [optionsStatus, changeStatus] = useState(initialState);
 
   // disables android go back button
   useFocusEffect(
