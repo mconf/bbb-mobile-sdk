@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { useOrientation } from '../../../hooks/use-orientation';
-import withPortal from '../../../components/high-order/with-portal';
+import ScreenWrapper from '../../../components/screen-wrapper';
 import PollService from '../service';
 import Styled from './styles';
 
@@ -86,20 +86,22 @@ const CreatePoll = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <Styled.ContainerView orientation={orientation}>
-        <Styled.ContainerPollCard>
-          <Styled.ContainerViewPadding>
-            <Suspense fallback={<ActivityIndicator />}>
-              {renderMethod()}
-            </Suspense>
-          </Styled.ContainerViewPadding>
-        </Styled.ContainerPollCard>
-      </Styled.ContainerView>
-    </KeyboardAvoidingView>
+    <ScreenWrapper>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <Styled.ContainerView orientation={orientation}>
+          <Styled.ContainerPollCard>
+            <Styled.ContainerViewPadding>
+              <Suspense fallback={<ActivityIndicator />}>
+                {renderMethod()}
+              </Suspense>
+            </Styled.ContainerViewPadding>
+          </Styled.ContainerPollCard>
+        </Styled.ContainerView>
+      </KeyboardAvoidingView>
+    </ScreenWrapper>
   );
 };
 
-export default withPortal(CreatePoll);
+export default CreatePoll;

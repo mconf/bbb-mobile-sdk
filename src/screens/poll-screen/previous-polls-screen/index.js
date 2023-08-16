@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useRef } from 'react';
 import { useOrientation } from '../../../hooks/use-orientation';
 import PreviousPollCard from './poll-card';
-import withPortal from '../../../components/high-order/with-portal';
+import ScreenWrapper from '../../../components/screen-wrapper';
 import Styled from './styles';
 
 const PreviousPollScreen = () => {
@@ -37,23 +37,25 @@ const PreviousPollScreen = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <Styled.ContainerView orientation={orientation}>
-        <Styled.ContainerPollCard
-          ref={scrollViewRef}
-          onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
-        >
-          <Styled.ContainerViewPadding>
-            <>
-              {renderMethod()}
-            </>
-          </Styled.ContainerViewPadding>
-        </Styled.ContainerPollCard>
-      </Styled.ContainerView>
-    </KeyboardAvoidingView>
+    <ScreenWrapper>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <Styled.ContainerView orientation={orientation}>
+          <Styled.ContainerPollCard
+            ref={scrollViewRef}
+            onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
+          >
+            <Styled.ContainerViewPadding>
+              <>
+                {renderMethod()}
+              </>
+            </Styled.ContainerViewPadding>
+          </Styled.ContainerPollCard>
+        </Styled.ContainerView>
+      </KeyboardAvoidingView>
+    </ScreenWrapper>
   );
 };
 
-export default withPortal(PreviousPollScreen);
+export default PreviousPollScreen;

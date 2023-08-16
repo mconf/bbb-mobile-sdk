@@ -6,7 +6,7 @@ import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Menu, Provider } from 'react-native-paper';
 import { useOrientation } from '../../hooks/use-orientation';
-import withPortal from '../../components/high-order/with-portal';
+import ScreenWrapper from '../../components/screen-wrapper';
 import { selectWaitingUsers } from '../../store/redux/slices/guest-users';
 import { isModerator, selectCurrentUserId } from '../../store/redux/slices/current-user';
 import UserParticipantsService from './service';
@@ -132,16 +132,18 @@ const UserParticipantsScreen = () => {
   };
 
   return (
-    <Provider>
-      <Styled.ContainerView orientation={orientation}>
-        <Styled.Block orientation={orientation}>
-          {amIModerator && renderGuestPolicy()}
-          <Styled.FlatList data={handleUsersName()} renderItem={renderItem} />
-          {renderMenuView()}
-        </Styled.Block>
-      </Styled.ContainerView>
-    </Provider>
+    <ScreenWrapper>
+      <Provider>
+        <Styled.ContainerView orientation={orientation}>
+          <Styled.Block orientation={orientation}>
+            {amIModerator && renderGuestPolicy()}
+            <Styled.FlatList data={handleUsersName()} renderItem={renderItem} />
+            {renderMenuView()}
+          </Styled.Block>
+        </Styled.ContainerView>
+      </Provider>
+    </ScreenWrapper>
   );
 };
 
-export default withPortal(UserParticipantsScreen);
+export default UserParticipantsScreen;
