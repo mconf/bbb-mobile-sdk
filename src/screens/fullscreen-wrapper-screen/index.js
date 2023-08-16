@@ -48,6 +48,7 @@ const FullscreenWrapperScreen = ({ navigation }) => {
             bindToBorders
             onLongPress={() => dispatch(trigDetailedInfo())}
           >
+            {layoutStore.focusedElement === 'videoStream' && <Styled.VideoStream streamURL={layoutStore.focusedId} />}
             {layoutStore.focusedElement === 'avatar' && <Styled.UserAvatar source={{ uri: layoutStore.focusedId }} />}
             {layoutStore.focusedElement === 'contentArea' && <Styled.ContentArea fullscreen />}
             {layoutStore.focusedElement === 'color'
