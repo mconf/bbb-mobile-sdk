@@ -47,7 +47,7 @@ const BottomSheetActionsBar = () => {
   return (
     <BottomSheet
       ref={bottomSheetRef}
-      index={0}
+      index={detailedInfo ? 0 : -1}
       enablePanDownToClose
       snapPoints={snapPoints}
       handleIndicatorStyle={Styled[isFullscreen ? 'fullscreenStyles' : 'styles'].indicatorStyle}
