@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { useOrientation } from '../../../hooks/use-orientation';
-import withPortal from '../../../components/high-order/with-portal';
+import ScreenWrapper from '../../../components/screen-wrapper';
 import Styled from './styles';
 import { selectUsersProp } from '../../../store/redux/slices/meeting';
 import { isModerator } from '../../../store/redux/slices/current-user';
@@ -31,49 +31,51 @@ const GuestPolicyScreen = ({ navigation }) => {
   }, [amIModerator]);
 
   return (
-    <Styled.ContainerView orientation={orientation}>
-      <Styled.GuestPolicyView orientation={orientation}>
-        <Styled.GuestPolicyTop>
-          <Styled.BackIcon
-            icon="arrow-left"
-            iconColor={Colors.white}
-            onPress={() => { navigation.goBack(); }}
-          />
-          <Styled.GuestPolicyTopText>{t('app.guest-policy.title')}</Styled.GuestPolicyTopText>
-        </Styled.GuestPolicyTop>
-        <Styled.DividerTop />
-        <Styled.OptionsButtonsContainer>
-          <Styled.OptionsButton
-            selected={guestPolicy === guestPolicies.ASK_MODERATOR}
-            disabled={guestPolicy === guestPolicies.ASK_MODERATOR}
-            onPress={() => {
-              Service.handleChangeGuestPolicy(guestPolicies.ASK_MODERATOR);
-            }}
-          >
-            {t('app.guest-policy.button.askModerator')}
-          </Styled.OptionsButton>
-          <Styled.OptionsButton
-            selected={guestPolicy === guestPolicies.ALWAYS_ACCEPT}
-            disabled={guestPolicy === guestPolicies.ALWAYS_ACCEPT}
-            onPress={() => {
-              Service.handleChangeGuestPolicy(guestPolicies.ALWAYS_ACCEPT);
-            }}
-          >
-            {t('app.userList.guest.allowEveryone')}
-          </Styled.OptionsButton>
-          <Styled.OptionsButton
-            selected={guestPolicy === guestPolicies.ALWAYS_DENY}
-            disabled={guestPolicy === guestPolicies.ALWAYS_DENY}
-            onPress={() => {
-              Service.handleChangeGuestPolicy(guestPolicies.ALWAYS_DENY);
-            }}
-          >
-            {t('app.userList.guest.denyEveryone')}
-          </Styled.OptionsButton>
-        </Styled.OptionsButtonsContainer>
-      </Styled.GuestPolicyView>
-    </Styled.ContainerView>
+    <ScreenWrapper>
+      <Styled.ContainerView orientation={orientation}>
+        <Styled.GuestPolicyView orientation={orientation}>
+          <Styled.GuestPolicyTop>
+            <Styled.BackIcon
+              icon="arrow-left"
+              iconColor={Colors.white}
+              onPress={() => { navigation.goBack(); }}
+            />
+            <Styled.GuestPolicyTopText>{t('app.guest-policy.title')}</Styled.GuestPolicyTopText>
+          </Styled.GuestPolicyTop>
+          <Styled.DividerTop />
+          <Styled.OptionsButtonsContainer>
+            <Styled.OptionsButton
+              selected={guestPolicy === guestPolicies.ASK_MODERATOR}
+              disabled={guestPolicy === guestPolicies.ASK_MODERATOR}
+              onPress={() => {
+                Service.handleChangeGuestPolicy(guestPolicies.ASK_MODERATOR);
+              }}
+            >
+              {t('app.guest-policy.button.askModerator')}
+            </Styled.OptionsButton>
+            <Styled.OptionsButton
+              selected={guestPolicy === guestPolicies.ALWAYS_ACCEPT}
+              disabled={guestPolicy === guestPolicies.ALWAYS_ACCEPT}
+              onPress={() => {
+                Service.handleChangeGuestPolicy(guestPolicies.ALWAYS_ACCEPT);
+              }}
+            >
+              {t('app.userList.guest.allowEveryone')}
+            </Styled.OptionsButton>
+            <Styled.OptionsButton
+              selected={guestPolicy === guestPolicies.ALWAYS_DENY}
+              disabled={guestPolicy === guestPolicies.ALWAYS_DENY}
+              onPress={() => {
+                Service.handleChangeGuestPolicy(guestPolicies.ALWAYS_DENY);
+              }}
+            >
+              {t('app.userList.guest.denyEveryone')}
+            </Styled.OptionsButton>
+          </Styled.OptionsButtonsContainer>
+        </Styled.GuestPolicyView>
+      </Styled.ContainerView>
+    </ScreenWrapper>
   );
 };
 
-export default withPortal(GuestPolicyScreen);
+export default GuestPolicyScreen;

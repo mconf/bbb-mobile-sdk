@@ -2,7 +2,7 @@ import { useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { useOrientation } from '../../../hooks/use-orientation';
-import withPortal from '../../../components/high-order/with-portal';
+import ScreenWrapper from '../../../components/screen-wrapper';
 import Styled from './styles';
 import Service from './service';
 import Colors from '../../../constants/colors';
@@ -68,51 +68,53 @@ const WaitingUsersScreen = ({ navigation }) => {
   }, [amIModerator]);
 
   return (
-    <Styled.ContainerView orientation={orientation}>
-      <Styled.WaitingUsersView orientation={orientation}>
-        <Styled.WaitingUsersTop>
-          <Styled.BackIcon
-            icon="arrow-left"
-            iconColor={Colors.white}
-            onPress={() => { navigation.goBack(); }}
-          />
-          <Styled.WaitingUsersTopText>{t('mobileSdk.userList.waitingAtendees')}</Styled.WaitingUsersTopText>
-        </Styled.WaitingUsersTop>
-        <Styled.DividerTop />
-        <Styled.AccRejContainer>
-          <Styled.AccRejButtons>
-            <Styled.AccRejButtonsText
-              disabled={pendingUsers.length === 0}
-              onPress={() => {
-                Service.handleAllowPendingUsers(pendingUsers, ALLOW_STATUS);
-                navigation.goBack();
-              }}
-            >
-              {t('app.userList.guest.allowEveryone')}
-            </Styled.AccRejButtonsText>
-          </Styled.AccRejButtons>
-          <Styled.AccRejButtons>
-            <Styled.AccRejButtonsText
-              disabled={pendingUsers.length === 0}
-              onPress={() => {
-                Service.handleAllowPendingUsers(pendingUsers, DENY_STATUS);
-                navigation.goBack();
-              }}
-            >
-              {t('app.userList.guest.denyEveryone')}
-            </Styled.AccRejButtonsText>
-          </Styled.AccRejButtons>
-        </Styled.AccRejContainer>
-        {pendingUsers.length > 0
-          ? <Styled.FlatList data={handleUsersName()} renderItem={renderItem} />
-          : (
-            <Styled.NoPendingUsersText>
-              {t('app.userList.guest.noPendingUsers')}
-            </Styled.NoPendingUsersText>
-          )}
-      </Styled.WaitingUsersView>
-    </Styled.ContainerView>
+    <ScreenWrapper>
+      <Styled.ContainerView orientation={orientation}>
+        <Styled.WaitingUsersView orientation={orientation}>
+          <Styled.WaitingUsersTop>
+            <Styled.BackIcon
+              icon="arrow-left"
+              iconColor={Colors.white}
+              onPress={() => { navigation.goBack(); }}
+            />
+            <Styled.WaitingUsersTopText>{t('mobileSdk.userList.waitingAtendees')}</Styled.WaitingUsersTopText>
+          </Styled.WaitingUsersTop>
+          <Styled.DividerTop />
+          <Styled.AccRejContainer>
+            <Styled.AccRejButtons>
+              <Styled.AccRejButtonsText
+                disabled={pendingUsers.length === 0}
+                onPress={() => {
+                  Service.handleAllowPendingUsers(pendingUsers, ALLOW_STATUS);
+                  navigation.goBack();
+                }}
+              >
+                {t('app.userList.guest.allowEveryone')}
+              </Styled.AccRejButtonsText>
+            </Styled.AccRejButtons>
+            <Styled.AccRejButtons>
+              <Styled.AccRejButtonsText
+                disabled={pendingUsers.length === 0}
+                onPress={() => {
+                  Service.handleAllowPendingUsers(pendingUsers, DENY_STATUS);
+                  navigation.goBack();
+                }}
+              >
+                {t('app.userList.guest.denyEveryone')}
+              </Styled.AccRejButtonsText>
+            </Styled.AccRejButtons>
+          </Styled.AccRejContainer>
+          {pendingUsers.length > 0
+            ? <Styled.FlatList data={handleUsersName()} renderItem={renderItem} />
+            : (
+              <Styled.NoPendingUsersText>
+                {t('app.userList.guest.noPendingUsers')}
+              </Styled.NoPendingUsersText>
+            )}
+        </Styled.WaitingUsersView>
+      </Styled.ContainerView>
+    </ScreenWrapper>
   );
 };
 
-export default withPortal(WaitingUsersScreen);
+export default WaitingUsersScreen;

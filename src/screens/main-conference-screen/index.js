@@ -1,9 +1,8 @@
 import { useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
-import withPortal from '../../components/high-order/with-portal';
+import ScreenWrapper from '../../components/screen-wrapper';
 import VideoGrid from '../../components/video/video-grid';
-import ChatPopupList from '../../components/chat/chat-popup';
 import Styled from './styles';
 
 const MainConferenceScreen = () => {
@@ -22,9 +21,11 @@ const MainConferenceScreen = () => {
   /* view components */
   const renderGridLayout = () => {
     return (
-      <Styled.ContainerView>
-        <VideoGrid />
-      </Styled.ContainerView>
+      <ScreenWrapper>
+        <Styled.ContainerView>
+          <VideoGrid />
+        </Styled.ContainerView>
+      </ScreenWrapper>
     );
   };
 
@@ -37,4 +38,4 @@ const MainConferenceScreen = () => {
   return renderGridLayout();
 };
 
-export default withPortal(MainConferenceScreen);
+export default MainConferenceScreen;
