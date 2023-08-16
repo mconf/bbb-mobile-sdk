@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components/native';
+import { RTCView } from 'react-native-webrtc';
 import contentArea from '../../components/content-area';
 import Pressable from '../../components/pressable';
 import IconButtonComponent from '../../components/icon-button';
@@ -57,6 +58,13 @@ const PressableButton = styled(Pressable).attrs(() => ({
   `}
 `;
 
+const VideoStream = styled(RTCView)`
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  object-fit: contain;
+`;
+
 const FullscreenIcon = styled(IconButtonComponent)`
   padding: 0;
   margin: 0;
@@ -69,5 +77,6 @@ export default {
   UserColor,
   ContentArea,
   PressableButton,
-  FullscreenIcon
+  FullscreenIcon,
+  VideoStream
 };
