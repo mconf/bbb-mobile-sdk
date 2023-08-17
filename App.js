@@ -138,6 +138,7 @@ const AppContent = ({
 
   useEffect(() => {
     if (audioIsConnected) {
+      InCallManager.start({ media: 'video' });
       // Activate expo-keep-awake
       activateKeepAwakeAsync();
       // Start/show the notification foreground service
@@ -245,7 +246,6 @@ const AppContent = ({
     // once the store's about to be flushed
     if (typeof _onLeaveSession === 'function') injectStoreFlushCallback(_onLeaveSession);
     injectStore();
-    InCallManager.start({ media: 'video' });
     dispatch(ConnectionStatusTracker.registerConnectionStatusListeners());
     nativeEventListeners.current.push(
       DeviceEventEmitter.addListener('onAudioDeviceChanged', ({
