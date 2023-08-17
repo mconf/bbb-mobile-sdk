@@ -2,6 +2,7 @@ import React, {
   useCallback, useEffect, useMemo, useRef
 } from 'react';
 import { View } from 'react-native';
+import InCallManager from 'react-native-incall-manager';
 import BottomSheet from '@gorhom/bottom-sheet';
 import { useRoute } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,6 +17,8 @@ const BottomSheetActionsBar = () => {
   const route = useRoute();
   const orientation = useOrientation();
   const detailedInfo = useSelector((state) => state.layout.detailedInfo);
+  const audioDevices = useSelector((state) => state.audio.audioDevices);
+  const selectedAudioDevice = useSelector((state) => state.audio.selectedAudioDevice);
 
   const isFullscreen = route.name === 'FullscreenWrapperScreen';
 
@@ -23,7 +26,7 @@ const BottomSheetActionsBar = () => {
   const dispatch = useDispatch();
   const snapPoints = useMemo(() => {
     if (orientation === 'PORTRAIT') {
-      return [110];
+      return [110, 500];
     }
     return [110];
   }, [orientation]);
@@ -58,6 +61,24 @@ const BottomSheetActionsBar = () => {
     >
       <View style={Styled[isFullscreen ? 'fullscreenStyles' : 'styles'].contentContainer}>
         <ActionsBar />
+        <Styled.ButtonContainer>
+          <Styled.OptionsButton onPress={() => InCallManager.chooseAudioRoute('EARPIECE')} selected={selectedAudioDevice === 'EARPIECE'}>
+            EARPIECE
+          </Styled.OptionsButton>
+          <Styled.OptionsButton onPress={() => InCallManager.chooseAudioRoute('SPEAKER_PHONE')} selected={selectedAudioDevice === 'SPEAKER_PHONE'}>
+            SPEAKER_PHONE
+          </Styled.OptionsButton>
+          {audioDevices.includes('BLUETOOTH') && (
+          <Styled.OptionsButton onPress={() => InCallManager.chooseAudioRoute('BLUETOOTH')} selected={selectedAudioDevice === 'BLUETOOTH'}>
+            BLUETOOTH
+          </Styled.OptionsButton>
+          )}
+          {audioDevices.includes('WIRED_HEADSET') && (
+          <Styled.OptionsButton onPress={() => InCallManager.chooseAudioRoute('WIRED_HEADSET')} selected={selectedAudioDevice === 'WIRED_HEADSET'}>
+            WIRED_HEADSET
+          </Styled.OptionsButton>
+          )}
+        </Styled.ButtonContainer>
       </View>
     </BottomSheet>
   );
