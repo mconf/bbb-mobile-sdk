@@ -80,9 +80,8 @@ const sendMessage = (ws, msgObj) => {
     const msg = stringifyDDP(msgObj).replace(/\\|"/g, (match) => `\\${match}`);
     ws.send(`["${msg}"]`);
   } catch (error) {
-    logger.debug({
-      logCode: 'main_websocket_send_failure',
-    }, `Main websocket send failed, enqueue=${msgObj.msg || 'Unknown'}`);
+    // eslint-disable-next-line no-console
+    console.warn(`Main websocket send failed, enqueue=${msgObj?.msg || 'Unknown'}`);
   }
 };
 
