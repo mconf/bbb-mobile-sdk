@@ -29,6 +29,7 @@ class VideoBroker extends BaseBroker {
     // signalCandidates
     // traceLogs
     // logger
+    // recordingAdapter
     Object.assign(this, options);
   }
 
@@ -288,6 +289,7 @@ class VideoBroker extends BaseBroker {
       cameraId: this.cameraId,
       sdpOffer: offer,
       mediaServer: this.mediaServer,
+      recordingAdapter: this.recordingAdapter,
     };
 
     this.logger.debug({

@@ -34,6 +34,7 @@ const VideoControls = (props) => {
   const appState = useAppState();
   const [publishOnActive, setPublishOnActive] = useState(false);
   const mediaServer = useSelector((state) => selectMetadata(state, 'media-server-video'));
+  const recordingAdapter = useSelector((state) => selectMetadata(state, 'sfu-recording-adapter'));
 
   const fireDisabledCamAlert = () => {
     // TODO localization, programmatically dismissable Dialog that is reusable
@@ -46,7 +47,7 @@ const VideoControls = (props) => {
   };
 
   const publishCamera = () => {
-    VideoManager.publish({ mediaServer }).catch((error) => {
+    VideoManager.publish({ mediaServer, recordingAdapter }).catch((error) => {
       logger.error({
         logCode: 'video_publish_failure',
         extraInfo: {
