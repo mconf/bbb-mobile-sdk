@@ -80,9 +80,9 @@ const sendMessage = (ws, msgObj) => {
     const msg = stringifyDDP(msgObj).replace(/\\|"/g, (match) => `\\${match}`);
     ws.send(`["${msg}"]`);
   } catch (error) {
-    logger.warn({
+    logger.debug({
       logCode: 'main_websocket_send_failure',
-    }, 'Main websocket send failed - enqueue');
+    }, `Main websocket send failed, enqueue=${msgObj.msg || 'Unknown'}`);
   }
 };
 
