@@ -161,8 +161,6 @@ class VideoManager {
       this._onWSClosed();
     }
 
-    this._wsUrl = null;
-
     if (this._pingInterval) {
       clearInterval(this._pingInterval);
       this._pingInterval = null;
@@ -205,8 +203,8 @@ class VideoManager {
         return reject(error);
       };
 
-      this.ws = new ReconnectingWebSocket(wsUrl, [], { connectionTimeout: 4000 });
       this._wsUrl = wsUrl;
+      this.ws = new ReconnectingWebSocket(wsUrl, [], { connectionTimeout: 4000 });
       this.ws.addEventListener('close', this._onWSClosed, { once: true });
       this.ws.addEventListener('error', preloadErrorCatcher);
       this.ws.onopen = () => {
@@ -240,6 +238,7 @@ class VideoManager {
     const role = 'share';
     const brokerOptions = {
       ws: this.ws,
+      wsUrl: this._wsUrl,
       cameraId,
       iceServers: this.iceServers,
       stream: (inputStream && inputStream.active) ? inputStream : undefined,
@@ -297,6 +296,7 @@ class VideoManager {
     const role = 'viewer';
     const brokerOptions = {
       ws: this.ws,
+      wsUrl: this._wsUrl,
       cameraId,
       iceServers: this.iceServers,
       offering: false,
