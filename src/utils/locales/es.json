@@ -131,5 +131,10 @@
     "mobileSdk.notification.pollStarted.title": "Se ha iniciado una encuesta.",
     "mobileSdk.notification.pollStarted.subtitle": "Haga clic aquí para responder",
     "mobileSdk.question.answering": "Esta pregunta fue respondida por audio...",
-    "mobileSdk.question.answer": "Respuesta:"
+    "mobileSdk.question.answer": "Respuesta:",
+    "mobileSdk.audio.deviceSelector.title": "Seletor de áudio",
+    "mobileSdk.audio.deviceSelector.earpiece": "Alto-falante do ouvido",
+    "mobileSdk.audio.deviceSelector.speakerPhone": "Alto-falante",
+    "mobileSdk.audio.deviceSelector.bluetooth": "Bluetooth",
+    "mobileSdk.audio.deviceSelector.wiredHeadset": "Fone com fio"
 }

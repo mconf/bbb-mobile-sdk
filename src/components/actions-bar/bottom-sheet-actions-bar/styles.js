@@ -76,9 +76,16 @@ const ButtonContainer = styled.View`
   border-radius: 16px;
 `;
 
+const DeviceSelectorTitle = styled.Text`
+  color: white;
+  text-align: center;
+  font-size: 20px;
+`;
+
 export default {
   styles,
   fullscreenStyles,
   OptionsButton,
   ButtonContainer,
+  DeviceSelectorTitle
 };
