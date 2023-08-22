@@ -23,7 +23,6 @@ import { injectStore as injectStoreSM } from './src/services/webrtc/screenshare-
 import { injectStore as injectStoreAM } from './src/services/webrtc/audio-manager';
 import { injectStore as injectStoreIM } from './src/components/interactions/service';
 import { ConnectionStatusTracker } from './src/store/redux/middlewares';
-import { setAudioDevices, setSelectedAudioDevice } from './src/store/redux/slices/wide-app/audio';
 import Settings from './settings.json';
 import TestComponentsScreen from './src/screens/test-components-screen';
 import GuestScreen from './src/screens/guest-screen';
@@ -139,8 +138,8 @@ const AppContent = ({
 
   useEffect(() => {
     if (audioIsConnected) {
+      InCallManager.start({ media: 'video' });
       // Activate expo-keep-awake
-      InCallManager.chooseAudioRoute('SPEAKER_PHONE');
       activateKeepAwakeAsync();
       // Start/show the notification foreground service
       const getChannelIdAndDisplayNotification = async () => {
@@ -246,20 +245,20 @@ const AppContent = ({
     // Inject custom provided onLeaveSession callback into the store so it's called
     // once the store's about to be flushed
     if (typeof _onLeaveSession === 'function') injectStoreFlushCallback(_onLeaveSession);
-    InCallManager.start({ media: 'video' });
     injectStore();
     dispatch(ConnectionStatusTracker.registerConnectionStatusListeners());
     nativeEventListeners.current.push(
-      DeviceEventEmitter.addListener('onAudioDeviceChanged', (event) => {
+      DeviceEventEmitter.addListener('onAudioDeviceChanged', ({
+        availableAudioDeviceList,
+        selectedAudioDevice
+      }) => {
         logger.info({
           logCode: 'audio_devices_changed',
           extraInfo: {
-            audioDevices: event.availableAudioDeviceList,
-            selected: event.selectedAudioDevice
+            availableAudioDeviceList,
+            selectedAudioDevice,
           },
-        }, `Audio devices changed: devices: ${event.availableAudioDeviceList}, selected: ${event.selectedAudioDevice}`);
-        dispatch(setAudioDevices(event.availableAudioDeviceList));
-        dispatch(setSelectedAudioDevice(event.selectedAudioDevice));
+        }, `Audio devices changed: selected=${selectedAudioDevice} available=${availableAudioDeviceList}`);
       })
     );
 
