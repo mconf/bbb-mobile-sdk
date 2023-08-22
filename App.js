@@ -138,7 +138,6 @@ const AppContent = ({
 
   useEffect(() => {
     if (audioIsConnected) {
-      InCallManager.start({ media: 'video' });
       // Activate expo-keep-awake
       activateKeepAwakeAsync();
       // Start/show the notification foreground service
@@ -244,6 +243,7 @@ const AppContent = ({
   useEffect(() => {
     // Inject custom provided onLeaveSession callback into the store so it's called
     // once the store's about to be flushed
+    InCallManager.start({ media: 'video' });
     if (typeof _onLeaveSession === 'function') injectStoreFlushCallback(_onLeaveSession);
     injectStore();
     dispatch(ConnectionStatusTracker.registerConnectionStatusListeners());
