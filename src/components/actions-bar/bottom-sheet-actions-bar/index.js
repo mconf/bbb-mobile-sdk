@@ -1,8 +1,10 @@
 import React, {
   useCallback, useEffect, useMemo, useRef
 } from 'react';
-import { View } from 'react-native';
+import { View, Platform } from 'react-native';
+import InCallManager from 'react-native-incall-manager';
 import BottomSheet from '@gorhom/bottom-sheet';
+import { useTranslation } from 'react-i18next';
 import { useRoute } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useOrientation } from '../../../hooks/use-orientation';
@@ -15,7 +17,10 @@ const BottomSheetActionsBar = () => {
   const bottomSheetRef = useRef(null);
   const route = useRoute();
   const orientation = useOrientation();
+  const { t } = useTranslation();
   const detailedInfo = useSelector((state) => state.layout.detailedInfo);
+  const audioDevices = useSelector((state) => state.audio.audioDevices);
+  const selectedAudioDevice = useSelector((state) => state.audio.selectedAudioDevice);
 
   const isFullscreen = route.name === 'FullscreenWrapperScreen';
 
@@ -23,7 +28,9 @@ const BottomSheetActionsBar = () => {
   const dispatch = useDispatch();
   const snapPoints = useMemo(() => {
     if (orientation === 'PORTRAIT') {
-      return [110];
+      if (Platform.OS === 'android') {
+        return [110, 380];
+      }
     }
     return [110];
   }, [orientation]);
@@ -43,6 +50,33 @@ const BottomSheetActionsBar = () => {
     }
   }, [detailedInfo]);
 
+  const audioDeviceSelectorView = () => {
+    if (Platform.OS === 'android') {
+      return (
+        <Styled.ButtonContainer>
+          <Styled.DeviceSelectorTitle>{t('mobileSdk.audio.deviceSelector.title')}</Styled.DeviceSelectorTitle>
+          <Styled.OptionsButton onPress={() => InCallManager.chooseAudioRoute('EARPIECE')} selected={selectedAudioDevice === 'EARPIECE'}>
+            {t('mobileSdk.audio.deviceSelector.earpiece')}
+          </Styled.OptionsButton>
+          <Styled.OptionsButton onPress={() => InCallManager.chooseAudioRoute('SPEAKER_PHONE')} selected={selectedAudioDevice === 'SPEAKER_PHONE'}>
+            {t('mobileSdk.audio.deviceSelector.speakerPhone')}
+          </Styled.OptionsButton>
+          {audioDevices.includes('BLUETOOTH') && (
+          <Styled.OptionsButton onPress={() => InCallManager.chooseAudioRoute('BLUETOOTH')} selected={selectedAudioDevice === 'BLUETOOTH'}>
+            {t('mobileSdk.audio.deviceSelector.bluetooth')}
+          </Styled.OptionsButton>
+          )}
+          {audioDevices.includes('WIRED_HEADSET') && (
+          <Styled.OptionsButton onPress={() => InCallManager.chooseAudioRoute('WIRED_HEADSET')} selected={selectedAudioDevice === 'WIRED_HEADSET'}>
+            {t('mobileSdk.audio.deviceSelector.wiredHeadset')}
+          </Styled.OptionsButton>
+          )}
+        </Styled.ButtonContainer>
+      );
+    }
+    return null;
+  };
+
   // renders
   return (
     <BottomSheet
@@ -58,6 +92,7 @@ const BottomSheetActionsBar = () => {
     >
       <View style={Styled[isFullscreen ? 'fullscreenStyles' : 'styles'].contentContainer}>
         <ActionsBar />
+        {audioDeviceSelectorView()}
       </View>
     </BottomSheet>
   );

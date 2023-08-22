@@ -8,9 +8,11 @@ import { Provider, useDispatch, useSelector } from 'react-redux';
 // providers and store
 import { activateKeepAwakeAsync } from 'expo-keep-awake';
 import InCallManager from 'react-native-incall-manager';
-import { BackHandler, DeviceEventEmitter, Alert } from 'react-native';
+import {
+  BackHandler, DeviceEventEmitter, Alert, Platform
+} from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { store, injectStoreFlushCallback} from './src/store/redux/store';
+import { store, injectStoreFlushCallback } from './src/store/redux/store';
 import * as api from './src/services/api';
 import DrawerNavigator from './src/components/custom-drawer/drawer-navigator';
 import EndSessionScreen from './src/screens/end-session-screen';
@@ -23,6 +25,7 @@ import { injectStore as injectStoreSM } from './src/services/webrtc/screenshare-
 import { injectStore as injectStoreAM } from './src/services/webrtc/audio-manager';
 import { injectStore as injectStoreIM } from './src/components/interactions/service';
 import { ConnectionStatusTracker } from './src/store/redux/middlewares';
+import { setAudioDevices, setSelectedAudioDevice } from './src/store/redux/slices/wide-app/audio';
 import Settings from './settings.json';
 import TestComponentsScreen from './src/screens/test-components-screen';
 import GuestScreen from './src/screens/guest-screen';
@@ -98,7 +101,7 @@ const AppContent = ({
   }, [leaveOnUnmount]);
 
   useEffect(() => {
-    console.log("FOCUS MOUNTED")
+    console.log('FOCUS MOUNTED');
     const onBackPress = () => {
       Alert.alert(t('app.leaveModal.title'), t('app.leaveModal.desc'), [
         {
@@ -114,7 +117,7 @@ const AppContent = ({
     BackHandler.addEventListener('hardwareBackPress', onBackPress);
     return () => {
       BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-      console.log("FOCUS UNMOUNTED");
+      console.log('FOCUS UNMOUNTED');
     };
   }, []);
 
@@ -138,6 +141,9 @@ const AppContent = ({
 
   useEffect(() => {
     if (audioIsConnected) {
+      if (Platform.OS === 'android') {
+        InCallManager.chooseAudioRoute('SPEAKER_PHONE');
+      }
       // Activate expo-keep-awake
       activateKeepAwakeAsync();
       // Start/show the notification foreground service
@@ -248,10 +254,8 @@ const AppContent = ({
     injectStore();
     dispatch(ConnectionStatusTracker.registerConnectionStatusListeners());
     nativeEventListeners.current.push(
-      DeviceEventEmitter.addListener('onAudioDeviceChanged', ({
-        availableAudioDeviceList,
-        selectedAudioDevice
-      }) => {
+      DeviceEventEmitter.addListener('onAudioDeviceChanged', (event) => {
+        const { availableAudioDeviceList, selectedAudioDevice } = event;
         logger.info({
           logCode: 'audio_devices_changed',
           extraInfo: {
@@ -259,6 +263,8 @@ const AppContent = ({
             selectedAudioDevice,
           },
         }, `Audio devices changed: selected=${selectedAudioDevice} available=${availableAudioDeviceList}`);
+        dispatch(setAudioDevices(event.availableAudioDeviceList));
+        dispatch(setSelectedAudioDevice(event.selectedAudioDevice));
       })
     );
 
@@ -275,10 +281,10 @@ const AppContent = ({
       }
     });
 
-    console.log("REGULAR APP MOUNT");
+    console.log('REGULAR APP MOUNT');
 
     return () => {
-      console.log("REGULAR APP UNMOUNT - leave?", leaveOnUnmountRef.current);
+      console.log('REGULAR APP UNMOUNT - leave?', leaveOnUnmountRef.current);
       dispatch(ConnectionStatusTracker.unregisterConnectionStatusListeners());
       nativeEventListeners.current.forEach((eventListener) => eventListener.remove());
 
