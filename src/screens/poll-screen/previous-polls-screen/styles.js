@@ -22,7 +22,6 @@ const ContainerViewPadding = styled.View`
 `;
 
 const ContainerPollCard = styled.ScrollView`
-  background-color: ${Colors.white};
   width: 100%;
   border-radius: 12px;
   display: flex;
