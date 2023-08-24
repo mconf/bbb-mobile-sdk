@@ -1,4 +1,5 @@
 import styled from 'styled-components/native';
+import button from '../../../components/button';
 import Colors from '../../../constants/colors';
 
 const Title = styled.Text`
@@ -42,10 +43,21 @@ const ContainerView = styled.View`
   `}
 `;
 
+const ReturnButton = styled(button)`
+  background-color: ${Colors.blue};
+  color: ${Colors.white};
+  font-size: 16px;
+  font-weight: 400;
+  padding: 12px;
+  margin-bottom: 16px;
+  border-radius: 12px;
+`;
+
 export default {
   Title,
   NoPollText,
   ContainerViewPadding,
   ContainerPollCard,
   ContainerView,
+  ReturnButton,
 };
