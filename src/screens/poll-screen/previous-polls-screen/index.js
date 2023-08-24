@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useRef } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { useOrientation } from '../../../hooks/use-orientation';
+import { isPresenter } from '../../../store/redux/slices/current-user';
 import PreviousPollCard from './poll-card';
 import ScreenWrapper from '../../../components/screen-wrapper';
 import Styled from './styles';
@@ -15,6 +16,7 @@ const PreviousPollScreen = () => {
   const scrollViewRef = useRef();
 
   const previousPollPublishedStore = useSelector((state) => state.previousPollPublishedCollection);
+  const amIPresenter = useSelector(isPresenter);
 
   const renderMethod = () => {
     if (
@@ -50,9 +52,11 @@ const PreviousPollScreen = () => {
           >
             <Styled.ContainerViewPadding>
               <>
+                {amIPresenter && (
                 <Styled.ReturnButton onPress={() => navigation.goBack()}>
                   {t('mobileSdk.poll.createLabel')}
                 </Styled.ReturnButton>
+                )}
                 {renderMethod()}
               </>
             </Styled.ContainerViewPadding>
