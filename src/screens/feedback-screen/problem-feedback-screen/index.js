@@ -203,6 +203,7 @@ const ProblemFeedbackScreen = ({ route }) => {
             <Styled.TextInputContainer>
               <Styled.TextInput
                 onFocus={() => checkOption('other')}
+                multiline
                 onChangeText={(newText) => setMessageText(newText)}
               />
             </Styled.TextInputContainer>

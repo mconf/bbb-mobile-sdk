@@ -88,7 +88,7 @@ const Option = styled(Checkbox.Item)`
 
 const TextInputContainer = styled.View`
   width: 100%;
-  max-height: 15%;
+  max-height: 300px;
   align-items: center;
 `;
 
