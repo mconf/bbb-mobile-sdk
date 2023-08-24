@@ -27,7 +27,7 @@ const ReceivingAnswers = () => {
   }, [currentUserObj]);
 
   const handleViewerAnswers = () => {
-    const isCustomPoll = currentPollObj?.questionType === 'CUSTOM';
+    const noPollLocale = currentPollObj.questionType === 'CUSTOM' || 'R-';
 
     return (
       <>
@@ -38,7 +38,7 @@ const ReceivingAnswers = () => {
             * 100).toFixed(0);
           return (
             <Styled.AnswerContainer key={answer.id}>
-              <Styled.Answer>{isCustomPoll ? answer.key : t(`app.poll.answer.${answer.key}`.toLowerCase())}</Styled.Answer>
+              <Styled.Answer>{noPollLocale ? answer.key : t(`app.poll.answer.${answer.key}`.toLowerCase())}</Styled.Answer>
               <Styled.BarContainer style={{ justifyContent: 'center' }}>
                 <Styled.Bar style={{ width: `${calcBarSize}%` }} />
                 <Styled.InsideBarText style={{ left: `${calcBarSize / 2}%` }}>{answer.numVotes}</Styled.InsideBarText>
