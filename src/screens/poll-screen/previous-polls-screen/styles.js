@@ -1,5 +1,4 @@
 import styled from 'styled-components/native';
-import Colors from '../../../constants/colors';
 
 const Title = styled.Text`
   font-size: 24px;
@@ -21,7 +20,6 @@ const ContainerViewPadding = styled.View`
 `;
 
 const ContainerPollCard = styled.ScrollView`
-  background-color: ${Colors.white};
   width: 100%;
   border-radius: 12px;
   display: flex;
