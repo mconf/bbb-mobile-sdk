@@ -4,6 +4,7 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
+import { useOrientation } from '../../../hooks/use-orientation';
 import logger from '../../../services/logger';
 import Settings from '../../../../settings.json';
 import Colors from '../../../constants/colors';
@@ -16,6 +17,7 @@ const CUSTOMER_METADATA = Settings.feedback.custom.customerMetadata;
 const ProblemFeedbackScreen = ({ route }) => {
   const { t } = useTranslation();
   const height = useHeaderHeight();
+  const orientation = useOrientation();
   const navigation = useNavigation();
 
   const questionTitle = t('mobileSdk.feedback.questionTitle');
@@ -173,14 +175,17 @@ const ProblemFeedbackScreen = ({ route }) => {
   };
 
   return (
-    <Styled.ContainerView>
+    <Styled.ContainerView orientation={orientation}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
         keyboardVerticalOffset={height + 47}
         enabled
       >
-        <Styled.ContainerFeedbackCard contentContainerStyle={Styled.ContentContainerStyle}>
+        <Styled.ContainerFeedbackCard
+          contentContainerStyle={Styled.ContentContainerStyle}
+          orientation={orientation}
+        >
           <Styled.ContainerTitle>
             <Styled.Title>{questionTitle}</Styled.Title>
             <Styled.Progress>1/2</Styled.Progress>

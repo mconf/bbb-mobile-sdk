@@ -23,11 +23,15 @@ const ContainerView = styled.View`
 const ContainerFeedbackCard = styled.ScrollView`
   background-color: ${Colors.white};
   width: 100%;
-  max-height: 85%;
-  padding: 16px;
   border-radius: 12px;
   display: flex;
-  margin: 40px;
+  margin: 16px;
+  padding: 16px;
+
+  ${({ orientation }) => orientation === 'LANDSCAPE'
+  && `
+    margin: 8px 0;
+  `}
 `;
 
 const ContainerTitle = styled.View`
