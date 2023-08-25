@@ -388,7 +388,7 @@ PODS:
     - React-jsi (= 0.71.7)
     - React-logger (= 0.71.7)
     - React-perflogger (= 0.71.7)
-  - ReactNativeIncallManager (4.0.1):
+  - ReactNativeIncallManager (4.1.0):
     - React-Core
   - RNGestureHandler (2.9.0):
     - React-Core
@@ -656,7 +656,7 @@ SPEC CHECKSUMS:
   React-RCTVibration: 08f132cad9896458776f37c112e71d60aef1c6ae
   React-runtimeexecutor: c5c89f8f543842dd864b63ded1b0bbb9c9445328
   ReactCommon: dbfbe2f7f3c5ce4ce44f43f2fd0d5950d1eb67c5
-  ReactNativeIncallManager: 0d2cf9f4d50359728a30c08549762fe67a2efb81
+  ReactNativeIncallManager: 2385505fa5dfdbbc78925e3b8d23b30ce0cde40e
   RNGestureHandler: 071d7a9ad81e8b83fe7663b303d132406a7d8f39
   RNNotifee: 05692d7bb42b6c718a3906aeb8431c48ff2e8097
   RNReanimated: cc5e3aa479cb9170bcccf8204291a6950a3be128
