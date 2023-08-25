@@ -114,6 +114,7 @@ const BottomSheetChat = () => {
             <Styled.TextInput
               label={t('app.chat.submitLabel')}
               onChangeText={(newText) => setMessageText(newText)}
+              multiline
               value={messageText}
             />
             <IconButtonComponent
