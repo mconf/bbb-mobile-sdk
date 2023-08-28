@@ -140,5 +140,7 @@
   "mobileSdk.audio.deviceSelector.earpiece": "Earpiece",
   "mobileSdk.audio.deviceSelector.speakerPhone": "Speaker phone",
   "mobileSdk.audio.deviceSelector.bluetooth": "Bluetooth",
-  "mobileSdk.audio.deviceSelector.wiredHeadset": "Wired headset"
+  "mobileSdk.audio.deviceSelector.wiredHeadset": "Wired headset",
+  "mobileSdk.upload.notification.header": "A file was uploaded:",
+  "mobileSdk.upload.notification.disclaimer": "In case you want to open this file, try using the web version."
 }

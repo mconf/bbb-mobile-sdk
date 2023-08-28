@@ -14,6 +14,15 @@ export function useChatMsgs() {
       // replace html character entities
       const filteredMsg = he.decode(message?.message).replaceAll('<br/>', '');
 
+      // if is a 'upload media' message - MCONF EXCLUSIVE
+      if (message.id.toString().includes('SYSTEM_MESSAGE-PUBLIC_CHAT_MEDIA_UPLOAD')) {
+        return {
+          timestamp: message.timestamp,
+          author: t('app.toast.chat.system'),
+          message: `${t('mobileSdk.upload.notification.header')} ${message?.extra?.filename}\n\n${t('mobileSdk.upload.notification.disclaimer')}`,
+        };
+      }
+
       // if is a 'question' message - MCONF EXCLUSIVE
       if (message.id.toString().includes('SYSTEM_MESSAGE-PUBLIC_CHAT_QUESTION')) {
         return {
