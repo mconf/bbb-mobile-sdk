@@ -27,7 +27,7 @@ const ReceivingAnswers = () => {
   }, [currentUserObj]);
 
   const handleViewerAnswers = () => {
-    const noPollLocale = currentPollObj?.questionType === 'CUSTOM' || 'R-';
+    const noPollLocale = currentPollObj?.questionType === 'CUSTOM' || currentPollObj?.questionType === 'R-';
 
     return (
       <>
