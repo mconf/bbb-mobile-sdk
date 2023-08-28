@@ -137,5 +137,7 @@
   "mobileSdk.audio.deviceSelector.earpiece": "Alto-falante do ouvido",
   "mobileSdk.audio.deviceSelector.speakerPhone": "Alto-falante",
   "mobileSdk.audio.deviceSelector.bluetooth": "Bluetooth",
-  "mobileSdk.audio.deviceSelector.wiredHeadset": "Fone com fio"
+  "mobileSdk.audio.deviceSelector.wiredHeadset": "Fone com fio",
+  "mobileSdk.upload.notification.header": "Um arquivo foi carregado:",
+  "mobileSdk.upload.notification.disclaimer": "Caso você queira abrir este arquivo, tente usar a versão web."
 }
