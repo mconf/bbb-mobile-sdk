@@ -1,15 +1,18 @@
 import { View } from 'react-native';
+import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import Styled from './styles';
+import { trigDetailedInfo } from '../../../../store/redux/slices/wide-app/layout';
 
 const PreviousPollCard = (props) => {
   const { pollObj } = props;
   const timestamp = new Date(parseInt(pollObj.id.split('/')[2], 10));
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const noPollLocale = pollObj?.questionType === 'CUSTOM' || pollObj?.questionType === 'R-';
 
   return (
-    <Styled.ContainerPollCard>
+    <Styled.ContainerPollCard onPress={() => dispatch(trigDetailedInfo())}>
       <Styled.QuestionText>
         {pollObj.questionText === ''
           ? t('mobileSdk.poll.noQuestionTextProvided')
