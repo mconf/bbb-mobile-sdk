@@ -6,7 +6,7 @@ const PreviousPollCard = (props) => {
   const { pollObj } = props;
   const timestamp = new Date(parseInt(pollObj.id.split('/')[2], 10));
   const { t } = useTranslation();
-  const noPollLocale = pollObj?.questionType === 'CUSTOM' || 'R-';
+  const noPollLocale = pollObj?.questionType === 'CUSTOM' || pollObj?.questionType === 'R-';
 
   return (
     <Styled.ContainerPollCard>

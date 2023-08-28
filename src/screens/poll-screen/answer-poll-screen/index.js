@@ -51,7 +51,7 @@ const AnswerPollScreen = () => {
   );
 
   const handleTypeOfAnswer = () => {
-    const noPollLocale = activePollObject?.pollType === 'CUSTOM' || 'R-';
+    const noPollLocale = activePollObject?.pollType === 'CUSTOM' || activePollObject?.pollType === 'R-';
 
     // 'R-' === custom input
     if (activePollObject?.pollType === 'R-') {
