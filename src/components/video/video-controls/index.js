@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { Alert, View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
-import _ from 'lodash';
+import useDebounce from '../../../hooks/use-debounce';
 import IconButtonComponent from '../../icon-button';
 import Colors from '../../../constants/colors';
 import VideoManager from '../../../services/webrtc/video-manager';
@@ -46,21 +46,17 @@ const VideoControls = (props) => {
     );
   };
 
-  const debouncedButtonPress = _.debounce(
-    () => {
-      if (!camDisabled) {
-        if (isActive) {
-          VideoManager.unpublish(localCameraId);
-        } else {
-          publishCamera();
-        }
+  const onButtonPress = useDebounce(() => {
+    if (!camDisabled) {
+      if (isActive) {
+        VideoManager.unpublish(localCameraId);
       } else {
-        fireDisabledCamAlert();
+        publishCamera();
       }
-    },
-    250,
-    { leading: false, trailing: true }
-  );
+    } else {
+      fireDisabledCamAlert();
+    }
+  }, 1000);
 
   const publishCamera = () => {
     VideoManager.publish({ mediaServer }).catch((error) => {
@@ -144,7 +140,7 @@ const VideoControls = (props) => {
         iconColor={iconColor}
         containerColor={isActive ? Colors.blue : Colors.lightGray100}
         animated
-        onPress={debouncedButtonPress}
+        onPress={onButtonPress}
       />
       <Styled.LoadingWrapper pointerEvents="none">
         <ActivityIndicator
