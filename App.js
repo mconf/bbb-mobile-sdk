@@ -143,8 +143,6 @@ const AppContent = ({
       if (Platform.OS === 'android') {
         InCallManager.chooseAudioRoute('SPEAKER_PHONE');
       }
-      // Activate expo-keep-awake
-      activateKeepAwakeAsync();
       // Start/show the notification foreground service
       const getChannelIdAndDisplayNotification = async () => {
         // Request permissions (required for iOS)
