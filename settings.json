@@ -6,11 +6,11 @@
   "showLanguageScreen": true,
   "clientLog": {
     "server": {
-      "enabled": true,
+      "enabled": false,
       "level": "debug"
     },
     "console": {
-      "enabled": true,
+      "enabled": false,
       "level": "debug"
     },
     "external": {

@@ -132,7 +132,7 @@ export default class WebRtcPeer extends EventEmitter2 {
     this.logger.debug({
       logCode: 'BBB::WebRtcPeer::signalingstatechange',
       extraInfo: { ...this._logMetadata, signalingState },
-    }, 'BBB::WebRtcPeer::signalingstatechange');
+    }, `BBB::WebRtcPeer::signalingstatechange ${signalingState}`);
     this.emit('signalingstatechange', signalingState);
   }
 
@@ -141,7 +141,7 @@ export default class WebRtcPeer extends EventEmitter2 {
     this.logger.debug({
       logCode: 'BBB::WebRtcPeer::oniceconnectionstatechange',
       extraInfo: { ...this._logMetadata, iceConnectionState },
-    }, 'BBB::WebRtcPeer::oniceconnectionstatechange');
+    }, `BBB::WebRtcPeer::oniceconnectionstatechange, ${iceConnectionState}`);
     this.emit('iceconnectionstatechange', iceConnectionState);
   }
 
@@ -150,7 +150,7 @@ export default class WebRtcPeer extends EventEmitter2 {
     this.logger.debug({
       logCode: 'BBB::WebRtcPeer::onconnectionstatechange',
       extraInfo: { ...this._logMetadata, connectionState },
-    }, 'BBB::WebRtcPeer::onconnectionstatechange');
+    }, `BBB::WebRtcPeer::onconnectionstatechange ${connectionState}`);
     this.emit('connectionstatechange', connectionState);
   }
 
@@ -178,7 +178,7 @@ export default class WebRtcPeer extends EventEmitter2 {
           errorName: error.name,
           errorMessage: error.message,
         },
-      }, 'BBB::WebRtcPeer::mediaStreamFactory - gUM failed');
+      }, `BBB::WebRtcPeer::mediaStreamFactory - gUM failed: ${error.name || error.message}`);
       throw error;
     });
   }
@@ -377,7 +377,7 @@ export default class WebRtcPeer extends EventEmitter2 {
           errorName: error.name,
           errorMessage: error.message,
         },
-      }, 'BBB::WebRtcPeer::processAnswer::setRemoteDescription - failed');
+      }, `BBB::WebRtcPeer::processAnswer::setRemoteDescription - failed = ${error.message || error.name}`);
 
       throw error;
     });
@@ -404,7 +404,7 @@ export default class WebRtcPeer extends EventEmitter2 {
           logCode: 'BBB::WebRtcPeer::processOffer::setRemoteDescription',
           extraInfo: this._logMetadata,
         }, 'BBB::WebRtcPeer::processOffer - Remote description set');
-        return this.peerConnection.createAnswer()
+        return this.peerConnection.createAnswer();
       })
       .then((answer) => {
         this.logger.debug({
@@ -459,7 +459,7 @@ export default class WebRtcPeer extends EventEmitter2 {
           errorName: error.name,
           errorMessage: error.message,
         },
-      }, 'Dispose peer failed');
+      }, `Dispose peer failed = ${error.message || error.name}`);
     }
 
     this.removeAllListeners();

@@ -8,7 +8,7 @@ import { setBreakoutData } from '../../store/redux/slices/wide-app/client';
 import { useOrientation } from '../../hooks/use-orientation';
 import AudioManager from '../../services/webrtc/audio-manager';
 import VideoManager from '../../services/webrtc/video-manager';
-import withPortal from '../../components/high-order/with-portal';
+import ScreenWrapper from '../../components/screen-wrapper';
 import BreakoutRoomService from './service';
 import Styled from './styles';
 
@@ -149,19 +149,18 @@ const BreakoutRoomScreen = () => {
   }
 
   return (
-    <Provider>
-      <Styled.ContainerView orientation={orientation}>
-        <Styled.Block orientation={orientation}>
-          {renderMenuView()}
-          {renderJoinedRoomsView()}
-          {renderNotJoinedRoomsView()}
-        </Styled.Block>
-        <Styled.ActionsBarContainer orientation={orientation}>
-          <Styled.ActionsBar orientation={orientation} />
-        </Styled.ActionsBarContainer>
-      </Styled.ContainerView>
-    </Provider>
+    <ScreenWrapper>
+      <Provider>
+        <Styled.ContainerView orientation={orientation}>
+          <Styled.Block orientation={orientation}>
+            {renderMenuView()}
+            {renderJoinedRoomsView()}
+            {renderNotJoinedRoomsView()}
+          </Styled.Block>
+        </Styled.ContainerView>
+      </Provider>
+    </ScreenWrapper>
   );
 };
 
-export default withPortal(BreakoutRoomScreen);
+export default BreakoutRoomScreen;

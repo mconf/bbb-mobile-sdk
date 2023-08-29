@@ -140,5 +140,12 @@
   "mobileSdk.notification.breakoutsStarted.title": "Group rooms started",
   "mobileSdk.notification.breakoutsStarted.subtitle": "Click here to go to the group rooms list",
   "mobileSdk.question.answering": "This question was answered by audio...",
-  "mobileSdk.question.answer": "Answer:"
+  "mobileSdk.question.answer": "Answer:",
+  "mobileSdk.audio.deviceSelector.title": "Audio device selector",
+  "mobileSdk.audio.deviceSelector.earpiece": "Earpiece",
+  "mobileSdk.audio.deviceSelector.speakerPhone": "Speaker phone",
+  "mobileSdk.audio.deviceSelector.bluetooth": "Bluetooth",
+  "mobileSdk.audio.deviceSelector.wiredHeadset": "Wired headset",
+  "mobileSdk.upload.notification.header": "A file was uploaded:",
+  "mobileSdk.upload.notification.disclaimer": "In case you want to open this file, try using the web version."
 }

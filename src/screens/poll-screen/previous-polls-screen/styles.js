@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
+import button from '../../../components/button';
 import Colors from '../../../constants/colors';
-import actionsBar from '../../../components/actions-bar';
 
 const Title = styled.Text`
   font-size: 24px;
@@ -19,12 +19,12 @@ const NoPollText = styled.Text`
 
 const ContainerViewPadding = styled.View`
   padding: 12px;
+  background-color: white;
+  border-radius: 16px;
 `;
 
 const ContainerPollCard = styled.ScrollView`
-  background-color: ${Colors.white};
   width: 100%;
-  max-height: 85%;
   border-radius: 12px;
   display: flex;
 `;
@@ -44,25 +44,14 @@ const ContainerView = styled.View`
   `}
 `;
 
-const ActionsBarContainer = styled.View`
-  width: 100%;
-  height: 10%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  ${({ orientation }) => orientation === 'LANDSCAPE'
-  && `
-      width: 10%;
-      height: 100%;
-  `}
-`;
-
-const ActionsBar = styled(actionsBar)`
-  ${({ orientation }) => orientation === 'LANDSCAPE'
-  && `
-      flex-direction: column;
-      display: flex;
-  `}
+const ReturnButton = styled(button)`
+  background-color: ${Colors.blue};
+  color: ${Colors.white};
+  font-size: 16px;
+  font-weight: 400;
+  padding: 12px;
+  margin-bottom: 16px;
+  border-radius: 12px;
 `;
 
 export default {
@@ -71,6 +60,5 @@ export default {
   ContainerViewPadding,
   ContainerPollCard,
   ContainerView,
-  ActionsBarContainer,
-  ActionsBar
+  ReturnButton,
 };
