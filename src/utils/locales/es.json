@@ -135,6 +135,13 @@
     "mobileSdk.notification.pollStarted.subtitle": "Haga clic aquí para responder",
     "mobileSdk.question.answering": "Esta pregunta fue respondida por audio...",
     "mobileSdk.question.answer": "Respuesta:",
+    "mobileSdk.audio.deviceSelector.title": "Seletor de áudio",
+    "mobileSdk.audio.deviceSelector.earpiece": "Alto-falante do ouvido",
+    "mobileSdk.audio.deviceSelector.speakerPhone": "Alto-falante",
+    "mobileSdk.audio.deviceSelector.bluetooth": "Bluetooth",
+    "mobileSdk.audio.deviceSelector.wiredHeadset": "Fone com fio",
+    "mobileSdk.upload.notification.header": "Se subió un archivo:",
+    "mobileSdk.upload.notification.disclaimer": "En caso de que quieras abrir este archivo, intenta usar la versión web.",
     "mobileSdk.notification.breakoutsStarted.title": "Iniciaron grupos de trabajo",
     "mobileSdk.notification.breakoutsStarted.subtitle": "Clic aquí para ir grupos de trabajo"
 }

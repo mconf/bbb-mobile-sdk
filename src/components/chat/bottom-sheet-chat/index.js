@@ -2,10 +2,12 @@ import {
   useCallback, useRef, useMemo, useState
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHeaderHeight } from '@react-navigation/elements';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 import { Pressable, KeyboardAvoidingView, Platform } from 'react-native';
 import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
+import { useBottomSheetBackHandler } from '../../../hooks/useBottomSheetBackHandler';
 import { hasUnreadMessages, setBottomChatOpen } from '../../../store/redux/slices/wide-app/chat';
 import UserAvatar from '../../user-avatar';
 import IconButtonComponent from '../../icon-button';
@@ -13,10 +15,10 @@ import { useChatMsgs } from '../../../hooks/selectors/chat/use-chat-msgs';
 import ChatService from '../service';
 import Colors from '../../../constants/colors';
 import Styled from './styles';
-import { useBottomSheetBackHandler } from '../../../hooks/useBottomSheetBackHandler';
 
 const BottomSheetChat = () => {
   const messages = useChatMsgs();
+  const height = useHeaderHeight();
   const reverseMessages = messages.reverse();
   const navigation = useNavigation();
   const { t } = useTranslation();
@@ -105,12 +107,14 @@ const BottomSheetChat = () => {
 
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          keyboardVerticalOffset={135}
+          keyboardVerticalOffset={height + 47}
+          enabled
         >
           <Styled.SendMessageContainer>
             <Styled.TextInput
               label={t('app.chat.submitLabel')}
               onChangeText={(newText) => setMessageText(newText)}
+              multiline
               value={messageText}
             />
             <IconButtonComponent

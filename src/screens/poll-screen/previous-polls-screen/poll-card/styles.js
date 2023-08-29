@@ -1,12 +1,10 @@
 import styled from 'styled-components/native';
 import Colors from '../../../../constants/colors';
 
-const ContainerPollCard = styled.ScrollView`
+const ContainerPollCard = styled.Pressable`
   background-color: ${Colors.white};
   width: 100%;
-  max-height: 85%;
   border-radius: 12px;
-  border: ${Colors.blue} solid 2px;
   margin: 16px 0;
   padding: 8px;
   display: flex;

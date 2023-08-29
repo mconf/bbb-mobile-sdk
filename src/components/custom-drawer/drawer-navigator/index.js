@@ -14,6 +14,7 @@ import TestComponentsScreen from '../../../screens/test-components-screen';
 import BreakoutRoomScreen from '../../../screens/breakout-room-screen';
 import MainConferenceScreen from '../../../screens/main-conference-screen';
 import SelectLanguageScreen from '../../../screens/select-language-screen';
+import FullscreenWrapperScreen from '../../../screens/fullscreen-wrapper-screen';
 import InsideBreakoutRoomScreen from '../../../screens/inside-breakout-room-screen';
 import Colors from '../../../constants/colors';
 import Styled from './styles';
@@ -261,6 +262,15 @@ const DrawerNavigator = ({
         }}
       />
       )}
+
+      <Drawer.Screen
+        name="FullscreenWrapperScreen"
+        component={FullscreenWrapperScreen}
+        options={{
+          headerShown: false,
+          drawerItemStyle: { display: 'none' },
+        }}
+      />
 
       <Drawer.Screen
         name="InsideBreakoutRoomScreen"
