@@ -6,7 +6,7 @@ import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Menu, Provider } from 'react-native-paper';
 import { useOrientation } from '../../hooks/use-orientation';
-import withPortal from '../../components/high-order/with-portal';
+import ScreenWrapper from '../../components/screen-wrapper';
 import { selectWaitingUsers } from '../../store/redux/slices/guest-users';
 import { selectMainUsers } from '../../store/redux/slices/users';
 import { isModerator, selectCurrentUserId } from '../../store/redux/slices/current-user';
@@ -16,15 +16,19 @@ import Colors from '../../constants/colors';
 import Styled from './styles';
 
 const UserParticipantsScreen = () => {
-  const [showMenu, setShowMenu] = useState(false);
-  const [selectedUser, setSelectedUser] = useState({});
-  const [menuAnchor, setMenuAnchor] = useState({ x: 0, y: 0 });
+  const usersStore = useSelector((state) => state.usersCollection);
   const amIModerator = useSelector(isModerator);
   const mainUsers = useSelector(selectMainUsers);
   const myUserId = useSelector(selectCurrentUserId);
   const pendingUsers = useSelector(selectWaitingUsers);
+
+  const [showMenu, setShowMenu] = useState(false);
+  const [selectedUser, setSelectedUser] = useState({});
+  const [menuAnchor, setMenuAnchor] = useState({ x: 0, y: 0 });
   const meetingIsBreakout = useSelector(isBreakout);
+
   const { t } = useTranslation();
+  const orientation = useOrientation();
   const navigation = useNavigation();
 
   const handleUsersName = useCallback(
@@ -39,8 +43,6 @@ const UserParticipantsScreen = () => {
     }),
     [mainUsers]
   );
-
-  const orientation = useOrientation();
 
   const onIconPress = (event, item, isMe) => {
     const { nativeEvent } = event;
@@ -134,19 +136,18 @@ const UserParticipantsScreen = () => {
   };
 
   return (
-    <Provider>
-      <Styled.ContainerView orientation={orientation}>
-        <Styled.Block orientation={orientation}>
-          {amIModerator && !meetingIsBreakout && renderGuestPolicy()}
-          <Styled.FlatList data={handleUsersName()} renderItem={renderItem} />
-          {renderMenuView()}
-        </Styled.Block>
-        <Styled.ActionsBarContainer orientation={orientation}>
-          <Styled.ActionsBar orientation={orientation} />
-        </Styled.ActionsBarContainer>
-      </Styled.ContainerView>
-    </Provider>
+    <ScreenWrapper>
+      <Provider>
+        <Styled.ContainerView orientation={orientation}>
+          <Styled.Block orientation={orientation}>
+            {amIModerator && !meetingIsBreakout && renderGuestPolicy()}
+            <Styled.FlatList data={handleUsersName()} renderItem={renderItem} />
+            {renderMenuView()}
+          </Styled.Block>
+        </Styled.ContainerView>
+      </Provider>
+    </ScreenWrapper>
   );
 };
 
-export default withPortal(UserParticipantsScreen);
+export default UserParticipantsScreen;

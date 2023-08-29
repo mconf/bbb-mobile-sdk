@@ -137,5 +137,12 @@
   "mobileSdk.notification.breakoutsStarted.title": "Salas de grupo iniciadas",
   "mobileSdk.notification.breakoutsStarted.subtitle": "Clique aqui ir para as salas de grupo",
   "mobileSdk.question.answering": "Essa pergunta foi respondida por áudio...",
-  "mobileSdk.question.answer": "Resposta:"
+  "mobileSdk.question.answer": "Resposta:",
+  "mobileSdk.audio.deviceSelector.title": "Seletor de áudio",
+  "mobileSdk.audio.deviceSelector.earpiece": "Alto-falante do ouvido",
+  "mobileSdk.audio.deviceSelector.speakerPhone": "Alto-falante",
+  "mobileSdk.audio.deviceSelector.bluetooth": "Bluetooth",
+  "mobileSdk.audio.deviceSelector.wiredHeadset": "Fone com fio",
+  "mobileSdk.upload.notification.header": "Um arquivo foi carregado:",
+  "mobileSdk.upload.notification.disclaimer": "Caso você queira abrir este arquivo, tente usar a versão web."
 }

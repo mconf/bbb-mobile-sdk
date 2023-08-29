@@ -6,7 +6,6 @@ import {
   setFocusedElement,
   setFocusedId,
   setIsFocused,
-  trigDetailedInfo
 } from '../../store/redux/slices/wide-app/layout';
 import Styled from './styles';
 
@@ -44,7 +43,7 @@ const ContentArea = (props) => {
     dispatch(setIsFocused(true));
     dispatch(setFocusedId(handleSlideAndPresentationActive()));
     dispatch(setFocusedElement('contentArea'));
-    navigation.navigate('FullscreenWrapper');
+    navigation.navigate('FullscreenWrapperScreen');
   };
 
   // ** Content area views methods **
@@ -73,7 +72,7 @@ const ContentArea = (props) => {
   }
 
   return (
-    <Styled.ContentAreaPressable onPress={() => dispatch(trigDetailedInfo())}>
+    <Styled.ContentAreaPressable>
       {!screenshare && presentationView()}
       {screenshare && screenshareView()}
       {detailedInfo && (

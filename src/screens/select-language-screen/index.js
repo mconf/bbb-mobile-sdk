@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useOrientation } from '../../hooks/use-orientation';
-import withPortal from '../../components/high-order/with-portal';
+import ScreenWrapper from '../../components/screen-wrapper';
 import logger from '../../services/logger';
 import Styled from './styles';
 
@@ -51,15 +51,14 @@ const SelectLanguageScreen = () => {
   };
 
   return (
-    <Styled.ContainerView orientation={orientation}>
-      <Styled.Block orientation={orientation}>
-        <Styled.FlatList data={languages} renderItem={renderItem} />
-      </Styled.Block>
-      <Styled.ActionsBarContainer orientation={orientation}>
-        <Styled.ActionsBar orientation={orientation} />
-      </Styled.ActionsBarContainer>
-    </Styled.ContainerView>
+    <ScreenWrapper>
+      <Styled.ContainerView orientation={orientation}>
+        <Styled.Block orientation={orientation}>
+          <Styled.FlatList data={languages} renderItem={renderItem} />
+        </Styled.Block>
+      </Styled.ContainerView>
+    </ScreenWrapper>
   );
 };
 
-export default withPortal(SelectLanguageScreen);
+export default SelectLanguageScreen;

@@ -126,18 +126,26 @@ class AudioManager {
 
   _attachProgressListeners(bridge) {
     bridge.onended = () => {
-      this.logger.info({ logCode: 'audio_ended' }, 'Audio ended without issue');
+      const clientSessionNumber = bridge?.clientSessionNumber || 'Unknown';
+      this.logger.info({
+        logCode: 'audio_ended',
+        clientSessionNumber,
+        role: bridge?.role || 'Unknown',
+      }, `Audio ended (${clientSessionNumber})`);
       this.onAudioExit(bridge);
     };
 
     bridge.onerror = (error) => {
+      const clientSessionNumber = bridge?.clientSessionNumber || 'Unknown';
       this.logger.error({
         logCode: 'audio_failure',
         extraInfo: {
+          clientSessionNumber,
           errorCode: error.code,
           errorMessage: error.message,
+          role: bridge?.role || 'Unknown',
         },
-      }, `Audio error - errorCode=${error.code}, cause=${error.message}`);
+      }, `Audio error (${clientSessionNumber}) - errorCode=${error.code}, cause=${error.message}`);
     };
 
     bridge.onstart = () => {
@@ -227,16 +235,19 @@ class AudioManager {
 
   // Connected, but needs acknowledgement from call states to be flagged as joined
   onAudioConnected(bridge) {
+    const role = bridge?.role || 'Unknown';
+    const clientSessionNumber = bridge?.clientSessionNumber || 'Unknown';
     this.logger.info({
       logCode: 'audio_connected',
       extraInfo: {
-        clientSessionNumber: bridge?.clientSessionNumber,
+        clientSessionNumber,
+        role,
       },
-    }, 'Audio connected');
+    }, `Audio connected (${clientSessionNumber})`);
 
     // Listen only doesn't wait for server side confirmation to flag join, so
     // do it once connected.
-    if (bridge?.role === 'recvonly') this.onAudioJoin(bridge?.clientSessionNumber);
+    if (role === 'recvonly') this.onAudioJoin(bridge?.clientSessionNumber);
   }
 
   // This is called:
@@ -244,6 +255,8 @@ class AudioManager {
   // b) via this.onAudioConected when using listen only
   // c) via this.onAudioReconnected when reconnecting
   onAudioJoin(clientSessionNumber) {
+    // Ignore the linter - the equality check is supposed to be `==`
+    // DO NOT CHANGE - prlanzarin
     if (clientSessionNumber == this.bridge?.clientSessionNumber) {
       store.dispatch(setIsConnected(true));
       store.dispatch(setIsConnecting(false));
@@ -254,15 +267,20 @@ class AudioManager {
       logCode: 'audio_joined',
       extraInfo: {
         clientSessionNumber,
+        role: this.bridge?.role || 'Unknown',
       },
-    }, 'Audio Joined');
+    }, `Audio Joined (${clientSessionNumber})`);
   }
 
   onAudioReconnecting(bridge) {
-    const clientSessionNumber = bridge?.clientSessionNumber;
+    const clientSessionNumber = bridge?.clientSessionNumber || 'Unknown';
     this.logger.info({
       logCode: 'audio_reconnecting',
-    }, 'Audio reconnecting');
+      extraInfo: {
+        clientSessionNumber,
+        role: bridge?.role || 'Unknown',
+      },
+    }, `Audio reconnecting (${clientSessionNumber})`);
 
     if (this.bridge?.clientSessionNumber <= clientSessionNumber) {
       store.dispatch(setIsReconnecting(true));

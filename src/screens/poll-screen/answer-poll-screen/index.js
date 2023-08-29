@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Platform } from 'react-native';
 import { selectActivePoll } from '../../../store/redux/slices/polls';
-import withPortal from '../../../components/high-order/with-portal';
+import ScreenWrapper from '../../../components/screen-wrapper';
 import { useOrientation } from '../../../hooks/use-orientation';
 import PollService from '../service';
 import Styled from './styles';
@@ -51,7 +51,7 @@ const AnswerPollScreen = () => {
   );
 
   const handleTypeOfAnswer = () => {
-    const isCustomPoll = activePollObject?.pollType === 'CUSTOM';
+    const noPollLocale = activePollObject?.pollType === 'CUSTOM' || activePollObject?.pollType === 'R-';
 
     // 'R-' === custom input
     if (activePollObject?.pollType === 'R-') {
@@ -70,7 +70,7 @@ const AnswerPollScreen = () => {
           handleSelectAnswers(question.id);
         }}
       >
-        {isCustomPoll ? question.key : t(`app.poll.answer.${question.key}`.toLowerCase())}
+        {noPollLocale ? question.key : t(`app.poll.answer.${question.key}`.toLowerCase())}
       </Styled.OptionsButton>
     ));
   };
@@ -91,25 +91,23 @@ const AnswerPollScreen = () => {
   );
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <Styled.ContainerView orientation={orientation}>
-        <Styled.ContainerPollCard
-          ref={scrollViewRef}
-          onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
-        >
-          <Styled.ContainerViewPadding>
-            {renderMethod()}
-          </Styled.ContainerViewPadding>
-        </Styled.ContainerPollCard>
-
-        <Styled.ActionsBarContainer orientation={orientation}>
-          <Styled.ActionsBar orientation={orientation} />
-        </Styled.ActionsBarContainer>
-      </Styled.ContainerView>
-    </KeyboardAvoidingView>
+    <ScreenWrapper>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <Styled.ContainerView orientation={orientation}>
+          <Styled.ContainerPollCard
+            ref={scrollViewRef}
+            onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
+          >
+            <Styled.ContainerViewPadding>
+              {renderMethod()}
+            </Styled.ContainerViewPadding>
+          </Styled.ContainerPollCard>
+        </Styled.ContainerView>
+      </KeyboardAvoidingView>
+    </ScreenWrapper>
   );
 };
 
-export default withPortal(AnswerPollScreen);
+export default AnswerPollScreen;
