@@ -85,6 +85,9 @@
     "app.userList.label": "Lista de usuarios",
     "app.userList.menu.demoteUser.label": "Degradar a espectador",
     "app.videoDock.webcamFocusLabel": "Enfocar",
+    "app.createBreakoutRoom.title": "Grupos de trabajo",
+    "app.createBreakoutRoom.askToJoin": "Solicitar unirte",
+    "app.createBreakoutRoom.join": "Unirte",
     "mobileSdk.chat.isEmptyLabel": "El chat está vacío",
     "mobileSdk.endSession.subtitle": "Serás redirigido a la página de inicio en unos segundos",
     "mobileSdk.error.fallback": "Fin inesperado de la sesión, intenta iniciar sesión de nuevo",
@@ -138,5 +141,7 @@
     "mobileSdk.audio.deviceSelector.bluetooth": "Bluetooth",
     "mobileSdk.audio.deviceSelector.wiredHeadset": "Fone com fio",
     "mobileSdk.upload.notification.header": "Se subió un archivo:",
-    "mobileSdk.upload.notification.disclaimer": "En caso de que quieras abrir este archivo, intenta usar la versión web."
+    "mobileSdk.upload.notification.disclaimer": "En caso de que quieras abrir este archivo, intenta usar la versión web.",
+    "mobileSdk.notification.breakoutsStarted.title": "Iniciaron grupos de trabajo",
+    "mobileSdk.notification.breakoutsStarted.subtitle": "Clic aquí para ir grupos de trabajo"
 }

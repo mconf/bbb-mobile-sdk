@@ -33,6 +33,8 @@
 
 ## How to run
 
+    First go to settings.json and flip the flag dev to 'true'
+
     Android:
     $ npx expo run:android
     

@@ -40,6 +40,12 @@ const notificationBarSlice = createSlice({
           state.messageSubtitle = 'mobileSdk.notification.pollStarted.subtitle';
           state.icon = 'poll';
           break;
+        case 'breakoutsStarted':
+          state.isShow = true;
+          state.messageTitle = 'mobileSdk.notification.breakoutsStarted.title';
+          state.messageSubtitle = 'mobileSdk.notification.breakoutsStarted.subtitle';
+          state.icon = 'breakout-room';
+          break;
         default:
       }
     }

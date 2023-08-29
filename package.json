@@ -1,6 +1,6 @@
 {
   "name": "bbbmobile",
-  "version": "0.8.8",
+  "version": "0.9.3",
   "private": true,
   "description": "BigBlueButton mobile sdk",
   "main": "index.js",
@@ -39,6 +39,7 @@
     "@reduxjs/toolkit": "^1.8.3",
     "axios": "^0.27.2",
     "browser-bunyan": "^1.8.0",
+    "bbb-breakout-sdk": "git+https://github.com/mconf/bbb-mobile-sdk.git#breakout-sdk",
     "eas-cli": "^3.10.2",
     "ejson": "^2.2.3",
     "eventemitter2": "^6.4.7",
@@ -46,7 +47,6 @@
     "expo-application": "~5.1.1",
     "expo-av": "~13.2.1",
     "expo-device": "~5.2.1",
-    "expo-keep-awake": "^12.0.1",
     "expo-linking": "~4.0.1",
     "expo-splash-screen": "~0.18.2",
     "expo-status-bar": "~1.4.0",
