@@ -20,7 +20,9 @@ import Colors from '../../../constants/colors';
 import Styled from './styles';
 import usePrevious from '../../../hooks/use-previous';
 import { selectWaitingUsers } from '../../../store/redux/slices/guest-users';
+import { selectRecordMeeting } from '../../../store/redux/slices/record-meetings';
 import logger from '../../../services/logger';
+import RecordingIndicator from '../../recording-indicator'
 
 // components
 import CustomDrawer from '../index';
@@ -39,6 +41,7 @@ const DrawerNavigator = ({
   const meetingData = useSelector((state) => state.client.meetingData);
   const currentUser = useSelector(selectCurrentUser);
   const feedbackEnabled = useSelector((state) => state.client.feedbackEnabled);
+  const recordMeeting = useSelector(selectRecordMeeting);
 
   const guestUsersReady = useSelector((state) => state.guestUsersCollection.ready);
   const pendingUsers = useSelector(selectWaitingUsers);
@@ -143,7 +146,14 @@ const DrawerNavigator = ({
         name="Main"
         component={MainConferenceScreen}
         options={{
-          title: meetingData?.confname || t('mobileSdk.meeting.label'),
+          headerTitle: (props) => (
+            <Styled.HeaderTitleContainer recordMeeting={recordMeeting}>
+              <Styled.HeaderTitleText>
+                {meetingData?.confname || t('mobileSdk.meeting.label')}
+              </Styled.HeaderTitleText>
+              <RecordingIndicator recordMeeting={recordMeeting} {...props} />
+            </Styled.HeaderTitleContainer>
+          ),
           drawerIcon: (config) => (
             <Styled.DrawerIcon
               icon="home"
