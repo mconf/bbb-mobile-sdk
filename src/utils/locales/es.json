@@ -142,6 +142,8 @@
     "mobileSdk.audio.deviceSelector.speakerPhone": "Alto-falante",
     "mobileSdk.audio.deviceSelector.bluetooth": "Bluetooth",
     "mobileSdk.audio.deviceSelector.wiredHeadset": "Fone com fio",
+    "mobileSdk.notificationBar.microphoneOff": "Estás silenciado. Haz clic en el micrófono para activarlo.",
+    "mobileSdk.notificationBar.handsUp": "Tienes la mano levantada.",
     "mobileSdk.upload.notification.header": "Se subió un archivo:",
     "mobileSdk.upload.notification.disclaimer": "En caso de que quieras abrir este archivo, intenta usar la versión web."
 }
