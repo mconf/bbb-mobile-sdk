@@ -146,13 +146,9 @@ const DrawerNavigator = ({
         name="Main"
         component={MainConferenceScreen}
         options={{
-          headerTitle: (props) => (
-            <Styled.HeaderTitleContainer recordMeeting={recordMeeting}>
-              <Styled.HeaderTitleText>
-                {meetingData?.confname || t('mobileSdk.meeting.label')}
-              </Styled.HeaderTitleText>
-              <RecordingIndicator recordMeeting={recordMeeting} {...props} />
-            </Styled.HeaderTitleContainer>
+          title: meetingData?.confname || t('mobileSdk.meeting.label'),
+          headerRight: () => (
+            <RecordingIndicator recordMeeting={recordMeeting} />
           ),
           drawerIcon: (config) => (
             <Styled.DrawerIcon
@@ -170,6 +166,9 @@ const DrawerNavigator = ({
           component={UserNotesScreen}
           options={{
             title: t('app.notes.title'),
+            headerRight: () => (
+              <RecordingIndicator recordMeeting={recordMeeting} />
+            ),
             drawerIcon: (config) => (
               <Styled.DrawerIcon
                 icon="file-document"
@@ -187,6 +186,9 @@ const DrawerNavigator = ({
         component={PollNavigator}
         options={{
           title: t('mobileSdk.poll.label'),
+          headerRight: () => (
+            <RecordingIndicator recordMeeting={recordMeeting} />
+          ),
           drawerIcon: (config) => (
             <Styled.DrawerIcon
               icon="poll"
@@ -203,6 +205,9 @@ const DrawerNavigator = ({
         component={UserParticipantsNavigator}
         options={{
           title: t('app.userList.label'),
+          headerRight: () => (
+            <RecordingIndicator recordMeeting={recordMeeting} />
+          ),
           drawerIcon: (config) => (
             <>
               <Styled.DrawerIcon
@@ -228,6 +233,9 @@ const DrawerNavigator = ({
           component={WhiteboardScreen}
           options={{
             title: t('mobileSdk.whiteboard.label'),
+            headerRight: () => (
+              <RecordingIndicator recordMeeting={recordMeeting} />
+            ),
             drawerIcon: (config) => (
               <Styled.DrawerIcon
                 icon="brush"
@@ -245,6 +253,9 @@ const DrawerNavigator = ({
         component={SelectLanguageScreen}
         options={{
           title: t('mobileSdk.locales.label'),
+          headerRight: () => (
+            <RecordingIndicator recordMeeting={recordMeeting} />
+          ),
           drawerIcon: (config) => (
             <Styled.DrawerIcon
               icon="web"
@@ -262,6 +273,9 @@ const DrawerNavigator = ({
         component={BreakoutRoomScreen}
         options={{
           title: t('app.createBreakoutRoom.title'),
+          headerRight: () => (
+            <RecordingIndicator recordMeeting={recordMeeting} />
+          ),
           drawerIcon: (config) => (
             <Styled.DrawerIcon
               icon="account-group"
@@ -287,6 +301,9 @@ const DrawerNavigator = ({
         component={InsideBreakoutRoomScreen}
         options={{
           title: 'InsideBreakoutScreen',
+          headerRight: () => (
+            <RecordingIndicator recordMeeting={recordMeeting} />
+          ),
           unmountOnBlur: true,
           headerShown: false,
           drawerItemStyle: { display: 'none' },

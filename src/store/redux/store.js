@@ -27,6 +27,7 @@ import chatReducer from './slices/wide-app/chat';
 import notificationBarReducer from './slices/wide-app/notification-bar';
 import layoutReducer from './slices/wide-app/layout';
 import clientReducer, { setSessionTerminated, setConnected, sessionStateChanged }from './slices/wide-app/client';
+import modalReducer from './slices/wide-app/modal';
 // Middlewares
 import {
   screenshareCleanupObserver,
@@ -72,6 +73,7 @@ const appReducer = combineReducers({
   notificationBar: notificationBarReducer,
   layout: layoutReducer,
   client: clientReducer,
+  modal: modalReducer,
 });
 
 const flushStoreObserver = createListenerMiddleware();

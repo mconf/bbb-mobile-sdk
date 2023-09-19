@@ -3,6 +3,7 @@ import { css } from 'styled-components';
 import userAvatar from '../user-avatar';
 import Colors from '../../constants/colors';
 import Pressable from '../pressable';
+import Icon from '@expo/vector-icons/MaterialIcons';
 
 const ViewContainer = styled.View`
   flex: 1;
@@ -50,7 +51,7 @@ const ButtonLeaveContainer = styled(Pressable).attrs(() => ({
 const ViewLeaveContainer = styled.View`
   flex-direction: row;
   align-items: center;
-  padding: 10px;
+  padding: 12px;
   background-color: ${Colors.lightGray100};
   border-radius: 8px;
 `;
@@ -65,10 +66,54 @@ const ViewShareContainer = styled.View`
 const TextLeaveContainer = styled.Text`
   padding-left: 12px;
   color: ${Colors.lightGray400};
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 400;
   text-align: left;
   text-align-vertical: center;
+  padding-left: 14px;
+`;
+
+const ViewRecordContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+  padding: 12px;
+  background-color: ${Colors.lightGray100};
+  border-radius: 8px;
+
+  ${({ recording }) => recording 
+    && `
+      background-color: ${Colors.orange};
+  `}
+`;
+
+const ButtonRecordContainer = styled(Pressable).attrs(() => ({
+  pressStyle: {
+    opacity: 0.8,
+  },
+}))`
+  ${() => css`
+    padding:  5px 10px;
+    background-color: ${Colors.white};
+  `}
+`;
+
+const TextRecordContainer = styled.Text`
+  padding-left: 12px;
+  color: ${Colors.lightGray400};
+  font-size: 17px;
+  font-weight: 400;
+  text-align: left;
+  text-align-vertical: center;
+  padding-left: 14px;
+
+  ${({ recording }) => recording 
+    && `
+      color: ${Colors.white};
+  `}
+`;
+
+const DrawerIcon = styled(Icon)`
+  padding-left: 4px;
 `;
 
 export default {
@@ -82,4 +127,8 @@ export default {
   ViewLeaveContainer,
   TextLeaveContainer,
   ViewShareContainer,
+  ButtonRecordContainer,
+  ViewRecordContainer,
+  TextRecordContainer,
+  DrawerIcon,
 };

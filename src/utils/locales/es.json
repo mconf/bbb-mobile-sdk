@@ -95,6 +95,7 @@
     "app.recording.stopDescription": "¿Está seguro de querer pausar la grabación? Puede continuarla volviendo a presionar el botón de grabación nuevamente.",
     "app.notification.recordingStart": "La sesión está siendo grabada",
     "app.notification.recordingStop": "Esta sesión no está siendo grabada",
+    "app.notification.recordingPaused": "Se ha dejado de grabar la sesión",
     "mobileSdk.chat.isEmptyLabel": "El chat está vacío",
     "mobileSdk.endSession.subtitle": "Serás redirigido a la página de inicio en unos segundos",
     "mobileSdk.error.fallback": "Fin inesperado de la sesión, intenta iniciar sesión de nuevo",

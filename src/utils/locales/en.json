@@ -95,6 +95,7 @@
   "app.recording.stopDescription": "Are you sure you want to pause the recording? You can resume by selecting the record button again.",
   "app.notification.recordingStart": "This session is now being recorded",
   "app.notification.recordingStop": "This session is not being recorded",
+  "app.notification.recordingPaused": "This session is not being recorded anymore",
   "mobileSdk.chat.isEmptyLabel": "Chat is empty",
   "mobileSdk.endSession.subtitle": "Click the button below to be redirected to the homepage",
   "mobileSdk.error.fallback": "Unexpected end of session, try to sign in again",
