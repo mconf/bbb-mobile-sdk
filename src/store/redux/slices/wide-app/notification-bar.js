@@ -40,6 +40,18 @@ const notificationBarSlice = createSlice({
           state.messageSubtitle = 'mobileSdk.notification.pollStarted.subtitle';
           state.icon = 'poll';
           break;
+        case 'recordingStarted':
+          state.isShow = true;
+          state.messageTitle = 'app.notification.recordingStart';
+          state.messageSubtitle = '';
+          state.icon = 'recording-started';
+          break;
+        case 'recordingStopped':
+          state.isShow = true;
+          state.messageTitle = 'app.notification.recordingPaused';
+          state.messageSubtitle = '';
+          state.icon = 'recording-stopped';
+          break;
         default:
       }
     }
