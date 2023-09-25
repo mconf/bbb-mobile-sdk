@@ -104,14 +104,19 @@ const AppContent = ({
   useEffect(() => {
     console.log('FOCUS MOUNTED');
     const onBackPress = () => {
-      Alert.alert(t('app.leaveModal.title'), t('app.leaveModal.desc'), [
-        {
-          text: t('app.settings.main.cancel.label'),
-          onPress: () => { },
-          style: 'cancel',
-        },
-        { text: 'OK', onPress: () => dispatch(leave(api)) },
-      ]);
+      const navigation = navigationRef?.current;
+      if (navigation?.canGoBack()) {
+        navigation?.goBack();
+      } else {
+        Alert.alert(t('app.leaveModal.title'), t('app.leaveModal.desc'), [
+          {
+            text: t('app.settings.main.cancel.label'),
+            onPress: () => { },
+            style: 'cancel',
+          },
+          { text: 'OK', onPress: () => dispatch(leave(api)) },
+        ]);
+      }
 
       return true;
     };
