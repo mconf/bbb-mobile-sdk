@@ -66,6 +66,7 @@ const VideoContainer = (props) => {
         {isGrid && (
         <UserAvatar
           userName={userName}
+          userId={userId}
           userColor={userColor}
           userImage={userAvatar}
           isTalking={isTalking}

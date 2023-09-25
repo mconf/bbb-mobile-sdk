@@ -1,5 +1,6 @@
 import styled from 'styled-components/native';
 import Colors from '../../constants/colors';
+import IconButtonComponent from '../icon-button';
 
 const Background = styled.View`
   width: 52px;
@@ -24,6 +25,16 @@ const Background = styled.View`
           && `
      background-color: ${userColor};
   `}
+`;
+
+const PresenterIcon = styled(IconButtonComponent)`
+  position: absolute;
+  top: -10;
+  left: -10;
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  background-color: ${Colors.white};
 `;
 
 const ImageBackground = styled.Image`
@@ -57,4 +68,5 @@ export default {
   UserName,
   ImageBackground,
   ImageContainer,
+  PresenterIcon,
 };
