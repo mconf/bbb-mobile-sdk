@@ -5,19 +5,43 @@ import {
   DrawerContentScrollView,
   DrawerItemList,
 } from '@react-navigation/drawer';
-import Icon from '@expo/vector-icons/MaterialIcons';
 import Colors from '../../constants/colors';
-import { selectCurrentUser } from '../../store/redux/slices/current-user';
+import { selectCurrentUser, isModerator } from '../../store/redux/slices/current-user';
 import Styled from './styles';
 import * as api from '../../services/api';
 import { leave } from '../../store/redux/slices/wide-app/client';
+import { selectRecordMeeting } from '../../store/redux/slices/record-meetings';
+import { openModal, setActiveModal } from '../../store/redux/slices/wide-app/modal';
+import RecordService from '../modals/recording-confirm-modal/service';
+import { useNavigation, DrawerActions } from '@react-navigation/native';
 
 const CustomDrawer = (props) => {
   const { meetingUrl } = props;
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const currentUserObj = useSelector(selectCurrentUser);
+  const amIModerator = useSelector(isModerator);
   const isBreakout = useSelector((state) => state.client.meetingData.isBreakout);
+  const recordMeeting = useSelector(selectRecordMeeting);
+  const navigation = useNavigation();
+
+  const allowStartStopRecording = recordMeeting?.allowStartStopRecording;
+  const showRecordButton = RecordService.mayIRecord(amIModerator, allowStartStopRecording);
+
+  const handleOpenRecordingModal = () => {
+    dispatch(setActiveModal('recording-confirm'));
+    dispatch(openModal());
+    navigation.dispatch(DrawerActions.toggleDrawer());
+  };
+
+  let recordTitle = '';
+  if (!recordMeeting?.recording) {
+    recordTitle = recordMeeting?.time > 0
+      ? t('app.recording.resumeTitle')
+      : t('app.recording.startTitle')
+  } else {
+    recordTitle = t('app.recording.stopTitle')
+  }
 
   const leaveSession = () => {
     dispatch(leave(api));
@@ -60,21 +84,35 @@ const CustomDrawer = (props) => {
         <Styled.ContainerDrawerItemList>
           <DrawerItemList {...props} />
         </Styled.ContainerDrawerItemList>
+        {showRecordButton && (
+          <Styled.ButtonRecordContainer onPress={() => {handleOpenRecordingModal()}}>
+            <Styled.ViewRecordContainer recording={recordMeeting?.recording}>
+              <Styled.DrawerIcon 
+                name={recordMeeting?.recording ? "pause" : "radio-button-checked"} 
+                color={recordMeeting?.recording ? Colors.white : "#1C1B1F"} 
+                size={24} 
+              />
+              <Styled.TextRecordContainer recording={recordMeeting?.recording}>
+                {recordTitle}
+              </Styled.TextRecordContainer>
+            </Styled.ViewRecordContainer>
+          </Styled.ButtonRecordContainer>
+        )}
       </DrawerContentScrollView>
       <Styled.ContainerCustomButtons>
         {!isBreakout && (
-        <Styled.ButtonLeaveContainer onPress={onClickShare}>
-          <Styled.ViewShareContainer>
-            <Icon name="share" size={24} color="#1C1B1F" />
-            <Styled.TextLeaveContainer>
-              {t('mobileSdk.drawer.shareButtonLabel')}
-            </Styled.TextLeaveContainer>
-          </Styled.ViewShareContainer>
-        </Styled.ButtonLeaveContainer>
+          <Styled.ButtonLeaveContainer onPress={onClickShare}>
+            <Styled.ViewShareContainer>
+              <Styled.DrawerIcon name="share" size={24} color="#1C1B1F" />
+              <Styled.TextLeaveContainer>
+                {t('mobileSdk.drawer.shareButtonLabel')}
+              </Styled.TextLeaveContainer>
+            </Styled.ViewShareContainer>
+          </Styled.ButtonLeaveContainer>
         )}
         <Styled.ButtonLeaveContainer onPress={leaveSession}>
           <Styled.ViewLeaveContainer>
-            <Icon name="logout" size={24} color="#1C1B1F" />
+            <Styled.DrawerIcon name="logout" size={24} color="#1C1B1F" />
             <Styled.TextLeaveContainer>
               {isBreakout ? t('mobileSdk.breakout.leave') : t('app.navBar.settingsDropdown.leaveSessionLabel')}
             </Styled.TextLeaveContainer>
