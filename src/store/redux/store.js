@@ -17,6 +17,7 @@ import videoStreamsReducer from './slices/video-streams';
 import screenshareReducer from './slices/screenshare';
 import guestUsersReducer from './slices/guest-users';
 import breakoutsReducer from './slices/breakouts';
+import recordMeetingsReducer from './slices/record-meetings';
 // app exclusive wide state collections
 import previousPollPublishedReducer from './slices/wide-app/previous-poll-published';
 import audioReducer from './slices/wide-app/audio';
@@ -26,6 +27,7 @@ import chatReducer from './slices/wide-app/chat';
 import notificationBarReducer from './slices/wide-app/notification-bar';
 import layoutReducer from './slices/wide-app/layout';
 import clientReducer, { setSessionTerminated, setConnected, sessionStateChanged }from './slices/wide-app/client';
+import modalReducer from './slices/wide-app/modal';
 // Middlewares
 import {
   screenshareCleanupObserver,
@@ -59,6 +61,7 @@ const appReducer = combineReducers({
   screenshareCollection: screenshareReducer,
   guestUsersCollection: guestUsersReducer,
   breakoutsCollection: breakoutsReducer,
+  recordMeetingsCollection: recordMeetingsReducer,
   // ...other collections
 
   // app exclusive wide state collections
@@ -70,6 +73,7 @@ const appReducer = combineReducers({
   notificationBar: notificationBarReducer,
   layout: layoutReducer,
   client: clientReducer,
+  modal: modalReducer,
 });
 
 const flushStoreObserver = createListenerMiddleware();

@@ -21,6 +21,7 @@ import { SlidesModule } from './modules/slides';
 import { VideoStreamsModule } from './modules/video-streams';
 import { ScreenshareModule } from './modules/screenshare';
 import { GuestUsersModule } from './modules/guest-users';
+import { RecordMeetingsModule } from './modules/record-meetings';
 import {
   getRandomDigits,
   getRandomAlphanumericWithCaps,
@@ -197,7 +198,7 @@ const setupModules = (ws) => {
   const messageSender = new MessageSender(ws, GLOBAL_TRANSACTIONS);
   GLOBAL_MESSAGE_SENDER = messageSender;
 
-  // Mirrors for Meteor collections that area fully implemented
+  // Mirrors for Meteor collections that are fully implemented
   const modules = {
     voiceUsers: new VoiceUsersModule(messageSender),
     voiceCallStates: new VoiceCallStatesModule(messageSender),
@@ -214,6 +215,7 @@ const setupModules = (ws) => {
     users: new UsersModule(messageSender),
     guestUsers: new GuestUsersModule(messageSender),
     breakouts: new BreakoutsModule(messageSender),
+    'record-meetings': new RecordMeetingsModule(messageSender),
   };
 
   /*
@@ -312,7 +314,7 @@ const SocketConnectionComponent = (props) => {
   useEffect(() => {
     if (currentUserReady && currentRole === 'MODERATOR' && previousRole === 'VIEWER') {
       // force resubscribe on role dependent collections
-      ['meetings', 'users', 'guestUsers', 'breakouts'].forEach((module) => {
+      ['meetings', 'users', 'guestUsers', 'breakouts', 'record-meetings'].forEach((module) => {
         modules.current[module].onDisconnected();
         modules.current[module].onConnected();
       });

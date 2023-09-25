@@ -12,6 +12,7 @@ const Colors = {
   contentForegroundColor: '#3B4A5C',
   statusBarConnected: '#00BF6F',
   statusBarConnecting: '#FFC845',
+  dangerDark: '#AE1010',
 };
 
 export default Colors;

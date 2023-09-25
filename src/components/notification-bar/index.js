@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 import { hide } from '../../store/redux/slices/wide-app/notification-bar';
 import Styled from './styles';
+import Colors from '../../constants/colors';
 
 const NotificationBar = () => {
   const dispatch = useDispatch();
@@ -21,6 +22,10 @@ const NotificationBar = () => {
         return <Avatar.Icon size={36} icon="poll" />;
       case 'breakout-room':
         return <Avatar.Icon size={36} icon="account-group" />;
+      case 'recording-started':
+        return <Avatar.Icon size={36} icon="radiobox-marked" color={Colors.orange}/>;
+      case 'recording-stopped':
+        return <Avatar.Icon size={36} icon="radiobox-marked" />;
       // other icons...
       default:
         return null;
