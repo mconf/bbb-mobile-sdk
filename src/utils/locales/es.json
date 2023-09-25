@@ -83,6 +83,7 @@
     "app.userList.guest.denyEveryone": "Denegar a todos",
     "app.userList.guest.noPendingUsers": "Actualmente no hay usuarios pendientes...",
     "app.userList.label": "Lista de usuarios",
+    "app.userList.menu.promoteUser.label": "Promover a moderador",
     "app.userList.menu.demoteUser.label": "Degradar a espectador",
     "app.videoDock.webcamFocusLabel": "Enfocar",
     "mobileSdk.chat.isEmptyLabel": "El chat está vacío",
