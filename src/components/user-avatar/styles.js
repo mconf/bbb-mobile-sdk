@@ -29,8 +29,8 @@ const Background = styled.View`
 
 const PresenterIcon = styled(IconButtonComponent)`
   position: absolute;
-  top: -10;
-  left: -10;
+  top: -10px;
+  left: -10px;
   width: 16px;
   height: 16px;
   border-radius: 3px;
