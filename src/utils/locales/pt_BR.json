@@ -148,5 +148,6 @@
   "mobileSdk.audio.deviceSelector.bluetooth": "Bluetooth",
   "mobileSdk.audio.deviceSelector.wiredHeadset": "Fone com fio",
   "mobileSdk.upload.notification.header": "Um arquivo foi carregado:",
-  "mobileSdk.upload.notification.disclaimer": "Caso você queira abrir este arquivo, tente usar a versão web."
+  "mobileSdk.upload.notification.disclaimer": "Caso você queira abrir este arquivo, tente usar a versão web.",
+  "mobileSdk.notification.recordLabel": "Gravação"
 }
