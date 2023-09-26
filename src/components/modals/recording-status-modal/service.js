@@ -1,4 +1,7 @@
 const humanizeSeconds = (time) => {
+  if (!time) {
+    return '00:00';
+  }
   const minutes = Math.floor(time / 60);
   const seconds = time % 60;
   return [
@@ -9,8 +12,7 @@ const humanizeSeconds = (time) => {
       return `0${x}`;
     }
     return x;
-  },
-  ).join(':');
+  },).join(':');
 };
 
 export default {
