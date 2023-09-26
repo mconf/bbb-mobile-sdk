@@ -39,10 +39,9 @@ const EndSessionScreen = (props) => {
 
   const getImageSize = () => {
     if (orientation === 'LANDSCAPE') {
-      return { width: 150, height: 150 }; // Ajuste para modo paisagem
-    } else {
-      return { width: 250, height: 250 }; // Tamanho padrão
+      return { width: 150, height: 150 };
     }
+    return { width: 250, height: 250 };
   };
 
   const imageSize = getImageSize();

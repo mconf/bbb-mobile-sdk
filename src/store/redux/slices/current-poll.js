@@ -11,8 +11,7 @@ const currentPollSlice = createSlice({
   reducers: {
     addCurrentPoll: (state, action) => {
       const { currentPollObject } = action.payload;
-      state.currentPollCollection[currentPollObject.id] =
-        action.payload.currentPollObject.fields;
+      state.currentPollCollection[currentPollObject.id] = action.payload.currentPollObject.fields;
     },
     removeCurrentPoll: (state, action) => {
       const { currentPollObject } = action.payload;

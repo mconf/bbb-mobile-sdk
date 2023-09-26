@@ -9,7 +9,7 @@ const TestComponentsScreen = (props) => {
   const { jUrl } = props;
   const url = Linking.useURL();
   if (!Settings.dev) {
-    console.log("RENDERED SOCKET CONNECTION", jUrl)
+    console.log('RENDERED SOCKET CONNECTION', jUrl);
     return (
       <SocketConnection jUrl={jUrl} />
     );
