@@ -16,6 +16,17 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: ['react', '@babel'],
+  ignorePatterns: [
+    // build files
+    '**/lib/**',
+    '**/ios/**',
+    '**/node_modules/**',
+    '**/ios/**',
+    '**/android/**',
+
+    // services stuffs - WEBRTC/logger/api
+    '**/src/services/**',
+  ],
   rules: {
     'react/jsx-filename-extension': [
       'warn',
