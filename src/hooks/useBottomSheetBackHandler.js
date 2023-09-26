@@ -4,7 +4,8 @@ import { useFocusEffect } from '@react-navigation/native';
 
 /**
  * hook that dismisses the bottom sheet on the hardware back button press
- * @param bottomSheetRef ref to the bottom sheet which is going to be closed/dismissed on the back press
+ * @param bottomSheetRef
+ * ref to the bottom sheet which is going to be closed/dismissed on the back press
  */
 export const useBottomSheetBackHandler = (
   bottomSheetOpen,

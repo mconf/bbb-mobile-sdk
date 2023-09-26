@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 // UNUSED SCREEN FOR NOW
 
 import { useState } from 'react';

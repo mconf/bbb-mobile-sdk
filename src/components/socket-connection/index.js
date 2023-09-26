@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Text, View } from 'react-native';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import * as Linking from 'expo-linking';
+import { useNavigation } from '@react-navigation/native';
 import Settings from '../../../settings.json';
 import { UsersModule } from './modules/users';
 import { GroupChatModule } from './modules/group-chat';
@@ -270,7 +269,6 @@ const terminate = (ws, modules) => {
 const SocketConnectionComponent = (props) => {
   // jUrl === join Url from portal
   const { jUrl } = props;
-  const urlViaLinking = Linking.useURL();
   const websocket = useRef(null);
   const modules = useRef({});
   const validateReqId = useRef(null);
