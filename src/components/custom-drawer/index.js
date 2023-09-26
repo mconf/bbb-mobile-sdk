@@ -4,6 +4,7 @@ import { Share } from 'react-native';
 import {
   DrawerContentScrollView,
   DrawerItemList,
+  DrawerItem,
 } from '@react-navigation/drawer';
 import { useNavigation, DrawerActions } from '@react-navigation/native';
 import Colors from '../../constants/colors';
@@ -84,38 +85,43 @@ const CustomDrawer = (props) => {
           <DrawerItemList {...props} />
         </Styled.ContainerDrawerItemList>
         {showRecordButton && (
-          <Styled.ButtonRecordContainer onPress={() => { handleOpenRecordingModal(); }}>
-            <Styled.ViewRecordContainer recording={recordMeeting?.recording}>
+        <Styled.ContainerCustomButtonsInsideScrollview>
+          <DrawerItem
+            label={recordTitle}
+            labelStyle={recordMeeting?.recording ? Styled.TextButtonActive : Styled.TextButtonLabel}
+            onPress={handleOpenRecordingModal}
+            inactiveTintColor={recordMeeting?.recording ? Colors.orange : Colors.lightGray400}
+            inactiveBackgroundColor={recordMeeting?.recording ? Colors.orange : Colors.lightGray100}
+            icon={() => (
               <Styled.DrawerIcon
                 name={recordMeeting?.recording ? 'pause' : 'radio-button-checked'}
                 color={recordMeeting?.recording ? Colors.white : '#1C1B1F'}
                 size={24}
               />
-              <Styled.TextRecordContainer recording={recordMeeting?.recording}>
-                {recordTitle}
-              </Styled.TextRecordContainer>
-            </Styled.ViewRecordContainer>
-          </Styled.ButtonRecordContainer>
+            )}
+          />
+        </Styled.ContainerCustomButtonsInsideScrollview>
         )}
       </DrawerContentScrollView>
-      <Styled.ContainerCustomButtons>
-        <Styled.ButtonLeaveContainer onPress={onClickShare}>
-          <Styled.ViewShareContainer>
-            <Styled.DrawerIcon name="share" size={24} color="#1C1B1F" />
-            <Styled.TextLeaveContainer>
-              {t('mobileSdk.drawer.shareButtonLabel')}
-            </Styled.TextLeaveContainer>
-          </Styled.ViewShareContainer>
-        </Styled.ButtonLeaveContainer>
-        <Styled.ButtonLeaveContainer onPress={leaveSession}>
-          <Styled.ViewLeaveContainer>
-            <Styled.DrawerIcon name="logout" size={24} color="#1C1B1F" />
-            <Styled.TextLeaveContainer>
-              {t('app.navBar.settingsDropdown.leaveSessionLabel')}
-            </Styled.TextLeaveContainer>
-          </Styled.ViewLeaveContainer>
-        </Styled.ButtonLeaveContainer>
-      </Styled.ContainerCustomButtons>
+      <Styled.ContainerCustomBottomButtons>
+        <DrawerItem
+          label={t('mobileSdk.drawer.shareButtonLabel')}
+          labelStyle={Styled.TextButtonLabel}
+          onPress={onClickShare}
+          inactiveTintColor={Colors.lightGray400}
+          inactiveBackgroundColor={Colors.lightGray100}
+          icon={() => <Styled.DrawerIcon name="share" size={24} color="#1C1B1F" />}
+        />
+
+        <DrawerItem
+          label={t('app.navBar.settingsDropdown.leaveSessionLabel')}
+          labelStyle={Styled.TextButtonLabel}
+          onPress={leaveSession}
+          inactiveTintColor={Colors.lightGray400}
+          inactiveBackgroundColor={Colors.lightGray100}
+          icon={() => <Styled.DrawerIcon name="logout" size={24} color="#1C1B1F" />}
+        />
+      </Styled.ContainerCustomBottomButtons>
     </Styled.ViewContainer>
   );
 };

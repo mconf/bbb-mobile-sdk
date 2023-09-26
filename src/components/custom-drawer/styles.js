@@ -34,8 +34,12 @@ const ContainerDrawerItemList = styled.View`
   padding-top: 10px;
 `;
 
-const ContainerCustomButtons = styled.View`
+const ContainerCustomBottomButtons = styled.View`
   padding-bottom:  5%;
+`;
+
+const ContainerCustomButtonsInsideScrollview = styled.View`
+  background-color: white;
 `;
 
 const ButtonLeaveContainer = styled(Pressable).attrs(() => ({
@@ -63,72 +67,39 @@ const ViewShareContainer = styled.View`
   border-radius: 8px;
 `;
 
-const TextLeaveContainer = styled.Text`
-  padding-left: 12px;
-  color: ${Colors.lightGray400};
-  font-size: 17px;
-  font-weight: 400;
-  text-align: left;
-  text-align-vertical: center;
-  padding-left: 14px;
-`;
+const TextButtonLabel = {
+  paddingLeft: 12,
+  color: Colors.lightGray400,
+  fontSize: 16,
+  fontWeight: 400,
+  textAlign: 'left',
+};
 
-const ViewRecordContainer = styled.View`
-  flex-direction: row;
-  align-items: center;
-  padding: 12px;
-  background-color: ${Colors.lightGray100};
-  border-radius: 8px;
-
-  ${({ recording }) => recording
-    && `
-      background-color: ${Colors.orange};
-  `}
-`;
-
-const ButtonRecordContainer = styled(Pressable).attrs(() => ({
-  pressStyle: {
-    opacity: 0.8,
-  },
-}))`
-  ${() => css`
-    padding:  5px 10px;
-    background-color: ${Colors.white};
-  `}
-`;
-
-const TextRecordContainer = styled.Text`
-  padding-left: 12px;
-  color: ${Colors.lightGray400};
-  font-size: 17px;
-  font-weight: 400;
-  text-align: left;
-  text-align-vertical: center;
-  padding-left: 14px;
-
-  ${({ recording }) => recording
-    && `
-      color: ${Colors.white};
-  `}
-`;
+const TextButtonActive = {
+  paddingLeft: 12,
+  color: Colors.white,
+  fontSize: 16,
+  fontWeight: 400,
+  textAlign: 'left',
+};
 
 const DrawerIcon = styled(Icon)`
-  padding-left: 4px;
+  position: absolute;
+  margin: 12px;
 `;
 
 export default {
   ViewContainer,
   CustomDrawerContainer,
   ContainerDrawerItemList,
+  ContainerCustomButtonsInsideScrollview,
   UserAvatar,
   NameUserAvatar,
-  ContainerCustomButtons,
+  ContainerCustomBottomButtons,
   ButtonLeaveContainer,
   ViewLeaveContainer,
-  TextLeaveContainer,
+  TextButtonLabel,
+  TextButtonActive,
   ViewShareContainer,
-  ButtonRecordContainer,
-  ViewRecordContainer,
-  TextRecordContainer,
   DrawerIcon,
 };
