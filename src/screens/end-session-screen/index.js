@@ -3,6 +3,7 @@ import { Image, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import useEndReason from '../../hooks/use-end-reason';
+import logger from '../../services/logger';
 import Styled from './styles';
 
 const EndSessionScreen = (props) => {
@@ -17,7 +18,10 @@ const EndSessionScreen = (props) => {
   const [orientation, setOrientation] = useState(Dimensions.get('window').width > Dimensions.get('window').height ? 'LANDSCAPE' : 'PORTRAIT');
 
   useEffect(() => {
-    console.log('END SCREEN MOUNT');
+    logger.info({
+      logCode: 'end_screen_mount',
+      extraInfo: {},
+    }, 'End Session Screen mount');
 
     const updateOrientation = () => {
       const newOrientation = Dimensions.get('window').width > Dimensions.get('window').height ? 'LANDSCAPE' : 'PORTRAIT';
@@ -27,13 +31,18 @@ const EndSessionScreen = (props) => {
     Dimensions.addEventListener('change', updateOrientation);
 
     return () => {
-      console.log('END SCREEN UNMOUNT');
+      logger.info({
+        logCode: 'end_screen_unmount',
+        extraInfo: {},
+      }, 'End Session Screen unmount');
       Dimensions.removeEventListener('change', updateOrientation);
     };
   }, []);
 
   const handleLeaveSessionButtonPress = () => {
-    console.log('calling onLeaveSession BUTTON');
+    logger.info({
+      logCode: 'on_leave_session_button',
+    }, 'calling onLeaveSession Button');
     if (!onLeaveSession()) navigation.navigate('DrawerNavigator');
   };
 
