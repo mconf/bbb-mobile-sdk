@@ -44,7 +44,7 @@ const notificationBarSlice = createSlice({
           state.isShow = true;
           state.messageTitle = 'mobileSdk.notification.recordLabel';
           state.messageSubtitle = 'app.notification.recordingStart';
-          state.icon = 'recording-started';
+          state.icon = 'recording-stopped';
           break;
         case 'recordingStopped':
           state.isShow = true;
