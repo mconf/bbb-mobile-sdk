@@ -60,7 +60,8 @@ const voiceCallStateChangePredicate = (action, currentState) => {
 
   // Not for us - skip
   if (currentVoiceCallState.userId !== AudioManager.userId
-    || currentVoiceCallState.clientSession !== AudioManager.getCurrentAudioSessionNumber()
+    // eslint-disable-next-line eqeqeq
+    || currentVoiceCallState.clientSession != AudioManager.getCurrentAudioSessionNumber()
   ) {
     return false;
   }
@@ -82,7 +83,8 @@ const voiceCallStateChangeListener = (action, listenerApi) => {
   );
 
   if (currentVoiceCallState?.callState !== previousVoiceCallState?.callState
-    && currentVoiceCallState?.clientSession === AudioManager.audioSessionNumber) {
+    // eslint-disable-next-line eqeqeq
+    && currentVoiceCallState?.clientSession == AudioManager.audioSessionNumber) {
     switch (currentVoiceCallState?.callState) {
       case 'IN_CONFERENCE':
         AudioManager.onAudioJoin(currentVoiceCallState?.clientSession);
