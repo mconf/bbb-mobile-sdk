@@ -26,6 +26,9 @@ module.exports = {
 
     // services stuffs - WEBRTC/logger/api
     '**/src/services/**',
+
+    // socket connection
+    '**/socket-connection/**'
   ],
   rules: {
     'react/jsx-filename-extension': [
