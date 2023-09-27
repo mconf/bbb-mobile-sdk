@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { Menu, Provider } from 'react-native-paper';
 import { selectCurrentUserId } from '../../store/redux/slices/current-user';
 import { setBreakoutData } from '../../store/redux/slices/wide-app/client';
@@ -10,6 +10,7 @@ import AudioManager from '../../services/webrtc/audio-manager';
 import VideoManager from '../../services/webrtc/video-manager';
 import ScreenWrapper from '../../components/screen-wrapper';
 import BreakoutRoomService from './service';
+import UtilsService from '../../utils/functions';
 import Styled from './styles';
 
 const BreakoutRoomScreen = () => {
@@ -18,11 +19,17 @@ const BreakoutRoomScreen = () => {
   const currentUserId = useSelector(selectCurrentUserId);
   const localCameraId = useSelector((state) => state.video.localCameraId);
   const meetingData = useSelector((state) => state.client.meetingData);
+
   const [showMenu, setShowMenu] = useState(false);
   const [selectedBreakout, setSelectedBreakout] = useState({});
   const [menuAnchor, setMenuAnchor] = useState({ x: 0, y: 0 });
   const [joinedBreakouts, setJoinedBreakouts] = useState();
   const [notJoinedBreakouts, setNotJoinedBreakouts] = useState();
+  const [breakoutTimeRemaining, setBreakoutTimeRemaining] = useState(0);
+  const [time, setTime] = useState(0);
+
+  const hasBreakouts = joinedBreakouts?.length !== 0 || notJoinedBreakouts?.length !== 0;
+
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const { t } = useTranslation();
@@ -46,6 +53,35 @@ const BreakoutRoomScreen = () => {
 
   useFocusEffect(
     useCallback(() => {
+      let interval;
+
+      if (hasBreakouts) {
+        interval = setInterval(() => {
+          setTime((prevTime) => prevTime - 1);
+        }, 1050);
+      } else {
+        clearInterval(interval);
+      }
+
+      return () => {
+        clearInterval(interval);
+      };
+    }, [hasBreakouts]),
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      setTime(breakoutTimeRemaining);
+    }, [breakoutTimeRemaining]),
+  );
+
+  useEffect(() => {
+    setTime(breakoutTimeRemaining);
+  }, [breakoutTimeRemaining]);
+
+  useFocusEffect(
+    useCallback(() => {
+      setBreakoutTimeRemaining(Object.values(breakoutsStore.breakoutsCollection)[0]?.timeRemaining);
       setNotJoinedBreakouts(Object.values(breakoutsStore.breakoutsCollection)
         .filter((item) => !Object.keys(item)
           .some((key) => key.includes('url_')))
@@ -122,6 +158,7 @@ const BreakoutRoomScreen = () => {
 
     return (
       <>
+        <Styled.DividerBottom />
         <Styled.TitleText>{t('mobileSdk.breakout.joinedRoomsLabel')}</Styled.TitleText>
         <Styled.FlatList data={joinedBreakouts} renderItem={renderItem} />
       </>
@@ -134,17 +171,34 @@ const BreakoutRoomScreen = () => {
     }
     return (
       <>
+        <Styled.DividerBottom />
         <Styled.TitleText>{t('mobileSdk.breakout.remainingRoomsLabel')}</Styled.TitleText>
         <Styled.FlatList data={notJoinedBreakouts} renderItem={renderItem} />
       </>
     );
   };
 
-  if (joinedBreakouts?.length === 0 && notJoinedBreakouts?.length === 0) {
+  const renderBreakoutDurationCard = () => {
     return (
-      <Styled.TitleText>
-        {t('mobileSdk.breakout.noBreakouts')}
-      </Styled.TitleText>
+      <Styled.CardView>
+        <Styled.BreakoutRoomDurationLabel>
+          {t('mobileSdk.breakout.durationLabel')}
+        </Styled.BreakoutRoomDurationLabel>
+        <Styled.NumberTimerLabel>
+          {UtilsService.humanizeSeconds(time)}
+        </Styled.NumberTimerLabel>
+      </Styled.CardView>
+    );
+  };
+
+  if (!hasBreakouts) {
+    return (
+      <Styled.CardView>
+        <Styled.NoBreakoutsLabel>
+          {t('mobileSdk.breakout.noBreakouts')}
+        </Styled.NoBreakoutsLabel>
+        {/* add some image here */}
+      </Styled.CardView>
     );
   }
 
@@ -153,6 +207,7 @@ const BreakoutRoomScreen = () => {
       <Provider>
         <Styled.ContainerView orientation={orientation}>
           <Styled.Block orientation={orientation}>
+            {renderBreakoutDurationCard()}
             {renderMenuView()}
             {renderJoinedRoomsView()}
             {renderNotJoinedRoomsView()}

@@ -149,5 +149,6 @@
   "mobileSdk.notificationBar.microphoneOff": "You are silenced. Click on the microphone to activate it.",
   "mobileSdk.notificationBar.handsUp": "You have your hand raised.",
   "mobileSdk.upload.notification.header": "A file was uploaded:",
-  "mobileSdk.upload.notification.disclaimer": "In case you want to open this file, try using the web version."
+  "mobileSdk.upload.notification.disclaimer": "In case you want to open this file, try using the web version.",
+  "mobileSdk.breakout.durationLabel": "Breakout rooms time remaining"
 }

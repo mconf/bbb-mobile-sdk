@@ -1,5 +1,6 @@
 import styled from 'styled-components/native';
 import { css } from 'styled-components';
+import { Divider } from 'react-native-paper';
 import Colors from '../../constants/colors';
 import actionsBar from '../../components/actions-bar';
 import Pressable from '../../components/pressable';
@@ -16,6 +17,19 @@ const ContainerView = styled.SafeAreaView`
     flex-direction: row;
     justify-content: center;
   `}
+`;
+
+const CardView = styled.View`
+  background-color: ${Colors.white};
+  min-height: 20px;
+  border-radius: 12px;
+  border: 4px ${Colors.white} solid;
+  padding: 12px 0;
+  margin: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
 `;
 
 const CardPressable = styled(Pressable).attrs(() => ({
@@ -93,9 +107,38 @@ const TitleText = styled.Text`
   text-align: center;
 `;
 
+const NoBreakoutsLabel = styled.Text`
+  color: ${Colors.lightGray300};
+  font-size: 18px;
+  text-align: center;
+`;
+
+const BreakoutRoomDurationLabel = styled.Text`
+  color: ${Colors.lightGray300}
+  font-size: 12px;
+  text-align: center;
+  font-weight: 400;
+  padding: 0 0 12px 0;
+`;
+
+const NumberTimerLabel = styled.Text`
+  color: ${Colors.lightGray400}
+  font-size: 24px;
+  text-align: center;
+  font-weight: 500;
+  text-decoration: underline;
+`;
+
+const DividerBottom = styled(Divider)`
+  margin: 8px 8px;
+
+  border-color: ${Colors.white};
+`;
+
 export default {
   ShortName,
   CardPressable,
+  CardView,
   FlatList,
   ActionsBar,
   ActionsBarContainer,
@@ -103,4 +146,8 @@ export default {
   Block,
   TimeRemaining,
   TitleText,
+  BreakoutRoomDurationLabel,
+  NumberTimerLabel,
+  DividerBottom,
+  NoBreakoutsLabel,
 };
