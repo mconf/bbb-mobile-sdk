@@ -101,7 +101,10 @@ const AppContent = ({
   }, [leaveOnUnmount]);
 
   useEffect(() => {
-    console.log('FOCUS MOUNTED');
+    logger.info({
+      logCode: 'app_mounted',
+    }, 'App component mounted');
+
     const onBackPress = () => {
       const navigation = navigationRef?.current;
       if (navigation?.canGoBack()) {
@@ -122,7 +125,9 @@ const AppContent = ({
     BackHandler.addEventListener('hardwareBackPress', onBackPress);
     return () => {
       BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-      console.log('FOCUS UNMOUNTED');
+      logger.info({
+        logCode: 'app_unmounted',
+      }, 'App component unmounted');
     };
   }, []);
 
@@ -286,10 +291,7 @@ const AppContent = ({
       }
     });
 
-    console.log('REGULAR APP MOUNT');
-
     return () => {
-      console.log('REGULAR APP UNMOUNT - leave?', leaveOnUnmountRef.current);
       dispatch(ConnectionStatusTracker.unregisterConnectionStatusListeners());
       nativeEventListeners.current.forEach((eventListener) => eventListener.remove());
 

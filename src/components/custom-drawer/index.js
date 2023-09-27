@@ -9,6 +9,7 @@ import Icon from '@expo/vector-icons/MaterialIcons';
 import Colors from '../../constants/colors';
 import { selectCurrentUser } from '../../store/redux/slices/current-user';
 import Styled from './styles';
+import logger from '../../services/api';
 import * as api from '../../services/api';
 import { leave } from '../../store/redux/slices/wide-app/client';
 
@@ -37,7 +38,10 @@ const CustomDrawer = (props) => {
         // dismissed
       }
     } catch (error) {
-      console.error('error sharing link', error);
+      logger.error({
+        logCode: 'error_sharing_link',
+        extraInfo: { error },
+      }, `Exception thrown while clicking to share meeting_url: ${error}`);
     }
   };
 

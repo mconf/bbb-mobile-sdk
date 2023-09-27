@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Text, View } from 'react-native';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import * as Linking from 'expo-linking';
+import { useNavigation } from '@react-navigation/native';
 import Settings from '../../../settings.json';
 import { UsersModule } from './modules/users';
 import { GroupChatModule } from './modules/group-chat';
@@ -81,8 +80,11 @@ const sendMessage = (ws, msgObj) => {
     ws.send(`["${msg}"]`);
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.warn(`Main websocket send failed, enqueue=${msgObj?.msg || 'Unknown'}`);
-  }
+    logger.error({
+      logCode: 'main_websocket_error',
+      extraInfo: { error, msgObj },
+    }, `Main websocket send failed: ${error} enqueue= ${msgObj?.msg || 'Unknown'}`);
+  };
 };
 
 const sendConnectMsg = (ws) => {
@@ -270,7 +272,6 @@ const terminate = (ws, modules) => {
 const SocketConnectionComponent = (props) => {
   // jUrl === join Url from portal
   const { jUrl } = props;
-  const urlViaLinking = Linking.useURL();
   const websocket = useRef(null);
   const modules = useRef({});
   const validateReqId = useRef(null);
@@ -430,7 +431,12 @@ const SocketConnectionComponent = (props) => {
       // If it runs into a guest lobby, it'll be run again in the guest status
       // thunk if it succeeds - see client/fetchGuestStatus
       dispatch(join({ url: joinUrl, logger })).unwrap()
-        .catch(console.debug);
+        .catch((error) => {
+          logger.error({
+            logCode: 'join_error',
+            extraInfo: { error },
+          }, `First run of the join procedure error: ${error}`);
+        });
     }
   }, [joinUrl, loggedIn, loggingIn, loggingOut]);
 
