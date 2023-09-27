@@ -133,10 +133,7 @@ class MeteorStream {
           fullInfo,
         );
       } catch (error) {
-        logger.error({
-          logCode: 'error_make_call_logger',
-          extraInfo: { error },
-        }, `Exception thrown while trying to log makeCall: ${error}`);
+        console.debug('Logger makeCall failed', error);
       }
     } else {
       try {
@@ -148,10 +145,7 @@ class MeteorStream {
           this.rec.extraInfo,
         );
       } catch (error) {
-        logger.error({
-          logCode: 'error_make_call_logger',
-          extraInfo: { error },
-        }, `Exception thrown while trying to log makeCall: ${error}`);
+        console.debug('Logger makeCall failed', error);
       }
     }
   }
