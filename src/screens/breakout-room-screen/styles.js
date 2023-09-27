@@ -19,6 +19,14 @@ const ContainerView = styled.SafeAreaView`
   `}
 `;
 
+const ContainerCentralizedView = styled.View`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 const CardView = styled.View`
   background-color: ${Colors.white};
   min-height: 20px;
@@ -30,6 +38,13 @@ const CardView = styled.View`
   margin-bottom: 12px;
   display: flex;
   flex-direction: column;
+`;
+
+const NoBreakoutsAvaiableCard = styled.View`
+  background-color: ${Colors.white};
+  width: 95%;
+  border-radius: 12px;
+  padding: 24px 16px;
 `;
 
 const CardPressable = styled(Pressable).attrs(() => ({
@@ -107,9 +122,16 @@ const TitleText = styled.Text`
   text-align: center;
 `;
 
-const NoBreakoutsLabel = styled.Text`
-  color: ${Colors.lightGray300};
+const NoBreakoutsLabelTitle = styled.Text`
+  color: ${Colors.lightGray400};
   font-size: 18px;
+  text-align: center;
+  padding: 12px 0;
+`;
+
+const NoBreakoutsLabelSubtitle = styled.Text`
+  color: ${Colors.lightGray300};
+  font-size: 14px;
   text-align: center;
 `;
 
@@ -149,5 +171,8 @@ export default {
   BreakoutRoomDurationLabel,
   NumberTimerLabel,
   DividerBottom,
-  NoBreakoutsLabel,
+  NoBreakoutsLabelTitle,
+  NoBreakoutsLabelSubtitle,
+  ContainerCentralizedView,
+  NoBreakoutsAvaiableCard,
 };

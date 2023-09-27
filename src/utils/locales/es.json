@@ -127,7 +127,6 @@
     "mobileSdk.breakout.leave": "Salir grupo de trabajo",
     "mobileSdk.breakout.joinedRoomsLabel": "Grupos de trabajo participantes",
     "mobileSdk.breakout.remainingRoomsLabel": "Otros grupos de trabajo",
-    "mobileSdk.breakout.noBreakouts": "Grupos de trabajo no disponibles",
     "mobileSdk.chat.breakoutDurationUpdated": "La duración del grupo de trabajo es ahora de {{minutes}} minutos",
     "mobileSdk.notification.handsUp.title": "Levantaste la mano",
     "mobileSdk.notification.handsUp.subtitle": "Los moderadores han sido notificados",
@@ -146,5 +145,7 @@
     "mobileSdk.notificationBar.handsUp": "Tienes la mano levantada.",
     "mobileSdk.upload.notification.header": "Se subió un archivo:",
     "mobileSdk.upload.notification.disclaimer": "En caso de que quieras abrir este archivo, intenta usar la versión web.",
-    "mobileSdk.breakout.durationLabel": "Duración de la sala de trabajo"
+    "mobileSdk.breakout.durationLabel": "Duración de la sala de trabajo",
+    "mobileSdk.breakout.noBreakoutsTitle": "Actualmente no hay grupos de trabajo disponibles",
+    "mobileSdk.breakout.noBreakoutsSubtitle": "Si las salas de grupo ya comenzaron, pídale a un moderador que le asigne"
 }

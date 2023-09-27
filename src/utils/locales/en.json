@@ -131,7 +131,6 @@
   "mobileSdk.breakout.leave": "Leave breakout room",
   "mobileSdk.breakout.joinedRoomsLabel": "Joined rooms",
   "mobileSdk.breakout.remainingRoomsLabel": "Remaining rooms",
-  "mobileSdk.breakout.noBreakouts": "No breakouts available",
   "mobileSdk.chat.breakoutDurationUpdated": "Breakout time is now {{minutes}} minutes",
   "mobileSdk.notification.handsUp.title": "You raised your hand",
   "mobileSdk.notification.handsUp.subtitle": "Moderators have been notified",
@@ -150,5 +149,7 @@
   "mobileSdk.notificationBar.handsUp": "You have your hand raised.",
   "mobileSdk.upload.notification.header": "A file was uploaded:",
   "mobileSdk.upload.notification.disclaimer": "In case you want to open this file, try using the web version.",
-  "mobileSdk.breakout.durationLabel": "Breakout rooms time remaining"
+  "mobileSdk.breakout.durationLabel": "Breakout rooms time remaining",
+  "mobileSdk.breakout.noBreakoutsTitle": "No breakout rooms are currently available",
+  "mobileSdk.breakout.noBreakoutsSubtitle": "If the rooms have started, ask a moderator to assign you"
 }

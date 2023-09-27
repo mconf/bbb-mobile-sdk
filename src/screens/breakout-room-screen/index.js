@@ -193,12 +193,19 @@ const BreakoutRoomScreen = () => {
 
   if (!hasBreakouts) {
     return (
-      <Styled.CardView>
-        <Styled.NoBreakoutsLabel>
-          {t('mobileSdk.breakout.noBreakouts')}
-        </Styled.NoBreakoutsLabel>
-        {/* add some image here */}
-      </Styled.CardView>
+      <ScreenWrapper>
+        <Styled.ContainerCentralizedView>
+          <Styled.NoBreakoutsAvaiableCard>
+            <Styled.NoBreakoutsLabelTitle>
+              {t('mobileSdk.breakout.noBreakoutsTitle')}
+            </Styled.NoBreakoutsLabelTitle>
+            <Styled.NoBreakoutsLabelSubtitle>
+              {t('mobileSdk.breakout.noBreakoutsSubtitle')}
+            </Styled.NoBreakoutsLabelSubtitle>
+            {/* add some image here */}
+          </Styled.NoBreakoutsAvaiableCard>
+        </Styled.ContainerCentralizedView>
+      </ScreenWrapper>
     );
   }
 

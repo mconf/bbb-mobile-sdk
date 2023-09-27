@@ -128,7 +128,6 @@
   "mobileSdk.breakout.leave": "Sair da sala de apoio",
   "mobileSdk.breakout.joinedRoomsLabel": "Participante das salas de grupo",
   "mobileSdk.breakout.remainingRoomsLabel": "Outras salas de grupo",
-  "mobileSdk.breakout.noBreakouts": "Salas de grupo não foram iniciadas",
   "mobileSdk.chat.breakoutDurationUpdated": "Tempo das salas de apoio agora é de {{minutes}} minutos",
   "mobileSdk.notification.handsUp.title": "Você levantou a mão",
   "mobileSdk.notification.handsUp.subtitle": "Os moderadores foram notificados",
@@ -147,5 +146,7 @@
   "mobileSdk.notificationBar.handsUp": "Você está com a mão levantada.",
   "mobileSdk.upload.notification.header": "Um arquivo foi carregado:",
   "mobileSdk.upload.notification.disclaimer": "Caso você queira abrir este arquivo, tente usar a versão web.",
-  "mobileSdk.breakout.durationLabel": "Duração da sala de apoio"
+  "mobileSdk.breakout.durationLabel": "Duração da sala de apoio",
+  "mobileSdk.breakout.noBreakoutsTitle": "Nenhuma sala de grupo está disponível no momento",
+  "mobileSdk.breakout.noBreakoutsSubtitle": "Se as salas de grupo já começaram, peça a um moderador para designar você"
 }
