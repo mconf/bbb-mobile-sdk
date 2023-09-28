@@ -148,5 +148,6 @@
   "mobileSdk.upload.notification.disclaimer": "Caso você queira abrir este arquivo, tente usar a versão web.",
   "mobileSdk.breakout.durationLabel": "Duração da sala de apoio",
   "mobileSdk.breakout.noBreakoutsTitle": "Não há Salas de Apoio disponíveis no momento",
-  "mobileSdk.breakout.noBreakoutsSubtitle": "Quando você for adicionado à uma Sala de Apoio, ela estará disponível para acesso por aqui"
+  "mobileSdk.breakout.noBreakoutsSubtitle": "Quando você for adicionado à uma Sala de Apoio, ela estará disponível para acesso por aqui",
+  "mobileSdk.breakout.participantsLabel": "participantes"
 }

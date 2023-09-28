@@ -147,5 +147,6 @@
     "mobileSdk.upload.notification.disclaimer": "En caso de que quieras abrir este archivo, intenta usar la versión web.",
     "mobileSdk.breakout.durationLabel": "Duración de la grupo de trabajo",
     "mobileSdk.breakout.noBreakoutsTitle": "No hay grupos de trabajo disponibles en este momento",
-    "mobileSdk.breakout.noBreakoutsSubtitle": "Cuando te agreguen a una grupo de trabajo, estará disponible para acceder aquí"
+    "mobileSdk.breakout.noBreakoutsSubtitle": "Cuando te agreguen a una grupo de trabajo, estará disponible para acceder aquí",
+    "mobileSdk.breakout.participantsLabel": "participantes"
 }
