@@ -147,6 +147,6 @@
   "mobileSdk.upload.notification.header": "Um arquivo foi carregado:",
   "mobileSdk.upload.notification.disclaimer": "Caso você queira abrir este arquivo, tente usar a versão web.",
   "mobileSdk.breakout.durationLabel": "Duração da sala de apoio",
-  "mobileSdk.breakout.noBreakoutsTitle": "Nenhuma sala de grupo está disponível no momento",
-  "mobileSdk.breakout.noBreakoutsSubtitle": "Se as salas de grupo já começaram, peça a um moderador para designar você"
+  "mobileSdk.breakout.noBreakoutsTitle": "Não há Salas de Apoio disponíveis no momento",
+  "mobileSdk.breakout.noBreakoutsSubtitle": "Quando você for adicionado à uma Sala de Apoio, ela estará disponível para acesso por aqui"
 }
