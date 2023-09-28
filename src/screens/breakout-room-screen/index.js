@@ -163,6 +163,7 @@ const BreakoutRoomScreen = () => {
       <Styled.FlatList
         data={[...breakoutsList]}
         renderItem={renderItem}
+        keyExtractor={(item) => item.breakoutId}
       />
     );
   };
