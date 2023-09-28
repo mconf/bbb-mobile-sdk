@@ -123,16 +123,18 @@ const TitleText = styled.Text`
 `;
 
 const NoBreakoutsLabelTitle = styled.Text`
-  color: ${Colors.lightGray400};
-  font-size: 18px;
+  color: ${Colors.white};
+  font-size: 21px;
   text-align: center;
-  padding: 12px 0;
+  padding: 12px;
+  font-weight: 500;
 `;
 
 const NoBreakoutsLabelSubtitle = styled.Text`
-  color: ${Colors.lightGray300};
-  font-size: 14px;
+  color: ${Colors.white};
+  font-size: 16px;
   text-align: center;
+  padding: 24px;
 `;
 
 const BreakoutRoomDurationLabel = styled.Text`
@@ -153,9 +155,10 @@ const NumberTimerLabel = styled.Text`
 
 const DividerBottom = styled(Divider)`
   margin: 8px 8px;
-
   border-color: ${Colors.white};
 `;
+
+const NoBreakoutsImage = styled.Image``;
 
 export default {
   ShortName,
@@ -175,4 +178,5 @@ export default {
   NoBreakoutsLabelSubtitle,
   ContainerCentralizedView,
   NoBreakoutsAvaiableCard,
+  NoBreakoutsImage,
 };

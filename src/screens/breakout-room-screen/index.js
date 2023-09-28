@@ -195,15 +195,18 @@ const BreakoutRoomScreen = () => {
     return (
       <ScreenWrapper>
         <Styled.ContainerCentralizedView>
-          <Styled.NoBreakoutsAvaiableCard>
-            <Styled.NoBreakoutsLabelTitle>
-              {t('mobileSdk.breakout.noBreakoutsTitle')}
-            </Styled.NoBreakoutsLabelTitle>
-            <Styled.NoBreakoutsLabelSubtitle>
-              {t('mobileSdk.breakout.noBreakoutsSubtitle')}
-            </Styled.NoBreakoutsLabelSubtitle>
-            {/* add some image here */}
-          </Styled.NoBreakoutsAvaiableCard>
+          <Styled.NoBreakoutsImage
+            source={require('../../assets/service-off.png')}
+            resizeMode="contain"
+            style={{ width: 173, height: 130 }}
+          />
+          <Styled.NoBreakoutsLabelTitle>
+            {t('mobileSdk.breakout.noBreakoutsTitle')}
+          </Styled.NoBreakoutsLabelTitle>
+          <Styled.NoBreakoutsLabelSubtitle>
+            {t('mobileSdk.breakout.noBreakoutsSubtitle')}
+          </Styled.NoBreakoutsLabelSubtitle>
+
         </Styled.ContainerCentralizedView>
       </ScreenWrapper>
     );
