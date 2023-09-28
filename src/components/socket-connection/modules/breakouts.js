@@ -7,6 +7,7 @@ import {
 import {
   addBreakout,
   editBreakout,
+  editTimeRemaining,
   removeBreakout,
   readyStateChanged,
   cleanupStaleData,
@@ -47,6 +48,16 @@ export class BreakoutsModule extends Module {
 
   // eslint-disable-next-line class-methods-use-this
   _update(msgObj) {
+    // moving this update to outside breakoutObject because it is too much
+    if (Object.values(msgObj.fields).length === 1
+      && Object.keys(msgObj.fields)[0] === 'timeRemaining') {
+      return store.dispatch(
+        editTimeRemaining({
+          timeRemaining: msgObj.fields.timeRemaining,
+        })
+      );
+    }
+
     return store.dispatch(
       editBreakout({
         breakoutObject: msgObj,

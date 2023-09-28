@@ -4,6 +4,7 @@ const breakoutsSlice = createSlice({
   name: 'breakouts',
   initialState: {
     breakoutsCollection: {},
+    timeRemaining: 0,
     ready: false,
   },
   reducers: {
@@ -21,6 +22,10 @@ const breakoutsSlice = createSlice({
         ...state.breakoutsCollection[breakoutObject.id],
         ...action.payload.breakoutObject.fields,
       };
+    },
+    editTimeRemaining: (state, action) => {
+      const { timeRemaining } = action.payload;
+      state.timeRemaining = timeRemaining;
     },
     readyStateChanged: (state, action) => {
       state.ready = action.payload;
@@ -51,6 +56,7 @@ export const {
   editBreakout,
   readyStateChanged,
   cleanupStaleData,
+  editTimeRemaining,
 } = breakoutsSlice.actions;
 
 export default breakoutsSlice.reducer;
