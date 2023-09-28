@@ -6,12 +6,6 @@ import Pressable from '../../components/pressable';
 import UserAvatar from '../../components/user-avatar';
 
 const ContainerView = styled.View`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: space-between;
-  padding: 10px;
-
   ${({ orientation }) => orientation === 'LANDSCAPE'
   && `
     flex-direction: row;
@@ -21,7 +15,6 @@ const ContainerView = styled.View`
 
 const ContainerCentralizedView = styled.View`
   width: 100%;
-  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -29,7 +22,7 @@ const ContainerCentralizedView = styled.View`
 
 const CardView = styled.View`
   background-color: ${Colors.white};
-  min-height: 20px;
+  height: 12%;
   border-radius: 12px;
   padding: 12px 0;
   margin: 8px;
@@ -70,19 +63,10 @@ const ParticipantsCount = styled.Text`
 const FlatList = styled.FlatList`
   width: 100%;
   border-radius: 12px;
-  padding: 12px;
+  padding: 0 8px;
   display: flex;
-`;
-
-const Block = styled.SafeAreaView`
-  display: flex;
-  flex-direction: column;
-
-  ${({ orientation }) => orientation === 'LANDSCAPE'
-  && `
-    // width: 90%;
-    // max-height: 95%;
-  `}
+  flex-grow: 0;
+  height: 83%;
 `;
 
 const TitleText = styled.Text`
@@ -123,8 +107,7 @@ const NumberTimerLabel = styled.Text`
 `;
 
 const DividerBottom = styled(Divider)`
-  margin: 8px 8px;
-  border-color: ${Colors.white};
+  margin: 8px;
 `;
 
 const NoBreakoutsImage = styled.Image``;
@@ -134,7 +117,6 @@ const MiniAvatarsContainer = styled.View`
   align-items: center;
   padding-left: 7px;
   flex-direction: row;
-
   padding: 0 6px 0 6px;
 
   ${({ participantsCount }) => participantsCount === 0
@@ -159,7 +141,6 @@ export default {
   CardView,
   FlatList,
   ContainerView,
-  Block,
   ParticipantsCount,
   TitleText,
   BreakoutRoomDurationLabel,

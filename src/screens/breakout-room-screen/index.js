@@ -24,11 +24,10 @@ const BreakoutRoomScreen = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [selectedBreakout, setSelectedBreakout] = useState({});
   const [menuAnchor, setMenuAnchor] = useState({ x: 0, y: 0 });
-  const [joinedBreakouts, setJoinedBreakouts] = useState([]);
-  const [notJoinedBreakouts, setNotJoinedBreakouts] = useState([]);
+  const [breakoutsList, setBreakoutsList] = useState([]);
   const [time, setTime] = useState(0);
 
-  const hasBreakouts = joinedBreakouts?.length !== 0 || notJoinedBreakouts?.length !== 0;
+  const hasBreakouts = breakoutsList?.length !== 0;
 
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -64,21 +63,7 @@ const BreakoutRoomScreen = () => {
 
   useFocusEffect(
     useCallback(() => {
-      setNotJoinedBreakouts(Object.values(breakoutsStore.breakoutsCollection)
-        .filter((item) => !Object.keys(item)
-          .some((key) => key.includes('url_')))
-        .map((filteredItem) => {
-          return {
-            shortName: filteredItem.shortName,
-            breakoutId: filteredItem.breakoutId,
-            joinedUsers: filteredItem.joinedUsers,
-            timeRemaining: filteredItem.timeRemaining
-          };
-        }));
-
-      setJoinedBreakouts(Object.values(breakoutsStore.breakoutsCollection)
-        .filter((item) => Object.keys(item)
-          .some((key) => key.includes('url_')))
+      setBreakoutsList(Object.values(breakoutsStore.breakoutsCollection)
         .map((filteredItem) => {
           return {
             shortName: filteredItem.shortName,
@@ -169,43 +154,32 @@ const BreakoutRoomScreen = () => {
     );
   };
 
-  const renderJoinedRoomsView = () => {
-    if (joinedBreakouts?.length === 0) {
+  const renderBreakoutRoomsView = () => {
+    if (breakoutsList?.length === 0) {
       return;
     }
 
     return (
-      <>
-        <Styled.DividerBottom />
-        <Styled.TitleText>{t('mobileSdk.breakout.joinedRoomsLabel')}</Styled.TitleText>
-        <Styled.FlatList data={joinedBreakouts} renderItem={renderItem} />
-      </>
-    );
-  };
-
-  const renderNotJoinedRoomsView = () => {
-    if (notJoinedBreakouts?.length === 0) {
-      return;
-    }
-    return (
-      <>
-        <Styled.DividerBottom />
-        <Styled.TitleText>{t('mobileSdk.breakout.remainingRoomsLabel')}</Styled.TitleText>
-        <Styled.FlatList data={notJoinedBreakouts} renderItem={renderItem} />
-      </>
+      <Styled.FlatList
+        data={[...breakoutsList]}
+        renderItem={renderItem}
+      />
     );
   };
 
   const renderBreakoutDurationCard = () => {
     return (
-      <Styled.CardView>
-        <Styled.BreakoutRoomDurationLabel>
-          {t('mobileSdk.breakout.durationLabel')}
-        </Styled.BreakoutRoomDurationLabel>
-        <Styled.NumberTimerLabel>
-          {UtilsService.humanizeSeconds(time)}
-        </Styled.NumberTimerLabel>
-      </Styled.CardView>
+      <>
+        <Styled.CardView>
+          <Styled.BreakoutRoomDurationLabel>
+            {t('mobileSdk.breakout.durationLabel')}
+          </Styled.BreakoutRoomDurationLabel>
+          <Styled.NumberTimerLabel>
+            {UtilsService.humanizeSeconds(time)}
+          </Styled.NumberTimerLabel>
+        </Styled.CardView>
+        <Styled.DividerBottom />
+      </>
     );
   };
 
@@ -234,12 +208,9 @@ const BreakoutRoomScreen = () => {
     <ScreenWrapper>
       <Provider>
         <Styled.ContainerView orientation={orientation}>
-          <Styled.Block orientation={orientation}>
-            {renderBreakoutDurationCard()}
-            {renderMenuView()}
-            {renderJoinedRoomsView()}
-            {renderNotJoinedRoomsView()}
-          </Styled.Block>
+          {renderBreakoutDurationCard()}
+          {renderMenuView()}
+          {renderBreakoutRoomsView()}
         </Styled.ContainerView>
       </Provider>
     </ScreenWrapper>
