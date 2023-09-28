@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState } from 'react';
 import { Menu, Provider } from 'react-native-paper';
 import { selectCurrentUserId } from '../../store/redux/slices/current-user';
 import { setBreakoutData } from '../../store/redux/slices/wide-app/client';
@@ -34,6 +34,34 @@ const BreakoutRoomScreen = () => {
   const navigation = useNavigation();
   const { t } = useTranslation();
 
+  // ***** REACT LIFECYCLE FUNCTIONS *****
+
+  // this useEffect handles the breakout timer
+  useFocusEffect(
+    useCallback(() => {
+      let interval;
+
+      if (hasBreakouts) {
+        interval = setInterval(() => {
+          setTime((prevTime) => prevTime - 1);
+        }, 1050);
+      } else {
+        clearInterval(interval);
+      }
+
+      return () => {
+        clearInterval(interval);
+      };
+    }, [hasBreakouts]),
+  );
+
+  // this useEffect handles the breakout timer
+  useFocusEffect(
+    useCallback(() => {
+      setTime(breakoutTimeRemaining);
+    }, [breakoutTimeRemaining]),
+  );
+
   useFocusEffect(
     useCallback(() => {
       setJoinedBreakouts(Object.values(breakoutsStore.breakoutsCollection)
@@ -53,34 +81,6 @@ const BreakoutRoomScreen = () => {
 
   useFocusEffect(
     useCallback(() => {
-      let interval;
-
-      if (hasBreakouts) {
-        interval = setInterval(() => {
-          setTime((prevTime) => prevTime - 1);
-        }, 1050);
-      } else {
-        clearInterval(interval);
-      }
-
-      return () => {
-        clearInterval(interval);
-      };
-    }, [hasBreakouts]),
-  );
-
-  useFocusEffect(
-    useCallback(() => {
-      setTime(breakoutTimeRemaining);
-    }, [breakoutTimeRemaining]),
-  );
-
-  useEffect(() => {
-    setTime(breakoutTimeRemaining);
-  }, [breakoutTimeRemaining]);
-
-  useFocusEffect(
-    useCallback(() => {
       setBreakoutTimeRemaining(Object.values(breakoutsStore.breakoutsCollection)[0]?.timeRemaining);
       setNotJoinedBreakouts(Object.values(breakoutsStore.breakoutsCollection)
         .filter((item) => !Object.keys(item)
@@ -95,6 +95,8 @@ const BreakoutRoomScreen = () => {
         }));
     }, [breakoutsStore]),
   );
+
+  // ***** FUNCTIONS *****
 
   const onIconPress = (event, item) => {
     const { nativeEvent } = event;
@@ -115,6 +117,8 @@ const BreakoutRoomScreen = () => {
     dispatch(setBreakoutData({ parentMeetingJoinUrl: meetingData.joinUrl }));
     navigation.navigate('InsideBreakoutRoomScreen', { joinUrl: selectedBreakout.breakoutRoomJoinUrl });
   };
+
+  // ***** RENDER FUNCTIONS *****
 
   const renderMenuView = () => {
     return (
@@ -142,11 +146,30 @@ const BreakoutRoomScreen = () => {
     );
   };
 
+  const renderUsersJoinedMiniAvatar = (joinedUsers) => {
+    return (
+      <Styled.MiniAvatarsContainer participantsCount={joinedUsers.length}>
+        {
+          joinedUsers.slice(0, 3).map((item) => (
+            // the userId in breakout room has a -\S+/ after the original userId
+            <Styled.MiniAvatar userName={item.name} mini userId={item.userId.replace(/-\S+/, '')} />
+          ))
+        }
+      </Styled.MiniAvatarsContainer>
+    );
+  };
+
   const renderItem = ({ item }) => {
     return (
       <Styled.CardPressable onPress={(e) => onIconPress(e, item)}>
         <Styled.ShortName>{item.shortName}</Styled.ShortName>
-        <Styled.TimeRemaining>{`${item.joinedUsers.length} participantes`}</Styled.TimeRemaining>
+        <Styled.ParticipantsContainer>
+          {renderUsersJoinedMiniAvatar(item.joinedUsers)}
+          <Styled.ParticipantsCount>
+            {`${item.joinedUsers.length} ${t('mobileSdk.breakout.participantsLabel')}`}
+          </Styled.ParticipantsCount>
+        </Styled.ParticipantsContainer>
+
       </Styled.CardPressable>
     );
   };

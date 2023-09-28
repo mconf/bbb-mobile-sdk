@@ -4,6 +4,7 @@ import { Divider } from 'react-native-paper';
 import Colors from '../../constants/colors';
 import actionsBar from '../../components/actions-bar';
 import Pressable from '../../components/pressable';
+import UserAvatar from '../../components/user-avatar';
 
 const ContainerView = styled.SafeAreaView`
   width: 100%;
@@ -57,8 +58,7 @@ const CardPressable = styled(Pressable).attrs(() => ({
     min-height: 20px;
     border-radius: 12px;
     border: 4px ${Colors.white} solid;
-    padding: 8px;
-    align-items: center;
+    padding: 16px;
     margin-bottom: 12px;
     display: flex;
     flex-direction: column;
@@ -67,11 +67,13 @@ const CardPressable = styled(Pressable).attrs(() => ({
 
 const ShortName = styled.Text`
   color: black;
-  font-size: 16px;
+  font-size: 21px;
+  font-weight: 500;
+  padding: 0 0 6px 0;
 `;
 
-const TimeRemaining = styled.Text`
-  color: black;
+const ParticipantsCount = styled.Text`
+  color: ${Colors.lightGray300};
   font-size: 12px;
 `;
 
@@ -160,6 +162,30 @@ const DividerBottom = styled(Divider)`
 
 const NoBreakoutsImage = styled.Image``;
 
+const MiniAvatarsContainer = styled.View`
+  display: flex;
+  align-items: center;
+  padding-left: 7px;
+  flex-direction: row;
+
+  padding: 0 6px 0 6px;
+
+  ${({ participantsCount }) => participantsCount === 0
+  && `
+      display: none;
+      padding-left: 0px;
+  `}
+`;
+
+const MiniAvatar = styled(UserAvatar)`
+`;
+
+const ParticipantsContainer = styled.View`
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+`;
+
 export default {
   ShortName,
   CardPressable,
@@ -169,7 +195,7 @@ export default {
   ActionsBarContainer,
   ContainerView,
   Block,
-  TimeRemaining,
+  ParticipantsCount,
   TitleText,
   BreakoutRoomDurationLabel,
   NumberTimerLabel,
@@ -179,4 +205,7 @@ export default {
   ContainerCentralizedView,
   NoBreakoutsAvaiableCard,
   NoBreakoutsImage,
+  MiniAvatarsContainer,
+  ParticipantsContainer,
+  MiniAvatar
 };
