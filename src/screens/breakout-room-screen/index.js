@@ -16,6 +16,7 @@ import Styled from './styles';
 const BreakoutRoomScreen = () => {
   const orientation = useOrientation();
   const breakoutsStore = useSelector((state) => state.breakoutsCollection);
+  const breakoutTimeRemaining = useSelector((state) => state.breakoutsCollection.timeRemaining);
   const currentUserId = useSelector(selectCurrentUserId);
   const localCameraId = useSelector((state) => state.video.localCameraId);
   const meetingData = useSelector((state) => state.client.meetingData);
@@ -23,9 +24,8 @@ const BreakoutRoomScreen = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [selectedBreakout, setSelectedBreakout] = useState({});
   const [menuAnchor, setMenuAnchor] = useState({ x: 0, y: 0 });
-  const [joinedBreakouts, setJoinedBreakouts] = useState();
-  const [notJoinedBreakouts, setNotJoinedBreakouts] = useState();
-  const [breakoutTimeRemaining, setBreakoutTimeRemaining] = useState(0);
+  const [joinedBreakouts, setJoinedBreakouts] = useState([]);
+  const [notJoinedBreakouts, setNotJoinedBreakouts] = useState([]);
   const [time, setTime] = useState(0);
 
   const hasBreakouts = joinedBreakouts?.length !== 0 || notJoinedBreakouts?.length !== 0;
@@ -64,6 +64,18 @@ const BreakoutRoomScreen = () => {
 
   useFocusEffect(
     useCallback(() => {
+      setNotJoinedBreakouts(Object.values(breakoutsStore.breakoutsCollection)
+        .filter((item) => !Object.keys(item)
+          .some((key) => key.includes('url_')))
+        .map((filteredItem) => {
+          return {
+            shortName: filteredItem.shortName,
+            breakoutId: filteredItem.breakoutId,
+            joinedUsers: filteredItem.joinedUsers,
+            timeRemaining: filteredItem.timeRemaining
+          };
+        }));
+
       setJoinedBreakouts(Object.values(breakoutsStore.breakoutsCollection)
         .filter((item) => Object.keys(item)
           .some((key) => key.includes('url_')))
@@ -74,23 +86,6 @@ const BreakoutRoomScreen = () => {
             joinedUsers: filteredItem.joinedUsers,
             timeRemaining: filteredItem.timeRemaining,
             breakoutRoomJoinUrl: filteredItem[`url_${currentUserId}`]?.redirectToHtml5JoinURL
-          };
-        }));
-    }, [breakoutsStore]),
-  );
-
-  useFocusEffect(
-    useCallback(() => {
-      setBreakoutTimeRemaining(Object.values(breakoutsStore.breakoutsCollection)[0]?.timeRemaining);
-      setNotJoinedBreakouts(Object.values(breakoutsStore.breakoutsCollection)
-        .filter((item) => !Object.keys(item)
-          .some((key) => key.includes('url_')))
-        .map((filteredItem) => {
-          return {
-            shortName: filteredItem.shortName,
-            breakoutId: filteredItem.breakoutId,
-            joinedUsers: filteredItem.joinedUsers,
-            timeRemaining: filteredItem.timeRemaining
           };
         }));
     }, [breakoutsStore]),

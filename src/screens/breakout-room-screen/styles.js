@@ -2,11 +2,10 @@ import styled from 'styled-components/native';
 import { css } from 'styled-components';
 import { Divider } from 'react-native-paper';
 import Colors from '../../constants/colors';
-import actionsBar from '../../components/actions-bar';
 import Pressable from '../../components/pressable';
 import UserAvatar from '../../components/user-avatar';
 
-const ContainerView = styled.SafeAreaView`
+const ContainerView = styled.View`
   width: 100%;
   height: 100%;
   display: flex;
@@ -32,20 +31,12 @@ const CardView = styled.View`
   background-color: ${Colors.white};
   min-height: 20px;
   border-radius: 12px;
-  border: 4px ${Colors.white} solid;
   padding: 12px 0;
   margin: 8px;
   align-items: center;
   margin-bottom: 12px;
   display: flex;
   flex-direction: column;
-`;
-
-const NoBreakoutsAvaiableCard = styled.View`
-  background-color: ${Colors.white};
-  width: 95%;
-  border-radius: 12px;
-  padding: 24px 16px;
 `;
 
 const CardPressable = styled(Pressable).attrs(() => ({
@@ -57,7 +48,6 @@ const CardPressable = styled(Pressable).attrs(() => ({
     background-color: ${Colors.white};
     min-height: 20px;
     border-radius: 12px;
-    border: 4px ${Colors.white} solid;
     padding: 16px;
     margin-bottom: 12px;
     display: flex;
@@ -84,37 +74,14 @@ const FlatList = styled.FlatList`
   display: flex;
 `;
 
-const ActionsBar = styled(actionsBar)`
-  ${({ orientation }) => orientation === 'LANDSCAPE'
-  && `
-      flex-direction: column;
-      display: flex;
-  `}
-`;
-
-const ActionsBarContainer = styled.View`
-  width: 100%;
-  height: 10%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  ${({ orientation }) => orientation === 'LANDSCAPE'
-  && `
-      width: 10%;
-      height: 100%;
-  `}
-`;
-
 const Block = styled.SafeAreaView`
   display: flex;
   flex-direction: column;
-  max-height: 87%;
 
   ${({ orientation }) => orientation === 'LANDSCAPE'
   && `
-    width: 90%;
-    max-height: 95%;
+    // width: 90%;
+    // max-height: 95%;
   `}
 `;
 
@@ -191,8 +158,6 @@ export default {
   CardPressable,
   CardView,
   FlatList,
-  ActionsBar,
-  ActionsBarContainer,
   ContainerView,
   Block,
   ParticipantsCount,
@@ -203,7 +168,6 @@ export default {
   NoBreakoutsLabelTitle,
   NoBreakoutsLabelSubtitle,
   ContainerCentralizedView,
-  NoBreakoutsAvaiableCard,
   NoBreakoutsImage,
   MiniAvatarsContainer,
   ParticipantsContainer,
