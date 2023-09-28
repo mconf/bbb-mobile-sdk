@@ -24,6 +24,13 @@ const Background = styled.View`
           && `
      background-color: ${userColor};
   `}
+
+  ${({ mini }) => mini && `
+    margin: 0 0 0 -7px;
+    width: 24px;
+    height: 24px;
+    font-size: 8px;
+  `}
 `;
 
 const ImageBackground = styled.Image`
@@ -50,6 +57,10 @@ const ImageContainer = styled.View`
 const UserName = styled.Text`
   color: ${Colors.white};
   font-size: 18px;
+
+  ${({ mini }) => mini && `
+    font-size: 11px;
+  `}
 `;
 
 export default {
