@@ -1,8 +1,7 @@
 import styled from 'styled-components/native';
-import { css } from 'styled-components';
 import { Divider } from 'react-native-paper';
+import button from '../../components/button';
 import Colors from '../../constants/colors';
-import Pressable from '../../components/pressable';
 import UserAvatar from '../../components/user-avatar';
 
 const ContainerView = styled.View`
@@ -25,29 +24,21 @@ const CardView = styled.View`
   background-color: ${Colors.white};
   height: 12%;
   border-radius: 12px;
-  padding: 12px 0;
-  margin: 8px;
+  padding: 16px 8px;
+  margin: 24px 16px;
   align-items: center;
-  margin-bottom: 12px;
   display: flex;
   flex-direction: column;
 `;
 
-const CardPressable = styled(Pressable).attrs(() => ({
-  pressStyle: {
-    opacity: 0.8,
-  },
-}))`
-  ${() => css`
+const Card = styled.View`
     background-color: ${Colors.white};
-    min-height: 20px;
     border-radius: 12px;
     padding: 16px;
     margin-bottom: 12px;
     display: flex;
     flex-direction: column;
-  `}
-`;
+  `;
 
 const ShortName = styled.Text`
   color: black;
@@ -61,10 +52,24 @@ const ParticipantsCount = styled.Text`
   font-size: 12px;
 `;
 
+const ParticipantsContainerExpandable = styled.View`
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  padding: 0 0 6px 0;
+  margin-left: 6px;
+`;
+
+const UserNameText = styled.Text`
+  color: ${Colors.lightGray300};
+  font-size: 16px;
+  padding-left: 4px;
+`;
+
 const FlatList = styled.FlatList`
   width: 100%;
   border-radius: 12px;
-  padding: 0 8px;
+  padding: 0 16px;
   display: flex;
   flex-grow: 0;
   height: 83%;
@@ -104,11 +109,14 @@ const NumberTimerLabel = styled.Text`
   font-size: 24px;
   text-align: center;
   font-weight: 500;
-  text-decoration: underline;
 `;
 
 const DividerBottom = styled(Divider)`
-  margin: 8px;
+  margin: 0 16px 24px 16px;
+`;
+
+const DividerTinyBottom = styled(Divider)`
+  margin: 16px 0;
 `;
 
 const NoBreakoutsImage = styled.Image``;
@@ -136,9 +144,23 @@ const ParticipantsContainer = styled.View`
   flex-direction: row;
 `;
 
+const JoinBreakoutButton = styled(button)`
+  background-color: ${Colors.orange}
+  color: ${Colors.white};
+  font-size: 16px;
+  font-weight: 400;
+  padding: 12px 0;
+  border-radius: 12px;
+  width: 100%;
+`;
+
+const ButtonContainer = styled.View`
+  width: 100%;
+`;
+
 export default {
   ShortName,
-  CardPressable,
+  Card,
   CardView,
   FlatList,
   ContainerView,
@@ -147,11 +169,16 @@ export default {
   BreakoutRoomDurationLabel,
   NumberTimerLabel,
   DividerBottom,
+  DividerTinyBottom,
   NoBreakoutsLabelTitle,
   NoBreakoutsLabelSubtitle,
   ContainerCentralizedView,
   NoBreakoutsImage,
   MiniAvatarsContainer,
   ParticipantsContainer,
-  MiniAvatar
+  MiniAvatar,
+  UserNameText,
+  ParticipantsContainerExpandable,
+  JoinBreakoutButton,
+  ButtonContainer
 };

@@ -1,10 +1,8 @@
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useCallback, useState } from 'react';
-import { Menu, Provider } from 'react-native-paper';
 import { selectCurrentUserId } from '../../store/redux/slices/current-user';
-import { setBreakoutData } from '../../store/redux/slices/wide-app/client';
 import { useOrientation } from '../../hooks/use-orientation';
 import AudioManager from '../../services/webrtc/audio-manager';
 import VideoManager from '../../services/webrtc/video-manager';
@@ -12,26 +10,23 @@ import ScreenWrapper from '../../components/screen-wrapper';
 import BreakoutRoomService from './service';
 import UtilsService from '../../utils/functions';
 import Styled from './styles';
+import ExpandedCard from '../../components/expandable-card';
 
 const BreakoutRoomScreen = () => {
-  const orientation = useOrientation();
   const breakoutsStore = useSelector((state) => state.breakoutsCollection);
   const breakoutTimeRemaining = useSelector((state) => state.breakoutsCollection.timeRemaining);
   const currentUserId = useSelector(selectCurrentUserId);
   const localCameraId = useSelector((state) => state.video.localCameraId);
-  const meetingData = useSelector((state) => state.client.meetingData);
 
-  const [showMenu, setShowMenu] = useState(false);
-  const [selectedBreakout, setSelectedBreakout] = useState({});
-  const [menuAnchor, setMenuAnchor] = useState({ x: 0, y: 0 });
   const [breakoutsList, setBreakoutsList] = useState([]);
+  const [requestedUrl, setRequestedUrl] = useState(false);
   const [time, setTime] = useState(0);
 
-  const hasBreakouts = breakoutsList?.length !== 0;
-
-  const dispatch = useDispatch();
+  const orientation = useOrientation();
   const navigation = useNavigation();
   const { t } = useTranslation();
+
+  const hasBreakouts = breakoutsList?.length !== 0;
 
   // ***** REACT LIFECYCLE FUNCTIONS *****
 
@@ -43,7 +38,7 @@ const BreakoutRoomScreen = () => {
       if (hasBreakouts) {
         interval = setInterval(() => {
           setTime((prevTime) => prevTime - 1);
-        }, 1050);
+        }, 1000);
       } else {
         clearInterval(interval);
       }
@@ -70,6 +65,7 @@ const BreakoutRoomScreen = () => {
             breakoutId: filteredItem.breakoutId,
             joinedUsers: filteredItem.joinedUsers,
             timeRemaining: filteredItem.timeRemaining,
+            sequence: filteredItem.sequence,
             breakoutRoomJoinUrl: filteredItem[`url_${currentUserId}`]?.redirectToHtml5JoinURL
           };
         }));
@@ -78,61 +74,31 @@ const BreakoutRoomScreen = () => {
 
   // ***** FUNCTIONS *****
 
-  const onIconPress = (event, item) => {
-    const { nativeEvent } = event;
-    const anchor = {
-      x: nativeEvent.pageX,
-      y: nativeEvent.pageY - 150,
-    };
-
-    setSelectedBreakout(item);
-    setMenuAnchor(anchor);
-    setShowMenu(true);
-  };
-
-  const onClickJoinSession = () => {
-    setShowMenu(false);
+  const joinSession = (breakoutRoomJoinUrl) => {
     AudioManager.exitAudio();
     VideoManager.unpublish(localCameraId);
-    dispatch(setBreakoutData({ parentMeetingJoinUrl: meetingData.joinUrl }));
-    navigation.navigate('InsideBreakoutRoomScreen', { joinUrl: selectedBreakout.breakoutRoomJoinUrl });
+    navigation.navigate('InsideBreakoutRoomScreen', { joinUrl: breakoutRoomJoinUrl });
+  };
+
+  const handleJoinButton = (breakoutId, breakoutRoomJoinUrl) => {
+    if (!breakoutRoomJoinUrl) {
+      setRequestedUrl(true);
+      BreakoutRoomService.requestJoinURL(breakoutId);
+      setTimeout(() => setRequestedUrl(false), 3000);
+    } else {
+      joinSession(breakoutRoomJoinUrl);
+    }
   };
 
   // ***** RENDER FUNCTIONS *****
-
-  const renderMenuView = () => {
-    return (
-      <Menu
-        visible={showMenu}
-        onDismiss={() => setShowMenu(false)}
-        anchor={menuAnchor}
-      >
-        {selectedBreakout.breakoutRoomJoinUrl && (
-        <Menu.Item
-          onPress={onClickJoinSession}
-          title={t('app.createBreakoutRoom.join')}
-        />
-        )}
-        {!selectedBreakout.breakoutRoomJoinUrl && (
-          <Menu.Item
-            onPress={() => {
-              setShowMenu(false);
-              BreakoutRoomService.requestJoinURL(selectedBreakout.breakoutId);
-            }}
-            title={t('app.createBreakoutRoom.askToJoin')}
-          />
-        )}
-      </Menu>
-    );
-  };
 
   const renderUsersJoinedMiniAvatar = (joinedUsers) => {
     return (
       <Styled.MiniAvatarsContainer participantsCount={joinedUsers.length}>
         {
-          joinedUsers.slice(0, 3).map((item) => (
+          joinedUsers.slice(0, 3).map((item, idx) => (
             // the userId in breakout room has a -\S+/ after the original userId
-            <Styled.MiniAvatar userName={item.name} mini userId={item.userId.replace(/-\S+/, '')} />
+            <Styled.MiniAvatar userName={item.name} mini userId={item.userId.replace(/-\S+/, '')} key={item.userId + idx} />
           ))
         }
       </Styled.MiniAvatarsContainer>
@@ -141,16 +107,46 @@ const BreakoutRoomScreen = () => {
 
   const renderItem = ({ item }) => {
     return (
-      <Styled.CardPressable onPress={(e) => onIconPress(e, item)}>
-        <Styled.ShortName>{item.shortName}</Styled.ShortName>
-        <Styled.ParticipantsContainer>
-          {renderUsersJoinedMiniAvatar(item.joinedUsers)}
-          <Styled.ParticipantsCount>
-            {`${item.joinedUsers.length} ${t('mobileSdk.breakout.participantsLabel')}`}
-          </Styled.ParticipantsCount>
-        </Styled.ParticipantsContainer>
+      <Styled.Card>
+        <ExpandedCard
+          content={(
+            <>
+              <Styled.ShortName>{item.shortName}</Styled.ShortName>
+              <Styled.ParticipantsContainer>
+                {renderUsersJoinedMiniAvatar(item.joinedUsers)}
+                <Styled.ParticipantsCount>
+                  {`${item.joinedUsers.length} ${t('mobileSdk.breakout.participantsLabel')}`}
+                </Styled.ParticipantsCount>
+              </Styled.ParticipantsContainer>
+            </>
+            )}
+          expandedContent={(
+            <>
+              <Styled.DividerTinyBottom />
+              {item.joinedUsers.map((user, idx) => {
+                return (
+                  <Styled.ParticipantsContainerExpandable key={user.userId + idx}>
+                    {/* // the userId in breakout room has a -\S+/ after the original userId */}
+                    <Styled.MiniAvatar userName={user.name} mini userId={user.userId.replace(/-\S+/, '')} />
+                    <Styled.UserNameText>{user.name}</Styled.UserNameText>
+                  </Styled.ParticipantsContainerExpandable>
+                );
+              })}
 
-      </Styled.CardPressable>
+              <Styled.ButtonContainer>
+                <Styled.JoinBreakoutButton
+                  onPress={() => handleJoinButton(item.breakoutId, item.breakoutRoomJoinUrl)}
+                  loading={requestedUrl}
+                >
+                  {item.breakoutRoomJoinUrl ? 'Entrar' : 'Pedir para entrar'}
+                </Styled.JoinBreakoutButton>
+              </Styled.ButtonContainer>
+            </>
+          )}
+          // 30px for each participant and 90 for the button
+          expandableHeight={item.joinedUsers.length * 30 + 90}
+        />
+      </Styled.Card>
     );
   };
 
@@ -161,7 +157,7 @@ const BreakoutRoomScreen = () => {
 
     return (
       <Styled.FlatList
-        data={[...breakoutsList]}
+        data={breakoutsList.sort((a, b) => a.sequence - b.sequence)}
         renderItem={renderItem}
         keyExtractor={(item) => item.breakoutId}
       />
@@ -207,13 +203,10 @@ const BreakoutRoomScreen = () => {
 
   return (
     <ScreenWrapper>
-      <Provider>
-        <Styled.ContainerView orientation={orientation}>
-          {renderBreakoutDurationCard()}
-          {renderMenuView()}
-          {renderBreakoutRoomsView()}
-        </Styled.ContainerView>
-      </Provider>
+      <Styled.ContainerView orientation={orientation}>
+        {renderBreakoutDurationCard()}
+        {renderBreakoutRoomsView()}
+      </Styled.ContainerView>
     </ScreenWrapper>
   );
 };
