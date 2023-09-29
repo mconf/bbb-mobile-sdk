@@ -149,5 +149,7 @@
   "mobileSdk.breakout.durationLabel": "Duração da sala de apoio",
   "mobileSdk.breakout.noBreakoutsTitle": "Não há Salas de Apoio disponíveis no momento",
   "mobileSdk.breakout.noBreakoutsSubtitle": "Quando você for adicionado à uma Sala de Apoio, ela estará disponível para acesso por aqui",
-  "mobileSdk.breakout.participantsLabel": "participantes"
+  "mobileSdk.breakout.participantsLabel": "participantes",
+  "mobileSdk.breakout.starting": "Salas começando...",
+  "mobileSdk.breakout.finishing": "Salas finalizando..."
 }

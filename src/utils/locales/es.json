@@ -148,5 +148,7 @@
     "mobileSdk.breakout.durationLabel": "Duración de la grupo de trabajo",
     "mobileSdk.breakout.noBreakoutsTitle": "No hay grupos de trabajo disponibles en este momento",
     "mobileSdk.breakout.noBreakoutsSubtitle": "Cuando te agreguen a una grupo de trabajo, estará disponible para acceder aquí",
-    "mobileSdk.breakout.participantsLabel": "participantes"
+    "mobileSdk.breakout.participantsLabel": "participantes",
+    "mobileSdk.breakout.starting": "Salas empezando...",
+    "mobileSdk.breakout.finishing": "Salas acabando..."
 }

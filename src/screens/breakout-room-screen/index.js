@@ -20,7 +20,7 @@ const BreakoutRoomScreen = () => {
 
   const [breakoutsList, setBreakoutsList] = useState([]);
   const [requestedUrl, setRequestedUrl] = useState(false);
-  const [time, setTime] = useState(0);
+  const [time, setTime] = useState(-100);
 
   const orientation = useOrientation();
   const navigation = useNavigation();
@@ -35,7 +35,10 @@ const BreakoutRoomScreen = () => {
     useCallback(() => {
       let interval;
 
+      if (time <= -100) return;
+
       if (hasBreakouts) {
+        setTime(-100);
         interval = setInterval(() => {
           setTime((prevTime) => prevTime - 1);
         }, 1000);
@@ -49,7 +52,7 @@ const BreakoutRoomScreen = () => {
     }, [hasBreakouts]),
   );
 
-  // this useEffect handles the breakout timer
+  // this useEffect handles the breakout timer syncing with server time
   useFocusEffect(
     useCallback(() => {
       setTime(breakoutTimeRemaining);
@@ -164,6 +167,17 @@ const BreakoutRoomScreen = () => {
     );
   };
 
+  // review this...
+  const renderBreakoutTimeClock = () => {
+    if (time <= -100) {
+      return t('mobileSdk.breakout.starting');
+    }
+    if (time <= 0) {
+      return t('mobileSdk.breakout.finishing');
+    }
+    return UtilsService.humanizeSeconds(time);
+  };
+
   const renderBreakoutDurationCard = () => {
     return (
       <>
@@ -172,7 +186,7 @@ const BreakoutRoomScreen = () => {
             {t('mobileSdk.breakout.durationLabel')}
           </Styled.BreakoutRoomDurationLabel>
           <Styled.NumberTimerLabel>
-            {UtilsService.humanizeSeconds(time)}
+            {renderBreakoutTimeClock()}
           </Styled.NumberTimerLabel>
         </Styled.CardView>
         <Styled.DividerBottom />
