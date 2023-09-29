@@ -72,7 +72,7 @@ const FlatList = styled.FlatList`
   padding: 0 16px;
   display: flex;
   flex-grow: 0;
-  height: 83%;
+  height: 78%;
 `;
 
 const TitleText = styled.Text`
