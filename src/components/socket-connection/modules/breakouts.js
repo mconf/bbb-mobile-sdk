@@ -8,9 +8,9 @@ import {
   addBreakout,
   editBreakout,
   editTimeRemaining,
-  removeBreakout,
   readyStateChanged,
   cleanupStaleData,
+  removeAllBreakouts,
 } from '../../../store/redux/slices/breakouts';
 
 const BREAKOUTS_TOPIC = 'breakouts';
@@ -34,15 +34,12 @@ export class BreakoutsModule extends Module {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  _remove(msgObj) {
+  _remove() {
     if (!this._ignoreDeletions) {
       return store.dispatch(
-        removeBreakout({
-          breakoutObject: msgObj,
-        })
+        removeAllBreakouts()
       );
     }
-
     return false;
   }
 

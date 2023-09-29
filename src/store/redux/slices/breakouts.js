@@ -27,6 +27,9 @@ const breakoutsSlice = createSlice({
       const { timeRemaining } = action.payload;
       state.timeRemaining = timeRemaining;
     },
+    removeAllBreakouts: (state) => {
+      state.breakoutsCollection = {};
+    },
     readyStateChanged: (state, action) => {
       state.ready = action.payload;
     },
@@ -57,6 +60,7 @@ export const {
   readyStateChanged,
   cleanupStaleData,
   editTimeRemaining,
+  removeAllBreakouts,
 } = breakoutsSlice.actions;
 
 export default breakoutsSlice.reducer;
