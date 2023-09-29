@@ -27,8 +27,16 @@ const ButtonText = styled.Text`
   font-size: 18px;
 `;
 
+const LoadingContainer = styled.View`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+`;
+
 export default {
   ButtonOuterContainer,
   ButtonInnerContainer,
   ButtonText,
+  LoadingContainer,
 };
