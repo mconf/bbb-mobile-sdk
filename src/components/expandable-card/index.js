@@ -19,7 +19,7 @@ const ExpandedCard = ({ content, expandedContent, expandableHeight }) => {
 
   // Define the animation configuration
   const slideConfig = {
-    duration: 500, // Animation duration in milliseconds
+    duration: 200, // Animation duration in milliseconds
     easing: Easing.inOut(Easing.ease),
   };
 
