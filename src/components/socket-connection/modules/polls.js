@@ -7,7 +7,6 @@ import {
   readyStateChanged,
   cleanupStaleData,
 } from '../../../store/redux/slices/polls';
-import { showNotificationWithTimeout } from '../../../store/redux/slices/wide-app/notification-bar';
 
 const POLLS_TOPIC = 'polls';
 
@@ -23,7 +22,6 @@ export class PollsModule extends Module {
         pollObject: msgObj,
       })
     );
-    store.dispatch(showNotificationWithTimeout('pollStarted'));
   }
 
   // eslint-disable-next-line class-methods-use-this
