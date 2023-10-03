@@ -20,42 +20,39 @@ const ContainerView = styled.View`
 const ContainerEndSessionCard = styled.View`
   background-color: ${Colors.white};
   width: 100%;
-  max-height: 85%;
-  padding: 16px;
+  padding: 64px 16px 48px 16px;
+  gap: 24px;
   border-radius: 12px;
   display: flex;
   align-items: center;
 `;
 
+const MiddleContainer = styled.View`
+  gap: 8px;
+`;
+
 const Title = styled.Text`
-  font-size: 21px;
-  font-weight: 500;
-  text-align: center;
-  color: ${Colors.lightGray400};
-  padding-bottom: 10px;
-`;
-
-const ConfirmButton = styled(PrimaryButton)`
-  background-color: ${Colors.blue};
-  color: ${Colors.white};
-  font-size: 16px;
-  font-weight: 400;
-  padding: 12px;
-  border-radius: 12px;
-`;
-
-const Subtitle = styled.Text`
   font-size: 18px;
   font-weight: 500;
   text-align: center;
-  color: #667080;
-  padding-bottom: 40px;
+  color: ${Colors.lightGray400};
 `;
 
-const ButtonContainer = styled.View`
-  position: absolute;
-  bottom: -25px;
-  width: 100%;
+const ConfirmButton = styled(PrimaryButton)`
+  background-color: ${Colors.orange};
+  color: ${Colors.white};
+  font-size: 18px;
+  height: 40px;
+  font-weight: 500;
+  padding: 8px 24px;
+  border-radius: 40px;
+`;
+
+const Subtitle = styled.Text`
+  font-size: 16px;
+  font-weight: 400;
+  text-align: center;
+  color: #667080;
 `;
 
 export default {
@@ -64,5 +61,5 @@ export default {
   ContainerEndSessionCard,
   Title,
   Subtitle,
-  ButtonContainer,
+  MiddleContainer,
 };

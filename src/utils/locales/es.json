@@ -155,5 +155,8 @@
     "mobileSdk.breakout.inviteModal.content": "Has sido invitado a unirte",
     "mobileSdk.breakout.inviteModal.button": "Únase",
     "mobileSdk.breakout.inviteModal.moderatorContent": "Las salas para grupos de trabajo han comenzado, haga clic en el botón para ver las salas",
-    "mobileSdk.breakout.inviteModal.moderatorButton": "Grupos de trabajo"
+    "mobileSdk.breakout.inviteModal.moderatorButton": "Grupos de trabajo",
+    "mobileSdk.breakout.endSession.modal.title": "Este grupo de trabajo ha sido cerrada.",
+    "mobileSdk.breakout.endSession.modal.subtitle": "Serás redirigido a la sala principal en breve.",
+    "mobileSdk.breakout.endSession.modal.buttonLabel": "Acceso Sala Principal"
 }

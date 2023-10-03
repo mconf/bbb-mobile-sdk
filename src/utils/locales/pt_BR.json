@@ -156,5 +156,8 @@
   "mobileSdk.breakout.inviteModal.content": "Você foi adicionado pelo moderador para",
   "mobileSdk.breakout.inviteModal.button": "Acessar Sala de Apoio",
   "mobileSdk.breakout.inviteModal.moderatorContent": "As salas de apoio foram iniciadas, clique no botão para visualizar as salas",
-  "mobileSdk.breakout.inviteModal.moderatorButton": "Salas de Apoio"
+  "mobileSdk.breakout.inviteModal.moderatorButton": "Salas de Apoio",
+  "mobileSdk.breakout.endSession.modal.title": "Essa sala de apoio foi fechada",
+  "mobileSdk.breakout.endSession.modal.subtitle": "Você será redirecionado para a Sala Principal em breve",
+  "mobileSdk.breakout.endSession.modal.buttonLabel": "Acessar Sala Principal"
 }
