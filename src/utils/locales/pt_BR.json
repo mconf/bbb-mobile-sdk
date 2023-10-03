@@ -128,7 +128,6 @@
   "mobileSdk.breakout.leave": "Sair da sala de apoio",
   "mobileSdk.breakout.joinedRoomsLabel": "Participante das salas de grupo",
   "mobileSdk.breakout.remainingRoomsLabel": "Outras salas de grupo",
-  "mobileSdk.breakout.noBreakouts": "Salas de grupo não foram iniciadas",
   "mobileSdk.chat.breakoutDurationUpdated": "Tempo das salas de apoio agora é de {{minutes}} minutos",
   "mobileSdk.notification.handsUp.title": "Você levantou a mão",
   "mobileSdk.notification.handsUp.subtitle": "Os moderadores foram notificados",
@@ -146,5 +145,16 @@
   "mobileSdk.notificationBar.microphoneOff": "Você está silenciado(a). Clique no microfone para ativá-lo",
   "mobileSdk.notificationBar.handsUp": "Você está com a mão levantada",
   "mobileSdk.upload.notification.header": "Um arquivo foi carregado:",
-  "mobileSdk.upload.notification.disclaimer": "Caso você queira abrir este arquivo, tente usar a versão web."
+  "mobileSdk.upload.notification.disclaimer": "Caso você queira abrir este arquivo, tente usar a versão web.",
+  "mobileSdk.breakout.durationLabel": "Duração da sala de apoio",
+  "mobileSdk.breakout.noBreakoutsTitle": "Não há Salas de Apoio disponíveis no momento",
+  "mobileSdk.breakout.noBreakoutsSubtitle": "Quando você for adicionado à uma Sala de Apoio, ela estará disponível para acesso por aqui",
+  "mobileSdk.breakout.participantsLabel": "participantes",
+  "mobileSdk.breakout.starting": "Salas começando...",
+  "mobileSdk.breakout.finishing": "Salas finalizando...",
+  "mobileSdk.breakout.inviteModal.title": "Sala de Apoio",
+  "mobileSdk.breakout.inviteModal.content": "Você foi adicionado pelo moderador para",
+  "mobileSdk.breakout.inviteModal.button": "Acessar Sala de Apoio",
+  "mobileSdk.breakout.inviteModal.moderatorContent": "As salas de apoio foram iniciadas, clique no botão para visualizar as salas",
+  "mobileSdk.breakout.inviteModal.moderatorButton": "Salas de Apoio"
 }

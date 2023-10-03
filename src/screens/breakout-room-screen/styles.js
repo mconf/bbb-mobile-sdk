@@ -1,16 +1,10 @@
 import styled from 'styled-components/native';
-import { css } from 'styled-components';
+import { Divider } from 'react-native-paper';
+import button from '../../components/button';
 import Colors from '../../constants/colors';
-import actionsBar from '../../components/actions-bar';
-import Pressable from '../../components/pressable';
+import UserAvatar from '../../components/user-avatar';
 
-const ContainerView = styled.SafeAreaView`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: space-between;
-  padding: 10px;
-
+const ContainerView = styled.View`
   ${({ orientation }) => orientation === 'LANDSCAPE'
   && `
     flex-direction: row;
@@ -18,73 +12,67 @@ const ContainerView = styled.SafeAreaView`
   `}
 `;
 
-const CardPressable = styled(Pressable).attrs(() => ({
-  pressStyle: {
-    opacity: 0.8,
-  },
-}))`
-  ${() => css`
+const ContainerCentralizedView = styled.View`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const CardView = styled.View`
+  background-color: ${Colors.white};
+  height: 12%;
+  border-radius: 12px;
+  padding: 16px 8px;
+  margin: 24px 16px;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+`;
+
+const Card = styled.View`
     background-color: ${Colors.white};
-    min-height: 20px;
     border-radius: 12px;
-    border: 4px ${Colors.white} solid;
-    padding: 8px;
-    align-items: center;
+    padding: 16px;
     margin-bottom: 12px;
     display: flex;
     flex-direction: column;
-  `}
-`;
+  `;
 
 const ShortName = styled.Text`
   color: black;
-  font-size: 16px;
+  font-size: 21px;
+  font-weight: 500;
+  padding: 0 0 6px 0;
 `;
 
-const TimeRemaining = styled.Text`
-  color: black;
+const ParticipantsCount = styled.Text`
+  color: ${Colors.lightGray300};
   font-size: 12px;
+`;
+
+const ParticipantsContainerExpandable = styled.View`
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  padding: 0 0 6px 0;
+  margin-left: 6px;
+`;
+
+const UserNameText = styled.Text`
+  color: ${Colors.lightGray300};
+  font-size: 16px;
+  padding-left: 4px;
 `;
 
 const FlatList = styled.FlatList`
   width: 100%;
   border-radius: 12px;
-  padding: 12px;
+  padding: 0 16px;
   display: flex;
-`;
-
-const ActionsBar = styled(actionsBar)`
-  ${({ orientation }) => orientation === 'LANDSCAPE'
-  && `
-      flex-direction: column;
-      display: flex;
-  `}
-`;
-
-const ActionsBarContainer = styled.View`
-  width: 100%;
-  height: 10%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  ${({ orientation }) => orientation === 'LANDSCAPE'
-  && `
-      width: 10%;
-      height: 100%;
-  `}
-`;
-
-const Block = styled.SafeAreaView`
-  display: flex;
-  flex-direction: column;
-  max-height: 87%;
-
-  ${({ orientation }) => orientation === 'LANDSCAPE'
-  && `
-    width: 90%;
-    max-height: 95%;
-  `}
+  flex-grow: 0;
+  height: 78%;
 `;
 
 const TitleText = styled.Text`
@@ -93,14 +81,104 @@ const TitleText = styled.Text`
   text-align: center;
 `;
 
+const NoBreakoutsLabelTitle = styled.Text`
+  color: ${Colors.white};
+  font-size: 21px;
+  text-align: center;
+  padding: 12px;
+  font-weight: 500;
+`;
+
+const NoBreakoutsLabelSubtitle = styled.Text`
+  color: ${Colors.white};
+  font-size: 16px;
+  text-align: center;
+  padding: 24px;
+`;
+
+const BreakoutRoomDurationLabel = styled.Text`
+  color: ${Colors.lightGray300}
+  font-size: 12px;
+  text-align: center;
+  font-weight: 400;
+  padding: 0 0 12px 0;
+`;
+
+const NumberTimerLabel = styled.Text`
+  color: ${Colors.lightGray400}
+  font-size: 24px;
+  text-align: center;
+  font-weight: 500;
+`;
+
+const DividerBottom = styled(Divider)`
+  margin: 0 16px 24px 16px;
+`;
+
+const DividerTinyBottom = styled(Divider)`
+  margin: 16px 0;
+`;
+
+const NoBreakoutsImage = styled.Image``;
+
+const MiniAvatarsContainer = styled.View`
+  display: flex;
+  align-items: center;
+  padding-left: 7px;
+  flex-direction: row;
+  padding: 0 6px 0 6px;
+
+  ${({ participantsCount }) => participantsCount === 0
+  && `
+      display: none;
+      padding-left: 0px;
+  `}
+`;
+
+const MiniAvatar = styled(UserAvatar)`
+`;
+
+const ParticipantsContainer = styled.View`
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+`;
+
+const JoinBreakoutButton = styled(button)`
+  background-color: ${Colors.orange}
+  color: ${Colors.white};
+  font-size: 16px;
+  font-weight: 400;
+  padding: 12px 0;
+  border-radius: 12px;
+  width: 100%;
+`;
+
+const ButtonContainer = styled.View`
+  width: 100%;
+`;
+
 export default {
   ShortName,
-  CardPressable,
+  Card,
+  CardView,
   FlatList,
-  ActionsBar,
-  ActionsBarContainer,
   ContainerView,
-  Block,
-  TimeRemaining,
+  ParticipantsCount,
   TitleText,
+  BreakoutRoomDurationLabel,
+  NumberTimerLabel,
+  DividerBottom,
+  DividerTinyBottom,
+  NoBreakoutsLabelTitle,
+  NoBreakoutsLabelSubtitle,
+  ContainerCentralizedView,
+  NoBreakoutsImage,
+  MiniAvatarsContainer,
+  ParticipantsContainer,
+  MiniAvatar,
+  UserNameText,
+  ParticipantsContainerExpandable,
+  JoinBreakoutButton,
+  ButtonContainer
 };
