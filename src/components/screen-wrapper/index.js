@@ -7,6 +7,7 @@ import NotificationBar from '../actions-bar/bar-notification';
 import BottomSheetActionsBar from '../actions-bar/bottom-sheet-actions-bar';
 import ModalControllerComponent from '../modal';
 import ChatPopupList from '../chat/chat-popup';
+import BreakoutRoomTimer from '../breakout-room-timer';
 
 const ScreenWrapper = ({ children }) => {
   const dispatch = useDispatch();
@@ -18,6 +19,7 @@ const ScreenWrapper = ({ children }) => {
         {children}
       </Pressable>
       <ModalControllerComponent />
+      <BreakoutRoomTimer />
       <NotificationBar />
       {/* This components keep mounted because react navigation does NOT unmount previous screens
       So, we will disable them from rendering when is not focused */}
