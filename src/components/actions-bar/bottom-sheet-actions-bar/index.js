@@ -1,5 +1,5 @@
 import React, {
-  useCallback, useEffect, useState, useMemo, useRef
+  useCallback, useEffect, useMemo, useRef
 } from 'react';
 import { View, Platform } from 'react-native';
 import InCallManager from 'react-native-incall-manager';
@@ -11,7 +11,6 @@ import { useOrientation } from '../../../hooks/use-orientation';
 import ActionsBar from '../index';
 import { setDetailedInfo } from '../../../store/redux/slices/wide-app/layout';
 
-import NotificationBar from '../bar-notification';
 import Styled from './styles';
 
 const BottomSheetActionsBar = () => {
@@ -24,7 +23,6 @@ const BottomSheetActionsBar = () => {
   const audioDevices = useSelector((state) => state.audio.audioDevices);
   const selectedAudioDevice = useSelector((state) => state.audio.selectedAudioDevice);
   const isFullscreen = route.name === 'FullscreenWrapperScreen';
-  const [currentBottomSheetIndex, setBottomSheetIndex] = useState(0);
 
   // variables
   const dispatch = useDispatch();
@@ -39,7 +37,6 @@ const BottomSheetActionsBar = () => {
 
   // callbacks
   const handleSheetChanges = useCallback((index) => {
-    setBottomSheetIndex(index);
     if (index === -1) {
       dispatch(setDetailedInfo(false));
     }
@@ -82,26 +79,22 @@ const BottomSheetActionsBar = () => {
 
   // renders
   return (
-    <>
-      <NotificationBar bottomSheetIndex={currentBottomSheetIndex} />
-      <BottomSheet
-        ref={bottomSheetRef}
-        index={detailedInfo ? 0 : -1}
-        enablePanDownToClose
-        snapPoints={snapPoints}
-        handleIndicatorStyle={Styled[isFullscreen ? 'fullscreenStyles' : 'styles'].indicatorStyle}
-        style={Styled[isFullscreen ? 'fullscreenStyles' : 'styles'].style}
-        handleStyle={Styled[isFullscreen ? 'fullscreenStyles' : 'styles'].handleStyle}
-        backgroundStyle={Styled[isFullscreen ? 'fullscreenStyles' : 'styles'].backgroundStyle}
-        onChange={handleSheetChanges}
-      >
-        <View style={Styled[isFullscreen ? 'fullscreenStyles' : 'styles'].contentContainer}>
-          <ActionsBar />
-          {audioDeviceSelectorView()}
-        </View>
-      </BottomSheet>
-
-    </>
+    <BottomSheet
+      ref={bottomSheetRef}
+      index={detailedInfo ? 0 : -1}
+      enablePanDownToClose
+      snapPoints={snapPoints}
+      handleIndicatorStyle={Styled[isFullscreen ? 'fullscreenStyles' : 'styles'].indicatorStyle}
+      style={Styled[isFullscreen ? 'fullscreenStyles' : 'styles'].style}
+      handleStyle={Styled[isFullscreen ? 'fullscreenStyles' : 'styles'].handleStyle}
+      backgroundStyle={Styled[isFullscreen ? 'fullscreenStyles' : 'styles'].backgroundStyle}
+      onChange={handleSheetChanges}
+    >
+      <View style={Styled[isFullscreen ? 'fullscreenStyles' : 'styles'].contentContainer}>
+        <ActionsBar />
+        {audioDeviceSelectorView()}
+      </View>
+    </BottomSheet>
   );
 };
 
