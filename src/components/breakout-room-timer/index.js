@@ -14,7 +14,7 @@ const BreakoutRoomTimer = () => {
     useCallback(() => {
       let interval;
 
-      if (time <= 0) {
+      if (time < 0) {
         setTime(0);
         return;
       }
@@ -44,7 +44,7 @@ const BreakoutRoomTimer = () => {
         resizeMode="contain"
         style={{ width: 16, height: 16 }}
       />
-      <Styled.Title>{UtilsService.humanizeSeconds(time)}</Styled.Title>
+      <Styled.Title>{time < 0 ? '00:00' : UtilsService.humanizeSeconds(time)}</Styled.Title>
     </Styled.ContainerCard>
   );
 };
