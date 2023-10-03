@@ -24,10 +24,11 @@ export class BreakoutsModule extends Module {
         breakoutObject: msgObj,
       })
     );
-    store.dispatch(setProfile({
-      profile: 'breakout_invite',
-      extraInfo: msgObj.fields
-    }));
+    // disable invite when is breakout-sdk
+    // store.dispatch(setProfile({
+    //   profile: 'breakout_invite',
+    //   extraInfo: msgObj.fields
+    // }));
   }
 
   // eslint-disable-next-line class-methods-use-this
