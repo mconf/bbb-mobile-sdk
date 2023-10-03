@@ -1,3 +1,4 @@
+import he from 'he';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslation, Trans } from 'react-i18next';
@@ -10,9 +11,26 @@ export function useChatMsgs() {
 
   const handleMessages = useCallback(
     () => Object.values(groupChatMsgStore.groupChatMsgCollection).map((message) => {
-      // replace html character entities || better way?
-      let filteredMsg = message?.message?.replace(/&quot;/g, '"');
-      filteredMsg = filteredMsg.replace(/&#39;/g, '"');
+      // replace html character entities
+      const filteredMsg = he.decode(message?.message).replaceAll('<br/>', '');
+
+      // if is a 'upload media' message - MCONF EXCLUSIVE
+      if (message.id.toString().includes('SYSTEM_MESSAGE-PUBLIC_CHAT_MEDIA_UPLOAD')) {
+        return {
+          timestamp: message.timestamp,
+          author: t('app.toast.chat.system'),
+          message: `${t('mobileSdk.upload.notification.header')} ${message?.extra?.filename}\n\n${t('mobileSdk.upload.notification.disclaimer')}`,
+        };
+      }
+
+      // if is a 'question' message - MCONF EXCLUSIVE
+      if (message.id.toString().includes('SYSTEM_MESSAGE-PUBLIC_CHAT_QUESTION')) {
+        return {
+          timestamp: message.timestamp,
+          author: message?.extra?.question?.text,
+          message: `${t('mobileSdk.question.answer')} ${message?.extra?.question?.answerText}` || t('mobileSdk.question.answering'),
+        };
+      }
 
       // if is a poll result message
       if (message.id.toString().includes('PUBLIC_CHAT_POLL_RESULT')) {

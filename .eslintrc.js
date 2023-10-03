@@ -110,5 +110,6 @@ module.exports = {
     'brace-style': 'off',
     'import/no-extraneous-dependencies': 'off',
     'consistent-return': 'off',
+    'react/no-array-index-key': 'off'
   },
 };

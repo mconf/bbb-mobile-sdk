@@ -9,6 +9,8 @@ const initialState = {
   isListenOnly: false,
   inputStreamId: null,
   audioError: null,
+  audioDevices: [],
+  selectedAudioDevice: ''
 };
 
 const audioSlice = createSlice({
@@ -39,6 +41,12 @@ const audioSlice = createSlice({
     setAudioError: (state, action) => {
       state.audioError = action.payload;
     },
+    setAudioDevices: (state, action) => {
+      state.audioDevices = action.payload;
+    },
+    setSelectedAudioDevice: (state, action) => {
+      state.selectedAudioDevice = action.payload;
+    },
   },
 });
 
@@ -51,5 +59,7 @@ export const {
   setIsReconnecting,
   setIsListenOnly,
   setAudioError,
+  setAudioDevices,
+  setSelectedAudioDevice,
 } = audioSlice.actions;
 export default audioSlice.reducer;

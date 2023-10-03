@@ -112,12 +112,13 @@ class VideoManager {
   }
 
   _onWSError(error) {
+    const errorMessage = error.name || error.message || 'Unknown error';
     this.logger.error({
       logCode: 'videomanager_websocket_error',
       extraInfo: {
-        errorMessage: error.name || error.message || 'Unknown error',
+        errorMessage,
       }
-    }, 'WebSocket connection to SFU dropped - will reconnect');
+    }, `WebSocket connection to SFU dropped, will reconnect (${errorMessage})`);
   }
 
   _onWSClosed() {
@@ -159,8 +160,6 @@ class VideoManager {
       this.ws = null;
       this._onWSClosed();
     }
-
-    this._wsUrl = null;
 
     if (this._pingInterval) {
       clearInterval(this._pingInterval);
@@ -204,8 +203,8 @@ class VideoManager {
         return reject(error);
       };
 
-      this.ws = new ReconnectingWebSocket(wsUrl, [], { connectionTimeout: 4000 });
       this._wsUrl = wsUrl;
+      this.ws = new ReconnectingWebSocket(wsUrl, [], { connectionTimeout: 4000 });
       this.ws.addEventListener('close', this._onWSClosed, { once: true });
       this.ws.addEventListener('error', preloadErrorCatcher);
       this.ws.onopen = () => {
@@ -236,8 +235,10 @@ class VideoManager {
   }
 
   _initializePublisherBroker({ cameraId, inputStream, mediaServer = 'mediasoup' }) {
+    const role = 'share';
     const brokerOptions = {
       ws: this.ws,
+      wsUrl: this._wsUrl,
       cameraId,
       iceServers: this.iceServers,
       stream: (inputStream && inputStream.active) ? inputStream : undefined,
@@ -252,9 +253,9 @@ class VideoManager {
         logCode: 'video_ended',
         extraInfo: {
           cameraId,
-          role: 'share',
+          role,
         },
-      }, 'Video ended without issue');
+      }, `Video ended, role=${role}`);
       this.onLocalVideoExit(cameraId);
     };
     broker.onerror = (error) => {
@@ -262,11 +263,11 @@ class VideoManager {
         logCode: 'video_failure',
         extraInfo: {
           cameraId,
-          role: 'share',
+          role,
           errorCode: error.code,
           errorMessage: error.message,
         },
-      }, `Video error - errorCode=${error.code}, cause=${error.message}`);
+      }, `Video error (${role}) - errorCode=${error.code}, cause=${error.message}`);
       this.stopVideo(cameraId);
     };
     broker.onstart = () => {
@@ -277,9 +278,9 @@ class VideoManager {
         logCode: 'video_reconnecting',
         extraInfo: {
           cameraId,
-          role: 'share',
+          role,
         },
-      }, 'Video reconnecting (publisher)');
+      }, `Video reconnecting, role=${role}`);
       // TODO - update local collection states about this and use it in the UI
       // to let the user know something's happening.
     };
@@ -292,8 +293,10 @@ class VideoManager {
   }
 
   _initializeSubscriberBroker({ cameraId, mediaServer = 'mediasoup' }) {
+    const role = 'viewer';
     const brokerOptions = {
       ws: this.ws,
+      wsUrl: this._wsUrl,
       cameraId,
       iceServers: this.iceServers,
       offering: false,
@@ -307,9 +310,9 @@ class VideoManager {
         logCode: 'video_ended',
         extraInfo: {
           cameraId,
-          role: 'viewer',
+          role,
         },
-      }, 'Video ended without issue');
+      }, `Video ended, role=${role}`);
       this.onRemoteVideoExit(cameraId);
     };
     broker.onerror = (error) => {
@@ -317,11 +320,11 @@ class VideoManager {
         logCode: 'video_failure',
         extraInfo: {
           cameraId,
-          role: 'viewer',
+          role,
           errorCode: error.code,
           errorMessage: error.message,
         },
-      }, `Video error - errorCode=${error.code}, cause=${error.message}`);
+      }, `Video error (${role}) - errorCode=${error.code}, cause=${error.message}`);
       this.stopVideo(cameraId);
     };
     broker.onstart = () => {
@@ -333,9 +336,9 @@ class VideoManager {
         logCode: 'video_reconnecting',
         extraInfo: {
           cameraId,
-          role: 'viewer',
+          role,
         },
-      }, 'Video reconnecting (viewer)');
+      }, `Video reconnecting, role=${role}`);
       // TODO - update local collection states about this and use it in the UI
       // to let the user know something's happening.
     };
@@ -410,7 +413,13 @@ class VideoManager {
     store.dispatch(setIsConnected(true));
     store.dispatch(setIsConnecting(false));
     this._makeCall('userShareWebcam', cameraId);
-    this.logger.info({ logCode: 'video_joined' }, 'Video Joined');
+    this.logger.info({
+      logCode: 'video_joined',
+      extraInfo: {
+        cameraId,
+        role: 'share',
+      },
+    }, 'Video Joined');
   }
 
   async publish(options = {}) {
