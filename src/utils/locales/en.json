@@ -154,5 +154,10 @@
   "mobileSdk.breakout.noBreakoutsSubtitle": "When you are added to a Breakout Room, it will be available to access here",
   "mobileSdk.breakout.participantsLabel": "participants",
   "mobileSdk.breakout.starting": "Rooms starting...",
-  "mobileSdk.breakout.finishing": "Rooms finishing..."
+  "mobileSdk.breakout.finishing": "Rooms finishing...",
+  "mobileSdk.breakout.inviteModal.title": "Breakout room",
+  "mobileSdk.breakout.inviteModal.content": "You have been invited to join",
+  "mobileSdk.breakout.inviteModal.button": "Join breakout room",
+  "mobileSdk.breakout.inviteModal.moderatorContent": "Breakout rooms have started, click the button to view the rooms",
+  "mobileSdk.breakout.inviteModal.moderatorButton": "Breakout rooms"
 }

@@ -151,5 +151,10 @@
   "mobileSdk.breakout.noBreakoutsSubtitle": "Quando você for adicionado à uma Sala de Apoio, ela estará disponível para acesso por aqui",
   "mobileSdk.breakout.participantsLabel": "participantes",
   "mobileSdk.breakout.starting": "Salas começando...",
-  "mobileSdk.breakout.finishing": "Salas finalizando..."
+  "mobileSdk.breakout.finishing": "Salas finalizando...",
+  "mobileSdk.breakout.inviteModal.title": "Sala de Apoio",
+  "mobileSdk.breakout.inviteModal.content": "Você foi adicionado pelo moderador para",
+  "mobileSdk.breakout.inviteModal.button": "Acessar Sala de Apoio",
+  "mobileSdk.breakout.inviteModal.moderatorContent": "As salas de apoio foram iniciadas, clique no botão para visualizar as salas",
+  "mobileSdk.breakout.inviteModal.moderatorButton": "Salas de Apoio"
 }

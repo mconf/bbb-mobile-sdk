@@ -150,5 +150,10 @@
     "mobileSdk.breakout.noBreakoutsSubtitle": "Cuando te agreguen a una grupo de trabajo, estará disponible para acceder aquí",
     "mobileSdk.breakout.participantsLabel": "participantes",
     "mobileSdk.breakout.starting": "Salas empezando...",
-    "mobileSdk.breakout.finishing": "Salas acabando..."
+    "mobileSdk.breakout.finishing": "Salas acabando...",
+    "mobileSdk.breakout.inviteModal.title": "Grupos de trabajo",
+    "mobileSdk.breakout.inviteModal.content": "Has sido invitado a unirte",
+    "mobileSdk.breakout.inviteModal.button": "Únase",
+    "mobileSdk.breakout.inviteModal.moderatorContent": "Las salas para grupos de trabajo han comenzado, haga clic en el botón para ver las salas",
+    "mobileSdk.breakout.inviteModal.moderatorButton": "Grupos de trabajo"
 }

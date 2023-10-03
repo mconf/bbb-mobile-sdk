@@ -1,9 +1,6 @@
 import Module from './module';
 import { store } from '../../../store/redux/store';
-import {
-  hideNotification,
-  setProfile
-} from '../../../store/redux/slices/wide-app/notification-bar';
+import { setProfile } from '../../../store/redux/slices/wide-app/modal';
 import {
   addBreakout,
   editBreakout,
@@ -27,10 +24,10 @@ export class BreakoutsModule extends Module {
         breakoutObject: msgObj,
       })
     );
-    store.dispatch(setProfile('breakoutsStarted'));
-    setTimeout(() => {
-      store.dispatch(hideNotification());
-    }, 5000);
+    store.dispatch(setProfile({
+      profile: 'breakout_invite',
+      extraInfo: msgObj.fields
+    }));
   }
 
   // eslint-disable-next-line class-methods-use-this
