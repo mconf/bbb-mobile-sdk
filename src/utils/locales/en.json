@@ -159,5 +159,8 @@
   "mobileSdk.breakout.inviteModal.content": "You have been invited to join",
   "mobileSdk.breakout.inviteModal.button": "Join breakout room",
   "mobileSdk.breakout.inviteModal.moderatorContent": "Breakout rooms have started, click the button to view the rooms",
-  "mobileSdk.breakout.inviteModal.moderatorButton": "Breakout rooms"
+  "mobileSdk.breakout.inviteModal.moderatorButton": "Breakout rooms",
+  "mobileSdk.breakout.endSession.modal.title": "This breakout room has been closed",
+  "mobileSdk.breakout.endSession.modal.subtitle": "You will be redirected to the main room shortly",
+  "mobileSdk.breakout.endSession.modal.buttonLabel": "Access Main Room"
 }
