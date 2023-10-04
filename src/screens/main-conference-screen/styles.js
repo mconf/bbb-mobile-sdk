@@ -10,7 +10,6 @@ const ContainerView = styled.View`
   display: flex;
   align-items: center;
   justify-content: space-around;
-  padding: 10px;
 
   ${({ orientation }) => orientation === 'LANDSCAPE'
     && `

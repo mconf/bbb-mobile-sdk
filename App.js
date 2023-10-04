@@ -6,12 +6,14 @@ import { NavigationContainer } from '@react-navigation/native';
 import notifee, { EventType } from '@notifee/react-native';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 // providers and store
-import { BackHandler, Alert } from 'react-native';
+import InCallManager from 'react-native-incall-manager';
+import {
+  BackHandler, DeviceEventEmitter, Alert, Platform
+} from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { store, injectStoreFlushCallback} from './src/store/redux/store';
+import { store, injectStoreFlushCallback } from './src/store/redux/store';
 import * as api from './src/services/api';
 import DrawerNavigator from './src/components/custom-drawer/drawer-navigator';
-import FullscreenWrapper from './src/components/fullscreen-wrapper';
 import EndSessionScreen from './src/screens/end-session-screen';
 import FeedbackScreen from './src/screens/feedback-screen';
 import ProblemFeedbackScreen from './src/screens/feedback-screen/problem-feedback-screen';
@@ -22,6 +24,7 @@ import { injectStore as injectStoreSM } from './src/services/webrtc/screenshare-
 import { injectStore as injectStoreAM } from './src/services/webrtc/audio-manager';
 import { injectStore as injectStoreIM } from './src/components/interactions/service';
 import { ConnectionStatusTracker } from './src/store/redux/middlewares';
+import { setAudioDevices, setSelectedAudioDevice } from './src/store/redux/slices/wide-app/audio';
 import Settings from './settings.json';
 import TestComponentsScreen from './src/screens/test-components-screen';
 import GuestScreen from './src/screens/guest-screen';
@@ -29,7 +32,6 @@ import {
   leave,
   setSessionTerminated,
   sessionStateChanged,
-  setFeedbackEnabled,
 } from './src/store/redux/slices/wide-app/client';
 import logger from './src/services/logger';
 import { toggleMuteMicrophone } from './src/components/audio/service';
@@ -76,6 +78,7 @@ const AppContent = ({
   });
   const [notification, setNotification] = useState(null);
   const navigationRef = useRef(null);
+  const nativeEventListeners = useRef([]);
   const leaveOnUnmountRef = useRef();
 
   const { t, i18n } = useTranslation();
@@ -97,7 +100,7 @@ const AppContent = ({
   }, [leaveOnUnmount]);
 
   useEffect(() => {
-    console.log("FOCUS MOUNTED")
+    console.log('FOCUS MOUNTED');
     const onBackPress = () => {
       Alert.alert(t('app.leaveModal.title'), t('app.leaveModal.desc'), [
         {
@@ -113,7 +116,7 @@ const AppContent = ({
     BackHandler.addEventListener('hardwareBackPress', onBackPress);
     return () => {
       BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-      console.log("FOCUS UNMOUNTED");
+      console.log('FOCUS UNMOUNTED');
     };
   }, []);
 
@@ -137,6 +140,9 @@ const AppContent = ({
 
   useEffect(() => {
     if (audioIsConnected) {
+      if (Platform.OS === 'android') {
+        InCallManager.chooseAudioRoute('SPEAKER_PHONE');
+      }
       // Start/show the notification foreground service
       const getChannelIdAndDisplayNotification = async () => {
         // Request permissions (required for iOS)
@@ -245,9 +251,24 @@ const AppContent = ({
   useEffect(() => {
     // Inject custom provided onLeaveSession callback into the store so it's called
     // once the store's about to be flushed
+    InCallManager.start({ media: 'video' });
     if (typeof _onLeaveSession === 'function') injectStoreFlushCallback(_onLeaveSession);
     injectStore();
     dispatch(ConnectionStatusTracker.registerConnectionStatusListeners());
+    nativeEventListeners.current.push(
+      DeviceEventEmitter.addListener('onAudioDeviceChanged', (event) => {
+        const { availableAudioDeviceList, selectedAudioDevice } = event;
+        logger.info({
+          logCode: 'audio_devices_changed',
+          extraInfo: {
+            availableAudioDeviceList,
+            selectedAudioDevice,
+          },
+        }, `Audio devices changed: selected=${selectedAudioDevice} available=${availableAudioDeviceList}`);
+        dispatch(setAudioDevices(event.availableAudioDeviceList));
+        dispatch(setSelectedAudioDevice(event.selectedAudioDevice));
+      })
+    );
 
     // Foreground event = device unlocked || app in view
     const unsubscribeForegroundEvents = notifee.onForegroundEvent((event) => {
@@ -266,10 +287,10 @@ const AppContent = ({
       }
     });
 
-    console.log("REGULAR APP MOUNT");
+    console.log('REGULAR APP MOUNT');
 
     return () => {
-      console.log("REGULAR APP UNMOUNT - leave?", leaveOnUnmountRef.current);
+      console.log('REGULAR APP UNMOUNT - leave?', leaveOnUnmountRef.current);
       dispatch(ConnectionStatusTracker.unregisterConnectionStatusListeners());
       unsubscribeForegroundEvents();
 
@@ -311,7 +332,6 @@ const AppContent = ({
         <Stack.Screen name="FeedbackScreen" component={FeedbackScreen} />
         <Stack.Screen name="ProblemFeedbackScreen" component={ProblemFeedbackScreen} />
         <Stack.Screen name="EmailFeedbackScreen" component={EmailFeedbackScreen} />
-        <Stack.Screen name="FullscreenWrapper" component={FullscreenWrapper} />
       </Stack.Navigator>
     </NavigationContainer>
   );

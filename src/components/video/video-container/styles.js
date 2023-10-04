@@ -1,7 +1,7 @@
 import styled from 'styled-components/native';
 import { css } from 'styled-components';
 import { RTCView } from 'react-native-webrtc';
-import ContentLoader, { Rect } from 'react-content-loader/native';
+import { ActivityIndicator } from 'react-native-paper';
 import IconButtonComponent from '../../icon-button';
 import Colors from '../../../constants/colors';
 import Pressable from '../../pressable';
@@ -72,24 +72,20 @@ const NameLabel = styled.Text`
 `;
 
 const VideoSkeleton = () => (
-  <ContentLoader
-    speed={1}
-    width="100%"
-    height="100%"
-    viewBox="0 0 90 90"
+  <ActivityIndicator
+    size="large"
+    color="white"
     backgroundColor={Colors.contentLetterboxColor}
-    foregroundColor={Colors.contentForegroundColor}
-  >
-    <Rect x="0" y="0" rx="3" ry="3" width="90" height="90" />
-  </ContentLoader>
+    animating="true"
+    style={{
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}
+  />
 );
 
-const ContainerPressableGrid = styled(Pressable).attrs(() => ({
-  pressStyle: {
-    borderWidth: 2,
-  },
-}))`
-  ${() => css`
+const ContainerPressableGrid = styled.Pressable`
     height: 120px;
     width: 120px;
     border-color: #06172A;
@@ -97,8 +93,7 @@ const ContainerPressableGrid = styled(Pressable).attrs(() => ({
     ${({ isTalking }) => isTalking && `
       border: 2px ${Colors.orange} solid;
     `}
-  `}
-`;
+  `;
 
 const PressableButton = styled(Pressable).attrs(() => ({
   pressStyle: {
@@ -112,6 +107,14 @@ const PressableButton = styled(Pressable).attrs(() => ({
     position: absolute;
     right: 0;
   `}
+`;
+
+const TalkingIndicatorContainer = styled.View`
+    background-color: #28282d99;
+    margin: 5px;
+    border-radius: 20px;
+    position: absolute;
+    left: 0;
 `;
 
 const FullscreenIcon = styled(IconButtonComponent)`
@@ -129,5 +132,6 @@ export default {
   VideoStream,
   VideoSkeleton,
   ContainerPressableGrid,
-  FullscreenIcon
+  FullscreenIcon,
+  TalkingIndicatorContainer,
 };

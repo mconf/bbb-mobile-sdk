@@ -2,16 +2,12 @@ import React, { useEffect } from 'react';
 import { Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
-import useEndReason from '../../hooks/use-end-reason';
 import Styled from './styles';
 
 const EndSessionScreen = (props) => {
   const { onLeaveSession } = props;
-  const { t } = useTranslation();
 
-  const title = useEndReason();
-  const subtitle = t('mobileSdk.endSession.subtitle');
-  const leaveText = t('app.leaveModal.confirm');
+  const { t } = useTranslation();
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -31,17 +27,17 @@ const EndSessionScreen = (props) => {
     <Styled.ContainerView>
       <Styled.ContainerEndSessionCard>
         <Image
-          source={require('../../assets/endSessionImage.png')}
+          source={require('../../assets/endSessionBreakout.png')}
           resizeMode="contain"
-          style={{ width: 250, height: 250 }}
+          style={{ width: 104, height: 104 }}
         />
-        <Styled.Title>{title}</Styled.Title>
-        <Styled.Subtitle>{subtitle}</Styled.Subtitle>
-        <Styled.ButtonContainer>
-          <Styled.ConfirmButton onPress={handleLeaveSessionButtonPress}>
-            {leaveText}
-          </Styled.ConfirmButton>
-        </Styled.ButtonContainer>
+        <Styled.MiddleContainer>
+          <Styled.Title>{t('mobileSdk.breakout.endSession.modal.title')}</Styled.Title>
+          <Styled.Subtitle>{t('mobileSdk.breakout.endSession.modal.subtitle')}</Styled.Subtitle>
+        </Styled.MiddleContainer>
+        <Styled.ConfirmButton onPress={handleLeaveSessionButtonPress}>
+          {t('mobileSdk.breakout.endSession.modal.buttonLabel')}
+        </Styled.ConfirmButton>
       </Styled.ContainerEndSessionCard>
     </Styled.ContainerView>
   );

@@ -1,10 +1,12 @@
+// UNUSED SCREEN FOR NOW
+
 import { useState } from 'react';
 import { FlatList, View, Alert } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import { useTranslation } from 'react-i18next';
 import { useOrientation } from '../../hooks/use-orientation';
 import IconButton from '../../components/icon-button';
-import withPortal from '../../components/high-order/with-portal';
+import ScreenWrapper from '../../components/screen-wrapper';
 import Styled from './styles';
 
 const ManagePresentationScreen = () => {
@@ -78,22 +80,24 @@ const ManagePresentationScreen = () => {
   );
 
   return (
-    <View>
-      <Styled.ContainerView orientation={orientation}>
-        <Styled.ContainerPresentationCard>
-          <Styled.Title>{t('mobileSdk.managePresentations.title')}</Styled.Title>
-          <FlatList data={documents} renderItem={renderItem} />
-          <Styled.ConfirmButton onPress={handlePickDocument}>
-            {t('mobileSdk.managePresentations.confirmButton')}
-          </Styled.ConfirmButton>
-        </Styled.ContainerPresentationCard>
+    <ScreenWrapper>
+      <View>
+        <Styled.ContainerView orientation={orientation}>
+          <Styled.ContainerPresentationCard>
+            <Styled.Title>{t('mobileSdk.managePresentations.title')}</Styled.Title>
+            <FlatList data={documents} renderItem={renderItem} />
+            <Styled.ConfirmButton onPress={handlePickDocument}>
+              {t('mobileSdk.managePresentations.confirmButton')}
+            </Styled.ConfirmButton>
+          </Styled.ContainerPresentationCard>
 
-        <Styled.ActionsBarContainer orientation={orientation}>
-          <Styled.ActionsBar orientation={orientation} />
-        </Styled.ActionsBarContainer>
-      </Styled.ContainerView>
-    </View>
+          <Styled.ActionsBarContainer orientation={orientation}>
+            <Styled.ActionsBar orientation={orientation} />
+          </Styled.ActionsBarContainer>
+        </Styled.ContainerView>
+      </View>
+    </ScreenWrapper>
   );
 };
 
-export default withPortal(ManagePresentationScreen);
+export default ManagePresentationScreen;

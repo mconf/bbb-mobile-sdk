@@ -24,6 +24,7 @@ import videoReducer from './slices/wide-app/video';
 import localScreenshareReducer from './slices/wide-app/screenshare';
 import chatReducer from './slices/wide-app/chat';
 import notificationBarReducer from './slices/wide-app/notification-bar';
+import modalReducer from './slices/wide-app/modal';
 import layoutReducer from './slices/wide-app/layout';
 import clientReducer, { setSessionTerminated, setConnected, sessionStateChanged }from './slices/wide-app/client';
 // Middlewares
@@ -68,6 +69,7 @@ const appReducer = combineReducers({
   screenshare: localScreenshareReducer,
   chat: chatReducer,
   notificationBar: notificationBarReducer,
+  modal: modalReducer,
   layout: layoutReducer,
   client: clientReducer,
 });

@@ -1,7 +1,6 @@
 import styled from 'styled-components/native';
 import button from '../../../../components/button';
 import Colors from '../../../../constants/colors';
-import actionsBar from '../../../../components/actions-bar';
 
 const ConfirmButton = styled(button)`
   background-color: ${Colors.orange};
@@ -96,33 +95,11 @@ const ContainerViewPadding = styled.View`
   padding: 12px;
 `;
 
-const ActionsBarContainer = styled.View`
-  width: 100%;
-  height: 10%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  ${({ orientation }) => orientation === 'LANDSCAPE'
-  && `
-      width: 10%;
-      height: 100%;
-  `}
-`;
-
 const ContainerPollCard = styled.ScrollView`
   background-color: ${Colors.white};
   width: 100%;
-  max-height: 85%;
   border-radius: 12px;
   display: flex;
-`;
-
-const ActionsBar = styled(actionsBar)`
-  ${({ orientation }) => orientation === 'LANDSCAPE'
-  && `
-      flex-direction: column;
-      display: flex;
-  `}
 `;
 
 export default {
@@ -137,8 +114,6 @@ export default {
   BarContainer,
   ContainerView,
   ContainerViewPadding,
-  ActionsBarContainer,
   ContainerPollCard,
-  ActionsBar,
   CancelButton,
 };
