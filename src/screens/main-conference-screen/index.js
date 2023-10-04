@@ -3,6 +3,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import ScreenWrapper from '../../components/screen-wrapper';
 import VideoGrid from '../../components/video/video-grid';
+import BreakoutRoomTimer from '../../components/breakout-room-timer';
 import Styled from './styles';
 
 const MainConferenceScreen = () => {
@@ -24,6 +25,7 @@ const MainConferenceScreen = () => {
       <ScreenWrapper>
         <Styled.ContainerView>
           <VideoGrid />
+          <BreakoutRoomTimer />
         </Styled.ContainerView>
       </ScreenWrapper>
     );

@@ -18,6 +18,7 @@ const ContainerCard = styled.View`
   align-items: center;
   margin: 8px;
   left: 0px;
+  top: 0px;
 `;
 
 const Title = styled.Text`
