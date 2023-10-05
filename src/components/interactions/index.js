@@ -34,7 +34,7 @@ const InteractionsControls = (props) => {
             : 'raiseHand'
         );
         if (!isHandRaised) {
-          dispatch(setProfile('handsUp'));
+          dispatch(setProfile({ profile: 'handsUp' }));
         } else {
           dispatch(hideNotification());
         }

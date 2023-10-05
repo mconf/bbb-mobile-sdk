@@ -61,7 +61,7 @@ const NotificationBar = () => {
         <Styled.NotificationContainer>
           <Styled.TextContainer>
             <Styled.Text>
-              {t('mobileSdk.notificationBar.handsUp')}
+              {t(`${notificationBarStore.text}`)}
             </Styled.Text>
           </Styled.TextContainer>
         </Styled.NotificationContainer>
