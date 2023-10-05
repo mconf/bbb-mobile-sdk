@@ -50,7 +50,7 @@ const RecordingIndicator = (props) => {
           }),
         ])
       ).start();
-    }, [])
+    }, [recording])
   );
 
   if (!recordMeeting?.record) return null;
