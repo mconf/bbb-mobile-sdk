@@ -1,12 +1,12 @@
-import { KeyboardAvoidingView, Platform } from 'react-native';
+import { KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { useRef } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { useOrientation } from '../../../hooks/use-orientation';
 import { isPresenter } from '../../../store/redux/slices/current-user';
-import PreviousPollCard from './poll-card';
 import ScreenWrapper from '../../../components/screen-wrapper';
+import PreviousPollCard from './poll-card';
 import Styled from './styles';
 
 const PreviousPollScreen = () => {
@@ -18,21 +18,41 @@ const PreviousPollScreen = () => {
   const previousPollPublishedStore = useSelector((state) => state.previousPollPublishedCollection);
   const amIPresenter = useSelector(isPresenter);
 
-  const renderMethod = () => {
-    if (
-      Object.keys(previousPollPublishedStore.previousPollPublishedCollection)
-        .length === 0
-    ) {
-      return (
-        <>
-          <Styled.Title>{t('mobileSdk.poll.noPollLabel')}</Styled.Title>
-          <Styled.NoPollText>
-            {t('mobileSdk.poll.noPollLabelYet')}
-          </Styled.NoPollText>
-        </>
-      );
-    }
+  if (Object.keys(previousPollPublishedStore.previousPollPublishedCollection)
+    .length === 0) {
+    return (
+      <ScreenWrapper>
+        <Styled.ContainerCentralizedView>
+          <Styled.NoPollsImage
+            source={require('../../../assets/application/service-off.png')}
+            resizeMode="contain"
+            style={{ width: 173, height: 130 }}
+          />
+          <Styled.NoPollsLabelTitle>
+            {t('mobileSdk.poll.noPollsTitle')}
+          </Styled.NoPollsLabelTitle>
+          <Styled.NoPollsLabelSubtitle>
+            {t('mobileSdk.poll.noPollsSubtitle')}
+          </Styled.NoPollsLabelSubtitle>
+          <Styled.ButtonContainer>
+            <Styled.PressableButton
+              onPress={() => navigation.navigate('CreatePollScreen')}
+              onPressDisabled={() => Alert.alert(
+                t('mobileSdk.poll.createPoll.noPermissionTitle'),
+                t('mobileSdk.poll.createPoll.noPermissionSubtitle')
+              )}
+              disabled={!amIPresenter}
+            >
+              {t('mobileSdk.poll.createLabel')}
+            </Styled.PressableButton>
+          </Styled.ButtonContainer>
+        </Styled.ContainerCentralizedView>
+      </ScreenWrapper>
 
+    );
+  }
+
+  const renderMethod = () => {
     return (
       Object.values(
         previousPollPublishedStore.previousPollPublishedCollection
@@ -52,11 +72,6 @@ const PreviousPollScreen = () => {
           >
             <Styled.ContainerViewPadding>
               <>
-                {amIPresenter && (
-                <Styled.ReturnButton onPress={() => navigation.goBack()}>
-                  {t('mobileSdk.poll.createLabel')}
-                </Styled.ReturnButton>
-                )}
                 {renderMethod()}
               </>
             </Styled.ContainerViewPadding>

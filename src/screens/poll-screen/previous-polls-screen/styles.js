@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-import button from '../../../components/button';
+import { Button } from 'react-native-paper';
 import Colors from '../../../constants/colors';
 
 const Title = styled.Text`
@@ -44,14 +44,65 @@ const ContainerView = styled.View`
   `}
 `;
 
-const ReturnButton = styled(button)`
-  background-color: ${Colors.blue};
+const ButtonContainer = styled.View`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+`;
+
+const ButtonCreate = styled(Button)`
+  margin-top: 48px;
+`;
+
+const PressableButton = ({
+  onPress, children, disabled, onPressDisabled
+}) => {
+  return (
+    <ButtonCreate
+      mode="contained"
+      icon="plus"
+      onPress={disabled ? onPressDisabled : onPress}
+      buttonColor={disabled ? Colors.lightGray300 : Colors.orange}
+      textColor={Colors.white}
+      style={{
+        width: '75%',
+      }}
+      labelStyle={{
+        fontSize: 18,
+        fontWeight: 500,
+      }}
+    >
+      {children}
+    </ButtonCreate>
+  );
+};
+
+const ContainerCentralizedView = styled.View`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const NoPollsImage = styled.Image``;
+
+const NoPollsLabelTitle = styled.Text`
+  color: ${Colors.white};
+  font-size: 21px;
+  text-align: center;
+  font-weight: 500;
+  width: 320px;
+  padding-top: 24px;
+`;
+
+const NoPollsLabelSubtitle = styled.Text`
   color: ${Colors.white};
   font-size: 16px;
-  font-weight: 400;
-  padding: 12px;
-  margin-bottom: 16px;
-  border-radius: 12px;
+  text-align: center;
+  width: 280px;
+  padding-top: 48px;
 `;
 
 export default {
@@ -60,5 +111,10 @@ export default {
   ContainerViewPadding,
   ContainerPollCard,
   ContainerView,
-  ReturnButton,
+  PressableButton,
+  ButtonContainer,
+  ContainerCentralizedView,
+  NoPollsImage,
+  NoPollsLabelTitle,
+  NoPollsLabelSubtitle
 };

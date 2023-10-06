@@ -111,8 +111,6 @@
     "mobileSdk.poll.inProgress": "Encuesta en progreso",
     "mobileSdk.poll.label": "Encuesta",
     "mobileSdk.poll.multipleChoice": "Selección múltiple",
-    "mobileSdk.poll.noPollLabel": "No se han publicado encuestas",
-    "mobileSdk.poll.noPollLabelYet": "Cuando el presentador publique una encuesta, aparecerá aquí",
     "mobileSdk.poll.noQuestionTextProvided": "El presentador no ha definido ningún texto para la pregunta",
     "mobileSdk.poll.oneAnswer": "Solo una respuesta",
     "mobileSdk.poll.postedMsg": "Se ha publicado una encuesta, revisa la sección de encuestas para ver los resultados",
@@ -159,5 +157,9 @@
     "mobileSdk.breakout.inviteModal.moderatorButton": "Grupos de trabajo",
     "mobileSdk.breakout.endSession.modal.title": "Este grupo de trabajo ha sido cerrada.",
     "mobileSdk.breakout.endSession.modal.subtitle": "Serás redirigido a la sala principal en breve.",
-    "mobileSdk.breakout.endSession.modal.buttonLabel": "Acceso Sala Principal"
-}
+    "mobileSdk.breakout.endSession.modal.buttonLabel": "Acceso Sala Principal",
+    "mobileSdk.poll.noPollsTitle": "No hay encuestas publicadas por el momento.",
+    "mobileSdk.poll.noPollsSubtitle": "Cuando se publiquen nuevas encuestas podrás seguir los resultados aquí",
+    "mobileSdk.poll.createPoll.noPermissionTitle": "Crear encusta",
+    "mobileSdk.poll.createPoll.noPermissionSubtitle": "Necesitas ser presentador para poder crear una encuesta"
+  }

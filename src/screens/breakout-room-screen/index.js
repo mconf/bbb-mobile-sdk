@@ -209,7 +209,6 @@ const BreakoutRoomScreen = () => {
           <Styled.NoBreakoutsLabelSubtitle>
             {t('mobileSdk.breakout.noBreakoutsSubtitle')}
           </Styled.NoBreakoutsLabelSubtitle>
-
         </Styled.ContainerCentralizedView>
       </ScreenWrapper>
     );
