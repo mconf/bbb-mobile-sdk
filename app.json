@@ -6,11 +6,11 @@
     "scheme": "bigbluebutton",
     "version": "1.0.0",
     "orientation": "default",
-    "icon": "./src/assets/icon.png",
+    "icon": "./src/assets/native/icon.png",
     "userInterfaceStyle": "dark",
     "backgroundColor": "#06172A",
     "splash": {
-      "image": "./src/assets/splash.png",
+      "image": "./src/assets/native/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#06172A"
     },
@@ -32,7 +32,7 @@
     ],
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./src/assets/adaptive-icon.png",
+        "foregroundImage": "./src/assets/native/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
       "permissions": [
@@ -52,7 +52,7 @@
       "package": "org.bbb.mobilesdk"
     },
     "web": {
-      "favicon": "./src/assets/favicon.png"
+      "favicon": "./src/assets/native/favicon.png"
     },
     "extra": {
       "eas": {

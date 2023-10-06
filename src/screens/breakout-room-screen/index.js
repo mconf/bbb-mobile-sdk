@@ -199,7 +199,7 @@ const BreakoutRoomScreen = () => {
       <ScreenWrapper>
         <Styled.ContainerCentralizedView>
           <Styled.NoBreakoutsImage
-            source={require('../../assets/service-off.png')}
+            source={require('../../assets/application/service-off.png')}
             resizeMode="contain"
             style={{ width: 173, height: 130 }}
           />

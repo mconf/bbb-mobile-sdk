@@ -31,7 +31,7 @@ const EndSessionScreen = (props) => {
     <Styled.ContainerView>
       <Styled.ContainerEndSessionCard>
         <Image
-          source={require('../../assets/endSessionImage.png')}
+          source={require('../../assets/application/endSessionImage.png')}
           resizeMode="contain"
           style={{ width: 250, height: 250 }}
         />
