@@ -46,6 +46,10 @@ const NotificationBar = () => {
     }
   }, [notificationBarStore.isShow, detailedInfo]);
 
+  if (!notificationBarStore.isShow) {
+    return null;
+  }
+
   return (
     <Animated.View
       style={{
