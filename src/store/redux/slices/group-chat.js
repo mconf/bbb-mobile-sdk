@@ -9,8 +9,7 @@ const groupChatSlice = createSlice({
   reducers: {
     addGroupChat: (state, action) => {
       const { groupChatObject } = action.payload;
-      state.groupChatCollection[groupChatObject.id] =
-        action.payload.groupChatObject.fields;
+      state.groupChatCollection[groupChatObject.id] = action.payload.groupChatObject.fields;
     },
     removeGroupChat: (state, action) => {
       const { groupChatObject } = action.payload;

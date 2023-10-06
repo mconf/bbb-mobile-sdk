@@ -9,8 +9,8 @@ const externalVideoMeetingsSlice = createSlice({
   reducers: {
     addExternalVideoMeeting: (state, action) => {
       const { externalVideoMeetingObject } = action.payload;
-      state.externalVideoMeetingsCollection[externalVideoMeetingObject.id] =
-        action.payload.externalVideoMeetingObject.fields;
+      state.externalVideoMeetingsCollection[externalVideoMeetingObject.id] = action
+        .payload.externalVideoMeetingObject.fields;
     },
     removeExternalVideoMeeting: (state, action) => {
       const { externalVideoMeetingObject } = action.payload;

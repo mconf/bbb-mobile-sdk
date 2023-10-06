@@ -13,6 +13,8 @@ const CreatePoll = () => {
   PollService.handleCurrentPollSubscription();
   const [questionTextInput, setQuestionTextInput] = useState('');
   const [answerTypeSelected, setAnswerTypeSelected] = useState('TF');
+  // will be used when we develop the feature
+  // eslint-disable-next-line no-unused-vars
   const [answersOptions, setAnswersOptions] = useState({
     secretPoll: false,
     isMultipleResponse: false,
@@ -25,7 +27,6 @@ const CreatePoll = () => {
   const handleCreatePoll = async () => {
     await PollService.handleCreatePoll(
       answerTypeSelected,
-      // TODO review this
       `${questionTextInput}-${Date.now()}`,
       answersOptions.secretPoll,
       questionTextInput,

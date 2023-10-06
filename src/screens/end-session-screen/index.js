@@ -17,8 +17,6 @@ const EndSessionScreen = (props) => {
   const [orientation, setOrientation] = useState(Dimensions.get('window').width > Dimensions.get('window').height ? 'LANDSCAPE' : 'PORTRAIT');
 
   useEffect(() => {
-    console.log('END SCREEN MOUNT');
-
     const updateOrientation = () => {
       const newOrientation = Dimensions.get('window').width > Dimensions.get('window').height ? 'LANDSCAPE' : 'PORTRAIT';
       setOrientation(newOrientation);
@@ -27,22 +25,19 @@ const EndSessionScreen = (props) => {
     Dimensions.addEventListener('change', updateOrientation);
 
     return () => {
-      console.log('END SCREEN UNMOUNT');
       Dimensions.removeEventListener('change', updateOrientation);
     };
   }, []);
 
   const handleLeaveSessionButtonPress = () => {
-    console.log('calling onLeaveSession BUTTON');
     if (!onLeaveSession()) navigation.navigate('DrawerNavigator');
   };
 
   const getImageSize = () => {
     if (orientation === 'LANDSCAPE') {
-      return { width: 150, height: 150 }; // Ajuste para modo paisagem
-    } else {
-      return { width: 250, height: 250 }; // Tamanho padrão
+      return { width: 150, height: 150 };
     }
+    return { width: 250, height: 250 };
   };
 
   const imageSize = getImageSize();
