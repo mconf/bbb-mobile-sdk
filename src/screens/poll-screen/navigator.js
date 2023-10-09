@@ -18,22 +18,16 @@ const PollNavigator = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    if (!activePollObject && hasCurrentPoll) {
-      navigation.reset({
-        index: 1,
-        routes: [{ name: 'ReceivingAnswersScreen' }]
-      });
-    }
-    else if (!activePollObject && amIPresenter && !hasCurrentPoll) {
-      navigation.reset({
-        index: 1,
-        routes: [{ name: 'CreatePollScreen' }]
-      });
-    }
-    else if (!activePollObject && !amIPresenter && !hasCurrentPoll) {
+    if (!activePollObject && !hasCurrentPoll) {
       navigation.reset({
         index: 1,
         routes: [{ name: 'PreviousPollsScreen' }]
+      });
+    }
+    else if (!activePollObject && amIPresenter && hasCurrentPoll) {
+      navigation.reset({
+        index: 1,
+        routes: [{ name: 'ReceivingAnswersScreen' }]
       });
     }
     else if (activePollObject && !amIPresenter) {
