@@ -18,22 +18,16 @@ const PollNavigator = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    if (!activePollObject && amIPresenter && hasCurrentPoll) {
-      navigation.reset({
-        index: 1,
-        routes: [{ name: 'ReceivingAnswersScreen' }]
-      });
-    }
-    else if (!activePollObject && amIPresenter && !hasCurrentPoll) {
-      navigation.reset({
-        index: 1,
-        routes: [{ name: 'CreatePollScreen' }]
-      });
-    }
-    else if (!activePollObject && !amIPresenter && !hasCurrentPoll) {
+    if (!activePollObject && !hasCurrentPoll) {
       navigation.reset({
         index: 1,
         routes: [{ name: 'PreviousPollsScreen' }]
+      });
+    }
+    else if (!activePollObject && amIPresenter && hasCurrentPoll) {
+      navigation.reset({
+        index: 1,
+        routes: [{ name: 'ReceivingAnswersScreen' }]
       });
     }
     else if (activePollObject && !amIPresenter) {
@@ -53,10 +47,10 @@ const PollNavigator = () => {
         }
       }}
     >
+      <Stack.Screen name="PreviousPollsScreen" component={PreviousPollsScreen} />
       <Stack.Screen name="CreatePollScreen" component={CreatePollScreen} />
       <Stack.Screen name="AnswerPollScreen" component={AnswerPollScreen} />
       <Stack.Screen name="ReceivingAnswersScreen" component={ReceivingAnswersScreen} />
-      <Stack.Screen name="PreviousPollsScreen" component={PreviousPollsScreen} />
     </Stack.Navigator>
   );
 };

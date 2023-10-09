@@ -111,8 +111,6 @@
   "mobileSdk.poll.inProgress": "Poll in progress",
   "mobileSdk.poll.label": "Poll",
   "mobileSdk.poll.multipleChoice": "Multiple choice",
-  "mobileSdk.poll.noPollLabel": "No polls have been published",
-  "mobileSdk.poll.noPollLabelYet": "When the presenter posts a poll, it will appear here",
   "mobileSdk.poll.noQuestionTextProvided": "The presenter has not defined any text for the question",
   "mobileSdk.poll.oneAnswer": "One answer only",
   "mobileSdk.poll.postedMsg": "A poll has been posted, check the poll section for the results",
@@ -162,5 +160,9 @@
   "mobileSdk.breakout.inviteModal.moderatorButton": "Breakout rooms",
   "mobileSdk.breakout.endSession.modal.title": "This breakout room has been closed",
   "mobileSdk.breakout.endSession.modal.subtitle": "You will be redirected to the main room shortly",
-  "mobileSdk.breakout.endSession.modal.buttonLabel": "Access Main Room"
+  "mobileSdk.breakout.endSession.modal.buttonLabel": "Access Main Room",
+  "mobileSdk.poll.noPollsTitle": "There are no published polls at the time",
+  "mobileSdk.poll.noPollsSubtitle": "When new polls are published, you can follow the results here",
+  "mobileSdk.poll.createPoll.noPermissionTitle": "Create poll",
+  "mobileSdk.poll.createPoll.noPermissionSubtitle": "You need to be a presenter to be able to create a poll"
 }

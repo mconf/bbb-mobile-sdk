@@ -107,12 +107,10 @@
   "mobileSdk.notification.label": "Em conferência",
   "mobileSdk.notification.title": "Conferência em progresso",
   "mobileSdk.permission.moderator": "Você precisa da permissão de um moderador para realizar esta ação.",
-  "mobileSdk.poll.createLabel": "Criar enquete",
+  "mobileSdk.poll.createLabel": "Criar Nova Enquete",
   "mobileSdk.poll.inProgress": "Enquete em progresso",
   "mobileSdk.poll.label": "Enquete",
   "mobileSdk.poll.multipleChoice": "Múltipla escolha",
-  "mobileSdk.poll.noPollLabel": "Nenhuma enquete foi publicada",
-  "mobileSdk.poll.noPollLabelYet": "Quando o apresentador publicar uma enquete, ela aparecerá aqui",
   "mobileSdk.poll.noQuestionTextProvided": "O apresentador nao definiu nenhum texto para a questão",
   "mobileSdk.poll.oneAnswer": "Apenas uma resposta",
   "mobileSdk.poll.postedMsg": "Uma enquete foi publicada, verifique a seção destinada a enquete para observar os resultados",
@@ -159,5 +157,9 @@
   "mobileSdk.breakout.inviteModal.moderatorButton": "Salas de Apoio",
   "mobileSdk.breakout.endSession.modal.title": "Essa sala de apoio foi fechada",
   "mobileSdk.breakout.endSession.modal.subtitle": "Você será redirecionado para a Sala Principal em breve",
-  "mobileSdk.breakout.endSession.modal.buttonLabel": "Acessar Sala Principal"
+  "mobileSdk.breakout.endSession.modal.buttonLabel": "Acessar Sala Principal",
+  "mobileSdk.poll.noPollsTitle": "Não há enquetes publicadas no momento",
+  "mobileSdk.poll.noPollsSubtitle": "Quando novas enquetes forem publicadas, você poderá acompanhar os resultados por aqui",
+  "mobileSdk.poll.createPoll.noPermissionTitle": "Criar enquete",
+  "mobileSdk.poll.createPoll.noPermissionSubtitle": "Você precisa ser apresentador para poder criar uma enquete"
 }
