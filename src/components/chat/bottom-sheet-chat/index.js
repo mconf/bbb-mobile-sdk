@@ -8,7 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Pressable, KeyboardAvoidingView, Platform } from 'react-native';
 import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import { useBottomSheetBackHandler } from '../../../hooks/useBottomSheetBackHandler';
-import { hasUnreadMessages, setBottomChatOpen } from '../../../store/redux/slices/wide-app/chat';
+import { setHasUnreadMessages, setBottomChatOpen } from '../../../store/redux/slices/wide-app/chat';
 import UserAvatar from '../../user-avatar';
 import IconButtonComponent from '../../icon-button';
 import { useChatMsgs } from '../../../hooks/selectors/chat/use-chat-msgs';
@@ -33,7 +33,7 @@ const BottomSheetChat = () => {
   const handleSheetChanges = useCallback((index) => {
     if (index === -1) {
       dispatch(setBottomChatOpen(false));
-      dispatch(hasUnreadMessages(false));
+      dispatch(setHasUnreadMessages(false));
     }
   }, []);
 
