@@ -1,10 +1,11 @@
-import { KeyboardAvoidingView, Platform, Alert } from 'react-native';
-import { useSelector } from 'react-redux';
+import { KeyboardAvoidingView, Platform } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { useRef } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { useOrientation } from '../../../hooks/use-orientation';
 import { isPresenter } from '../../../store/redux/slices/current-user';
+import { setProfile } from '../../../store/redux/slices/wide-app/modal';
 import ScreenWrapper from '../../../components/screen-wrapper';
 import PreviousPollCard from './poll-card';
 import Styled from './styles';
@@ -14,6 +15,7 @@ const PreviousPollScreen = () => {
   const orientation = useOrientation();
   const navigation = useNavigation();
   const scrollViewRef = useRef();
+  const dispatch = useDispatch();
 
   const previousPollPublishedStore = useSelector((state) => state.previousPollPublishedCollection);
   const amIPresenter = useSelector(isPresenter);
@@ -37,9 +39,10 @@ const PreviousPollScreen = () => {
           <Styled.ButtonContainer>
             <Styled.PressableButton
               onPress={() => navigation.navigate('CreatePollScreen')}
-              onPressDisabled={() => Alert.alert(
-                t('mobileSdk.poll.createPoll.noPermissionTitle'),
-                t('mobileSdk.poll.createPoll.noPermissionSubtitle')
+              onPressDisabled={() => dispatch(
+                setProfile({
+                  profile: 'create_poll_permission',
+                })
               )}
               disabled={!amIPresenter}
             >
