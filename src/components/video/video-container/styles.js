@@ -122,6 +122,11 @@ const FullscreenIcon = styled(IconButtonComponent)`
   margin: 0;
 `;
 
+const RaiseHandIcon = styled(IconButtonComponent)`
+  padding: 0;
+  margin: 0;
+`;
+
 export default {
   ContainerPressable,
   UserAvatar,
@@ -133,5 +138,6 @@ export default {
   VideoSkeleton,
   ContainerPressableGrid,
   FullscreenIcon,
+  RaiseHandIcon,
   TalkingIndicatorContainer,
 };
