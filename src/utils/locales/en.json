@@ -164,5 +164,6 @@
   "mobileSdk.poll.noPollsTitle": "There are no published polls at the time.",
   "mobileSdk.poll.noPollsSubtitle": "When new polls are published, you can follow the results here.",
   "mobileSdk.poll.createPoll.noPermissionTitle": "Create poll",
-  "mobileSdk.poll.createPoll.noPermissionSubtitle": "You need to be a presenter to be able to create a poll."
+  "mobileSdk.poll.createPoll.noPermissionSubtitle": "You need to be a presenter to be able to create a poll.",
+  "mobileSdk.actionsBar.debug.label": "Show activity debug overlay"
 }
