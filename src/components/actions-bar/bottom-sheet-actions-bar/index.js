@@ -12,20 +12,23 @@ import ActionsBar from '../index';
 import { setDetailedInfo } from '../../../store/redux/slices/wide-app/layout';
 
 import Styled from './styles';
+import DebugControl from '../debug-control';
 
 const BottomSheetActionsBar = () => {
   // ref
   const bottomSheetRef = useRef(null);
   const route = useRoute();
   const orientation = useOrientation();
+  const dispatch = useDispatch();
   const { t } = useTranslation();
+
   const detailedInfo = useSelector((state) => state.layout.detailedInfo);
   const audioDevices = useSelector((state) => state.audio.audioDevices);
   const selectedAudioDevice = useSelector((state) => state.audio.selectedAudioDevice);
+
   const isFullscreen = route.name === 'FullscreenWrapperScreen';
 
   // variables
-  const dispatch = useDispatch();
   const snapPoints = useMemo(() => {
     if (orientation === 'PORTRAIT') {
       if (Platform.OS === 'android') {
@@ -93,6 +96,7 @@ const BottomSheetActionsBar = () => {
       <View style={Styled[isFullscreen ? 'fullscreenStyles' : 'styles'].contentContainer}>
         <ActionsBar />
         {audioDeviceSelectorView()}
+        <DebugControl />
       </View>
     </BottomSheet>
   );
