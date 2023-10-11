@@ -21,12 +21,13 @@ import breakoutsReducer from './slices/breakouts';
 import previousPollPublishedReducer from './slices/wide-app/previous-poll-published';
 import audioReducer from './slices/wide-app/audio';
 import videoReducer from './slices/wide-app/video';
+import debugReducer from './slices/wide-app/debug';
 import localScreenshareReducer from './slices/wide-app/screenshare';
 import chatReducer from './slices/wide-app/chat';
 import notificationBarReducer from './slices/wide-app/notification-bar';
 import modalReducer from './slices/wide-app/modal';
 import layoutReducer from './slices/wide-app/layout';
-import clientReducer, { setSessionTerminated, setConnected, sessionStateChanged }from './slices/wide-app/client';
+import clientReducer, { setSessionTerminated, setConnected, sessionStateChanged } from './slices/wide-app/client';
 // Middlewares
 import {
   screenshareCleanupObserver,
@@ -71,6 +72,7 @@ const appReducer = combineReducers({
   notificationBar: notificationBarReducer,
   modal: modalReducer,
   layout: layoutReducer,
+  debug: debugReducer,
   client: clientReducer,
 });
 
