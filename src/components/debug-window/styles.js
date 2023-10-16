@@ -1,8 +1,8 @@
-import styled, { css } from 'styled-components/native';
+import styled from 'styled-components/native';
+import Colors from '../../constants/colors';
 
 const ContainerInside = styled.View`
   background-color: #000000aa;
-  padding: 12px;
   border-radius: 8px;
   height: 100%;
 `;
@@ -19,30 +19,28 @@ const TextContainer = styled.View`
   padding: 8px;
 `;
 
-const UserNameText = styled.Text`
-  font-size: 12px;
-  color: white;
-  font-weight: 700;
+const PayloadMessage = styled.Text`
+  font-size: 10px;
+  color: ${Colors.lightGray100};
 `;
 
-const UserMessage = styled.Text`
+const TypeMessage = styled.Text`
   font-size: 12px;
+  font-weight: 800;
   color: white;
 `;
 
 const FlatList = styled.FlatList`
   width: 100%;
   border-radius: 12px;
-  padding: 12px;
-  padding-top: 16px;
   display: flex;
 `;
 
 export default {
   ContainerInside,
   ContainerView,
-  UserMessage,
-  UserNameText,
+  TypeMessage,
+  PayloadMessage,
   TextContainer,
   FlatList
 };

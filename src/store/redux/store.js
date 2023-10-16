@@ -28,6 +28,8 @@ import notificationBarReducer from './slices/wide-app/notification-bar';
 import modalReducer from './slices/wide-app/modal';
 import layoutReducer from './slices/wide-app/layout';
 import clientReducer, { setSessionTerminated, setConnected, sessionStateChanged } from './slices/wide-app/client';
+// Loggers
+import ReduxDebug from '../../services/logger/redux-debug';
 // Middlewares
 import {
   screenshareCleanupObserver,
@@ -103,6 +105,7 @@ flushStoreObserver.startListening({
 });
 
 const rootReducer = (state, action) => {
+  ReduxDebug.addToReduxLog(action);
   // Reset the store on logouts
   if (action.type === 'STORE_FLUSH') {
     console.debug("FLUSHING STORE", storeFlushCallback);
