@@ -161,5 +161,6 @@
     "mobileSdk.poll.noPollsTitle": "No hay encuestas publicadas por el momento.",
     "mobileSdk.poll.noPollsSubtitle": "Cuando se publiquen nuevas encuestas podrás seguir los resultados aquí.",
     "mobileSdk.poll.createPoll.noPermissionTitle": "Crear encusta",
-    "mobileSdk.poll.createPoll.noPermissionSubtitle": "Necesitas ser presentador para poder crear una encuesta."
+    "mobileSdk.poll.createPoll.noPermissionSubtitle": "Necesitas ser presentador para poder crear una encuesta.",
+    "mobileSdk.actionsBar.debug.label": "Mostrar superposición de depuración de actividad"
   }
