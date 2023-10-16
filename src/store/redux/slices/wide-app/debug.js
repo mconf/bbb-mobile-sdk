@@ -2,7 +2,6 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   isShow: false,
-  debugCollection: [],
 };
 
 const debugSlice = createSlice({
@@ -15,15 +14,11 @@ const debugSlice = createSlice({
     hide: (state) => {
       state.isShow = false;
     },
-    addDebug: (state, action) => {
-      state.debugCollection.push(action.payload);
-    },
   }
 });
 
 export const {
   show,
   hide,
-  addDebug,
 } = debugSlice.actions;
 export default debugSlice.reducer;
