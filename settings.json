@@ -4,6 +4,7 @@
     "videoPageSize": 3
   },
   "showLanguageScreen": true,
+  "showDebugToggle": true,
   "clientLog": {
     "server": {
       "enabled": false,

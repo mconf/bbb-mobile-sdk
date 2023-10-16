@@ -1,5 +1,4 @@
 import { useSelector } from 'react-redux';
-import { useState } from 'react';
 import ReduxDebug from '../../services/logger/redux-debug';
 import Styled from './styles';
 

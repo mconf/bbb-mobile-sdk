@@ -3,6 +3,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { show, hide } from '../../../store/redux/slices/wide-app/debug';
+import Settings from '../../../../settings.json';
 import Colors from '../../../constants/colors';
 import Styled from './styles';
 
@@ -23,6 +24,10 @@ const DebugControl = () => {
   const onToggleSwitch = () => {
     setIsSwitchOn((prevValue) => !prevValue);
   };
+
+  if (!Settings.showDebugToggle) {
+    return null;
+  }
 
   return (
     <Styled.DebugContainer>
