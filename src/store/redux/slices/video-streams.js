@@ -77,6 +77,7 @@ const selectSortedVideoUsers = createSelector(
         userRole: user.role,
         userAvatar: user.avatar,
         userColor: user.color,
+        userEmoji: user.emoji,
         local,
       };
     }), Settings.media.videoPageSize);
