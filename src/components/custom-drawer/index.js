@@ -6,43 +6,18 @@ import {
   DrawerItemList,
   DrawerItem,
 } from '@react-navigation/drawer';
-import { useNavigation, DrawerActions } from '@react-navigation/native';
 import Colors from '../../constants/colors';
-import { selectCurrentUser, isModerator } from '../../store/redux/slices/current-user';
+import { selectCurrentUser } from '../../store/redux/slices/current-user';
 import Styled from './styles';
 import logger from '../../services/api';
 import * as api from '../../services/api';
 import { leave } from '../../store/redux/slices/wide-app/client';
-import { selectRecordMeeting } from '../../store/redux/slices/record-meetings';
-import { openModal, setActiveModal } from '../../store/redux/slices/wide-app/modal';
-import RecordService from '../modals/recording-confirm-modal/service';
 
 const CustomDrawer = (props) => {
   const { meetingUrl } = props;
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const currentUserObj = useSelector(selectCurrentUser);
-  const amIModerator = useSelector(isModerator);
-  const recordMeeting = useSelector(selectRecordMeeting);
-  const navigation = useNavigation();
-
-  const allowStartStopRecording = recordMeeting?.allowStartStopRecording;
-  const showRecordButton = RecordService.mayIRecord(amIModerator, allowStartStopRecording);
-
-  const handleOpenRecordingModal = () => {
-    dispatch(setActiveModal('recording-confirm'));
-    dispatch(openModal());
-    navigation.dispatch(DrawerActions.toggleDrawer());
-  };
-
-  let recordTitle = '';
-  if (!recordMeeting?.recording) {
-    recordTitle = recordMeeting?.time > 0
-      ? t('app.recording.resumeTitle')
-      : t('app.recording.startTitle');
-  } else {
-    recordTitle = t('app.recording.stopTitle');
-  }
 
   const leaveSession = () => {
     dispatch(leave(api));
@@ -88,24 +63,6 @@ const CustomDrawer = (props) => {
         <Styled.ContainerDrawerItemList>
           <DrawerItemList {...props} />
         </Styled.ContainerDrawerItemList>
-        {showRecordButton && (
-        <Styled.ContainerCustomButtonsInsideScrollview>
-          <DrawerItem
-            label={recordTitle}
-            labelStyle={recordMeeting?.recording ? Styled.TextButtonActive : Styled.TextButtonLabel}
-            onPress={handleOpenRecordingModal}
-            inactiveTintColor={recordMeeting?.recording ? Colors.orange : Colors.lightGray400}
-            inactiveBackgroundColor={recordMeeting?.recording ? Colors.orange : Colors.lightGray100}
-            icon={() => (
-              <Styled.DrawerIcon
-                name={recordMeeting?.recording ? 'pause' : 'radio-button-checked'}
-                color={recordMeeting?.recording ? Colors.white : '#1C1B1F'}
-                size={24}
-              />
-            )}
-          />
-        </Styled.ContainerCustomButtonsInsideScrollview>
-        )}
       </DrawerContentScrollView>
       <Styled.ContainerCustomBottomButtons>
         <DrawerItem

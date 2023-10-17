@@ -1,24 +1,36 @@
 import { useCallback, useEffect, useRef } from 'react';
-import Svg, { G, Circle } from 'react-native-svg';
 import { Pressable, Animated } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/core';
-import Colors from '../../constants/colors';
-import Styled from './styles';
-import usePrevious from '../../hooks/use-previous';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { openModal, setActiveModal } from '../../store/redux/slices/wide-app/modal';
 import { showNotificationWithTimeout } from '../../store/redux/slices/wide-app/notification-bar';
+import { isModerator } from '../../store/redux/slices/current-user';
+import usePrevious from '../../hooks/use-previous';
+import Colors from '../../constants/colors';
+import Styled from './styles';
 
 const RecordingIndicator = (props) => {
   const { recordMeeting } = props;
   const recording = recordMeeting?.recording;
   const previousRecording = usePrevious(recording);
+  const amIModerator = useSelector(isModerator);
+  const neverRecorded = (recordMeeting?.time === 0 || recordMeeting?.time === undefined)
+    ? !recordMeeting?.recording
+    : false;
 
   const dispatch = useDispatch();
   const anim = useRef(new Animated.Value(1));
 
-  const handleOpenModal = () => {
+  const hasRecordingPermission = amIModerator && true;
+
+  const handleOpenRecordingViewerModal = () => {
     dispatch(setActiveModal('recording-status'));
+    dispatch(openModal());
+  };
+
+  const handleOpenRecordingControlsModal = () => {
+    dispatch(setActiveModal('recording-confirm'));
     dispatch(openModal());
   };
 
@@ -55,22 +67,31 @@ const RecordingIndicator = (props) => {
 
   if (!recordMeeting?.record) return null;
 
+  const handleIcon = () => {
+    if (neverRecorded) {
+      return (<MaterialCommunityIcons name="record-circle-outline" size={24} color={Colors.white} />);
+    }
+    if (!recording) {
+      return (<MaterialCommunityIcons name="pause-circle" size={24} color={Colors.blue} />);
+    }
+    return (<MaterialCommunityIcons name="record-circle-outline" size={24} color={Colors.orange} />);
+  };
+
   return (
-    <Styled.RecordingIndicatorIcon titleMargin={recording}>
-      <Pressable onPress={handleOpenModal}>
-        <Animated.View style={{ transform: [{ scale: recording ? anim.current : 1 }] }}>
-          <Svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-            <G
-              fill={recording ? Colors.orange : Colors.white}
-              stroke={recording ? Colors.orange : Colors.white}
-            >
-              <Circle cx={10} cy={10} r={9} fill="none" />
-              <Circle cx={10} cy={10} r={4} />
-            </G>
-          </Svg>
-        </Animated.View>
-      </Pressable>
-    </Styled.RecordingIndicatorIcon>
+    <Styled.Container neverRecorded={neverRecorded}>
+      <Styled.RecordingIndicatorIcon>
+        <Pressable
+          onPress={hasRecordingPermission
+            ? handleOpenRecordingControlsModal
+            : handleOpenRecordingViewerModal}
+        >
+          <Animated.View style={{ transform: [{ scale: recording ? anim.current : 1 }] }}>
+            {handleIcon()}
+          </Animated.View>
+        </Pressable>
+      </Styled.RecordingIndicatorIcon>
+    </Styled.Container>
+
   );
 };
 

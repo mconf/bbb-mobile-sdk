@@ -1,19 +1,26 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { Pressable } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { useFocusEffect } from '@react-navigation/native';
 import Modal from 'react-native-modal';
 import { closeModal } from '../../../store/redux/slices/wide-app/modal';
 import { selectRecordMeeting } from '../../../store/redux/slices/record-meetings';
 import Colors from '../../../constants/colors';
 import Service from './service';
+import ViewerService from '../recording-status-modal/service';
 import Styled from './styles';
 
 const RecordingConfirmModal = () => {
-  const dispatch = useDispatch();
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const isModalVisible = useSelector((state) => state.modal.isModalVisible);
   const recordMeeting = useSelector(selectRecordMeeting);
+
+  const recordingTime = recordMeeting ? recordMeeting.time : 0;
+  const recording = recordMeeting?.recording;
+
+  const [time, setTime] = useState(recordingTime);
 
   let title = '';
   if (!recordMeeting?.recording) {
@@ -27,6 +34,32 @@ const RecordingConfirmModal = () => {
   const description = !recordMeeting?.recording
     ? t('app.recording.startDescription')
     : t('app.recording.stopDescription');
+
+  useFocusEffect(
+    useCallback(() => {
+      let interval;
+
+      if (recording) {
+        interval = setInterval(() => {
+          setTime((prevTime) => prevTime + 1);
+        }, 1000);
+      } else {
+        clearInterval(interval);
+      }
+
+      return () => {
+        clearInterval(interval);
+      };
+    }, [recording])
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      if (recordingTime > time) {
+        setTime(recordingTime + 1);
+      }
+    }, [recordingTime])
+  );
 
   const handleCloseModal = () => {
     dispatch(closeModal());
@@ -53,6 +86,12 @@ const RecordingConfirmModal = () => {
             <Styled.Title>{title}</Styled.Title>
             <Styled.CloseButton name="close" size={24} color="#1C1B1F" onPress={handleCloseModal} />
           </Styled.ModalTop>
+          <Styled.TimeText>
+            {ViewerService.humanizeSeconds(time)}
+          </Styled.TimeText>
+          <Styled.DividerContainer>
+            <Styled.Divider />
+          </Styled.DividerContainer>
           <Styled.Description>{description}</Styled.Description>
           <Styled.ButtonContainer>
             <Pressable onPress={handleCloseModal}>

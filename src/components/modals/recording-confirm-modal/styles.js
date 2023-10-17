@@ -50,7 +50,7 @@ const CloseButtonText = styled(Text)`
 const ModalContent = styled(View)`
   background-color: white;
   border-radius: 10px;
-  padding: 20px;
+  padding: 24px;
   width: 95%;
 `;
 
@@ -65,6 +65,7 @@ const Description = styled(Text)`
   margin-bottom: 20px;
   font-weight: 400;
   color: ${Colors.lightGray300};
+  padding-top: 16px;
 `;
 
 const ButtonContainer = styled(View)`
@@ -80,7 +81,7 @@ const Button = styled(TouchableOpacity)`
   align-items: center;
   justify-content: center;
   background-color: ${Colors.orange};
-  padding: 15px;
+  padding: 8px 24px;
   gap: 8px;
   border-radius: 40px;
 `;
@@ -102,6 +103,28 @@ const CancelText = styled(Text)`
   color: ${Colors.lightGray300};
 `;
 
+const TimeText = styled(Text)`
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  color: ${Colors.lightGray400};
+  font-weight: 500;
+  padding-top: 24px;
+  padding-bottom: 4px;
+`;
+
+const Divider = styled(View)`
+  width: 120px;
+  border-top-width: 1px;
+  border-color: ${Colors.lightGray200};
+`;
+
+const DividerContainer = styled.View`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 export default {
   ModalContainer,
   ModalTop,
@@ -118,4 +141,7 @@ export default {
   ButtonText,
   CancelButton,
   CancelText,
+  TimeText,
+  Divider,
+  DividerContainer
 };
