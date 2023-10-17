@@ -11,8 +11,6 @@ import { isTalkingByUserId } from '../../../store/redux/slices/voice-users';
 import { selectMetadata } from '../../../store/redux/slices/meeting';
 import SoundWaveAnimation from '../../animations/sound-wave-animation';
 import UserAvatar from '../../user-avatar';
-import { selectUsers } from '../../../store/redux/slices/users';
-import Colors from '../../../constants/colors';
 import VideoManager from '../../../services/webrtc/video-manager';
 import Styled from './styles';
 
@@ -28,6 +26,7 @@ const VideoContainer = (props) => {
     visible,
     isGrid,
     userRole,
+    userEmoji,
   } = props;
 
   const dispatch = useDispatch();
@@ -42,9 +41,6 @@ const VideoContainer = (props) => {
   const signalingTransportOpen = useSelector((state) => state.video.signalingTransportOpen);
   const isTalking = useSelector((state) => isTalkingByUserId(state, userId));
   const mediaServer = useSelector((state) => selectMetadata(state, 'media-server-video'));
-  const currentUserObj = useSelector(selectUsers);
-  const usersWithRaisedHand = currentUserObj.filter((user) => user.emoji === 'raiseHand');
-  const shouldRenderRaisedHand = usersWithRaisedHand.some((user) => user.userId === userId);
 
   useEffect(() => {
     if (signalingTransportOpen && clientIsReady) {
@@ -99,6 +95,15 @@ const VideoContainer = (props) => {
     navigation.navigate('FullscreenWrapperScreen');
   };
 
+  const renderRaisedHand = () => {
+    if (userEmoji === 'raiseHand') {
+      return (
+        <Styled.HandRaisedIcon />
+      );
+    }
+    return null;
+  };
+
   const renderGridVideoContainerItem = () => (
     <Styled.ContainerPressableGrid
       onPress={() => {
@@ -135,16 +140,7 @@ const VideoContainer = (props) => {
           </Styled.PressableButton>
         </>
       )}
-
-      {shouldRenderRaisedHand && (
-        <Styled.RaiseHandIcon
-          icon="hand-back-right"
-          iconColor={Colors.blue}
-          size={18}
-          containerColor="white"
-          style={{ position: 'absolute', bottom: 10, right: 10 }}
-        />
-      )}
+      {renderRaisedHand()}
     </Styled.ContainerPressableGrid>
   );
 
