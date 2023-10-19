@@ -1,6 +1,7 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit';
 import { addMeeting, editMeeting } from './meeting';
 import { sessionStateChanged } from './wide-app/client';
+import makeCall from '../../../services/api/makeCall';
 
 // Slice
 const currentUserSlice = createSlice({
@@ -124,6 +125,22 @@ const logoutOrEjectionListener = (action, listenerApi) => {
   }
 };
 
+const setCustomDataPredicate = (action, currentState) => {
+  if (addCurrentUser.match(action)) {
+    return true;
+  }
+  return false;
+};
+
+const setCustomDataListener = (action, listenerApi) => {
+  const currentState = listenerApi.getState();
+  const customData = currentState.client.meetingData.customdata;
+
+  if (customData.length) {
+    makeCall('addUserSettings', customData);
+  }
+};
+
 export const {
   addCurrentUser,
   removeCurrentUser,
@@ -141,6 +158,8 @@ export {
   isPresenter,
   logoutOrEjectionPredicate,
   logoutOrEjectionListener,
+  setCustomDataPredicate,
+  setCustomDataListener,
 };
 
 export default currentUserSlice.reducer;

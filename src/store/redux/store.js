@@ -38,6 +38,7 @@ import {
   voiceCallStateObserver,
   joinAudioOnLogin,
   logoutOrEjectionObserver,
+  setCustomDataObserver,
 } from './middlewares';
 
 let storeFlushCallback = () => {
@@ -137,6 +138,7 @@ export const store = configureStore({
       voiceCallStateObserver.middleware,
       joinAudioOnLogin.middleware,
       logoutOrEjectionObserver.middleware,
+      setCustomDataObserver.middleware,
     ]);
   },
 });

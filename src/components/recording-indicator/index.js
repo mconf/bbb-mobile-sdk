@@ -15,6 +15,7 @@ const RecordingIndicator = (props) => {
   const recording = recordMeeting?.recording;
   const previousRecording = usePrevious(recording);
   const amIModerator = useSelector(isModerator);
+  const customData = useSelector((state) => state.client.meetingData.customdata);
   const neverRecorded = (recordMeeting?.time === 0 || recordMeeting?.time === undefined)
     ? !recordMeeting?.recording
     : false;
@@ -22,7 +23,10 @@ const RecordingIndicator = (props) => {
   const dispatch = useDispatch();
   const anim = useRef(new Animated.Value(1));
 
-  const hasRecordingPermission = amIModerator && true;
+  const customRecord = customData?.find((item) => item.mconf_custom_record !== undefined);
+  const hasRecordingPermission = customRecord
+    ? JSON.parse(customRecord.mconf_custom_record)
+    : amIModerator;
 
   const handleOpenRecordingViewerModal = () => {
     dispatch(setActiveModal('recording-status'));

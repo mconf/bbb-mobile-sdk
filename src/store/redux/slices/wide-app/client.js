@@ -28,6 +28,7 @@ const initialState = {
     fullname: null,
     externUserID: null,
     confname: null,
+    customdata: null,
   },
   connectionStatus: {
     isConnected: null,
