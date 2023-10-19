@@ -20,6 +20,7 @@ import videoStreamsReducer from './slices/video-streams';
 import screenshareReducer from './slices/screenshare';
 import guestUsersReducer from './slices/guest-users';
 import recordMeetingsReducer from './slices/record-meetings';
+import usersSettingsReducer from './slices/users-settings';
 // app exclusive wide state collections
 import previousPollPublishedReducer from './slices/wide-app/previous-poll-published';
 import audioReducer from './slices/wide-app/audio';
@@ -66,6 +67,7 @@ const appReducer = combineReducers({
   screenshareCollection: screenshareReducer,
   guestUsersCollection: guestUsersReducer,
   recordMeetingsCollection: recordMeetingsReducer,
+  usersSettingsCollection: usersSettingsReducer,
   // ...other collections
 
   // app exclusive wide state collections

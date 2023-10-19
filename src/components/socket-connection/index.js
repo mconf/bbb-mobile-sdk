@@ -20,6 +20,7 @@ import { VideoStreamsModule } from './modules/video-streams';
 import { ScreenshareModule } from './modules/screenshare';
 import { GuestUsersModule } from './modules/guest-users';
 import { RecordMeetingsModule } from './modules/record-meetings';
+import { UsersSettingsModule } from './modules/users-settings';
 import {
   getRandomDigits,
   getRandomAlphanumericWithCaps,
@@ -216,6 +217,7 @@ const setupModules = (ws) => {
     users: new UsersModule(messageSender),
     guestUsers: new GuestUsersModule(messageSender),
     'record-meetings': new RecordMeetingsModule(messageSender),
+    'users-settings': new UsersSettingsModule(messageSender),
   };
 
   /*
