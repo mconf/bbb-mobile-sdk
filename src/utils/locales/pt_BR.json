@@ -162,5 +162,6 @@
   "mobileSdk.poll.noPollsSubtitle": "Quando novas enquetes forem publicadas, você poderá acompanhar os resultados por aqui.",
   "mobileSdk.poll.createPoll.noPermissionTitle": "Criar enquete",
   "mobileSdk.poll.createPoll.noPermissionSubtitle": "Você precisa ser apresentador para poder criar uma enquete.",
-  "mobileSdk.actionsBar.debug.label": "Mostrar sobreposição de depuração da atividade"
+  "mobileSdk.actionsBar.debug.label": "Mostrar sobreposição de depuração da atividade",
+  "mobileSdk.poll.previousPolls.publishedLabel": "Enquete Publicada"
 }
