@@ -1,7 +1,6 @@
 import { KeyboardAvoidingView, Platform } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { useRef } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { useOrientation } from '../../../hooks/use-orientation';
 import { isPresenter } from '../../../store/redux/slices/current-user';
@@ -14,7 +13,6 @@ const PreviousPollScreen = () => {
   const { t } = useTranslation();
   const orientation = useOrientation();
   const navigation = useNavigation();
-  const scrollViewRef = useRef();
   const dispatch = useDispatch();
 
   const previousPollPublishedStore = useSelector((state) => state.previousPollPublishedCollection);
@@ -56,10 +54,12 @@ const PreviousPollScreen = () => {
   }
 
   const renderMethod = () => {
+    const invertPublishedPolls = Object.values(
+      previousPollPublishedStore.previousPollPublishedCollection
+    ).reverse();
+
     return (
-      Object.values(
-        previousPollPublishedStore.previousPollPublishedCollection
-      ).map((pollObj) => <PreviousPollCard pollObj={pollObj} key={pollObj.id} />)
+      invertPublishedPolls.map((pollObj) => <PreviousPollCard pollObj={pollObj} key={pollObj.id} />)
     );
   };
 
@@ -69,10 +69,7 @@ const PreviousPollScreen = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <Styled.ContainerView orientation={orientation}>
-          <Styled.ContainerPollCard
-            ref={scrollViewRef}
-            onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
-          >
+          <Styled.ContainerPollCard>
             <Styled.ContainerViewPadding>
               <>
                 {renderMethod()}

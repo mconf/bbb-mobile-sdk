@@ -19,8 +19,8 @@ const NoPollText = styled.Text`
 
 const ContainerViewPadding = styled.View`
   padding: 12px;
-  background-color: white;
   border-radius: 16px;
+  gap: 16px;
 `;
 
 const ContainerPollCard = styled.ScrollView`
