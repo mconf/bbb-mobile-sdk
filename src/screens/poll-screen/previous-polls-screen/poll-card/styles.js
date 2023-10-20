@@ -92,6 +92,7 @@ const PressableButton = ({
     <ButtonCreate
       onPress={disabled ? onPressDisabled : onPress}
       buttonColor={Colors.lightGray300}
+      disabled={disabled}
     >
       <Text
         style={{

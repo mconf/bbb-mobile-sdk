@@ -57,7 +57,9 @@ const PreviousPollCard = (props) => {
         </Styled.PollInfoLabelContainer>
         <Styled.BlankSpaceForButton />
       </Styled.ContainerPollCard>
-      <Styled.PressableButton>{t('mobileSdk.poll.previousPolls.publishedLabel')}</Styled.PressableButton>
+      <Styled.PressableButton disabled>
+        {t('mobileSdk.poll.previousPolls.publishedLabel')}
+      </Styled.PressableButton>
     </View>
   );
 };
