@@ -75,9 +75,6 @@ const RecordingIndicator = (props) => {
     if (neverRecorded) {
       return (<MaterialCommunityIcons name="record-circle-outline" size={24} color={Colors.white} />);
     }
-    if (!recording) {
-      return (<MaterialCommunityIcons name="pause-circle" size={24} color={Colors.blue} />);
-    }
     return (<MaterialCommunityIcons name="record-circle-outline" size={24} color={Colors.orange} />);
   };
 
