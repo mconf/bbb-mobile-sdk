@@ -24,26 +24,39 @@ const TitleDesc = styled.Text`
   color: ${Colors.lightGray300}
 `;
 
-const RoomName = styled.Text`
+const MakePresenterButton = styled(button)`
+  background-color: ${Colors.blue}
+  color: ${Colors.white};
   font-size: 16px;
-  font-weight: 600;
-  color: ${Colors.lightGray300}
+  font-weight: 400;
+  padding: 12px;
+  border-radius: 12px;
+  width: 100%;
 `;
 
-const Button = styled(button)`
+const OkButton = styled(button)`
   background-color: ${Colors.orange}
   color: ${Colors.white};
   font-size: 16px;
   font-weight: 400;
-  padding: 12px 0;
+  padding: 12px;
   border-radius: 12px;
   width: 100%;
+`;
+
+const ButtonContainer = styled.View`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  flex-grow: 1;
 `;
 
 export default {
   Container,
   TitleModal,
   TitleDesc,
-  Button,
-  RoomName
+  MakePresenterButton,
+  OkButton,
+  ButtonContainer
 };

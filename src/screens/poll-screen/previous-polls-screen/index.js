@@ -18,6 +18,20 @@ const PreviousPollScreen = () => {
   const previousPollPublishedStore = useSelector((state) => state.previousPollPublishedCollection);
   const amIPresenter = useSelector(isPresenter);
 
+  const renderCreatePollButtonView = () => (
+    <Styled.PressableButton
+      onPress={() => navigation.navigate('CreatePollScreen')}
+      onPressDisabled={() => dispatch(
+        setProfile({
+          profile: 'create_poll_permission',
+        })
+      )}
+      disabled={!amIPresenter}
+    >
+      {t('mobileSdk.poll.createLabel')}
+    </Styled.PressableButton>
+  );
+
   if (Object.keys(previousPollPublishedStore.previousPollPublishedCollection)
     .length === 0) {
     return (
@@ -35,17 +49,7 @@ const PreviousPollScreen = () => {
             {t('mobileSdk.poll.noPollsSubtitle')}
           </Styled.NoPollsLabelSubtitle>
           <Styled.ButtonContainer>
-            <Styled.PressableButton
-              onPress={() => navigation.navigate('CreatePollScreen')}
-              onPressDisabled={() => dispatch(
-                setProfile({
-                  profile: 'create_poll_permission',
-                })
-              )}
-              disabled={!amIPresenter}
-            >
-              {t('mobileSdk.poll.createLabel')}
-            </Styled.PressableButton>
+            {renderCreatePollButtonView()}
           </Styled.ButtonContainer>
         </Styled.ContainerCentralizedView>
       </ScreenWrapper>
@@ -69,13 +73,16 @@ const PreviousPollScreen = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <Styled.ContainerView orientation={orientation}>
-          <Styled.ContainerPollCard>
+          <Styled.ContainerPollScrollView>
             <Styled.ContainerViewPadding>
               <>
                 {renderMethod()}
               </>
             </Styled.ContainerViewPadding>
-          </Styled.ContainerPollCard>
+          </Styled.ContainerPollScrollView>
+          <Styled.ButtonFlyingContainer>
+            {renderCreatePollButtonView()}
+          </Styled.ButtonFlyingContainer>
         </Styled.ContainerView>
       </KeyboardAvoidingView>
     </ScreenWrapper>
