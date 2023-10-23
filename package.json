@@ -60,6 +60,7 @@
     "react-native": "0.71.7",
     "react-native-gesture-handler": "~2.9.0",
     "react-native-incall-manager": "^4.1.0",
+    "react-native-modal": "^13.0.1",
     "react-native-paper": "5.0.0-rc.3",
     "react-native-reanimated": "~2.14.4",
     "react-native-safe-area-context": "4.5.0",

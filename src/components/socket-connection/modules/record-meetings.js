@@ -1,30 +1,25 @@
 import Module from './module';
-import { store } from '../../../store/redux/store';
 import {
-  addCurrentUser,
-  editCurrentUser,
-  removeCurrentUser,
+  addRecordMeeting,
+  removeRecordMeeting,
+  editRecordMeeting,
   readyStateChanged,
   cleanupStaleData,
-} from '../../../store/redux/slices/current-user';
+} from '../../../store/redux/slices/record-meetings';
+import { store } from '../../../store/redux/store';
 
-const CURRENT_USER_TOPIC = 'current-user';
+const RECORD_MEETING_TOPIC = 'record-meetings';
 
-export class CurrentUserModule extends Module {
+export class RecordMeetingsModule extends Module {
   constructor(messageSender) {
-    super(CURRENT_USER_TOPIC, messageSender);
+    super(RECORD_MEETING_TOPIC, messageSender);
   }
 
   // eslint-disable-next-line class-methods-use-this
   _add(msgObj) {
-    //inject userData to userSettings
-    const customData = msgObj.fields.userdata;
-    if (customData && Object.keys(customData).length > 0) {
-      this.messageSender.makeCall('addUserSettings', [customData]);
-    }
     return store.dispatch(
-      addCurrentUser({
-        currentUserObject: msgObj,
+      addRecordMeeting({
+        meetingObject: msgObj,
       })
     );
   }
@@ -33,8 +28,8 @@ export class CurrentUserModule extends Module {
   _remove(msgObj) {
     if (!this._ignoreDeletions) {
       return store.dispatch(
-        removeCurrentUser({
-          currentUserObject: msgObj,
+        removeRecordMeeting({
+          meetingObject: msgObj,
         })
       );
     }
@@ -45,8 +40,8 @@ export class CurrentUserModule extends Module {
   // eslint-disable-next-line class-methods-use-this
   _update(msgObj) {
     return store.dispatch(
-      editCurrentUser({
-        currentUserObject: msgObj,
+      editRecordMeeting({
+        meetingObject: msgObj,
       })
     );
   }

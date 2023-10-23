@@ -86,6 +86,14 @@
     "app.userList.menu.promoteUser.label": "Promover a moderador",
     "app.userList.menu.demoteUser.label": "Degradar a espectador",
     "app.videoDock.webcamFocusLabel": "Enfocar",
+    "app.recording.startTitle": "Iniciar grabación",
+    "app.recording.stopTitle": "Pausar grabación",
+    "app.recording.resumeTitle": "Continuar grabación",
+    "app.recording.startDescription": "Puede volver a presionar el botón de grabación para pausar la grabación actual.",
+    "app.recording.stopDescription": "¿Está seguro de querer pausar la grabación? Puede continuarla volviendo a presionar el botón de grabación nuevamente.",
+    "app.notification.recordingStart": "La sesión está siendo grabada",
+    "app.notification.recordingStop": "Esta sesión no está siendo grabada",
+    "app.notification.recordingPaused": "Se ha dejado de grabar la sesión",
     "mobileSdk.chat.isEmptyLabel": "El chat está vacío",
     "mobileSdk.endSession.subtitle": "Serás redirigido a la página de inicio en unos segundos",
     "mobileSdk.error.fallback": "Fin inesperado de la sesión, intenta iniciar sesión de nuevo",
@@ -139,5 +147,6 @@
     "mobileSdk.audio.deviceSelector.bluetooth": "Bluetooth",
     "mobileSdk.audio.deviceSelector.wiredHeadset": "Fone com fio",
     "mobileSdk.upload.notification.header": "Se subió un archivo:",
-    "mobileSdk.upload.notification.disclaimer": "En caso de que quieras abrir este archivo, intenta usar la versión web."
+    "mobileSdk.upload.notification.disclaimer": "En caso de que quieras abrir este archivo, intenta usar la versión web.",
+    "mobileSdk.notification.recordLabel": "Grabación"
 }
