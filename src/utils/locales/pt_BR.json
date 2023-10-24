@@ -163,5 +163,7 @@
   "mobileSdk.poll.createPoll.noPermissionTitle": "Criar enquete",
   "mobileSdk.poll.createPoll.noPermissionSubtitle": "Você precisa ser apresentador para poder criar uma enquete.",
   "mobileSdk.actionsBar.debug.label": "Mostrar sobreposição de depuração da atividade",
-  "mobileSdk.poll.previousPolls.publishedLabel": "Enquete Publicada"
+  "mobileSdk.poll.previousPolls.publishedLabel": "Enquete Publicada",
+  "mobileSdk.poll.createPoll.back": "Voltar",
+  "mobileSdk.poll.createPoll.becomePresenter": "Torne-se apresentador"
 }

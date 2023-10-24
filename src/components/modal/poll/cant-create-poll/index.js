@@ -23,7 +23,7 @@ const CantCreatePollModal = () => {
             dispatch(hide());
           }}
         >
-          Torne-se apresentador
+          {t('mobileSdk.poll.createPoll.becomePresenter')}
         </Styled.MakePresenterButton>
       );
     }
@@ -33,7 +33,7 @@ const CantCreatePollModal = () => {
           dispatch(hide());
         }}
       >
-        Voltar
+        {t('mobileSdk.poll.createPoll.back')}
       </Styled.OkButton>
     );
   };

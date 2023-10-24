@@ -166,5 +166,7 @@
   "mobileSdk.poll.createPoll.noPermissionTitle": "Create poll",
   "mobileSdk.poll.createPoll.noPermissionSubtitle": "You need to be a presenter to be able to create a poll.",
   "mobileSdk.actionsBar.debug.label": "Show activity debug overlay",
-  "mobileSdk.poll.previousPolls.publishedLabel": "Published poll"
+  "mobileSdk.poll.previousPolls.publishedLabel": "Published poll",
+  "mobileSdk.poll.createPoll.back": "Back",
+  "mobileSdk.poll.createPoll.becomePresenter": "Become presenter"
 }
