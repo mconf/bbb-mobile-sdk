@@ -60,12 +60,12 @@ const PreviousPollCard = (props) => {
       <View key={answer.id}>
         <Styled.AnswerContainer>
           <Styled.LabelContainer>
-            <Styled.KeyText>
+            <Styled.PercentageText numberOfLines={1}>
               {(pollObj?.numResponders === 0 || !pollObj?.numResponders
                 ? 0
                 : (answer.numVotes / pollObj.numResponders) * 100).toFixed(0)}
               %
-            </Styled.KeyText>
+            </Styled.PercentageText>
             <Styled.KeyText>
               {noPollLocale ? answer.key : t(`app.poll.answer.${answer.key}`.toLowerCase())}
             </Styled.KeyText>

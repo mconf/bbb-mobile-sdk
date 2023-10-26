@@ -21,6 +21,13 @@ const KeyText = styled.Text`
   color: ${Colors.lightGray300};
 `;
 
+const PercentageText = styled.Text`
+  font-size: 12px;
+  font-weight: 400;
+  width: 30px;
+  color: ${Colors.lightGray300};
+`;
+
 const AnswerContainer = styled.View`
   display: flex;
   flex-direction: column;
@@ -221,5 +228,6 @@ export default {
   MinimizeAnswersText,
   DeleteIcon,
   UserAnswerComponent,
-  PressableMinimizeAnswersText
+  PressableMinimizeAnswersText,
+  PercentageText
 };
