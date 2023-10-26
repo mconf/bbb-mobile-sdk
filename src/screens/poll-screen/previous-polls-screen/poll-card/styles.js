@@ -79,15 +79,32 @@ const MinimizeAnswersText = styled.Text`
   font-size: 12px;
   color: ${Colors.blue}
   text-decoration: underline;
+
+  ${({ secretPoll }) => secretPoll
+    && `
+      color: ${Colors.lightGray300}
+      text-decoration: none;
+    `}
 `;
 
-const PressableMinimizeAnswersText = ({ children, onPress }) => (
-  <PressableRN onPress={onPress}>
-    <MinimizeAnswersText>
-      {children}
-    </MinimizeAnswersText>
-  </PressableRN>
-);
+const PressableMinimizeAnswersText = ({
+  children, onPress, secretPoll, anonLabel
+}) => {
+  if (secretPoll) {
+    return (
+      <MinimizeAnswersText secretPoll={secretPoll}>
+        {anonLabel}
+      </MinimizeAnswersText>
+    );
+  }
+
+  return (
+    <PressableRN onPress={!secretPoll ? onPress : () => {}}>
+      <MinimizeAnswersText secretPoll={secretPoll}>
+        {children}
+      </MinimizeAnswersText>
+    </PressableRN>
+  ); };
 
 const DeleteIcon = ({ onPress }) => (
   <PressableRN onPress={onPress}>

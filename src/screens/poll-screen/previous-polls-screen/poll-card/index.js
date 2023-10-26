@@ -103,11 +103,14 @@ const PreviousPollCard = (props) => {
           }
           </Styled.PollInfoText>
           <Styled.PresenterContainerOptions>
-            <Styled.MinimizeAnswersText
+            <Styled.PressableMinimizeAnswersText
+              secretPoll={pollObj.secretPoll}
+              showUsersAnswers={showUsersAnswers}
+              anonLabel="Anonimo"
               onPress={() => setShowUsersAnswers((prevValue) => !prevValue)}
             >
               {showUsersAnswers ? 'Minimizar Respostas' : 'Maximizar Respostas'}
-            </Styled.MinimizeAnswersText>
+            </Styled.PressableMinimizeAnswersText>
             <Styled.DeleteIcon onPress={() => PollService.handleStopPoll()} />
           </Styled.PresenterContainerOptions>
         </Styled.PollInfoLabelContainer>
