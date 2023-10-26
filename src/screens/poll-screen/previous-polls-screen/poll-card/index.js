@@ -61,7 +61,7 @@ const PreviousPollCard = (props) => {
         <Styled.AnswerContainer>
           <Styled.LabelContainer>
             <Styled.KeyText>
-              {(pollObj.numResponders === 0
+              {(pollObj?.numResponders === 0 || !pollObj?.numResponders
                 ? 0
                 : (answer.numVotes / pollObj.numResponders) * 100).toFixed(0)}
               %
@@ -71,7 +71,7 @@ const PreviousPollCard = (props) => {
             </Styled.KeyText>
           </Styled.LabelContainer>
           <ActivityBar
-            width={`${pollObj.numResponders === 0
+            width={`${pollObj.numResponders === 0 || !pollObj?.numResponders
               ? 0
               : (((answer.numVotes / pollObj.numResponders) * 100).toFixed(0))}%`}
           />
@@ -97,7 +97,11 @@ const PreviousPollCard = (props) => {
     return (
       <>
         <Styled.PollInfoLabelContainer>
-          <Styled.PollInfoText>{`${pollObj.numResponders} / ${pollObj.numRespondents}`}</Styled.PollInfoText>
+          <Styled.PollInfoText>
+            {
+          `${pollObj.numResponders ?? 0} / ${pollObj.numRespondents ?? 0}`
+          }
+          </Styled.PollInfoText>
           <Styled.PresenterContainerOptions>
             <Styled.MinimizeAnswersText
               onPress={() => setShowUsersAnswers((prevValue) => !prevValue)}
@@ -116,7 +120,7 @@ const PreviousPollCard = (props) => {
     <View>
       <Styled.ContainerPollCard onPress={() => dispatch(trigDetailedInfo())}>
         <Styled.QuestionText>
-          {pollObj.questionText === ''
+          {pollObj?.questionText === '' || !pollObj.questionText
             ? t('mobileSdk.poll.noQuestionTextProvided')
             : pollObj.questionText}
         </Styled.QuestionText>
