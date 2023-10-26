@@ -107,8 +107,8 @@ const UserNameAnswer = styled.Text`
 const UserAnswer = styled.Text`
   font-weight: 500;
   font-size: 12px;
-  flex: 1;
   vertical-align: middle;
+  max-width: 200px;
   color: ${Colors.lightGray300}
 `;
 
