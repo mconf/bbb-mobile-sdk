@@ -47,6 +47,7 @@ const PreviousPollCard = (props) => {
   const renderUsersAnswers = () => (
     pollObj?.responses?.map((ans) => (
       <Styled.UserAnswerComponent
+        key={ans.userId}
         userId={ans.userId}
         userName={ans.userId}
         userAnswers={returnStringfyAnswers(ans.answerIds)}
