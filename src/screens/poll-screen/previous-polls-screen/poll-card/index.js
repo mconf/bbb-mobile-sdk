@@ -1,16 +1,58 @@
+import { useCallback, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { trigDetailedInfo } from '../../../../store/redux/slices/wide-app/layout';
 import ActivityBar from '../../../../components/activity-bar';
+import PollService from '../../service';
 import Styled from './styles';
 
 const PreviousPollCard = (props) => {
   const { pollObj } = props;
-  const timestamp = new Date(parseInt(pollObj.id.split('/')[2], 10));
+
   const { t } = useTranslation();
   const dispatch = useDispatch();
+
   const noPollLocale = pollObj?.questionType === 'CUSTOM' || pollObj?.questionType === 'R-';
+  const timestamp = new Date(parseInt(pollObj.id.split('/')[2], 10));
+  const isReceivingAnswers = pollObj?.receivingAnswers;
+  const answersType = pollObj?.answers;
+  const [mappedObject, setMappedObject] = useState({});
+  const [showUsersAnswers, setShowUsersAnswers] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      const mapObj = {};
+
+      answersType?.forEach((item) => {
+        const { id, ...rest } = item;
+        mapObj[id] = rest;
+      });
+
+      setMappedObject(mapObj);
+    }, [answersType?.length])
+  );
+
+  const returnStringfyAnswers = (arr) => {
+    const ansArray = [];
+    arr.forEach((item) => {
+      if (mappedObject ?? item) {
+        ansArray.push(mappedObject[item]?.key);
+      }
+    });
+    return ansArray;
+  };
+
+  const renderUsersAnswers = () => (
+    pollObj?.responses?.map((ans) => (
+      <Styled.UserAnswerComponent
+        userId={ans.userId}
+        userName={ans.userId}
+        userAnswers={returnStringfyAnswers(ans.answerIds)}
+      />
+    ))
+  );
 
   const renderAnswers = () => (
     pollObj.answers.map((answer) => (
@@ -37,6 +79,38 @@ const PreviousPollCard = (props) => {
     ))
   );
 
+  const renderBottomSideOfCard = () => {
+    if (!isReceivingAnswers) {
+      return (
+        <Styled.PollInfoLabelContainer>
+          <Styled.PollInfoText>{`${pollObj.numResponders} / ${pollObj.numRespondents}`}</Styled.PollInfoText>
+          <Styled.PollInfoText>
+            {`${String(timestamp.getHours()).padStart(2, '0')}:${String(
+              timestamp.getMinutes()
+            ).padStart(2, '0')}`}
+          </Styled.PollInfoText>
+        </Styled.PollInfoLabelContainer>
+      );
+    }
+
+    return (
+      <>
+        <Styled.PollInfoLabelContainer>
+          <Styled.PollInfoText>{`${pollObj.numResponders} / ${pollObj.numRespondents}`}</Styled.PollInfoText>
+          <Styled.PresenterContainerOptions>
+            <Styled.MinimizeAnswersText
+              onPress={() => setShowUsersAnswers((prevValue) => !prevValue)}
+            >
+              {showUsersAnswers ? 'Minimizar Respostas' : 'Maximizar Respostas'}
+            </Styled.MinimizeAnswersText>
+            <Styled.DeleteIcon onPress={() => PollService.handleStopPoll()} />
+          </Styled.PresenterContainerOptions>
+        </Styled.PollInfoLabelContainer>
+        {showUsersAnswers && renderUsersAnswers()}
+      </>
+    );
+  };
+
   return (
     <View>
       <Styled.ContainerPollCard onPress={() => dispatch(trigDetailedInfo())}>
@@ -47,18 +121,17 @@ const PreviousPollCard = (props) => {
         </Styled.QuestionText>
         {renderAnswers()}
         <Styled.CustomDivider />
-        <Styled.PollInfoLabelContainer>
-          <Styled.PollInfoText>{`${pollObj.numResponders} / ${pollObj.numRespondents}`}</Styled.PollInfoText>
-          <Styled.PollInfoText>
-            {`${String(timestamp.getHours()).padStart(2, '0')}:${String(
-              timestamp.getMinutes()
-            ).padStart(2, '0')}`}
-          </Styled.PollInfoText>
-        </Styled.PollInfoLabelContainer>
+        {renderBottomSideOfCard()}
         <Styled.BlankSpaceForButton />
       </Styled.ContainerPollCard>
-      <Styled.PressableButton disabled>
-        {t('mobileSdk.poll.previousPolls.publishedLabel')}
+      <Styled.PressableButton
+        disabled={!isReceivingAnswers}
+        onPress={() => {
+          PollService.handlePublishPoll();
+          PollService.handleStopPoll();
+        }}
+      >
+        {isReceivingAnswers ? 'Publicar enquete' : t('mobileSdk.poll.previousPolls.publishedLabel')}
       </Styled.PressableButton>
     </View>
   );

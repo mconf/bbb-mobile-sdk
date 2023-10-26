@@ -1,8 +1,10 @@
 import styled, { css } from 'styled-components/native';
 import { Divider } from 'react-native-paper';
-import { Text } from 'react-native';
+import { Text, Pressable as PressableRN } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 import Pressable from '../../../../components/pressable';
 import Colors from '../../../../constants/colors';
+import UserAvatar from '../../../../components/user-avatar';
 
 const ContainerPollCard = styled.Pressable`
   background-color: ${Colors.white};
@@ -64,6 +66,77 @@ const BlankSpaceForButton = styled.View`
   height: 24px;
 `;
 
+const PresenterContainerOptions = styled.View`
+  gap: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+`;
+
+const MinimizeAnswersText = styled.Text`
+  font-weight: 400;
+  font-size: 12px;
+  color: ${Colors.blue}
+  text-decoration: underline;
+`;
+
+const PressableMinimizeAnswersText = ({ children, onPress }) => (
+  <PressableRN onPress={onPress}>
+    <MinimizeAnswersText>
+      {children}
+    </MinimizeAnswersText>
+  </PressableRN>
+);
+
+const DeleteIcon = ({ onPress }) => (
+  <PressableRN onPress={onPress}>
+    <Feather name="trash-2" size={24} color={Colors.lightGray300} />
+  </PressableRN>
+);
+
+const UserNameAnswer = styled.Text`
+  font-weight: 400;
+  font-size: 12px;
+  text-align: center;
+  vertical-align: middle;
+  color: ${Colors.lightGray300}
+`;
+
+const UserAnswer = styled.Text`
+  font-weight: 500;
+  font-size: 12px;
+  color: ${Colors.lightGray300}
+`;
+
+const UserNameContainer = styled.View`
+  display: flex;
+  flex-direction: row;
+  aling-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 100%;
+`;
+
+const UserAnswerContainer = styled.View`
+  display: flex;
+  flex-direction: row;
+  aling-items: center;
+  justify-content: space-between;
+`;
+
+const UserAnswerComponent = ({ userId, userName, userAnswers }) => {
+  return (
+    <UserAnswerContainer>
+      <UserNameContainer>
+        <UserAvatar mini userId={userId} userName={userName} />
+        <UserNameAnswer>{userName}</UserNameAnswer>
+      </UserNameContainer>
+      <UserAnswer>{userAnswers}</UserAnswer>
+    </UserAnswerContainer>
+  );
+};
+
 const ButtonCreate = styled(Pressable).attrs(() => ({
   pressStyle: {
     opacity: 0.8,
@@ -75,13 +148,17 @@ const ButtonCreate = styled(Pressable).attrs(() => ({
 }))`
   ${() => css`
   height: 40px;
-  background-color: ${Colors.lightGray300};
+  
   position: absolute;
   bottom: 0;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+    ${({ buttonColor }) => buttonColor
+    && `
+      background-color: ${buttonColor};
+    `}
   `}
 `;
 
@@ -91,7 +168,7 @@ const PressableButton = ({
   return (
     <ButtonCreate
       onPress={disabled ? onPressDisabled : onPress}
-      buttonColor={Colors.lightGray300}
+      buttonColor={disabled ? Colors.lightGray300 : Colors.blue}
       disabled={disabled}
     >
       <Text
@@ -118,5 +195,10 @@ export default {
   PollInfoLabelContainer,
   PollInfoText,
   PressableButton,
-  BlankSpaceForButton
+  BlankSpaceForButton,
+  PresenterContainerOptions,
+  MinimizeAnswersText,
+  DeleteIcon,
+  UserAnswerComponent,
+  PressableMinimizeAnswersText
 };
