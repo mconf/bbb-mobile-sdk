@@ -136,7 +136,7 @@ const UserAnswerComponent = ({ userId, userName, userAnswers }) => {
         <UserAvatar mini userId={userId} userName={userName} />
         <UserNameAnswer numberOfLines={1}>{userName}</UserNameAnswer>
       </UserNameContainer>
-      <UserAnswer numberOfLines={1}>{userAnswers}</UserAnswer>
+      <UserAnswer numberOfLines={1}>{String(userAnswers)}</UserAnswer>
     </UserAnswerContainer>
   );
 };
