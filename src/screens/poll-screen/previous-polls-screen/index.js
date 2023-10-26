@@ -70,7 +70,7 @@ const PreviousPollScreen = () => {
     );
 
     if (hasCurrentPoll && amIPresenter) {
-      invertPublishedPolls.push({ ...currentPollObj, receivingAnswers: true });
+      invertPublishedPolls.push({ ...currentPollObj, receivingAnswers: true, id: `${currentPollObj.id}_current` });
     }
     invertPublishedPolls.reverse();
 
