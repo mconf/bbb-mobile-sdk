@@ -100,12 +100,15 @@ const UserNameAnswer = styled.Text`
   font-size: 12px;
   text-align: center;
   vertical-align: middle;
+  max-width: 80px;
   color: ${Colors.lightGray300}
 `;
 
 const UserAnswer = styled.Text`
   font-weight: 500;
   font-size: 12px;
+  flex: 1;
+  vertical-align: middle;
   color: ${Colors.lightGray300}
 `;
 
@@ -123,6 +126,7 @@ const UserAnswerContainer = styled.View`
   flex-direction: row;
   aling-items: center;
   justify-content: space-between;
+  gap: 8px;
 `;
 
 const UserAnswerComponent = ({ userId, userName, userAnswers }) => {
@@ -130,9 +134,9 @@ const UserAnswerComponent = ({ userId, userName, userAnswers }) => {
     <UserAnswerContainer>
       <UserNameContainer>
         <UserAvatar mini userId={userId} userName={userName} />
-        <UserNameAnswer>{userName}</UserNameAnswer>
+        <UserNameAnswer numberOfLines={1}>{userName}</UserNameAnswer>
       </UserNameContainer>
-      <UserAnswer>{userAnswers}</UserAnswer>
+      <UserAnswer numberOfLines={1}>{userAnswers}</UserAnswer>
     </UserAnswerContainer>
   );
 };
