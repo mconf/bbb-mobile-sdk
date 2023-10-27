@@ -4,7 +4,6 @@ import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { selectActivePoll } from '../../store/redux/slices/polls';
 import CreatePollScreen from './create-poll-screen';
-import ReceivingAnswersScreen from './create-poll-screen/receiving-answers-screen';
 import PreviousPollsScreen from './previous-polls-screen';
 import AnswerPollScreen from './answer-poll-screen';
 import { isPresenter } from '../../store/redux/slices/current-user';
@@ -18,16 +17,10 @@ const PollNavigator = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    if (!activePollObject && !hasCurrentPoll) {
+    if (!activePollObject) {
       navigation.reset({
         index: 1,
         routes: [{ name: 'PreviousPollsScreen' }]
-      });
-    }
-    else if (!activePollObject && amIPresenter && hasCurrentPoll) {
-      navigation.reset({
-        index: 1,
-        routes: [{ name: 'ReceivingAnswersScreen' }]
       });
     }
     else if (activePollObject && !amIPresenter) {
@@ -50,7 +43,6 @@ const PollNavigator = () => {
       <Stack.Screen name="PreviousPollsScreen" component={PreviousPollsScreen} />
       <Stack.Screen name="CreatePollScreen" component={CreatePollScreen} />
       <Stack.Screen name="AnswerPollScreen" component={AnswerPollScreen} />
-      <Stack.Screen name="ReceivingAnswersScreen" component={ReceivingAnswersScreen} />
     </Stack.Navigator>
   );
 };

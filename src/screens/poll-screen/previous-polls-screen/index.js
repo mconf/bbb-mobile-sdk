@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useOrientation } from '../../../hooks/use-orientation';
 import { isPresenter } from '../../../store/redux/slices/current-user';
 import { setProfile } from '../../../store/redux/slices/wide-app/modal';
+import { hasCurrentPollSelector, selectCurrentPoll } from '../../../store/redux/slices/current-poll';
 import ScreenWrapper from '../../../components/screen-wrapper';
 import PreviousPollCard from './poll-card';
 import Styled from './styles';
@@ -16,10 +17,31 @@ const PreviousPollScreen = () => {
   const dispatch = useDispatch();
 
   const previousPollPublishedStore = useSelector((state) => state.previousPollPublishedCollection);
+  const currentPollObj = useSelector(selectCurrentPoll);
+  const hasCurrentPoll = useSelector(hasCurrentPollSelector);
   const amIPresenter = useSelector(isPresenter);
 
+  const renderCreatePollButtonView = () => {
+    if (hasCurrentPoll) {
+      return;
+    }
+
+    return (
+      <Styled.PressableButton
+        onPress={() => navigation.navigate('CreatePollScreen')}
+        onPressDisabled={() => dispatch(
+          setProfile({
+            profile: 'create_poll_permission',
+          })
+        )}
+        disabled={!amIPresenter}
+      >
+        {t('mobileSdk.poll.createLabel')}
+      </Styled.PressableButton>
+    ); };
+
   if (Object.keys(previousPollPublishedStore.previousPollPublishedCollection)
-    .length === 0) {
+    .length === 0 && (isPresenter && !hasCurrentPoll)) {
     return (
       <ScreenWrapper>
         <Styled.ContainerCentralizedView>
@@ -35,28 +57,22 @@ const PreviousPollScreen = () => {
             {t('mobileSdk.poll.noPollsSubtitle')}
           </Styled.NoPollsLabelSubtitle>
           <Styled.ButtonContainer>
-            <Styled.PressableButton
-              onPress={() => navigation.navigate('CreatePollScreen')}
-              onPressDisabled={() => dispatch(
-                setProfile({
-                  profile: 'create_poll_permission',
-                })
-              )}
-              disabled={!amIPresenter}
-            >
-              {t('mobileSdk.poll.createLabel')}
-            </Styled.PressableButton>
+            {renderCreatePollButtonView()}
           </Styled.ButtonContainer>
         </Styled.ContainerCentralizedView>
       </ScreenWrapper>
-
     );
   }
 
   const renderMethod = () => {
     const invertPublishedPolls = Object.values(
       previousPollPublishedStore.previousPollPublishedCollection
-    ).reverse();
+    );
+
+    if (hasCurrentPoll && amIPresenter) {
+      invertPublishedPolls.push({ ...currentPollObj, receivingAnswers: true, id: `${currentPollObj.id}_current` });
+    }
+    invertPublishedPolls.reverse();
 
     return (
       invertPublishedPolls.map((pollObj) => <PreviousPollCard pollObj={pollObj} key={pollObj.id} />)
@@ -69,13 +85,16 @@ const PreviousPollScreen = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <Styled.ContainerView orientation={orientation}>
-          <Styled.ContainerPollCard>
+          <Styled.ContainerPollScrollView>
             <Styled.ContainerViewPadding>
               <>
                 {renderMethod()}
               </>
             </Styled.ContainerViewPadding>
-          </Styled.ContainerPollCard>
+          </Styled.ContainerPollScrollView>
+          <Styled.ButtonFlyingContainer>
+            {renderCreatePollButtonView()}
+          </Styled.ButtonFlyingContainer>
         </Styled.ContainerView>
       </KeyboardAvoidingView>
     </ScreenWrapper>

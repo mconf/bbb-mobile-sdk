@@ -23,7 +23,7 @@ const ContainerViewPadding = styled.View`
   gap: 16px;
 `;
 
-const ContainerPollCard = styled.ScrollView`
+const ContainerPollScrollView = styled.ScrollView`
   width: 100%;
   border-radius: 12px;
   display: flex;
@@ -78,6 +78,14 @@ const PressableButton = ({
   );
 };
 
+const ButtonFlyingContainer = styled.View`
+  position: absolute;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  bottom: 48px;
+`;
+
 const ContainerCentralizedView = styled.View`
   width: 100%;
   height: 100%;
@@ -109,12 +117,13 @@ export default {
   Title,
   NoPollText,
   ContainerViewPadding,
-  ContainerPollCard,
+  ContainerPollScrollView,
   ContainerView,
   PressableButton,
   ButtonContainer,
   ContainerCentralizedView,
   NoPollsImage,
   NoPollsLabelTitle,
-  NoPollsLabelSubtitle
+  NoPollsLabelSubtitle,
+  ButtonFlyingContainer
 };
