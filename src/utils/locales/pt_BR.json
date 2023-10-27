@@ -165,5 +165,9 @@
   "mobileSdk.actionsBar.debug.label": "Mostrar sobreposição de depuração da atividade",
   "mobileSdk.poll.previousPolls.publishedLabel": "Enquete Publicada",
   "mobileSdk.poll.createPoll.back": "Voltar",
-  "mobileSdk.poll.createPoll.becomePresenter": "Torne-se apresentador"
+  "mobileSdk.poll.createPoll.becomePresenter": "Torne-se apresentador",
+  "mobileSdk.poll.createPoll.anonymous": "Anônimo",
+  "mobileSdk.poll.createPoll.maximize": "Maximizar Respostas",
+  "mobileSdk.poll.createPoll.minimize": "Minimizar Respostas",
+  "mobileSdk.poll.createPoll.publish": "Publicar Enquete"
 }

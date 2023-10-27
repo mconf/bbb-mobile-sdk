@@ -109,10 +109,10 @@ const PreviousPollCard = (props) => {
             <Styled.PressableMinimizeAnswersText
               secretPoll={pollObj.secretPoll}
               showUsersAnswers={showUsersAnswers}
-              anonLabel="Anonimo"
+              anonLabel={t('mobileSdk.poll.createPoll.anonymous')}
               onPress={() => setShowUsersAnswers((prevValue) => !prevValue)}
             >
-              {showUsersAnswers ? 'Minimizar Respostas' : 'Maximizar Respostas'}
+              {showUsersAnswers ? t('mobileSdk.poll.createPoll.minimize') : t('mobileSdk.poll.createPoll.maximize')}
             </Styled.PressableMinimizeAnswersText>
             <Styled.DeleteIcon onPress={() => PollService.handleStopPoll()} />
           </Styled.PresenterContainerOptions>
@@ -142,7 +142,7 @@ const PreviousPollCard = (props) => {
           PollService.handleStopPoll();
         }}
       >
-        {isReceivingAnswers ? 'Publicar enquete' : t('mobileSdk.poll.previousPolls.publishedLabel')}
+        {isReceivingAnswers ? t('mobileSdk.poll.createPoll.publish') : t('mobileSdk.poll.previousPolls.publishedLabel')}
       </Styled.PressableButton>
     </View>
   );

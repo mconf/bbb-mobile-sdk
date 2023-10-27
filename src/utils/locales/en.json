@@ -168,5 +168,9 @@
   "mobileSdk.actionsBar.debug.label": "Show activity debug overlay",
   "mobileSdk.poll.previousPolls.publishedLabel": "Published poll",
   "mobileSdk.poll.createPoll.back": "Back",
-  "mobileSdk.poll.createPoll.becomePresenter": "Become presenter"
+  "mobileSdk.poll.createPoll.becomePresenter": "Become presenter",
+  "mobileSdk.poll.createPoll.anonymous": "Anonymous",
+  "mobileSdk.poll.createPoll.maximize": "Maximize Answers",
+  "mobileSdk.poll.createPoll.minimize": "Minimize Answers",
+  "mobileSdk.poll.createPoll.publish": "Publish Poll"
 }
