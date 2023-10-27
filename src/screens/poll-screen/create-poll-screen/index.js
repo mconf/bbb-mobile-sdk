@@ -95,20 +95,20 @@ const CreatePoll = () => {
           </Styled.OptionsButton>
         </Styled.ButtonsContainer>
         <Styled.AnswerTitle>
-          Opções de Resposta
+          {t('mobileSdk.poll.createPoll.responseOptions')}
         </Styled.AnswerTitle>
         <Styled.ToggleOptionsLabel
           value={isMultipleResponse}
           onValueChange={(val) => setIsMultipleResponse(val)}
         >
-          Permitir múltiplas respostas por usuário.
+          {t('mobileSdk.poll.createPoll.allowMultipleResponse')}
         </Styled.ToggleOptionsLabel>
         <Styled.ToggleOptionsLabel
           value={secretPoll}
           onValueChange={(val) => setSecretPoll(val)}
-          enableText="Você não poderá visualizar respostas individuais dos usuários."
+          enableText={t('mobileSdk.poll.createPoll.anonymousPollSubtitle')}
         >
-          Enquete anônima.
+          {t('mobileSdk.poll.createPoll.anonymousPoll')}
         </Styled.ToggleOptionsLabel>
         <Styled.ConfirmButton
           onPress={handleCreatePoll}

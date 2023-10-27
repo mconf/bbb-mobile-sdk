@@ -172,5 +172,9 @@
   "mobileSdk.poll.createPoll.anonymous": "Anonymous",
   "mobileSdk.poll.createPoll.maximize": "Maximize Answers",
   "mobileSdk.poll.createPoll.minimize": "Minimize Answers",
-  "mobileSdk.poll.createPoll.publish": "Publish Poll"
+  "mobileSdk.poll.createPoll.publish": "Publish Poll",
+  "mobileSdk.poll.createPoll.allowMultipleResponse": "Allow multiple responses.",
+  "mobileSdk.poll.createPoll.responseOptions": "Response Options",
+  "mobileSdk.poll.createPoll.anonymousPoll": "Anonymous Poll.",
+  "mobileSdk.poll.createPoll.anonymousPollSubtitle": "You will not be able to view individual user responses."
 }
