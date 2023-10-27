@@ -173,5 +173,6 @@
     "mobileSdk.poll.createPoll.allowMultipleResponse": "Permitir múltiples respuestas por usuario.",
     "mobileSdk.poll.createPoll.responseOptions": "Opciones de respuesta",
     "mobileSdk.poll.createPoll.anonymousPoll": "Encuesta anónima.",
-    "mobileSdk.poll.createPoll.anonymousPollSubtitle": "No podrás ver las respuestas de los usuarios individuales."
+    "mobileSdk.poll.createPoll.anonymousPollSubtitle": "No podrás ver las respuestas de los usuarios individuales.",
+    "app.poll.userResponse.label" : "Respuesta escrita"
   }

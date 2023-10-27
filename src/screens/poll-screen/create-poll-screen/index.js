@@ -83,17 +83,18 @@ const CreatePoll = () => {
               setAnswerTypeSelected('R-');
             }}
           >
-            Respostas do Usuário
+            {t('app.poll.userResponse.label')}
           </Styled.OptionsButton>
-          <Styled.OptionsButton
+          {/* TODO- another PR */}
+          {/* <Styled.OptionsButton
             selected={answerTypeSelected === 'CUSTOM'}
             onPress={() => {
               setAnswerTypeSelected('CUSTOM');
             }}
           >
-            Personalizar Respostas
+            Custom
           </Styled.OptionsButton>
-        </Styled.ButtonsContainer>
+        </Styled.ButtonsContainer> */}
         <Styled.AnswerTitle>
           {t('mobileSdk.poll.createPoll.responseOptions')}
         </Styled.AnswerTitle>
