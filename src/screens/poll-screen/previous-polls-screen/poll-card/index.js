@@ -1,9 +1,10 @@
 import { useCallback, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { View } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { trigDetailedInfo } from '../../../../store/redux/slices/wide-app/layout';
+import { selectUsersName } from '../../../../store/redux/slices/users';
 import ActivityBar from '../../../../components/activity-bar';
 import PollService from '../../service';
 import Styled from './styles';
@@ -18,6 +19,8 @@ const PreviousPollCard = (props) => {
   const timestamp = new Date(parseInt(pollObj.id.split('/')[2], 10));
   const isReceivingAnswers = pollObj?.receivingAnswers;
   const answersType = pollObj?.answers;
+  const usersName = useSelector(selectUsersName);
+
   const [mappedObject, setMappedObject] = useState({});
   const [showUsersAnswers, setShowUsersAnswers] = useState(false);
 
@@ -49,7 +52,7 @@ const PreviousPollCard = (props) => {
       <Styled.UserAnswerComponent
         key={ans.userId}
         userId={ans.userId}
-        userName={ans.userId}
+        userName={usersName[ans.userId].name}
         userAnswers={returnStringfyAnswers(ans.answerIds)}
       />
     ))
