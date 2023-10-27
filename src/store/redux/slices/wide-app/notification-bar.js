@@ -34,6 +34,18 @@ const notificationBarSlice = createSlice({
           state.text = 'mobileSdk.notificationBar.handsUp';
           state.extraInfo = action.payload.extraInfo;
           break;
+        case 'recordingStarted':
+          state.isShow = true;
+          state.messageTitle = 'mobileSdk.notification.recordLabel';
+          state.messageSubtitle = 'app.notification.recordingStart';
+          state.icon = 'recording-stopped';
+          break;
+        case 'recordingStopped':
+          state.isShow = true;
+          state.messageTitle = 'mobileSdk.notification.recordLabel';
+          state.messageSubtitle = 'app.notification.recordingPaused';
+          state.icon = 'recording-stopped';
+          break;
         default:
       }
     }

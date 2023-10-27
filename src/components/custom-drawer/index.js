@@ -4,11 +4,12 @@ import { Share } from 'react-native';
 import {
   DrawerContentScrollView,
   DrawerItemList,
+  DrawerItem,
 } from '@react-navigation/drawer';
-import Icon from '@expo/vector-icons/MaterialIcons';
 import Colors from '../../constants/colors';
 import { selectCurrentUser } from '../../store/redux/slices/current-user';
 import Styled from './styles';
+import logger from '../../services/api';
 import * as api from '../../services/api';
 import { leave } from '../../store/redux/slices/wide-app/client';
 
@@ -38,7 +39,10 @@ const CustomDrawer = (props) => {
         // dismissed
       }
     } catch (error) {
-      console.error('error sharing link', error);
+      logger.error({
+        logCode: 'error_sharing_link',
+        extraInfo: { error },
+      }, `Exception thrown while clicking to share meeting_url: ${error}`);
     }
   };
 
@@ -61,26 +65,25 @@ const CustomDrawer = (props) => {
           <DrawerItemList {...props} />
         </Styled.ContainerDrawerItemList>
       </DrawerContentScrollView>
-      <Styled.ContainerCustomButtons>
-        {!isBreakout && (
-        <Styled.ButtonLeaveContainer onPress={onClickShare}>
-          <Styled.ViewShareContainer>
-            <Icon name="share" size={24} color="#1C1B1F" />
-            <Styled.TextLeaveContainer>
-              {t('mobileSdk.drawer.shareButtonLabel')}
-            </Styled.TextLeaveContainer>
-          </Styled.ViewShareContainer>
-        </Styled.ButtonLeaveContainer>
-        )}
-        <Styled.ButtonLeaveContainer onPress={leaveSession}>
-          <Styled.ViewLeaveContainer>
-            <Icon name="logout" size={24} color="#1C1B1F" />
-            <Styled.TextLeaveContainer>
-              {isBreakout ? t('mobileSdk.breakout.leave') : t('app.navBar.settingsDropdown.leaveSessionLabel')}
-            </Styled.TextLeaveContainer>
-          </Styled.ViewLeaveContainer>
-        </Styled.ButtonLeaveContainer>
-      </Styled.ContainerCustomButtons>
+      <Styled.ContainerCustomBottomButtons>
+        <DrawerItem
+          label={t('mobileSdk.drawer.shareButtonLabel')}
+          labelStyle={Styled.TextButtonLabel}
+          onPress={onClickShare}
+          inactiveTintColor={Colors.lightGray400}
+          inactiveBackgroundColor={Colors.lightGray100}
+          icon={() => <Styled.DrawerIcon name="share" size={24} color="#1C1B1F" />}
+        />
+
+        <DrawerItem
+          label={isBreakout ? t('mobileSdk.breakout.leave') : t('app.navBar.settingsDropdown.leaveSessionLabel')}
+          labelStyle={Styled.TextButtonLabel}
+          onPress={leaveSession}
+          inactiveTintColor={Colors.lightGray400}
+          inactiveBackgroundColor={Colors.lightGray100}
+          icon={() => <Styled.DrawerIcon name="logout" size={24} color="#1C1B1F" />}
+        />
+      </Styled.ContainerCustomBottomButtons>
     </Styled.ViewContainer>
   );
 };

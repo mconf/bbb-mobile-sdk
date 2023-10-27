@@ -38,92 +38,81 @@ const CreatePoll = () => {
   };
 
   // * return logic *
-  const renderMethod = () => {
-    return (
-      <>
-        <Styled.HeaderContainer>
-          <Styled.IconPoll />
-          <Styled.Title>{t('mobileSdk.poll.createLabel')}</Styled.Title>
-        </Styled.HeaderContainer>
-        <Styled.TextInput
-          label={t('app.poll.question.label')}
-          numberOfLines={4}
-          multiline
-          onChangeText={(text) => setQuestionTextInput(text)}
-        />
-        <Styled.ButtonsContainer>
-          <Styled.AnswerTitle>{t('app.poll.responseTypes.label')}</Styled.AnswerTitle>
-          <Styled.OptionsButton
-            selected={answerTypeSelected === 'TF'}
-            onPress={() => {
-              setAnswerTypeSelected('TF');
-            }}
-          >
-            {t('app.poll.tf')}
-          </Styled.OptionsButton>
-          <Styled.OptionsButton
-            selected={answerTypeSelected === 'A-4'}
-            onPress={() => {
-              setAnswerTypeSelected('A-4');
-            }}
-          >
-            {t('app.poll.a4')}
-          </Styled.OptionsButton>
-          <Styled.OptionsButton
-            selected={answerTypeSelected === 'YNA'}
-            onPress={() => {
-              setAnswerTypeSelected('YNA');
-            }}
-          >
-            {t('app.poll.yna')}
-          </Styled.OptionsButton>
-          <Styled.OptionsButton
-            selected={answerTypeSelected === 'R-'}
-            onPress={() => {
-              setAnswerTypeSelected('R-');
-            }}
-          >
-            {t('app.poll.userResponse.label')}
-          </Styled.OptionsButton>
-          {/* TODO- another PR */}
-          {/* <Styled.OptionsButton
-            selected={answerTypeSelected === 'CUSTOM'}
-            onPress={() => {
-              setAnswerTypeSelected('CUSTOM');
-            }}
-          >
-            Custom
-          </Styled.OptionsButton>
-        </Styled.ButtonsContainer> */}
-        <Styled.AnswerTitle>
-          {t('mobileSdk.poll.createPoll.responseOptions')}
-        </Styled.AnswerTitle>
-        <Styled.ToggleOptionsLabel
-          value={isMultipleResponse}
-          onValueChange={(val) => setIsMultipleResponse(val)}
+  const renderMethod = () => (
+    <>
+      <Styled.HeaderContainer>
+        <Styled.IconPoll />
+        <Styled.Title>{t('mobileSdk.poll.createLabel')}</Styled.Title>
+      </Styled.HeaderContainer>
+      <Styled.TextInput
+        label={t('app.poll.question.label')}
+        numberOfLines={4}
+        multiline
+        onChangeText={(text) => setQuestionTextInput(text)}
+      />
+      <Styled.ButtonsContainer>
+        <Styled.AnswerTitle>{t('app.poll.responseTypes.label')}</Styled.AnswerTitle>
+        <Styled.OptionsButton
+          selected={answerTypeSelected === 'TF'}
+          onPress={() => {
+            setAnswerTypeSelected('TF');
+          }}
         >
-          {t('mobileSdk.poll.createPoll.allowMultipleResponse')}
-        </Styled.ToggleOptionsLabel>
-        <Styled.ToggleOptionsLabel
-          value={secretPoll}
-          onValueChange={(val) => setSecretPoll(val)}
-          enableText={t('mobileSdk.poll.createPoll.anonymousPollSubtitle')}
+          {t('app.poll.tf')}
+        </Styled.OptionsButton>
+        <Styled.OptionsButton
+          selected={answerTypeSelected === 'A-4'}
+          onPress={() => {
+            setAnswerTypeSelected('A-4');
+          }}
         >
-          {t('mobileSdk.poll.createPoll.anonymousPoll')}
-        </Styled.ToggleOptionsLabel>
-        <Styled.ConfirmButton
-          onPress={handleCreatePoll}
+          {t('app.poll.a4')}
+        </Styled.OptionsButton>
+        <Styled.OptionsButton
+          selected={answerTypeSelected === 'YNA'}
+          onPress={() => {
+            setAnswerTypeSelected('YNA');
+          }}
         >
-          {t('app.poll.start.label')}
-        </Styled.ConfirmButton>
-        <Styled.SeePublishPollsButton
-          onPress={() => navigation.navigate('PreviousPollsScreen')}
+          {t('app.poll.yna')}
+        </Styled.OptionsButton>
+        <Styled.OptionsButton
+          selected={answerTypeSelected === 'R-'}
+          onPress={() => {
+            setAnswerTypeSelected('R-');
+          }}
         >
-          {t('mobileSdk.poll.previousPolls.label')}
-        </Styled.SeePublishPollsButton>
-      </>
-    );
-  };
+          {t('app.poll.userResponse.label')}
+        </Styled.OptionsButton>
+      </Styled.ButtonsContainer>
+      <Styled.AnswerTitle>
+        {t('mobileSdk.poll.createPoll.responseOptions')}
+      </Styled.AnswerTitle>
+      <Styled.ToggleOptionsLabel
+        value={isMultipleResponse}
+        onValueChange={(val) => setIsMultipleResponse(val)}
+      >
+        {t('mobileSdk.poll.createPoll.allowMultipleResponse')}
+      </Styled.ToggleOptionsLabel>
+      <Styled.ToggleOptionsLabel
+        value={secretPoll}
+        onValueChange={(val) => setSecretPoll(val)}
+        enableText={t('mobileSdk.poll.createPoll.anonymousPollSubtitle')}
+      >
+        {t('mobileSdk.poll.createPoll.anonymousPoll')}
+      </Styled.ToggleOptionsLabel>
+      <Styled.ConfirmButton
+        onPress={handleCreatePoll}
+      >
+        {t('app.poll.start.label')}
+      </Styled.ConfirmButton>
+      <Styled.SeePublishPollsButton
+        onPress={() => navigation.navigate('PreviousPollsScreen')}
+      >
+        {t('mobileSdk.poll.previousPolls.label')}
+      </Styled.SeePublishPollsButton>
+    </>
+  );
 
   return (
     <ScreenWrapper>

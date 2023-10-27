@@ -9,8 +9,7 @@ const slidesSlice = createSlice({
   reducers: {
     addSlide: (state, action) => {
       const { slideObject } = action.payload;
-      state.slidesCollection[slideObject.id] =
-        action.payload.slideObject.fields;
+      state.slidesCollection[slideObject.id] = action.payload.slideObject.fields;
     },
     removeSlide: (state, action) => {
       const { slideObject } = action.payload;
