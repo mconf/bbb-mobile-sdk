@@ -1,4 +1,7 @@
-import { combineReducers, configureStore, createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit';
+import {
+  combineReducers, configureStore, createListenerMiddleware, isAnyOf
+} from '@reduxjs/toolkit';
+import logger from '../../services/logger';
 // meteor collections
 import usersReducer from './slices/users';
 import meetingReducer from './slices/meeting';
@@ -17,6 +20,8 @@ import videoStreamsReducer from './slices/video-streams';
 import screenshareReducer from './slices/screenshare';
 import guestUsersReducer from './slices/guest-users';
 import breakoutsReducer from './slices/breakouts';
+import recordMeetingsReducer from './slices/record-meetings';
+import usersSettingsReducer from './slices/users-settings';
 // app exclusive wide state collections
 import previousPollPublishedReducer from './slices/wide-app/previous-poll-published';
 import audioReducer from './slices/wide-app/audio';
@@ -37,11 +42,13 @@ import {
   voiceUserStateObserver,
   voiceCallStateObserver,
   joinAudioOnLogin,
-  logoutOrEjectionObserver,
+  logoutOrEjectionObserver
 } from './middlewares';
 
 let storeFlushCallback = () => {
-  console.log("Store flushed");
+  logger.info({
+    logCode: 'store_flushed',
+  }, 'Store flushed');
 };
 
 const appReducer = combineReducers({
@@ -63,6 +70,8 @@ const appReducer = combineReducers({
   screenshareCollection: screenshareReducer,
   guestUsersCollection: guestUsersReducer,
   breakoutsCollection: breakoutsReducer,
+  recordMeetingsCollection: recordMeetingsReducer,
+  usersSettingsCollection: usersSettingsReducer,
   // ...other collections
 
   // app exclusive wide state collections
@@ -88,15 +97,19 @@ const flushStoreEffect = (action, listenerApi) => {
     const ended = _state.client.sessionState.ended || (type === 'client/sessionStateChanged' && payload.ended);
     const terminated = _state.client.sessionState.terminated || (type === 'client/setSessionTerminated' && payload);
 
-    console.log("DISCONNECTED?", disconnected, "ENDED?", ended, "TERMINATED?", terminated);
+    logger.info({
+      logCode: 'store_flushed',
+    }, `Disconnected=${disconnected}, Ended=${ended}, Terminated=${terminated}`);
 
     return disconnected && ended && terminated;
-  }
+  };
 
   if (hasEnded(state, action.type, action.payload)) {
-    console.log("DISPATCHING STORE_FLUSH");
+    logger.info({
+      logCode: 'dispatch_store_flushed',
+    }, 'Dispatching store_flush');
     if (typeof storeFlushCallback === 'function') storeFlushCallback();
-    listenerApi.dispatch({ type: "STORE_FLUSH" });
+    listenerApi.dispatch({ type: 'STORE_FLUSH' });
   }
 };
 flushStoreObserver.startListening({
@@ -108,17 +121,19 @@ const rootReducer = (state, action) => {
   ReduxDebug.addToReduxLog(action);
   // Reset the store on logouts
   if (action.type === 'STORE_FLUSH') {
-    console.debug("FLUSHING STORE", storeFlushCallback);
+    logger.info({
+      logCode: 'flushing_store',
+    }, 'Flushing store');
 
     return appReducer(undefined, action);
   }
 
   return appReducer(state, action);
-}
+};
 
 export const injectStoreFlushCallback = (callback) => {
   storeFlushCallback = callback;
-}
+};
 
 export const store = configureStore({
   reducer: rootReducer,

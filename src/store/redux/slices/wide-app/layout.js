@@ -4,7 +4,7 @@ const initialState = {
   isFocused: false,
   focusedId: '',
   focusedElement: '',
-  detailedInfo: false,
+  detailedInfo: true,
 };
 
 const layoutSlice = createSlice({

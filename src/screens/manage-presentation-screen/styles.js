@@ -11,9 +11,8 @@ const ContainerView = styled.View`
   justify-content: space-around;
   padding: 10px;
 
-  ${({ orientation }) =>
-    orientation === 'LANDSCAPE' &&
-    `
+  ${({ orientation }) => orientation === 'LANDSCAPE'
+    && `
     flex-direction: row;
     justify-content: center;
   `}
@@ -25,9 +24,8 @@ const ActionsBarContainer = styled.View`
   display: flex;
   justify-content: center;
   align-items: center;
-  ${({ orientation }) =>
-    orientation === 'LANDSCAPE' &&
-    `
+  ${({ orientation }) => orientation === 'LANDSCAPE'
+    && `
       width: 10%;
       height: 100%;
   `}
@@ -54,9 +52,8 @@ const ConfirmButton = styled(button)`
 `;
 
 const ActionsBar = styled(actionsBar)`
-  ${({ orientation }) =>
-    orientation === 'LANDSCAPE' &&
-    `
+  ${({ orientation }) => orientation === 'LANDSCAPE'
+    && `
       flex-direction: column;
       display: flex;
   `}

@@ -28,6 +28,7 @@ import { setAudioDevices, setSelectedAudioDevice } from './src/store/redux/slice
 import Settings from './settings.json';
 import TestComponentsScreen from './src/screens/test-components-screen';
 import GuestScreen from './src/screens/guest-screen';
+
 import {
   leave,
   setSessionTerminated,
@@ -100,23 +101,33 @@ const AppContent = ({
   }, [leaveOnUnmount]);
 
   useEffect(() => {
-    console.log('FOCUS MOUNTED');
+    logger.info({
+      logCode: 'app_mounted',
+    }, 'App component mounted');
+
     const onBackPress = () => {
-      Alert.alert(t('app.leaveModal.title'), t('app.leaveModal.desc'), [
-        {
-          text: t('app.settings.main.cancel.label'),
-          onPress: () => {},
-          style: 'cancel',
-        },
-        { text: 'OK', onPress: () => dispatch(leave(api)) },
-      ]);
+      const navigation = navigationRef?.current;
+      if (navigation?.canGoBack()) {
+        navigation?.goBack();
+      } else {
+        Alert.alert(t('app.leaveModal.title'), t('app.leaveModal.desc'), [
+          {
+            text: t('app.settings.main.cancel.label'),
+            onPress: () => { },
+            style: 'cancel',
+          },
+          { text: 'OK', onPress: () => dispatch(leave(api)) },
+        ]);
+      }
 
       return true;
     };
     BackHandler.addEventListener('hardwareBackPress', onBackPress);
     return () => {
       BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-      console.log('FOCUS UNMOUNTED');
+      logger.info({
+        logCode: 'app_unmounted',
+      }, 'App component unmounted');
     };
   }, []);
 
@@ -287,10 +298,7 @@ const AppContent = ({
       }
     });
 
-    console.log('REGULAR APP MOUNT');
-
     return () => {
-      console.log('REGULAR APP UNMOUNT - leave?', leaveOnUnmountRef.current);
       dispatch(ConnectionStatusTracker.unregisterConnectionStatusListeners());
       nativeEventListeners.current.forEach((eventListener) => eventListener.remove());
 
