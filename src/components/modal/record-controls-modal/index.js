@@ -1,26 +1,26 @@
-import React, { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { Pressable } from 'react-native';
+import { Modal } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { useFocusEffect } from '@react-navigation/native';
-import Modal from 'react-native-modal';
-import { closeModal } from '../../../store/redux/slices/wide-app/modal';
+import { hide } from '../../../store/redux/slices/wide-app/modal';
 import { selectRecordMeeting } from '../../../store/redux/slices/record-meetings';
 import Colors from '../../../constants/colors';
+import ViewerService from '../record-status-modal/service';
 import Service from './service';
-import ViewerService from '../recording-status-modal/service';
 import Styled from './styles';
 
-const RecordingConfirmModal = () => {
+const RecordControlsModal = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const isModalVisible = useSelector((state) => state.modal.isModalVisible);
+  const modalCollection = useSelector((state) => state.modal);
   const recordMeeting = useSelector(selectRecordMeeting);
 
   const recordingTime = recordMeeting ? recordMeeting.time : 0;
   const recording = recordMeeting?.recording;
 
-  const [time, setTime] = useState(recordingTime);
+  const [time, setTime] = useState(recordingTime || 0);
 
   let title = '';
   if (!recordMeeting?.recording) {
@@ -61,30 +61,21 @@ const RecordingConfirmModal = () => {
     }, [recordingTime])
   );
 
-  const handleCloseModal = () => {
-    dispatch(closeModal());
-  };
-
   const handleToggleRecording = () => {
     Service.handleToggleRecording();
-    dispatch(closeModal());
+    dispatch(hide());
   };
 
   return (
     <Modal
-      isVisible={isModalVisible}
-      animationIn="fadeIn"
-      animationOut="fadeOut"
-      backdropOpacity={0.5}
-      onBackButtonPress={handleCloseModal}
-      hasBackdrop={false}
-      onBackdropPress={handleCloseModal}
+      visible={modalCollection.isShow}
+      onDismiss={() => dispatch(hide())}
     >
       <Styled.ModalContainer>
         <Styled.ModalContent>
           <Styled.ModalTop>
             <Styled.Title>{title}</Styled.Title>
-            <Styled.CloseButton name="close" size={24} color="#1C1B1F" onPress={handleCloseModal} />
+            <Styled.CloseButton name="close" size={24} color="#1C1B1F" onPress={() => dispatch(hide())} />
           </Styled.ModalTop>
           <Styled.TimeText>
             {ViewerService.humanizeSeconds(time)}
@@ -94,7 +85,7 @@ const RecordingConfirmModal = () => {
           </Styled.DividerContainer>
           <Styled.Description>{description}</Styled.Description>
           <Styled.ButtonContainer>
-            <Pressable onPress={handleCloseModal}>
+            <Pressable onPress={() => dispatch(hide())}>
               <Styled.CancelText>{t('app.settings.main.cancel.label')}</Styled.CancelText>
             </Pressable>
             <Styled.Button activeOpacity={0.8} onPress={handleToggleRecording}>
@@ -112,4 +103,4 @@ const RecordingConfirmModal = () => {
   );
 };
 
-export default RecordingConfirmModal;
+export default RecordControlsModal;

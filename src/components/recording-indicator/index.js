@@ -3,7 +3,7 @@ import { Pressable, Animated } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/core';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { openModal, setActiveModal } from '../../store/redux/slices/wide-app/modal';
+import { setProfile } from '../../store/redux/slices/wide-app/modal';
 import { showNotificationWithTimeout } from '../../store/redux/slices/wide-app/notification-bar';
 import { isModerator } from '../../store/redux/slices/current-user';
 import usePrevious from '../../hooks/use-previous';
@@ -29,13 +29,11 @@ const RecordingIndicator = (props) => {
     : amIModerator;
 
   const handleOpenRecordingViewerModal = () => {
-    dispatch(setActiveModal('recording-status'));
-    dispatch(openModal());
+    dispatch(setProfile({ profile: 'record_status' }));
   };
 
   const handleOpenRecordingControlsModal = () => {
-    dispatch(setActiveModal('recording-confirm'));
-    dispatch(openModal());
+    dispatch(setProfile({ profile: 'record_controls' }));
   };
 
   useEffect(() => {

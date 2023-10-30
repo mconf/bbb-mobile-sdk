@@ -4,7 +4,6 @@ import Icon from '@expo/vector-icons/MaterialIcons';
 import Colors from '../../../constants/colors';
 
 const ModalContainer = styled(View)`
-  flex: 1;
   justify-content: center;
   align-items: center;
 `;

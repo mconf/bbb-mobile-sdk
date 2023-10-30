@@ -5,7 +5,6 @@ import Colors from '../../../constants/colors';
 import button from '../../button';
 
 const ModalContainer = styled(View)`
-  flex: 1;
   justify-content: center;
   align-items: center;
 `;

@@ -28,7 +28,6 @@ import { setAudioDevices, setSelectedAudioDevice } from './src/store/redux/slice
 import Settings from './settings.json';
 import TestComponentsScreen from './src/screens/test-components-screen';
 import GuestScreen from './src/screens/guest-screen';
-import ModalWrapper from './src/components/modal-wrapper';
 
 import {
   leave,
@@ -322,31 +321,29 @@ const AppContent = ({
     <NavigationContainer independent ref={navigationRef}>
       {(guestStatus === 'WAIT') && <GuestScreen />}
       {!Settings.dev && <TestComponentsScreen jUrl={jUrl} />}
-      <ModalWrapper>
-        <Stack.Navigator
-          screenOptions={{
-            headerShown: false,
-            contentStyle: { backgroundColor: '#06172A' }
-          }}
-        >
-          <Stack.Screen name="DrawerNavigator">
-            {() => (
-              <DrawerNavigator
-                navigationRef={navigationRef}
-                jUrl={jUrl}
-                onLeaveSession={onLeaveSession}
-                meetingUrl={meetingUrl}
-              />
-            )}
-          </Stack.Screen>
-          <Stack.Screen name="EndSessionScreen">
-            {() => <EndSessionScreen onLeaveSession={onLeaveSession} />}
-          </Stack.Screen>
-          <Stack.Screen name="FeedbackScreen" component={FeedbackScreen} />
-          <Stack.Screen name="ProblemFeedbackScreen" component={ProblemFeedbackScreen} />
-          <Stack.Screen name="EmailFeedbackScreen" component={EmailFeedbackScreen} />
-        </Stack.Navigator>
-      </ModalWrapper>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: '#06172A' }
+        }}
+      >
+        <Stack.Screen name="DrawerNavigator">
+          {() => (
+            <DrawerNavigator
+              navigationRef={navigationRef}
+              jUrl={jUrl}
+              onLeaveSession={onLeaveSession}
+              meetingUrl={meetingUrl}
+            />
+          )}
+        </Stack.Screen>
+        <Stack.Screen name="EndSessionScreen">
+          {() => <EndSessionScreen onLeaveSession={onLeaveSession} />}
+        </Stack.Screen>
+        <Stack.Screen name="FeedbackScreen" component={FeedbackScreen} />
+        <Stack.Screen name="ProblemFeedbackScreen" component={ProblemFeedbackScreen} />
+        <Stack.Screen name="EmailFeedbackScreen" component={EmailFeedbackScreen} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 };

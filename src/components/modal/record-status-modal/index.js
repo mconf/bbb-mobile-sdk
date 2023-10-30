@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import Modal from 'react-native-modal';
-import { closeModal } from '../../../store/redux/slices/wide-app/modal';
+import { Modal } from 'react-native-paper';
+import { hide } from '../../../store/redux/slices/wide-app/modal';
 import { selectRecordMeeting } from '../../../store/redux/slices/record-meetings';
 import Styled from './styles';
 import Service from './service';
 
-const RecordingConfirmModal = () => {
+const RecordStatusModal = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const isModalVisible = useSelector((state) => state.modal.isModalVisible);
+  const isShow = useSelector((state) => state.modal.isShow);
   const recordMeeting = useSelector(selectRecordMeeting);
 
   const recordingTime = recordMeeting ? recordMeeting.time : 0;
@@ -41,7 +41,7 @@ const RecordingConfirmModal = () => {
   }, [recordingTime]);
 
   const handleCloseModal = () => {
-    dispatch(closeModal());
+    dispatch(hide());
   };
 
   const description = !recording
@@ -50,13 +50,8 @@ const RecordingConfirmModal = () => {
 
   return (
     <Modal
-      isVisible={isModalVisible}
-      animationIn="fadeIn"
-      animationOut="fadeOut"
-      backdropOpacity={0.5}
-      onBackButtonPress={handleCloseModal}
-      hasBackdrop={false}
-      onBackdropPress={handleCloseModal}
+      visible={isShow}
+      onDismiss={() => dispatch(hide())}
     >
       <Styled.ModalContainer>
         <Styled.ModalContent>
@@ -72,4 +67,4 @@ const RecordingConfirmModal = () => {
   );
 };
 
-export default RecordingConfirmModal;
+export default RecordStatusModal;
