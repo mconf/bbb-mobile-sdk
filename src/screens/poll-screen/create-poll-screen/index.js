@@ -28,6 +28,7 @@ const CreatePoll = () => {
   const navigation = useNavigation();
 
   const handleCreatePoll = async () => {
+    navigation.navigate('PreviousPollsScreen');
     await PollService.handleCreatePoll(
       answerTypeSelected,
       `${questionTextInput}-${Date.now()}`,
