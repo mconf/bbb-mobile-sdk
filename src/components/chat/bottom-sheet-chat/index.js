@@ -1,5 +1,5 @@
 import {
-  useCallback, useRef, useMemo, useState, useEffect
+  useCallback, useRef, useMemo, useState
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHeaderHeight } from '@react-navigation/elements';
@@ -46,12 +46,6 @@ const BottomSheetChat = () => {
     }
   };
 
-  useEffect(() => {
-    if (flatListRef.current && messages.length > 0) {
-      flatListRef.current.scrollToEnd({ animated: true });
-    }
-  }, [messages]);
-
   const handleMessage = (message) => {
     if ((/^https?:/.test(message))) {
       return (
@@ -71,7 +65,11 @@ const BottomSheetChat = () => {
     return (
       <Pressable onPress={() => handleMessagePressed(item)}>
         <Styled.ContainerItem>
-          <UserAvatar userName={item.author} userRole={item.role} userId={item.senderUserId} />
+          <UserAvatar
+            userName={item.author}
+            userRole={item.role}
+            userId={item.senderUserId}
+          />
           <Styled.Card>
             <Styled.MessageTopContainer>
               <Styled.MessageAuthor>{item.author}</Styled.MessageAuthor>
@@ -108,9 +106,12 @@ const BottomSheetChat = () => {
         enablePanDownToClose
       >
         {renderEmptyChatHandler()}
-
-        <BottomSheetFlatList ref={flatListRef} data={messages} renderItem={renderItem} />
-
+        <BottomSheetFlatList
+          ref={flatListRef}
+          data={messages}
+          renderItem={renderItem}
+          onContentSizeChange={() => flatListRef.current.scrollToEnd()}
+        />
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           keyboardVerticalOffset={height + 47}

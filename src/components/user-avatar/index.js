@@ -1,22 +1,24 @@
 import { useSelector } from 'react-redux';
-import { selectUserByIntId, selectUsers } from '../../store/redux/slices/users';
+import { selectUserByIntId } from '../../store/redux/slices/users';
 import Styled from './styles';
 
 const UserAvatar = (props) => {
   const {
-    userName, userRole, userColor, userImage, isTalking, mini, userId
+    userName, userRole, userColor, userImage, isTalking, mini, userId, presenter
   } = props;
-
-  const currentUserObj = useSelector(selectUsers);
-  const presenterUser = currentUserObj.find((user) => user.presenter === true);
-
-  const shouldRenderPresenterIcon = presenterUser && presenterUser.userId === userId;
 
   const userColorByIntId = useSelector((state) => {
     if (!userId) {
       return;
     }
     return selectUserByIntId(state, userId)?.color;
+  });
+
+  const userPresenterByIntId = useSelector((state) => {
+    if (!userId) {
+      return;
+    }
+    return selectUserByIntId(state, userId)?.presenter;
   });
 
   return (
@@ -34,7 +36,7 @@ const UserAvatar = (props) => {
           </Styled.ImageContainer>
         )
         : <Styled.UserName mini={mini}>{userName?.substring(0, 2)}</Styled.UserName>}
-      {shouldRenderPresenterIcon && (
+      {(presenter || userPresenterByIntId) && (
         <Styled.PresenterIcon
           icon="presentation"
           size={13}

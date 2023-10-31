@@ -58,6 +58,7 @@ const CustomDrawer = (props) => {
             userRole={currentUserObj?.role}
             userColor={currentUserObj?.color}
             userImage={currentUserObj?.avatar}
+            presenter={currentUserObj?.presenter}
           />
           <Styled.NameUserAvatar numberOfLines={1}>{currentUserObj?.name}</Styled.NameUserAvatar>
         </Styled.CustomDrawerContainer>
