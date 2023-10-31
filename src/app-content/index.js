@@ -6,9 +6,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import notifee, { EventType } from '@notifee/react-native';
 import { useDispatch, useSelector } from 'react-redux';
 // providers and store
-import InCallManager from 'react-native-incall-manager';
 import {
-  BackHandler, DeviceEventEmitter, Alert, Platform
+  BackHandler, Alert
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { store, injectStoreFlushCallback } from '../store/redux/store';
@@ -23,7 +22,6 @@ import { injectStore as injectStoreSM } from '../services/webrtc/screenshare-man
 import { injectStore as injectStoreAM } from '../services/webrtc/audio-manager';
 import { injectStore as injectStoreIM } from '../components/interactions/service';
 import { ConnectionStatusTracker } from '../store/redux/middlewares';
-import { setAudioDevices, setSelectedAudioDevice } from '../store/redux/slices/wide-app/audio';
 import Settings from '../../settings.json';
 import TestComponentsScreen from '../screens/test-components-screen';
 import GuestScreen from '../screens/guest-screen';
@@ -78,7 +76,6 @@ const AppContent = ({
   });
   const [notification, setNotification] = useState(null);
   const navigationRef = useRef(null);
-  const nativeEventListeners = useRef([]);
   const leaveOnUnmountRef = useRef();
 
   const { t, i18n } = useTranslation();
