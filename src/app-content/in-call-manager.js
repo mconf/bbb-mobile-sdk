@@ -1,12 +1,7 @@
-import {
-  useEffect, useRef
-} from 'react';
+import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-// providers and store
 import InCallManager from 'react-native-incall-manager';
-import {
-  DeviceEventEmitter, Platform
-} from 'react-native';
+import { DeviceEventEmitter, Platform } from 'react-native';
 import { ConnectionStatusTracker } from '../store/redux/middlewares';
 import { setAudioDevices, setSelectedAudioDevice } from '../store/redux/slices/wide-app/audio';
 import logger from '../services/logger';
@@ -15,7 +10,6 @@ import '../utils/locales/i18n';
 const InCallManagerController = () => {
   const audioIsConnected = useSelector((state) => state.audio.isConnected);
   const dispatch = useDispatch();
-
   const nativeEventListeners = useRef([]);
 
   useEffect(() => {
