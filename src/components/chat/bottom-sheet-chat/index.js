@@ -65,7 +65,11 @@ const BottomSheetChat = () => {
     return (
       <Pressable onPress={() => handleMessagePressed(item)}>
         <Styled.ContainerItem>
-          <UserAvatar userName={item.author} userRole={item.role} userId={item.senderUserId} />
+          <UserAvatar
+            userName={item.author}
+            userRole={item.role}
+            userId={item.senderUserId}
+          />
           <Styled.Card>
             <Styled.MessageTopContainer>
               <Styled.MessageAuthor>{item.author}</Styled.MessageAuthor>
