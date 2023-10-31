@@ -156,9 +156,6 @@ const AppContent = ({
       }
       // Start/show the notification foreground service
       const getChannelIdAndDisplayNotification = async () => {
-        // Request permissions (required for iOS)
-        await notifee.requestPermission();
-
         const channelId = await notifee.createChannel({
           id: 'main_meeting_channel',
           name: t('mobileSdk.notification.label'),
@@ -215,6 +212,14 @@ const AppContent = ({
       notifee.stopForegroundService();
     }
   }, [audioIsConnected]);
+
+  useEffect(() => {
+    const requestNotificationPermission = async () => {
+      await notifee.requestPermission();
+    };
+
+    requestNotificationPermission();
+  }, []);
 
   useEffect(() => {
     if (notification) {
