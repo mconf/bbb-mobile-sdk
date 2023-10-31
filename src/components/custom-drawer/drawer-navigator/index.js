@@ -274,11 +274,15 @@ const DrawerNavigator = ({
         options={{
           title: t('app.createBreakoutRoom.title'),
           drawerIcon: (config) => (
-            <Styled.DrawerIcon
-              icon="account-group"
-              size={24}
-              iconColor={config.color}
-            />
+            <>
+              <Styled.BetaTag>BETA</Styled.BetaTag>
+              <Styled.DrawerIcon
+                icon="account-group"
+                size={24}
+                iconColor={config.color}
+              />
+            </>
+
           ),
         }}
       />
