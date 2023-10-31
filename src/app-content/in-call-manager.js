@@ -48,10 +48,7 @@ const InCallManagerController = () => {
     }
   }, [audioIsConnected]);
 
-  return (
-    <>
-    </>
-  );
+  return null;
 };
 
 export default InCallManagerController;

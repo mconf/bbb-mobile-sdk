@@ -162,10 +162,7 @@ const NotifeeController = () => {
     };
   }, []);
 
-  return (
-    <>
-    </>
-  );
+  return null;
 };
 
 export default NotifeeController;
