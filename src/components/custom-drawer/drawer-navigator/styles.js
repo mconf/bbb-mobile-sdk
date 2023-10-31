@@ -1,6 +1,7 @@
 import styled from 'styled-components/native';
 import iconButton from '../../icon-button';
 import Colors from '../../../constants/colors';
+import Tag from '../../tag';
 
 const DrawerIcon = styled(iconButton)`
   position: absolute;
@@ -21,12 +22,6 @@ const HeaderTitleContainer = styled.View`
   justify-content: center;
   width: 100%;
   gap: 10px;
-
-  ${({ recordMeeting }) => recordMeeting 
-    && `
-      margin-left: 6%; 
-  `}
-
 `;
 
 const HeaderTitleText = styled.Text`
@@ -37,9 +32,15 @@ const HeaderTitleText = styled.Text`
   max-width: 80%;
 `;
 
+const BetaTag = styled(Tag)`
+  position: absolute;
+  right: 12px;
+`;
+
 export default {
   DrawerIcon,
   NotificationIcon,
   HeaderTitleContainer,
-  HeaderTitleText
+  HeaderTitleText,
+  BetaTag
 };
