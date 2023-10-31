@@ -31,7 +31,6 @@ import {
   sessionStateChanged,
 } from '../store/redux/slices/wide-app/client';
 import logger from '../services/logger';
-import '../utils/locales/i18n';
 
 //  Inject store in non-component files
 const injectStore = () => {
@@ -44,11 +43,11 @@ const injectStore = () => {
 const AppContent = ({
   onLeaveSession: _onLeaveSession,
   jUrl,
-  defaultLanguage,
   meetingUrl,
 }) => {
   const Stack = createNativeStackNavigator();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const guestStatus = useSelector((state) => state.client.guestStatus);
   const leaveOnUnmount = useSelector((state) => {
     const { sessionState } = state.client;
@@ -60,8 +59,6 @@ const AppContent = ({
   });
   const navigationRef = useRef(null);
   const leaveOnUnmountRef = useRef();
-
-  const { t, i18n } = useTranslation();
 
   const onLeaveSession = () => {
     dispatch(setSessionTerminated(true));
@@ -108,24 +105,6 @@ const AppContent = ({
         logCode: 'app_unmounted',
       }, 'App component unmounted');
     };
-  }, []);
-
-  useEffect(() => {
-    const changeLanguage = (lng = 'en') => {
-      i18n.changeLanguage(lng)
-        .then(() => {
-          logger.debug({
-            logCode: 'app_locale_change',
-          }, 'Change locale sucessfully');
-        })
-        .catch((err) => {
-          logger.debug({
-            logCode: 'app_locale_change',
-            extraInfo: err,
-          }, 'Change locale error');
-        });
-    };
-    changeLanguage(defaultLanguage);
   }, []);
 
   useEffect(() => {
