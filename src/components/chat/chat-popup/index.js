@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setBottomChatOpen, setHasShownInFastChat } from '../../../store/redux/slices/wide-app/chat';
 import { useChatMsgs } from '../../../hooks/selectors/chat/use-chat-msgs';
 import ChatPopupItem from './chat-popout-item';
+import Styled from './styles';
 
 const ChatPopupList = () => {
   const dispatch = useDispatch();
@@ -28,11 +29,13 @@ const ChatPopupList = () => {
 
   if (showMessage) {
     return (
-      <ChatPopupItem
-        userName={lastMessage?.author}
-        userText={lastMessage?.message}
-        onPress={() => dispatch(setBottomChatOpen(true))}
-      />
+      <Styled.Container>
+        <ChatPopupItem
+          userName={lastMessage?.author}
+          userText={lastMessage?.message}
+          onPress={() => dispatch(setBottomChatOpen(true))}
+        />
+      </Styled.Container>
     );
   }
 

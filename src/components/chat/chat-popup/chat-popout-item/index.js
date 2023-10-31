@@ -6,9 +6,12 @@ const ChatPopupItem = (props) => {
   return (
     <Styled.ContainerPressable onPress={onPress}>
       <Styled.TextContainer>
-        <Styled.UserNameText numberOfLines={1}>
-          {userName}
-        </Styled.UserNameText>
+        <Styled.AuthorContainer>
+          <Styled.ChatIcon />
+          <Styled.UserNameText numberOfLines={1}>
+            {userName}
+          </Styled.UserNameText>
+        </Styled.AuthorContainer>
         <Styled.UserMessage numberOfLines={1}>
           {userText}
         </Styled.UserMessage>
