@@ -1,5 +1,5 @@
 import {
-  useCallback, useRef, useMemo, useState
+  useCallback, useRef, useMemo, useState, useEffect
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHeaderHeight } from '@react-navigation/elements';
@@ -19,11 +19,11 @@ import Styled from './styles';
 const BottomSheetChat = () => {
   const messages = useChatMsgs();
   const height = useHeaderHeight();
-  const reverseMessages = messages.reverse();
   const navigation = useNavigation();
   const { t } = useTranslation();
 
   const sheetRef = useRef(null);
+  const flatListRef = useRef(null);
   const [messageText, setMessageText] = useState('');
   const dispatch = useDispatch();
   const chatStore = useSelector((state) => state.chat);
@@ -45,6 +45,12 @@ const BottomSheetChat = () => {
       navigation.navigate('PollScreen');
     }
   };
+
+  useEffect(() => {
+    if (flatListRef.current && messages.length > 0) {
+      flatListRef.current.scrollToEnd({ animated: true });
+    }
+  }, [messages]);
 
   const handleMessage = (message) => {
     if ((/^https?:/.test(message))) {
@@ -103,7 +109,7 @@ const BottomSheetChat = () => {
       >
         {renderEmptyChatHandler()}
 
-        <BottomSheetFlatList data={reverseMessages} renderItem={renderItem} />
+        <BottomSheetFlatList ref={flatListRef} data={messages} renderItem={renderItem} />
 
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
