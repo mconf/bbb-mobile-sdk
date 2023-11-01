@@ -1,36 +1,32 @@
-import {
-  useEffect, useRef
-} from 'react';
+import { useEffect, useRef } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
-// providers and store
-import {
-  BackHandler, Alert
-} from 'react-native';
+import { BackHandler, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
+// providers and store
 import { store, injectStoreFlushCallback } from '../store/redux/store';
-import * as api from '../services/api';
+import { ConnectionStatusTracker } from '../store/redux/middlewares';
+import { leave, setSessionTerminated, sessionStateChanged, } from '../store/redux/slices/wide-app/client';
+// components
 import DrawerNavigator from '../components/custom-drawer/drawer-navigator';
 import EndSessionScreen from '../screens/end-session-screen';
 import FeedbackScreen from '../screens/feedback-screen';
 import ProblemFeedbackScreen from '../screens/feedback-screen/problem-feedback-screen';
 import EmailFeedbackScreen from '../screens/feedback-screen/email-feedback-screen';
+import TestComponentsScreen from '../screens/test-components-screen';
+import GuestScreen from '../screens/guest-screen';
+import InCallManagerController from './in-call-manager';
+import LocalesController from './locales';
+import NotifeeController from './notifee';
+// services
 import { injectStore as injectStoreVM } from '../services/webrtc/video-manager';
 import { injectStore as injectStoreSM } from '../services/webrtc/screenshare-manager';
 import { injectStore as injectStoreAM } from '../services/webrtc/audio-manager';
 import { injectStore as injectStoreIM } from '../components/interactions/service';
-import { ConnectionStatusTracker } from '../store/redux/middlewares';
-import Settings from '../../settings.json';
-import TestComponentsScreen from '../screens/test-components-screen';
-import GuestScreen from '../screens/guest-screen';
-
-import {
-  leave,
-  setSessionTerminated,
-  sessionStateChanged,
-} from '../store/redux/slices/wide-app/client';
+import * as api from '../services/api';
 import logger from '../services/logger';
+import Settings from '../../settings.json';
 
 //  Inject store in non-component files
 const injectStore = () => {
@@ -81,6 +77,14 @@ const AppContent = ({
       logCode: 'app_mounted',
     }, 'App component mounted');
 
+    return () => {
+      logger.info({
+        logCode: 'app_unmounted',
+      }, 'App component unmounted');
+    };
+  }, []);
+
+  useEffect(() => {
     const onBackPress = () => {
       const navigation = navigationRef?.current;
       if (navigation?.canGoBack()) {
@@ -101,9 +105,6 @@ const AppContent = ({
     BackHandler.addEventListener('hardwareBackPress', onBackPress);
     return () => {
       BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-      logger.info({
-        logCode: 'app_unmounted',
-      }, 'App component unmounted');
     };
   }, []);
 
@@ -129,33 +130,38 @@ const AppContent = ({
   }, []);
 
   return (
-    <NavigationContainer independent ref={navigationRef}>
-      {(guestStatus === 'WAIT') && <GuestScreen />}
-      {!Settings.dev && <TestComponentsScreen jUrl={jUrl} />}
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
-          contentStyle: { backgroundColor: '#06172A' }
-        }}
-      >
-        <Stack.Screen name="DrawerNavigator">
-          {() => (
-            <DrawerNavigator
-              navigationRef={navigationRef}
-              jUrl={jUrl}
-              onLeaveSession={onLeaveSession}
-              meetingUrl={meetingUrl}
-            />
-          )}
-        </Stack.Screen>
-        <Stack.Screen name="EndSessionScreen">
-          {() => <EndSessionScreen onLeaveSession={onLeaveSession} />}
-        </Stack.Screen>
-        <Stack.Screen name="FeedbackScreen" component={FeedbackScreen} />
-        <Stack.Screen name="ProblemFeedbackScreen" component={ProblemFeedbackScreen} />
-        <Stack.Screen name="EmailFeedbackScreen" component={EmailFeedbackScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <>
+      <NavigationContainer independent ref={navigationRef}>
+        {(guestStatus === 'WAIT') && <GuestScreen />}
+        {!Settings.dev && <TestComponentsScreen jUrl={jUrl} />}
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: '#06172A' }
+          }}
+        >
+          <Stack.Screen name="DrawerNavigator">
+            {() => (
+              <DrawerNavigator
+                navigationRef={navigationRef}
+                jUrl={jUrl}
+                onLeaveSession={onLeaveSession}
+                meetingUrl={meetingUrl}
+              />
+            )}
+          </Stack.Screen>
+          <Stack.Screen name="EndSessionScreen">
+            {() => <EndSessionScreen onLeaveSession={onLeaveSession} />}
+          </Stack.Screen>
+          <Stack.Screen name="FeedbackScreen" component={FeedbackScreen} />
+          <Stack.Screen name="ProblemFeedbackScreen" component={ProblemFeedbackScreen} />
+          <Stack.Screen name="EmailFeedbackScreen" component={EmailFeedbackScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+      <InCallManagerController />
+      <LocalesController />
+      <NotifeeController />
+    </>
   );
 };
 
