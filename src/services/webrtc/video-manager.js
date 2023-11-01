@@ -234,7 +234,12 @@ class VideoManager {
     return `https://${this._host}/bigbluebutton/api/stuns?sessionToken=${this._sessionToken}`;
   }
 
-  _initializePublisherBroker({ cameraId, inputStream, mediaServer = 'mediasoup' }) {
+  _initializePublisherBroker({
+    cameraId,
+    inputStream,
+    mediaServer = 'mediasoup',
+    recordingAdapter
+  }) {
     const role = 'share';
     const brokerOptions = {
       ws: this.ws,
@@ -246,6 +251,7 @@ class VideoManager {
       traceLogs: true,
       logger: this.logger,
       mediaServer,
+      recordingAdapter,
     };
     const broker = new VideoBroker('share', brokerOptions);
     broker.onended = () => {
