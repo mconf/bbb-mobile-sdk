@@ -1,5 +1,6 @@
 import styled from 'styled-components/native';
 import { css } from 'styled-components';
+import Icon from '@expo/vector-icons/MaterialIcons';
 import userAvatar from '../user-avatar';
 import Colors from '../../constants/colors';
 import Pressable from '../pressable';
@@ -33,8 +34,12 @@ const ContainerDrawerItemList = styled.View`
   padding-top: 10px;
 `;
 
-const ContainerCustomButtons = styled.View`
+const ContainerCustomBottomButtons = styled.View`
   padding-bottom:  5%;
+`;
+
+const ContainerCustomButtonsInsideScrollview = styled.View`
+  background-color: white;
 `;
 
 const ButtonLeaveContainer = styled(Pressable).attrs(() => ({
@@ -50,7 +55,7 @@ const ButtonLeaveContainer = styled(Pressable).attrs(() => ({
 const ViewLeaveContainer = styled.View`
   flex-direction: row;
   align-items: center;
-  padding: 10px;
+  padding: 12px;
   background-color: ${Colors.lightGray100};
   border-radius: 8px;
 `;
@@ -62,24 +67,39 @@ const ViewShareContainer = styled.View`
   border-radius: 8px;
 `;
 
-const TextLeaveContainer = styled.Text`
-  padding-left: 12px;
-  color: ${Colors.lightGray400};
-  font-size: 16px;
-  font-weight: 400;
-  text-align: left;
-  text-align-vertical: center;
+const TextButtonLabel = {
+  paddingLeft: 12,
+  color: Colors.lightGray400,
+  fontSize: 16,
+  fontWeight: 400,
+  textAlign: 'left',
+};
+
+const TextButtonActive = {
+  paddingLeft: 12,
+  color: Colors.white,
+  fontSize: 16,
+  fontWeight: 400,
+  textAlign: 'left',
+};
+
+const DrawerIcon = styled(Icon)`
+  position: absolute;
+  margin: 12px;
 `;
 
 export default {
   ViewContainer,
   CustomDrawerContainer,
   ContainerDrawerItemList,
+  ContainerCustomButtonsInsideScrollview,
   UserAvatar,
   NameUserAvatar,
-  ContainerCustomButtons,
+  ContainerCustomBottomButtons,
   ButtonLeaveContainer,
   ViewLeaveContainer,
-  TextLeaveContainer,
+  TextButtonLabel,
+  TextButtonActive,
   ViewShareContainer,
+  DrawerIcon,
 };

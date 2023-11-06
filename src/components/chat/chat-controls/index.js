@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Colors from '../../../constants/colors';
-import { hasUnreadMessages, setBottomChatOpen } from '../../../store/redux/slices/wide-app/chat';
+import { setHasUnreadMessages, setBottomChatOpen } from '../../../store/redux/slices/wide-app/chat';
 import IconButtonComponent from '../../icon-button';
 import Styled from './styles';
 
@@ -24,7 +24,7 @@ const ChatControls = (props) => {
         animated
         onPress={() => {
           dispatch(setBottomChatOpen(true));
-          dispatch(hasUnreadMessages(false));
+          dispatch(setHasUnreadMessages(false));
         }}
       />
       {chatStore.hasUnreadMessages && (

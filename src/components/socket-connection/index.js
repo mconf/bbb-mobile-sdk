@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Text, View } from 'react-native';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import * as Linking from 'expo-linking';
+import { useNavigation } from '@react-navigation/native';
 import Settings from '../../../settings.json';
 import { BreakoutsModule } from './modules/breakouts';
 import { UsersModule } from './modules/users';
@@ -21,6 +20,8 @@ import { SlidesModule } from './modules/slides';
 import { VideoStreamsModule } from './modules/video-streams';
 import { ScreenshareModule } from './modules/screenshare';
 import { GuestUsersModule } from './modules/guest-users';
+import { RecordMeetingsModule } from './modules/record-meetings';
+import { UsersSettingsModule } from './modules/users-settings';
 import {
   getRandomDigits,
   getRandomAlphanumericWithCaps,
@@ -82,8 +83,11 @@ const sendMessage = (ws, msgObj) => {
     ws.send(`["${msg}"]`);
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.warn(`Main websocket send failed, enqueue=${msgObj?.msg || 'Unknown'}`);
-  }
+    logger.error({
+      logCode: 'main_websocket_error',
+      extraInfo: { error, msgObj },
+    }, `Main websocket send failed: ${error} enqueue= ${msgObj?.msg || 'Unknown'}`);
+  };
 };
 
 const sendConnectMsg = (ws) => {
@@ -197,7 +201,7 @@ const setupModules = (ws) => {
   const messageSender = new MessageSender(ws, GLOBAL_TRANSACTIONS);
   GLOBAL_MESSAGE_SENDER = messageSender;
 
-  // Mirrors for Meteor collections that area fully implemented
+  // Mirrors for Meteor collections that are fully implemented
   const modules = {
     voiceUsers: new VoiceUsersModule(messageSender),
     voiceCallStates: new VoiceCallStatesModule(messageSender),
@@ -214,6 +218,8 @@ const setupModules = (ws) => {
     users: new UsersModule(messageSender),
     guestUsers: new GuestUsersModule(messageSender),
     breakouts: new BreakoutsModule(messageSender),
+    'record-meetings': new RecordMeetingsModule(messageSender),
+    'users-settings': new UsersSettingsModule(messageSender),
   };
 
   /*
@@ -272,7 +278,6 @@ const terminate = (ws, modules) => {
 const SocketConnectionComponent = (props) => {
   // jUrl === join Url from portal
   const { jUrl } = props;
-  const urlViaLinking = Linking.useURL();
   const websocket = useRef(null);
   const modules = useRef({});
   const validateReqId = useRef(null);
@@ -312,8 +317,7 @@ const SocketConnectionComponent = (props) => {
   useEffect(() => {
     if (currentUserReady && currentRole === 'MODERATOR' && previousRole === 'VIEWER') {
       // force resubscribe on role dependent collections
-      // TODO add 'breakouts' and ''breakouts-history' when we support it
-      ['meetings', 'users', 'guestUsers'].forEach((module) => {
+      ['meetings', 'users', 'guestUsers', 'record-meetings'].forEach((module) => {
         modules.current[module].onDisconnected();
         modules.current[module].onConnected();
       });
@@ -432,7 +436,12 @@ const SocketConnectionComponent = (props) => {
       // If it runs into a guest lobby, it'll be run again in the guest status
       // thunk if it succeeds - see client/fetchGuestStatus
       dispatch(join({ url: joinUrl, logger })).unwrap()
-        .catch(console.debug);
+        .catch((error) => {
+          logger.error({
+            logCode: 'join_error',
+            extraInfo: { error },
+          }, `First run of the join procedure error: ${error}`);
+        });
     }
   }, [joinUrl, loggedIn, loggingIn, loggingOut]);
 

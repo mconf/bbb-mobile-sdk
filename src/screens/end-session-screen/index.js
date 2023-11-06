@@ -1,35 +1,26 @@
-import React, { useEffect } from 'react';
-import { Image } from 'react-native';
+import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
+import { useOrientation } from '../../hooks/use-orientation';
 import Styled from './styles';
 
 const EndSessionScreen = (props) => {
   const { onLeaveSession } = props;
-
   const { t } = useTranslation();
+  const orientation = useOrientation();
   const navigation = useNavigation();
 
-  useEffect(() => {
-    console.log('END SCREEN MOUNT');
-
-    return () => {
-      console.log('END SCREEN UNMOUNT');
-    };
-  }, []);
-
   const handleLeaveSessionButtonPress = () => {
-    console.log('calling onLeaveSession BUTTON');
     if (!onLeaveSession()) navigation.navigate('DrawerNavigator');
   };
 
   return (
     <Styled.ContainerView>
       <Styled.ContainerEndSessionCard>
-        <Image
+        <Styled.Image
           source={require('../../assets/endSessionBreakout.png')}
           resizeMode="contain"
-          style={{ width: 104, height: 104 }}
+          orientation={orientation}
         />
         <Styled.MiddleContainer>
           <Styled.Title>{t('mobileSdk.breakout.endSession.modal.title')}</Styled.Title>

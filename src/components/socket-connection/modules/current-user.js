@@ -17,6 +17,11 @@ export class CurrentUserModule extends Module {
 
   // eslint-disable-next-line class-methods-use-this
   _add(msgObj) {
+    //inject userData to userSettings
+    const customData = msgObj.fields.userdata;
+    if (customData && Object.keys(customData).length > 0) {
+      this.messageSender.makeCall('addUserSettings', [customData]);
+    }
     return store.dispatch(
       addCurrentUser({
         currentUserObject: msgObj,

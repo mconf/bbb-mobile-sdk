@@ -26,6 +26,7 @@ const VideoContainer = (props) => {
     visible,
     isGrid,
     userRole,
+    userEmoji,
   } = props;
 
   const dispatch = useDispatch();
@@ -66,6 +67,7 @@ const VideoContainer = (props) => {
         {isGrid && (
         <UserAvatar
           userName={userName}
+          userId={userId}
           userColor={userColor}
           userImage={userAvatar}
           isTalking={isTalking}
@@ -92,6 +94,15 @@ const VideoContainer = (props) => {
 
     dispatch(setIsFocused(true));
     navigation.navigate('FullscreenWrapperScreen');
+  };
+
+  const renderRaisedHand = () => {
+    if (userEmoji === 'raiseHand') {
+      return (
+        <Styled.HandRaisedIcon />
+      );
+    }
+    return null;
   };
 
   const renderGridVideoContainerItem = () => (
@@ -130,6 +141,7 @@ const VideoContainer = (props) => {
           </Styled.PressableButton>
         </>
       )}
+      {renderRaisedHand()}
     </Styled.ContainerPressableGrid>
   );
 

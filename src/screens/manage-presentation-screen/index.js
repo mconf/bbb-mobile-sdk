@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 // UNUSED SCREEN FOR NOW
 
 import { useState } from 'react';
@@ -33,9 +34,7 @@ const ManagePresentationScreen = () => {
   };
 
   const handleRemoveDocument = (item) => {
-    setDocuments((oldArray) =>
-      oldArray.filter((document) => document.uri !== item.uri)
-    );
+    setDocuments((oldArray) => oldArray.filter((document) => document.uri !== item.uri));
   };
 
   const handleSetActiveDocument = (item) => {
@@ -63,12 +62,10 @@ const ManagePresentationScreen = () => {
         <IconButton
           icon="download"
           size={16}
-          onPress={() =>
-            Alert.alert(
-              'Currently under development',
-              'This feature will be addressed soon, please check out our github page'
-            )
-          }
+          onPress={() => Alert.alert(
+            'Currently under development',
+            'This feature will be addressed soon, please check out our github page'
+          )}
         />
         <IconButton
           icon="delete"

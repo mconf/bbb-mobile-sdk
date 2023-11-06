@@ -4,7 +4,7 @@ import Styled from './styles';
 
 const UserAvatar = (props) => {
   const {
-    userName, userRole, userColor, userImage, isTalking, mini, userId
+    userName, userRole, userColor, userImage, isTalking, mini, userId, presenter
   } = props;
 
   const userColorByIntId = useSelector((state) => {
@@ -12,6 +12,13 @@ const UserAvatar = (props) => {
       return;
     }
     return selectUserByIntId(state, userId)?.color;
+  });
+
+  const userPresenterByIntId = useSelector((state) => {
+    if (!userId) {
+      return;
+    }
+    return selectUserByIntId(state, userId)?.presenter;
   });
 
   return (
@@ -29,6 +36,12 @@ const UserAvatar = (props) => {
           </Styled.ImageContainer>
         )
         : <Styled.UserName mini={mini}>{userName?.substring(0, 2)}</Styled.UserName>}
+      {(presenter || userPresenterByIntId) && (
+        <Styled.PresenterIcon
+          icon="presentation"
+          size={13}
+        />
+      )}
     </Styled.Background>
   );
 };
