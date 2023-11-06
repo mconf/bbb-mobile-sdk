@@ -88,13 +88,18 @@ const selectVideoStreamByDocumentId = (state, documentId) => {
   return state.videoStreamsCollection.videoStreamsCollection[documentId];
 };
 
-const selectLocalVideoStreams = (state) => {
-  const currentUserId = state.client.meetingData?.internalUserID;
+const selectCurrentUserId = (state) => state.client.meetingData?.internalUserID;
 
-  if (currentUserId == null) return [];
+const selectLocalVideoStreams = createSelector(
+  [selectVideoStreams, selectCurrentUserId],
+  (videoStreams, currentUserId) => {
+    if (!currentUserId) {
+      return [];
+    }
 
-  return selectVideoStreams(state).filter(({ userId }) => userId === currentUserId);
-};
+    return videoStreams.filter(({ userId }) => userId === currentUserId);
+  }
+);
 
 // Middleware effects and listeners
 const videoStreamCleanupListener = (action, listenerApi) => {
