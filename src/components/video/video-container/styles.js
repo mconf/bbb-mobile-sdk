@@ -2,6 +2,7 @@ import styled from 'styled-components/native';
 import { css } from 'styled-components';
 import { RTCView } from 'react-native-webrtc';
 import { ActivityIndicator } from 'react-native-paper';
+import { Ionicons } from '@expo/vector-icons';
 import IconButtonComponent from '../../icon-button';
 import Colors from '../../../constants/colors';
 import Pressable from '../../pressable';
@@ -122,6 +123,27 @@ const FullscreenIcon = styled(IconButtonComponent)`
   margin: 0;
 `;
 
+const IconContainer = styled.View`
+  padding: 0;
+  margin: 8px;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 32px;
+  bottom: 0px;
+  right: 0px;
+  width: 32px;
+  height: 32px;
+  background-color: white;
+`;
+
+const HandRaisedIcon = () => (
+  <IconContainer>
+    <Ionicons name="md-hand-right-sharp" size={20} color={Colors.blue} />
+  </IconContainer>
+);
+
 export default {
   ContainerPressable,
   UserAvatar,
@@ -133,5 +155,6 @@ export default {
   VideoSkeleton,
   ContainerPressableGrid,
   FullscreenIcon,
+  HandRaisedIcon,
   TalkingIndicatorContainer,
 };

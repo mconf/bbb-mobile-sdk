@@ -1,42 +1,81 @@
 import { KeyboardAvoidingView, Platform } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { useRef } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { useOrientation } from '../../../hooks/use-orientation';
 import { isPresenter } from '../../../store/redux/slices/current-user';
-import PreviousPollCard from './poll-card';
+import { setProfile } from '../../../store/redux/slices/wide-app/modal';
+import { hasCurrentPollSelector, selectCurrentPoll } from '../../../store/redux/slices/current-poll';
 import ScreenWrapper from '../../../components/screen-wrapper';
+import PreviousPollCard from './poll-card';
 import Styled from './styles';
 
 const PreviousPollScreen = () => {
   const { t } = useTranslation();
   const orientation = useOrientation();
   const navigation = useNavigation();
-  const scrollViewRef = useRef();
+  const dispatch = useDispatch();
 
   const previousPollPublishedStore = useSelector((state) => state.previousPollPublishedCollection);
+  const currentPollObj = useSelector(selectCurrentPoll);
+  const hasCurrentPoll = useSelector(hasCurrentPollSelector);
   const amIPresenter = useSelector(isPresenter);
 
-  const renderMethod = () => {
-    if (
-      Object.keys(previousPollPublishedStore.previousPollPublishedCollection)
-        .length === 0
-    ) {
-      return (
-        <>
-          <Styled.Title>{t('mobileSdk.poll.noPollLabel')}</Styled.Title>
-          <Styled.NoPollText>
-            {t('mobileSdk.poll.noPollLabelYet')}
-          </Styled.NoPollText>
-        </>
-      );
+  const renderCreatePollButtonView = () => {
+    if (hasCurrentPoll) {
+      return;
     }
 
     return (
-      Object.values(
-        previousPollPublishedStore.previousPollPublishedCollection
-      ).map((pollObj) => <PreviousPollCard pollObj={pollObj} key={pollObj.id} />)
+      <Styled.PressableButton
+        onPress={() => navigation.navigate('CreatePollScreen')}
+        onPressDisabled={() => dispatch(
+          setProfile({
+            profile: 'create_poll_permission',
+          })
+        )}
+        disabled={!amIPresenter}
+      >
+        {t('mobileSdk.poll.createLabel')}
+      </Styled.PressableButton>
+    ); };
+
+  if (Object.keys(previousPollPublishedStore.previousPollPublishedCollection)
+    .length === 0 && (isPresenter && !hasCurrentPoll)) {
+    return (
+      <ScreenWrapper>
+        <Styled.ContainerCentralizedView>
+          <Styled.NoPollsImage
+            source={require('../../../assets/application/service-off.png')}
+            resizeMode="contain"
+            style={{ width: 173, height: 130 }}
+          />
+          <Styled.NoPollsLabelTitle>
+            {t('mobileSdk.poll.noPollsTitle')}
+          </Styled.NoPollsLabelTitle>
+          <Styled.NoPollsLabelSubtitle>
+            {t('mobileSdk.poll.noPollsSubtitle')}
+          </Styled.NoPollsLabelSubtitle>
+          <Styled.ButtonContainer>
+            {renderCreatePollButtonView()}
+          </Styled.ButtonContainer>
+        </Styled.ContainerCentralizedView>
+      </ScreenWrapper>
+    );
+  }
+
+  const renderMethod = () => {
+    const invertPublishedPolls = Object.values(
+      previousPollPublishedStore.previousPollPublishedCollection
+    );
+
+    if (hasCurrentPoll && amIPresenter) {
+      invertPublishedPolls.push({ ...currentPollObj, receivingAnswers: true, id: `${currentPollObj.id}_current` });
+    }
+    invertPublishedPolls.reverse();
+
+    return (
+      invertPublishedPolls.map((pollObj) => <PreviousPollCard pollObj={pollObj} key={pollObj.id} />)
     );
   };
 
@@ -46,21 +85,16 @@ const PreviousPollScreen = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <Styled.ContainerView orientation={orientation}>
-          <Styled.ContainerPollCard
-            ref={scrollViewRef}
-            onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
-          >
+          <Styled.ContainerPollScrollView>
             <Styled.ContainerViewPadding>
               <>
-                {amIPresenter && (
-                <Styled.ReturnButton onPress={() => navigation.goBack()}>
-                  {t('mobileSdk.poll.createLabel')}
-                </Styled.ReturnButton>
-                )}
                 {renderMethod()}
               </>
             </Styled.ContainerViewPadding>
-          </Styled.ContainerPollCard>
+          </Styled.ContainerPollScrollView>
+          <Styled.ButtonFlyingContainer>
+            {renderCreatePollButtonView()}
+          </Styled.ButtonFlyingContainer>
         </Styled.ContainerView>
       </KeyboardAvoidingView>
     </ScreenWrapper>

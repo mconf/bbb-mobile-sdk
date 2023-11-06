@@ -12,7 +12,7 @@ import {
   addPreviousPollPublished,
   addPreviousPollPublishedViaChat,
 } from '../../../store/redux/slices/wide-app/previous-poll-published';
-import { hasUnreadMessages } from '../../../store/redux/slices/wide-app/chat';
+import { setHasUnreadMessages, setHasShownInFastChat } from '../../../store/redux/slices/wide-app/chat';
 
 const GROUP_CHAT_MSG_TOPIC = 'group-chat-msg';
 const TIME_BETWEEN_FETCHS = 1000;
@@ -59,12 +59,12 @@ export class GroupChatMsgModule extends Module {
           }
           // hyperlink
           if (msgObj.message.toString().includes('href=')) {
-            const pattern = /href='(.+)'/;
             const path = msgObj.message.toString();
-            const match = path.match(pattern);
+            const regex = /<a[^>]+href=['"](https?:\/\/[^'"]+)['"][^>]*>(<u>)?[^<]+(<\/u>)?<\/a>/gi;
+            const linkMessage = path.replace(regex, '$1');
             return store.dispatch(
               addGroupChatMsgBeforeJoin({
-                groupChatMsgObject: { ...msgObj, message: match[1] },
+                groupChatMsgObject: { ...msgObj, message: linkMessage },
               })
             );
           }
@@ -97,7 +97,8 @@ export class GroupChatMsgModule extends Module {
   // eslint-disable-next-line class-methods-use-this
   _add(msgObj) {
     // add the notification to chat
-    store.dispatch(hasUnreadMessages(true));
+    store.dispatch(setHasUnreadMessages(true));
+    store.dispatch(setHasShownInFastChat(false));
 
     if (msgObj.fields.id.toString().includes('POLL_RESULT')) {
       store.dispatch(
@@ -116,14 +117,14 @@ export class GroupChatMsgModule extends Module {
     }
     // hyperlink
     if (msgObj.fields.message.toString().includes('href=')) {
-      const pattern = /href='(.+)'/;
       const path = msgObj.fields.message.toString();
-      const match = path.match(pattern);
+      const regex = /<a[^>]+href=['"](https?:\/\/[^'"]+)['"][^>]*>(<u>)?[^<]+(<\/u>)?<\/a>/gi;
+      const linkMessage = path.replace(regex, '$1');
       return store.dispatch(
         addGroupChatMsg({
           groupChatMsgObject: {
             ...msgObj,
-            fields: { ...msgObj.fields, message: match[1] },
+            fields: { ...msgObj.fields, message: linkMessage },
           },
         })
       );

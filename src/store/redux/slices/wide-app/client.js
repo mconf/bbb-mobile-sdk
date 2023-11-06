@@ -29,6 +29,7 @@ const initialState = {
     externUserID: null,
     confname: null,
     isBreakout: null,
+    customdata: null,
   },
   breakoutData: {
     parentMeetingJoinUrl: null,
@@ -129,11 +130,11 @@ const clientSlice = createSlice({
         state.meetingData = initialState.meetingData;
         state.sessionState.loggingIn = false;
       })
-      .addCase(leave.pending, (state) => {
+      .addCase(leave.pending, () => {
       })
-      .addCase(leave.fulfilled, (state, action) => {
+      .addCase(leave.fulfilled, () => {
       })
-      .addCase(leave.rejected, (state, action) => {
+      .addCase(leave.rejected, () => {
       });
   },
 });
@@ -165,6 +166,7 @@ const fetchGuestStatus = createAsyncThunk(
     }
 
     const url = `https://${host}${GUEST_WAIT_ENDPOINT}?sessionToken=${sessionToken}&redirect=false`;
+    // eslint-disable-next-line no-undef
     const response = await fetch(url, { method: 'get' });
     const responseJSON = await response.json();
     const { guestStatus, messageKey, url: joinUrl } = responseJSON.response;
@@ -196,6 +198,7 @@ const join = createAsyncThunk(
 
     const _fetchRetry = (_url, options) => {
       return pRetry(() => {
+        // eslint-disable-next-line no-undef
         return fetch(_url, options);
       }, { retries: JOIN_ENTER_RETRIES });
     };

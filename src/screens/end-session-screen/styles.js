@@ -38,6 +38,16 @@ const Title = styled.Text`
   color: ${Colors.lightGray400};
 `;
 
+const Image = styled.Image`
+  width: 104px;
+  height: 104px;
+
+  ${({ orientation }) => orientation === 'LANDSCAPE'
+  && `
+    display: none;
+  `}
+`;
+
 const ConfirmButton = styled(PrimaryButton)`
   background-color: ${Colors.orange};
   color: ${Colors.white};
@@ -62,4 +72,6 @@ export default {
   Title,
   Subtitle,
   MiddleContainer,
+  ButtonContainer,
+  Image,
 };

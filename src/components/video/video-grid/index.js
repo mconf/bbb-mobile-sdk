@@ -36,6 +36,7 @@ const GridView = () => {
       visible,
       userRole,
       contentArea,
+      userEmoji,
     } = vuItem;
 
     if (contentArea) {
@@ -59,6 +60,7 @@ const GridView = () => {
           isGrid
           usersCount={mescleGridItems.length}
           userRole={userRole}
+          userEmoji={userEmoji}
         />
       </Styled.Item>
     );

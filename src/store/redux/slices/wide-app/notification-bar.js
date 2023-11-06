@@ -2,9 +2,9 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 const initialState = {
   isShow: false,
-  messageTitle: null,
-  messageSubtitle: null,
-  icon: null,
+  profile: '',
+  extraInfo: {},
+  text: '',
 };
 
 const notificationBarSlice = createSlice({
@@ -17,30 +17,34 @@ const notificationBarSlice = createSlice({
     hide: (state) => {
       state.isShow = false;
     },
-
-    hideNotification: (state) => {
-      state.isShow = false;
-      state.messageTitle = '';
-      state.messageSubtitle = '';
-      state.icon = '';
+    hideNotification: (state, action) => {
+      if (!action.payload || action.payload === state.profile) {
+        state.isShow = false;
+        state.profile = '';
+        state.extraInfo = {};
+      }
     },
 
     // notification profiles
     setProfile: (state, action) => {
-      switch (action.payload) {
+      switch (action.payload.profile) {
         case 'handsUp':
           state.isShow = true;
-          state.messageTitle = 'mobileSdk.notification.handsUp.title';
-          state.messageSubtitle = 'mobileSdk.notification.handsUp.subtitle';
-          state.icon = 'hand';
+          state.profile = 'handsUp';
+          state.text = 'mobileSdk.notificationBar.handsUp';
+          state.extraInfo = action.payload.extraInfo;
           break;
-        case 'pollStarted':
+        case 'recordingStarted':
           state.isShow = true;
-          state.messageTitle = 'mobileSdk.notification.pollStarted.title';
-          state.messageSubtitle = 'mobileSdk.notification.pollStarted.subtitle';
-          state.icon = 'poll';
+          state.messageTitle = 'mobileSdk.notification.recordLabel';
+          state.messageSubtitle = 'app.notification.recordingStart';
+          state.icon = 'recording-stopped';
           break;
-        case 'breakoutsStarted':
+        case 'recordingStopped':
+          state.isShow = true;
+          state.messageTitle = 'mobileSdk.notification.recordLabel';
+          state.messageSubtitle = 'app.notification.recordingPaused';
+          state.icon = 'recording-stopped';
           break;
         default:
       }
@@ -48,27 +52,26 @@ const notificationBarSlice = createSlice({
   },
 });
 
-// Disabling this thunk until we refactor all the notification system
-// const notificationQueue = [];
-// export const showNotificationWithTimeout = createAsyncThunk(
-//   'notificationBar/setProfile',
-//   async (profile, thunkAPI) => {
-//     if (notificationQueue.length === 0) {
-//       notificationQueue.push(profile);
-//       while (notificationQueue.length !== 0) {
-//         // eslint-disable-next-line prefer-destructuring
-//         profile = notificationQueue[0];
-//         thunkAPI.dispatch(setProfile(profile));
-//         // eslint-disable-next-line no-await-in-loop, no-promise-executor-return
-//         await new Promise((resolve) => setTimeout(resolve, 5000));
-//         notificationQueue.shift();
-//         thunkAPI.dispatch(hideNotification());
-//       }
-//     } else {
-//       notificationQueue.push(profile);
-//     }
-//   }
-// );
+const notificationQueue = [];
+export const showNotificationWithTimeout = createAsyncThunk(
+  'notificationBar/setProfile',
+  async (params, thunkAPI) => {
+    if (notificationQueue.length === 0) {
+      notificationQueue.push(params.profile);
+      while (notificationQueue.length !== 0) {
+        // eslint-disable-next-line prefer-destructuring
+        params.profile = notificationQueue[0];
+        thunkAPI.dispatch(setProfile({ profile: params.profile }));
+        // eslint-disable-next-line no-await-in-loop, no-promise-executor-return
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        notificationQueue.shift();
+        thunkAPI.dispatch(hideNotification());
+      }
+    } else {
+      notificationQueue.push(params.profile);
+    }
+  }
+);
 
 export const {
   show,

@@ -9,8 +9,8 @@ const presentationsSlice = createSlice({
   reducers: {
     addPresentation: (state, action) => {
       const { presentationObject } = action.payload;
-      state.presentationsCollection[presentationObject.id] =
-        action.payload.presentationObject.fields;
+      state.presentationsCollection[presentationObject.id] = action
+        .payload.presentationObject.fields;
     },
     removePresentation: (state, action) => {
       const { presentationObject } = action.payload;

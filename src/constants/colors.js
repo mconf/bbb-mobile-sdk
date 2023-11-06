@@ -1,5 +1,6 @@
 const Colors = {
   blue: '#003399',
+  lightBlue: '#1D65D4',
   green: '#00BF6F',
   orange: '#F18700',
   red: '#CD545B',
@@ -12,6 +13,7 @@ const Colors = {
   contentForegroundColor: '#3B4A5C',
   statusBarConnected: '#00BF6F',
   statusBarConnecting: '#FFC845',
+  dangerDark: '#AE1010',
 };
 
 export default Colors;

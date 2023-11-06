@@ -169,16 +169,22 @@ class AudioManager {
     bridge.onreconnected = () => {};
   }
 
-  _initializeBridge({ isListenOnly = false, inputStream, muted }) {
+  _initializeBridge({
+    isListenOnly = false,
+    inputStream,
+    muted,
+    transparentListenOnly,
+  }) {
     const brokerOptions = {
       clientSessionNumber: this.audioSessionNumber,
       iceServers: this.iceServers,
       stream: (inputStream && inputStream.active) ? inputStream : undefined,
-      offering: !isListenOnly,
+      offering: (!isListenOnly && !transparentListenOnly),
       traceLogs: true,
       muted,
       logger: this.logger,
       reconnectCondition: AudioManager.reconnectCondition,
+      transparentListenOnly,
     };
 
     const bridge = new AudioBroker(
@@ -334,12 +340,21 @@ class AudioManager {
     });
   }
 
-  async joinMicrophone({ muted = false, isListenOnly = false }) {
+  async joinMicrophone({
+    muted = false,
+    isListenOnly = false,
+    transparentListenOnly = false,
+  }) {
     try {
       this.isListenOnly = isListenOnly;
       this.onAudioJoining();
       const inputStream = await this._mediaFactory();
-      await this._joinAudio({ inputStream, isListenOnly, muted });
+      await this._joinAudio({
+        inputStream,
+        isListenOnly,
+        muted,
+        transparentListenOnly,
+      });
     } catch (error) {
       this.exitAudio();
       throw error;

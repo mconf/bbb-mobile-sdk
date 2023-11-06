@@ -9,16 +9,17 @@ const groupChatMsgSlice = createSlice({
   reducers: {
     addGroupChatMsgBeforeJoin: (state, action) => {
       const { groupChatMsgObject } = action.payload;
-      state.groupChatMsgCollection[groupChatMsgObject.id+`${groupChatMsgObject.timestamp}`] =
-        action.payload.groupChatMsgObject;
+      state
+        .groupChatMsgCollection[`${groupChatMsgObject.id}${groupChatMsgObject.timestamp}`] = action
+          .payload.groupChatMsgObject;
     },
     clearChatMessages: (state) => {
       state.groupChatMsgCollection = {};
     },
     addGroupChatMsg: (state, action) => {
       const { groupChatMsgObject } = action.payload;
-      state.groupChatMsgCollection[groupChatMsgObject.id] =
-        action.payload.groupChatMsgObject.fields;
+      state.groupChatMsgCollection[groupChatMsgObject.id] = action
+        .payload.groupChatMsgObject.fields;
     },
     removeGroupChatMsg: (state, action) => {
       const { groupChatMsgObject } = action.payload;

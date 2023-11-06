@@ -115,7 +115,7 @@ const FeedbackScreen = () => {
               value={rating || SLIDER_INITIAL_VALUE}
               step={1}
               animateTransitions
-              thumbImage={require('../../assets/star.png')}
+              thumbImage={require('../../assets/application/star.png')}
               thumbStyle={Styled.ThumbStyle}
               trackStyle={Styled.TrackStyle}
               minimumTrackTintColor={Colors.blue}

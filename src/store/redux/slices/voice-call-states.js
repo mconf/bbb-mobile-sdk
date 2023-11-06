@@ -60,6 +60,7 @@ const voiceCallStateChangePredicate = (action, currentState) => {
 
   // Not for us - skip
   if (currentVoiceCallState.userId !== AudioManager.userId
+    // eslint-disable-next-line eqeqeq
     || currentVoiceCallState.clientSession != AudioManager.getCurrentAudioSessionNumber()
   ) {
     return false;
@@ -82,6 +83,7 @@ const voiceCallStateChangeListener = (action, listenerApi) => {
   );
 
   if (currentVoiceCallState?.callState !== previousVoiceCallState?.callState
+    // eslint-disable-next-line eqeqeq
     && currentVoiceCallState?.clientSession == AudioManager.audioSessionNumber) {
     switch (currentVoiceCallState?.callState) {
       case 'IN_CONFERENCE':

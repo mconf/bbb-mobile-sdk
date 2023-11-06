@@ -8,7 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Pressable, KeyboardAvoidingView, Platform } from 'react-native';
 import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import { useBottomSheetBackHandler } from '../../../hooks/useBottomSheetBackHandler';
-import { hasUnreadMessages, setBottomChatOpen } from '../../../store/redux/slices/wide-app/chat';
+import { setHasUnreadMessages, setBottomChatOpen } from '../../../store/redux/slices/wide-app/chat';
 import UserAvatar from '../../user-avatar';
 import IconButtonComponent from '../../icon-button';
 import { useChatMsgs } from '../../../hooks/selectors/chat/use-chat-msgs';
@@ -19,11 +19,11 @@ import Styled from './styles';
 const BottomSheetChat = () => {
   const messages = useChatMsgs();
   const height = useHeaderHeight();
-  const reverseMessages = messages.reverse();
   const navigation = useNavigation();
   const { t } = useTranslation();
 
   const sheetRef = useRef(null);
+  const flatListRef = useRef(null);
   const [messageText, setMessageText] = useState('');
   const dispatch = useDispatch();
   const chatStore = useSelector((state) => state.chat);
@@ -33,7 +33,7 @@ const BottomSheetChat = () => {
   const handleSheetChanges = useCallback((index) => {
     if (index === -1) {
       dispatch(setBottomChatOpen(false));
-      dispatch(hasUnreadMessages(false));
+      dispatch(setHasUnreadMessages(false));
     }
   }, []);
 
@@ -65,7 +65,11 @@ const BottomSheetChat = () => {
     return (
       <Pressable onPress={() => handleMessagePressed(item)}>
         <Styled.ContainerItem>
-          <UserAvatar userName={item.author} userRole={item.role} />
+          <UserAvatar
+            userName={item.author}
+            userRole={item.role}
+            userId={item.senderUserId}
+          />
           <Styled.Card>
             <Styled.MessageTopContainer>
               <Styled.MessageAuthor>{item.author}</Styled.MessageAuthor>
@@ -102,9 +106,12 @@ const BottomSheetChat = () => {
         enablePanDownToClose
       >
         {renderEmptyChatHandler()}
-
-        <BottomSheetFlatList data={reverseMessages} renderItem={renderItem} />
-
+        <BottomSheetFlatList
+          ref={flatListRef}
+          data={messages}
+          renderItem={renderItem}
+          onContentSizeChange={() => flatListRef.current.scrollToEnd()}
+        />
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           keyboardVerticalOffset={height + 47}
