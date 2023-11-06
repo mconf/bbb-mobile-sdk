@@ -45,16 +45,7 @@ const AppContent = ({
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const guestStatus = useSelector((state) => state.client.guestStatus);
-  const leaveOnUnmount = useSelector((state) => {
-    const { sessionState } = state.client;
-    return !sessionState.ended
-        && (sessionState.connected
-          || sessionState.loggedIn
-          || sessionState.loggingIn
-          || sessionState.loggingOut);
-  });
   const navigationRef = useRef(null);
-  const leaveOnUnmountRef = useRef();
 
   const onLeaveSession = () => {
     dispatch(setSessionTerminated(true));
@@ -66,11 +57,6 @@ const AppContent = ({
     // from end-session-screen)
     return hasCustomLeaveSession;
   };
-
-  // Store leaveOnUnmount in a ref so we can use it in the unmount function
-  useEffect(() => {
-    leaveOnUnmountRef.current = leaveOnUnmount;
-  }, [leaveOnUnmount]);
 
   useEffect(() => {
     logger.info({
@@ -117,15 +103,13 @@ const AppContent = ({
 
     return () => {
       dispatch(ConnectionStatusTracker.unregisterConnectionStatusListeners());
-      if (leaveOnUnmountRef.current) {
-        dispatch(leave(api)).unwrap().finally(() => {
-          dispatch(sessionStateChanged({
-            ended: true,
-            endReason: 'logged_out',
-          }));
-          onLeaveSession();
-        });
-      }
+      dispatch(leave(api)).unwrap().finally(() => {
+        dispatch(sessionStateChanged({
+          ended: true,
+          endReason: 'logged_out',
+        }));
+        onLeaveSession();
+      });
     };
   }, []);
 
