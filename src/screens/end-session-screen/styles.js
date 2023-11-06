@@ -72,6 +72,5 @@ export default {
   Title,
   Subtitle,
   MiddleContainer,
-  ButtonContainer,
   Image,
 };
