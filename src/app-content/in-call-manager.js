@@ -4,7 +4,6 @@ import InCallManager from 'react-native-incall-manager';
 import { DeviceEventEmitter, Platform } from 'react-native';
 import { setAudioDevices, setSelectedAudioDevice } from '../store/redux/slices/wide-app/audio';
 import logger from '../services/logger';
-import '../utils/locales/i18n';
 
 const InCallManagerController = () => {
   const audioIsConnected = useSelector((state) => state.audio.isConnected);
