@@ -267,7 +267,7 @@ const DrawerNavigator = ({
       />
       )}
 
-      {!isBreakout && (
+      {!isBreakout && Settings.showBreakouts && (
       <Drawer.Screen
         name="BreakoutRoomScreen"
         component={BreakoutRoomScreen}
@@ -288,6 +288,7 @@ const DrawerNavigator = ({
       />
       )}
 
+      {!isBreakout && Settings.showBreakouts && (
       <Drawer.Screen
         name="InsideBreakoutRoomScreen"
         component={InsideBreakoutRoomScreen}
@@ -305,6 +306,7 @@ const DrawerNavigator = ({
           ),
         }}
       />
+      )}
 
       <Drawer.Screen
         name="FullscreenWrapperScreen"
