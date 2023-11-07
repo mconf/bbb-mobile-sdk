@@ -6,7 +6,6 @@ import * as api from '../services/api';
 import { leave } from '../store/redux/slices/wide-app/client';
 import logger from '../services/logger';
 import { toggleMuteMicrophone } from '../components/audio/service';
-import '../utils/locales/i18n';
 import Colors from '../constants/colors';
 
 // Create the foreground service task runner/notification
