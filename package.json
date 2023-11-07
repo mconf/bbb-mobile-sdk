@@ -52,6 +52,7 @@
     "expo-status-bar": "~1.4.0",
     "he": "^1.2.0",
     "i18next": "^22.4.10",
+    "lottie-react-native": "5.1.4",
     "p-retry": "5.1.2",
     "react": "18.2.0",
     "react-content-loader": "^6.2.0",
