@@ -45,6 +45,7 @@ const AppContent = ({
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const guestStatus = useSelector((state) => state.client.guestStatus);
+  const isBreakout = useSelector((state) => state.client.meetingData.isBreakout);
   const navigationRef = useRef(null);
 
   const onLeaveSession = () => {
@@ -142,8 +143,8 @@ const AppContent = ({
           <Stack.Screen name="EmailFeedbackScreen" component={EmailFeedbackScreen} />
         </Stack.Navigator>
       </NavigationContainer>
-      <InCallManagerController />
-      <LocalesController />
+      {!isBreakout && <InCallManagerController />}
+      {!isBreakout && <LocalesController />}
       <NotifeeController />
     </>
   );
