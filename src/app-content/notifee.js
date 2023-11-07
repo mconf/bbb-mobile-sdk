@@ -31,7 +31,7 @@ const NotifeeController = () => {
       // Start/show the notification foreground service
       const getChannelIdAndDisplayNotification = async () => {
         const channelId = await notifee.createChannel({
-          id: 'main_meeting_channel',
+          id: 'breakout_meeting_channel',
           name: t('mobileSdk.notification.label'),
           vibration: false,
         });
@@ -116,7 +116,7 @@ const NotifeeController = () => {
     notifee.onBackgroundEvent(async (event) => {
       const { type, detail } = event;
 
-      if (detail.notification?.android?.channelId !== 'main_meeting_channel') {
+      if (detail.notification?.android?.channelId !== 'breakout_meeting_channel') {
         return;
       }
 
@@ -143,7 +143,7 @@ const NotifeeController = () => {
     const unsubscribeForegroundEvents = notifee.onForegroundEvent((event) => {
       const { type, detail } = event;
 
-      if (detail.notification?.android?.channelId !== 'main_meeting_channel') {
+      if (detail.notification?.android?.channelId !== 'breakout_meeting_channel') {
         return;
       }
 
