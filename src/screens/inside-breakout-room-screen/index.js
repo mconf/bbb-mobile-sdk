@@ -27,7 +27,9 @@ const InsideBreakoutRoomScreen = (props) => {
     <BbbBreakoutSdk
       jUrl={route.params.joinUrl}
       onLeaveSession={() => {
-        navigation.goBack();
+        if (navigation.canGoBack()) {
+          navigation.goBack();
+        }
         joinMicrophone();
       }}
       defaultLanguage={i18n.language}
