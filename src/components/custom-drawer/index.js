@@ -67,6 +67,7 @@ const CustomDrawer = (props) => {
         </Styled.ContainerDrawerItemList>
       </DrawerContentScrollView>
       <Styled.ContainerCustomBottomButtons>
+        {!isBreakout && (
         <DrawerItem
           label={t('mobileSdk.drawer.shareButtonLabel')}
           labelStyle={Styled.TextButtonLabel}
@@ -75,6 +76,7 @@ const CustomDrawer = (props) => {
           inactiveBackgroundColor={Colors.lightGray100}
           icon={() => <Styled.DrawerIcon name="share" size={24} color="#1C1B1F" />}
         />
+        )}
 
         <DrawerItem
           label={isBreakout ? t('mobileSdk.breakout.leave') : t('app.navBar.settingsDropdown.leaveSessionLabel')}
