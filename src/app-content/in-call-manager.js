@@ -8,6 +8,7 @@ import '../utils/locales/i18n';
 
 const InCallManagerController = () => {
   const audioIsConnected = useSelector((state) => state.audio.isConnected);
+  const audioDevices = useSelector((state) => state.audio.audioDevices);
   const dispatch = useDispatch();
   const nativeEventListeners = useRef([]);
 
@@ -36,9 +37,21 @@ const InCallManagerController = () => {
 
   useEffect(() => {
     if (audioIsConnected) {
-      if (Platform.OS === 'android') {
-        InCallManager.chooseAudioRoute('SPEAKER_PHONE');
+      // Avaiable only in android
+      if (Platform.OS !== 'android') {
+        return;
       }
+
+      // Priority: "BLUETOOTH" -> "WIRED_HEADSET" -> "SPEAKER_PHONE" -> "EARPIECE"
+      if (audioDevices.includes('BLUETOOTH')) {
+        InCallManager.chooseAudioRoute('BLUETOOTH');
+        return;
+      }
+      if (audioDevices.includes('WIRED_HEADSET')) {
+        InCallManager.chooseAudioRoute('WIRED_HEADSET');
+        return;
+      }
+      InCallManager.chooseAudioRoute('SPEAKER_PHONE');
     }
   }, [audioIsConnected]);
 
