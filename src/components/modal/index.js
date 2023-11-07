@@ -1,18 +1,16 @@
 import React from 'react';
-import { Modal } from 'react-native-paper';
-import { useDispatch, useSelector } from 'react-redux';
-import { hide } from '../../store/redux/slices/wide-app/modal';
+import { useSelector } from 'react-redux';
 import BreakoutInviteModal from '../../screens/breakout-room-screen/breakout-invite-modal';
 import CantCreatePollModal from './poll/cant-create-poll';
 import RecordControlsModal from './record-controls-modal';
 import RecordStatusModal from './record-status-modal';
+import Settings from '../../../settings.json';
 import Styled from './styles';
 
 const ModalControllerComponent = () => {
   const modalCollection = useSelector((state) => state.modal);
-  const dispatch = useDispatch();
 
-  if (modalCollection.profile === 'breakout_invite') {
+  if (modalCollection.profile === 'breakout_invite' && Settings.showBreakouts) {
     return (
       <BreakoutInviteModal />
     );
@@ -33,18 +31,7 @@ const ModalControllerComponent = () => {
     );
   }
 
-  return (
-    <Modal
-      visible={modalCollection.isShow}
-      onDismiss={() => dispatch(hide())}
-    >
-      <Styled.Container>
-        <Styled.TitleModal>
-          A problem occurred
-        </Styled.TitleModal>
-      </Styled.Container>
-    </Modal>
-  );
+  return null;
 };
 
 export default ModalControllerComponent;
