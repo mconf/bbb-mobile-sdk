@@ -18,9 +18,10 @@ const EndSessionScreen = (props) => {
     <Styled.ContainerView>
       <Styled.ContainerEndSessionCard>
         <Styled.Image
-          source={require('../../assets/endSessionBreakout.png')}
-          resizeMode="contain"
+          source={require('../../assets/application/lotties/hourglass.json')}
           orientation={orientation}
+          autoPlay
+          loop
         />
         <Styled.MiddleContainer>
           <Styled.Title>{t('mobileSdk.breakout.endSession.modal.title')}</Styled.Title>
