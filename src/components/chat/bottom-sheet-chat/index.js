@@ -110,7 +110,11 @@ const BottomSheetChat = () => {
           ref={flatListRef}
           data={messages}
           renderItem={renderItem}
-          onContentSizeChange={() => flatListRef.current.scrollToEnd()}
+          onContentSizeChange={() => {
+            if (messages.length > 0) {
+              flatListRef.current.scrollToEnd({ animated: true });
+            }
+          }}
         />
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
