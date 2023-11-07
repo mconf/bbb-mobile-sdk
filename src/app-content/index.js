@@ -143,7 +143,7 @@ const AppContent = ({
           <Stack.Screen name="EmailFeedbackScreen" component={EmailFeedbackScreen} />
         </Stack.Navigator>
       </NavigationContainer>
-      {!isBreakout && <InCallManagerController />}
+      <InCallManagerController />
       {!isBreakout && <LocalesController />}
       <NotifeeController />
     </>

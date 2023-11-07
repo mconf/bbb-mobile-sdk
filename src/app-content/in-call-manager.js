@@ -12,7 +12,6 @@ const InCallManagerController = () => {
   const nativeEventListeners = useRef([]);
 
   useEffect(() => {
-    InCallManager.start({ media: 'video' });
     nativeEventListeners.current.push(
       DeviceEventEmitter.addListener('onAudioDeviceChanged', (event) => {
         const { availableAudioDeviceList, selectedAudioDevice } = event;
@@ -30,7 +29,6 @@ const InCallManagerController = () => {
 
     return () => {
       nativeEventListeners.current.forEach((eventListener) => eventListener.remove());
-      InCallManager.stop({ media: 'video' });
     };
   }, []);
 
