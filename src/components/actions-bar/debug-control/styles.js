@@ -11,7 +11,7 @@ const DebugContainer = styled.View`
   background-color: ${Colors.lightGray300};
   border-radius: 12px;
   padding: 12px;
-  width: 95%;
+  width: 100%;
   gap: 12px;
 `;
 

@@ -1,3 +1,4 @@
+import styled from 'styled-components/native';
 import { StyleSheet } from 'react-native';
 
 const fullscreenStyles = StyleSheet.create({
@@ -50,7 +51,13 @@ const styles = StyleSheet.create({
   }
 });
 
+const ControlsContainer = styled.View`
+  padding-top: 18px;
+  gap: 8px;
+`;
+
 export default {
   styles,
-  fullscreenStyles
+  fullscreenStyles,
+  ControlsContainer
 };
