@@ -19,7 +19,6 @@ const Container = styled.View`
 
   ${({ neverRecorded }) => !neverRecorded && `
     background-color: ${Colors.white};
-    box-shadow: 10px 5px 5px black;
   `}
 `;
 
