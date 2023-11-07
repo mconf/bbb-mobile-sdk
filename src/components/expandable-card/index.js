@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useFocusEffect } from '@react-navigation/core';
+import React, { useCallback, useState } from 'react';
 import {
   View, TouchableOpacity
 } from 'react-native';
@@ -13,6 +14,14 @@ import Animated, {
 
 const ExpandedCard = ({ content, expandedContent, expandableHeight }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        setIsExpanded(false);
+        height.value = 0;
+      };
+    }, [])
+  );
 
   // Define animated values
   const height = useSharedValue(0);
