@@ -1,7 +1,7 @@
 import React, {
   useCallback, useEffect, useMemo, useRef
 } from 'react';
-import { View, Platform, ScrollView, Pressable } from 'react-native';
+import { View, Platform } from 'react-native';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { useRoute } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
@@ -27,7 +27,7 @@ const BottomSheetActionsBar = () => {
   const snapPoints = useMemo(() => {
     if (orientation === 'PORTRAIT') {
       if (Platform.OS === 'android') {
-        return [110, 250];
+        return [110, 270];
       }
     }
     return [110];

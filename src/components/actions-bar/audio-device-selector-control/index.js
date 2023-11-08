@@ -10,7 +10,8 @@ const DeviceSelectorControl = () => {
   const { t } = useTranslation();
 
   return (
-    <Styled.Container
+    <Styled.ContainerPressable
+      rippleColor="rgba(0, 0, 0, .32)"
       onPress={() => {
         dispatch(trigDetailedInfo());
         dispatch(setProfile({
@@ -18,12 +19,15 @@ const DeviceSelectorControl = () => {
         }));
       }}
     >
-      <Styled.AudioIcon name="headphones" size={24} color="white" />
-      <Styled.AudioText>
-        {t('mobileSdk.audio.deviceSelector.title')}
-      </Styled.AudioText>
-      <Styled.OpenAudioSelectorIcon />
-    </Styled.Container>
+      <>
+        <Styled.AudioIconContainer />
+        <Styled.AudioText>
+          {t('mobileSdk.audio.deviceSelector.title')}
+        </Styled.AudioText>
+        <Styled.OpenAudioSelectorIcon />
+      </>
+
+    </Styled.ContainerPressable>
   );
 };
 
