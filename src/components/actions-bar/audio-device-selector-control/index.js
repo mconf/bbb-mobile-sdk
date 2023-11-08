@@ -22,7 +22,7 @@ const DeviceSelectorControl = () => {
       <Styled.AudioText>
         {t('mobileSdk.audio.deviceSelector.title')}
       </Styled.AudioText>
-      <Styled.OpenAudioSelectorModal />
+      <Styled.OpenAudioSelectorIcon />
     </Styled.Container>
   );
 };

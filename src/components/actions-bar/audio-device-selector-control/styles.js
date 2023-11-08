@@ -32,17 +32,13 @@ const AudioText = styled.Text`
   flex: 1;
 `;
 
-const OpenAudioSelectorModal = ({ onPress }) => (
-  <Pressable
-    onPress={onPress}
-  >
-    <Ionicons name="open-outline" size={24} color="white" />
-  </Pressable>
+const OpenAudioSelectorIcon = () => (
+  <Ionicons name="open-outline" size={24} color="white" />
 );
 
 export default {
   AudioIcon,
   Container,
   AudioText,
-  OpenAudioSelectorModal
+  OpenAudioSelectorIcon
 };
