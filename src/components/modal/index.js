@@ -4,8 +4,8 @@ import BreakoutInviteModal from '../../screens/breakout-room-screen/breakout-inv
 import CantCreatePollModal from './poll/cant-create-poll';
 import RecordControlsModal from './record-controls-modal';
 import RecordStatusModal from './record-status-modal';
+import AudioDeviceSelectorModal from '../actions-bar/audio-device-selector-control/audio-device-selector-modal';
 import Settings from '../../../settings.json';
-import Styled from './styles';
 
 const ModalControllerComponent = () => {
   const modalCollection = useSelector((state) => state.modal);
@@ -13,6 +13,11 @@ const ModalControllerComponent = () => {
   if (modalCollection.profile === 'breakout_invite' && Settings.showBreakouts) {
     return (
       <BreakoutInviteModal />
+    );
+  }
+  if (modalCollection.profile === 'audio_device_selector') {
+    return (
+      <AudioDeviceSelectorModal />
     );
   }
   if (modalCollection.profile === 'create_poll_permission') {
