@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
-import button from '../../button';
-import Colors from '../../../constants/colors';
+import button from '../../../button';
+import Colors from '../../../../constants/colors';
 
 const OptionsButton = styled(button)`
   background-color: ${Colors.lightGray200}
@@ -19,20 +19,31 @@ const OptionsButton = styled(button)`
 `;
 
 const ButtonContainer = styled.View`
-  width: 100%;
-  padding: 24px 0;
-  margin: 0;
-  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-radius: 12px;
 `;
 
 const DeviceSelectorTitle = styled.Text`
-  color: white;
-  text-align: center;
-  font-size: 20px;
+  font-size: 18px;
+  font-weight: 500;
+  color: ${Colors.lightGray400}
+`;
+
+const Container = styled.View`
+  display: flex;
+  flex-direction: column;
+  background-color: ${Colors.white}
+  margin: 24px;
+  padding: 24px;
+  gap: 18px;
+  border-radius: 12px;
 `;
 
 export default {
   OptionsButton,
   ButtonContainer,
-  DeviceSelectorTitle
+  DeviceSelectorTitle,
+  Container
 };

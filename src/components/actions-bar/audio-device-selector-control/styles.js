@@ -1,10 +1,10 @@
 import styled from 'styled-components/native';
-import { Switch } from 'react-native-paper';
-import { FontAwesome } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { TouchableRipple } from 'react-native-paper';
 import { View } from 'react-native';
 import Colors from '../../../constants/colors';
 
-const DebugContainer = styled.View`
+const ContainerPressable = styled(TouchableRipple)`
   display: flex;
   align-items: center;
   flex-direction: row;
@@ -16,43 +16,37 @@ const DebugContainer = styled.View`
   gap: 12px;
 `;
 
-const DebugIcon = styled(FontAwesome)`
+const AudioIcon = styled(MaterialCommunityIcons)`
   padding: 4px;
 `;
 
-const DebugIconContainer = () => (
+const AudioIconContainer = () => (
   <View style={{
     display: 'flex', alignItems: 'center', justifyContent: 'center'
   }}
   >
-    <DebugIcon name="wrench" size={24} color={Colors.white} />
+    <AudioIcon name="headphones" size={24} color={Colors.white} />
   </View>
 );
 
-const DebugText = styled.Text`
+const AudioText = styled.Text`
   font-size: 16px;
   font-weight: 500;
   color: ${Colors.white}
   flex: 1;
 `;
 
-const DebugModeSwitch = styled(Switch)`
-`;
-
-const SwitchContainer = ({ value, onValueChange }) => (
+const OpenAudioSelectorIcon = () => (
   <View style={{
     width: 50, display: 'flex', alignItems: 'center', justifyContent: 'center'
   }}
-  >
-    <DebugModeSwitch value={value} onValueChange={onValueChange} color={Colors.white} />
-  </View>
+  />
 );
 
 export default {
-  DebugModeSwitch,
-  DebugContainer,
-  DebugText,
-  DebugIcon,
-  SwitchContainer,
-  DebugIconContainer
+  AudioIcon,
+  AudioText,
+  OpenAudioSelectorIcon,
+  ContainerPressable,
+  AudioIconContainer
 };

@@ -2,14 +2,14 @@ import React, {
   useCallback, useEffect, useMemo, useRef
 } from 'react';
 import { View, Platform } from 'react-native';
-import BottomSheet from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { useRoute } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useOrientation } from '../../../hooks/use-orientation';
 import ActionsBar from '../index';
 import { setDetailedInfo } from '../../../store/redux/slices/wide-app/layout';
 import DebugControl from '../debug-control';
-import AudioDeviceSelector from '../audio-device-selector';
+import DeviceSelectorControl from '../audio-device-selector-control';
 import Styled from './styles';
 
 const BottomSheetActionsBar = () => {
@@ -27,7 +27,7 @@ const BottomSheetActionsBar = () => {
   const snapPoints = useMemo(() => {
     if (orientation === 'PORTRAIT') {
       if (Platform.OS === 'android') {
-        return [110, 380];
+        return [110, 270];
       }
     }
     return [110];
@@ -63,8 +63,13 @@ const BottomSheetActionsBar = () => {
     >
       <View style={Styled[isFullscreen ? 'fullscreenStyles' : 'styles'].contentContainer}>
         <ActionsBar />
-        <AudioDeviceSelector />
-        <DebugControl />
+        <BottomSheetScrollView>
+          <Styled.ControlsContainer>
+            <DeviceSelectorControl />
+            <DebugControl />
+          </Styled.ControlsContainer>
+        </BottomSheetScrollView>
+
       </View>
     </BottomSheet>
   );
