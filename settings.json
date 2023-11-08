@@ -5,6 +5,7 @@
   },
   "showLanguageScreen": true,
   "showDebugToggle": true,
+  "showBreakouts": true,
   "clientLog": {
     "server": {
       "enabled": false,

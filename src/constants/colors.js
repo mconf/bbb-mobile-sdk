@@ -9,6 +9,7 @@ const Colors = {
   lightGray200: '#D4DDE4',
   lightGray300: '#667080',
   lightGray400: '#28282D',
+  blueGray: '#566984',
   contentLetterboxColor: '#1b2a3a',
   contentForegroundColor: '#3B4A5C',
   statusBarConnected: '#00BF6F',

@@ -1,4 +1,5 @@
 import styled from 'styled-components/native';
+import LottieView from 'lottie-react-native';
 import Colors from '../../constants/colors';
 import PrimaryButton from '../../components/button';
 
@@ -38,7 +39,7 @@ const Title = styled.Text`
   color: ${Colors.lightGray400};
 `;
 
-const Image = styled.Image`
+const Image = styled(LottieView)`
   width: 104px;
   height: 104px;
 

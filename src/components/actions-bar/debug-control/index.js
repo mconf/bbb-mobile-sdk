@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { show, hide } from '../../../store/redux/slices/wide-app/debug';
 import Settings from '../../../../settings.json';
-import Colors from '../../../constants/colors';
 import Styled from './styles';
 
 const DebugControl = () => {
@@ -31,14 +30,13 @@ const DebugControl = () => {
 
   return (
     <Styled.DebugContainer>
-      <Styled.DebugIcon name="wrench" size={24} color="white" />
+      <Styled.DebugIconContainer />
       <Styled.DebugText>
         {t('mobileSdk.actionsBar.debug.label')}
       </Styled.DebugText>
-      <Styled.DebugModeSwitch
+      <Styled.SwitchContainer
         value={isSwitchOn}
         onValueChange={onToggleSwitch}
-        color={Colors.blue}
       />
     </Styled.DebugContainer>
   );

@@ -14,9 +14,14 @@ const ChatPopupList = () => {
   const detailedInfo = useSelector((state) => state.layout.detailedInfo);
   const hasUnreadMessages = useSelector((state) => state.chat.hasUnreadMessages);
   const hasShownInFastChat = useSelector((state) => state.chat.hasShownInFastChat);
+  const isBottomChatOpen = useSelector((state) => state.chat.isBottomChatOpen);
 
   useEffect(() => {
-    if (lastMessage?.message && !detailedInfo && hasUnreadMessages && !hasShownInFastChat) {
+    if (lastMessage?.message
+      && !detailedInfo
+      && hasUnreadMessages
+      && !hasShownInFastChat
+      && !isBottomChatOpen) {
       setShowMessage(true);
     }
     const timer = setTimeout(() => {
@@ -33,7 +38,11 @@ const ChatPopupList = () => {
         <ChatPopupItem
           userName={lastMessage?.author}
           userText={lastMessage?.message}
-          onPress={() => dispatch(setBottomChatOpen(true))}
+          onPress={() => {
+            dispatch(setBottomChatOpen(true));
+            setShowMessage(false);
+            dispatch(setHasShownInFastChat(true));
+          }}
         />
       </Styled.Container>
     );
