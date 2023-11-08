@@ -149,5 +149,6 @@
   "mobileSdk.audio.deviceSelector.wiredHeadset": "Fone com fio",
   "mobileSdk.upload.notification.header": "Um arquivo foi carregado:",
   "mobileSdk.upload.notification.disclaimer": "Caso você queira abrir este arquivo, tente usar a versão web.",
-  "mobileSdk.notification.recordLabel": "Gravação"
+  "mobileSdk.notification.recordLabel": "Gravação",
+  "mobileSdk.record.noPermission.label": "Você não possui permissão para gravar reuniões."
 }
