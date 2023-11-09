@@ -4,7 +4,6 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useTranslation } from 'react-i18next';
-import { useNavigation } from '@react-navigation/native';
 import { Pressable, KeyboardAvoidingView, Platform } from 'react-native';
 import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import { useBottomSheetBackHandler } from '../../../hooks/useBottomSheetBackHandler';
@@ -19,7 +18,6 @@ import Styled from './styles';
 const BottomSheetChat = () => {
   const messages = useChatMsgs();
   const height = useHeaderHeight();
-  const navigation = useNavigation();
   const { t } = useTranslation();
 
   const sheetRef = useRef(null);
@@ -39,13 +37,6 @@ const BottomSheetChat = () => {
 
   useBottomSheetBackHandler(chatStore.isBottomChatOpen, sheetRef, () => {});
 
-  const handleMessagePressed = (message) => {
-    if (message.message === t('mobileSdk.poll.postedMsg')) {
-      sheetRef.current?.close();
-      navigation.navigate('PollScreen');
-    }
-  };
-
   const handleMessage = (message) => {
     if ((/^https?:/.test(message))) {
       return (
@@ -63,7 +54,7 @@ const BottomSheetChat = () => {
   const renderItem = ({ item }) => {
     const timestamp = new Date(item.timestamp);
     return (
-      <Pressable onPress={() => handleMessagePressed(item)}>
+      <Pressable>
         <Styled.ContainerItem>
           <UserAvatar
             userName={item.author}

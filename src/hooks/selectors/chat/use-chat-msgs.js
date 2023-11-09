@@ -32,13 +32,9 @@ export function useChatMsgs() {
         };
       }
 
-      // if is a poll result message
+      // if is a poll result message do not show, cause we have modal now
       if (message.id.toString().includes('PUBLIC_CHAT_POLL_RESULT')) {
-        return {
-          author: t('app.toast.chat.system'),
-          timestamp: message.timestamp,
-          message: t('mobileSdk.poll.postedMsg'),
-        };
+        return null;
       }
       // if is a clear chat message
       if (message.id.toString().includes('PUBLIC_CHAT_CLEAR')) {
