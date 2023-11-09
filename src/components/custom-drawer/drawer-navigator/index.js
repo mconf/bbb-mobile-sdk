@@ -147,6 +147,7 @@ const DrawerNavigator = ({
         component={MainConferenceScreen}
         options={{
           title: meetingData?.confname || t('mobileSdk.meeting.label'),
+          unmountOnBlur: true,
           headerRight: () => (
             <RecordingIndicator recordMeeting={recordMeeting} />
           ),
@@ -166,6 +167,7 @@ const DrawerNavigator = ({
           component={UserNotesScreen}
           options={{
             title: t('app.notes.title'),
+            unmountOnBlur: true,
             headerRight: () => (
               <RecordingIndicator recordMeeting={recordMeeting} />
             ),
@@ -186,6 +188,7 @@ const DrawerNavigator = ({
         component={PollNavigator}
         options={{
           title: t('mobileSdk.poll.label'),
+          unmountOnBlur: true,
           headerRight: () => (
             <RecordingIndicator recordMeeting={recordMeeting} />
           ),
@@ -205,6 +208,7 @@ const DrawerNavigator = ({
         component={UserParticipantsNavigator}
         options={{
           title: t('app.userList.label'),
+          unmountOnBlur: true,
           headerRight: () => (
             <RecordingIndicator recordMeeting={recordMeeting} />
           ),
@@ -233,6 +237,7 @@ const DrawerNavigator = ({
           component={WhiteboardScreen}
           options={{
             title: t('mobileSdk.whiteboard.label'),
+            unmountOnBlur: true,
             headerRight: () => (
               <RecordingIndicator recordMeeting={recordMeeting} />
             ),
@@ -253,6 +258,7 @@ const DrawerNavigator = ({
         component={SelectLanguageScreen}
         options={{
           title: t('mobileSdk.locales.label'),
+          unmountOnBlur: true,
           headerRight: () => (
             <RecordingIndicator recordMeeting={recordMeeting} />
           ),
@@ -273,6 +279,7 @@ const DrawerNavigator = ({
         component={BreakoutRoomScreen}
         options={{
           title: t('app.createBreakoutRoom.title'),
+          unmountOnBlur: true,
           drawerIcon: (config) => (
             <>
               <Styled.BetaTag>BETA</Styled.BetaTag>
@@ -313,6 +320,7 @@ const DrawerNavigator = ({
         component={FullscreenWrapperScreen}
         options={{
           headerShown: false,
+          unmountOnBlur: true,
           drawerItemStyle: { display: 'none' },
 
         }}
