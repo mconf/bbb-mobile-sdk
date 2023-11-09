@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import BreakoutInviteModal from '../../screens/breakout-room-screen/breakout-invite-modal';
-import CantCreatePollModal from './poll/cant-create-poll';
+import CantCreatePollModal from '../../screens/poll-screen/modals/cant-create-poll';
 import RecordControlsModal from './record-controls-modal';
 import RecordStatusModal from './record-status-modal';
 import AudioDeviceSelectorModal from '../actions-bar/audio-device-selector-control/audio-device-selector-modal';
