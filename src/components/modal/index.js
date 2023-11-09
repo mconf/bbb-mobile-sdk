@@ -4,6 +4,7 @@ import BreakoutInviteModal from '../../screens/breakout-room-screen/breakout-inv
 import CantCreatePollModal from '../../screens/poll-screen/modals/cant-create-poll';
 import RecordControlsModal from './record-controls-modal';
 import RecordStatusModal from './record-status-modal';
+import ReceivePollModal from '../../screens/poll-screen/modals/receive-poll';
 import AudioDeviceSelectorModal from '../actions-bar/audio-device-selector-control/audio-device-selector-modal';
 import Settings from '../../../settings.json';
 
@@ -23,6 +24,11 @@ const ModalControllerComponent = () => {
   if (modalCollection.profile === 'create_poll_permission') {
     return (
       <CantCreatePollModal />
+    );
+  }
+  if (modalCollection.profile === 'receive_poll') {
+    return (
+      <ReceivePollModal />
     );
   }
   if (modalCollection.profile === 'record_controls') {
