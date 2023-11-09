@@ -49,8 +49,7 @@ const ContentArea = (props) => {
   // ** Content area views methods **
   const presentationView = () => (
     <Styled.Presentation
-      width="100%"
-      height="100%"
+      fullscreen={fullscreen}
       source={{
         uri: handleSlideAndPresentationActive(),
       }}
