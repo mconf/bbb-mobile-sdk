@@ -1,5 +1,6 @@
 import { store } from '../../../store/redux/store';
 import Module from './module';
+import { setProfile } from '../../../store/redux/slices/wide-app/modal';
 import { setInitialChatMsgsFetched } from '../../../store/redux/slices/wide-app/client';
 import {
   addGroupChatMsg,
@@ -101,6 +102,12 @@ export class GroupChatMsgModule extends Module {
     store.dispatch(setHasShownInFastChat(false));
 
     if (msgObj.fields.id.toString().includes('POLL_RESULT')) {
+      store.dispatch(
+        setProfile({
+          profile: 'poll_published',
+          extraInfo: msgObj.fields.extra.pollResultData
+        })
+      );
       store.dispatch(
         addPreviousPollPublishedViaChat({
           previousPollPublishedObject: msgObj,

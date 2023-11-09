@@ -5,6 +5,7 @@ import CantCreatePollModal from '../../screens/poll-screen/modals/cant-create-po
 import RecordControlsModal from './record-controls-modal';
 import RecordStatusModal from './record-status-modal';
 import ReceivePollModal from '../../screens/poll-screen/modals/receive-poll';
+import PublishedPollModal from '../../screens/poll-screen/modals/published-poll';
 import AudioDeviceSelectorModal from '../actions-bar/audio-device-selector-control/audio-device-selector-modal';
 import Settings from '../../../settings.json';
 
@@ -29,6 +30,11 @@ const ModalControllerComponent = () => {
   if (modalCollection.profile === 'receive_poll') {
     return (
       <ReceivePollModal />
+    );
+  }
+  if (modalCollection.profile === 'poll_published') {
+    return (
+      <PublishedPollModal />
     );
   }
   if (modalCollection.profile === 'record_controls') {
