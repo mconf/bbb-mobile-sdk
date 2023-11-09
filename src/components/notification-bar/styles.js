@@ -12,8 +12,7 @@ const NotificationsBarPressable = styled(Pressable).attrs(() => ({
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-evenly;
-    width: 75%;
+    width: 300px;
     height: 75px;
     background-color: ${Colors.lightGray100};
     border-radius: 8px;
@@ -27,6 +26,8 @@ const NotificationsBarPressable = styled(Pressable).attrs(() => ({
 const TextContainer = styled.View`
   display: flex;
   flex-direction: column;
+  width: 250px;
+  padding: 0 8px;
 `;
 
 const TitleText = styled.Text`

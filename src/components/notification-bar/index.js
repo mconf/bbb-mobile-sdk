@@ -45,10 +45,10 @@ const NotificationBar = () => {
     >
       {handleIcon()}
       <Styled.TextContainer>
-        <Styled.TitleText>
+        <Styled.TitleText numberOfLines={1}>
           {t(notificationBarStore.messageTitle)}
         </Styled.TitleText>
-        <Styled.SubtitleText>
+        <Styled.SubtitleText numberOfLines={1}>
           {t(notificationBarStore.messageSubtitle)}
         </Styled.SubtitleText>
       </Styled.TextContainer>
