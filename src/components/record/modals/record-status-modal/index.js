@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { Modal } from 'react-native-paper';
-import { hide } from '../../../store/redux/slices/wide-app/modal';
-import { selectRecordMeeting } from '../../../store/redux/slices/record-meetings';
+import { hide } from '../../../../store/redux/slices/wide-app/modal';
+import { selectRecordMeeting } from '../../../../store/redux/slices/record-meetings';
 import Styled from './styles';
 import Service from './service';
 
