@@ -1,5 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useCallback } from 'react';
+import { OrientationLocker, LANDSCAPE } from 'react-native-orientation-locker';
 import { useFocusEffect } from '@react-navigation/native';
 import { ReactNativeZoomableView } from '@openspacelabs/react-native-zoomable-view';
 import { BackHandler } from 'react-native';
@@ -48,9 +49,20 @@ const FullscreenWrapperScreen = ({ navigation }) => {
             bindToBorders
             onLongPress={() => dispatch(trigDetailedInfo())}
           >
-            {layoutStore.focusedElement === 'videoStream' && <Styled.VideoStream streamURL={layoutStore.focusedId} />}
+            {layoutStore.focusedElement === 'videoStream' && (
+              <>
+                <OrientationLocker orientation={LANDSCAPE} />
+                <Styled.VideoStream streamURL={layoutStore.focusedId} />
+              </>
+            )}
             {layoutStore.focusedElement === 'avatar' && <Styled.UserAvatar source={{ uri: layoutStore.focusedId }} />}
-            {layoutStore.focusedElement === 'contentArea' && <Styled.ContentArea fullscreen />}
+            {layoutStore.focusedElement === 'contentArea'
+            && (
+            <>
+              <OrientationLocker orientation={LANDSCAPE} />
+              <Styled.ContentArea fullscreen />
+            </>
+            )}
             {layoutStore.focusedElement === 'color'
             && (
               <Styled.UserColor userColor={layoutStore.focusedId.userColor} isGrid>
