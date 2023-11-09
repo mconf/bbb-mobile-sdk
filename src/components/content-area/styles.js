@@ -1,5 +1,4 @@
 import styled from 'styled-components/native';
-import { Dimensions } from 'react-native';
 import { css } from 'styled-components';
 import presentation from '../presentation';
 import screenshare from '../screenshare';
@@ -7,21 +6,8 @@ import Colors from '../../constants/colors';
 import Pressable from '../pressable';
 import IconButtonComponent from '../icon-button';
 
-const Presentation = styled(presentation)`
-  width: 100%;
-  height: 100%;
-  ${({ fullscreen }) => fullscreen
-    && `
-      width: ${Dimensions.get('window').height - Dimensions.get('window').width / 4}px ;
-      transform: rotate(90deg);
-  `}
-`;
-
-const Screenshare = styled(screenshare)`
-  width: 100%;
-  height: 100%;
-`;
-
+const Presentation = styled(presentation)``;
+const Screenshare = styled(screenshare)``;
 const ContentAreaPressable = styled.View`
   height: 100%;
   width: 100%;
