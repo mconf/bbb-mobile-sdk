@@ -73,6 +73,17 @@ const CustomDrawer = (props) => {
         </Styled.ContainerDrawerItemList>
       </DrawerContentScrollView>
       <Styled.ContainerCustomBottomButtons>
+
+        {/* NOT_IMPLEMENTED YET */}
+        <DrawerItem
+          label={t('mobileSdk.whiteboard.label')}
+          labelStyle={Styled.TextButtonLabel}
+          onPress={onClickFeatureNotImplemented}
+          inactiveTintColor={Colors.lightGray400}
+          inactiveBackgroundColor={Colors.lightGray100}
+          icon={() => <Styled.DrawerIcon name="brush" size={24} color="#1C1B1F" />}
+        />
+
         <DrawerItem
           label={t('app.notes.title')}
           labelStyle={Styled.TextButtonLabel}
@@ -81,6 +92,8 @@ const CustomDrawer = (props) => {
           inactiveBackgroundColor={Colors.lightGray100}
           icon={() => <Styled.DrawerIcon name="notes" size={24} color="#1C1B1F" />}
         />
+
+        {/* FIXED ITEMS */}
         {!isBreakout && (
         <DrawerItem
           label={t('mobileSdk.drawer.shareButtonLabel')}
@@ -91,7 +104,6 @@ const CustomDrawer = (props) => {
           icon={() => <Styled.DrawerIcon name="share" size={24} color="#1C1B1F" />}
         />
         )}
-
         <DrawerItem
           label={isBreakout ? t('mobileSdk.breakout.leave') : t('app.navBar.settingsDropdown.leaveSessionLabel')}
           labelStyle={Styled.TextButtonLabel}

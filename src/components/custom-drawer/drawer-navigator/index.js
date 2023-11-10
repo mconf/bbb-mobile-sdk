@@ -8,7 +8,6 @@ import { selectCurrentUser } from '../../../store/redux/slices/current-user';
 // screens
 import PollNavigator from '../../../screens/poll-screen/navigator';
 import UserParticipantsNavigator from '../../../screens/user-participants-screen/navigator';
-import WhiteboardScreen from '../../../screens/whiteboard-screen';
 import TestComponentsScreen from '../../../screens/test-components-screen';
 import BreakoutRoomScreen from '../../../screens/breakout-room-screen';
 import MainConferenceScreen from '../../../screens/main-conference-screen';
@@ -208,27 +207,6 @@ const DrawerNavigator = ({
           ),
         }}
       />
-
-      {Settings.dev && (
-        <Drawer.Screen
-          name="WhiteboardScreen"
-          component={WhiteboardScreen}
-          options={{
-            title: t('mobileSdk.whiteboard.label'),
-            unmountOnBlur: true,
-            headerRight: () => (
-              <RecordingIndicator recordMeeting={recordMeeting} />
-            ),
-            drawerIcon: (config) => (
-              <Styled.DrawerIcon
-                icon="brush"
-                size={24}
-                iconColor={config.color}
-              />
-            ),
-          }}
-        />
-      )}
 
       {Settings.showLanguageScreen && (
       <Drawer.Screen
