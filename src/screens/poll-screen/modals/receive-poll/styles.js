@@ -9,9 +9,10 @@ const Container = styled.View`
   flex-direction: column;
   background-color: ${Colors.white}
   margin: 24px;
-  padding: 24px;
-  gap: 24px;
+  padding: 8px;
+  gap: 12px;
   border-radius: 12px;
+  transform: scale(0.9)
 `;
 
 const SecretLabel = styled.Text`
@@ -22,20 +23,21 @@ const SecretLabel = styled.Text`
 `;
 
 const Title = styled.Text`
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   text-align: center;
 `;
 
-const ButtonsContainer = styled.View``;
+const ButtonsContainer = styled.View`
+`;
 
 const OptionsButton = styled(button)`
   background-color: ${Colors.lightGray200}
   color: ${Colors.lightGray400};
   font-size: 16px;
   font-weight: 400;
-  padding: 12px;
   border-radius: 12px;
+  padding: 2px;
 
   ${({ selected }) => selected
     && `
@@ -47,7 +49,6 @@ const OptionsButton = styled(button)`
 const TextInput = styled(textInput)``;
 
 const ButtonCreate = styled(Button)`
-  margin-top: 48px;
 `;
 
 const PressableButton = ({
@@ -62,9 +63,10 @@ const PressableButton = ({
       textColor={Colors.white}
       style={{
         width: '100%',
+        height: 40
       }}
       labelStyle={{
-        fontSize: 18,
+        fontSize: 14,
         fontWeight: 500,
       }}
     >
