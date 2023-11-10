@@ -6,7 +6,6 @@ import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { selectCurrentUser } from '../../../store/redux/slices/current-user';
 // screens
-import UserNotesScreen from '../../../screens/user-notes-screen';
 import PollNavigator from '../../../screens/poll-screen/navigator';
 import UserParticipantsNavigator from '../../../screens/user-participants-screen/navigator';
 import WhiteboardScreen from '../../../screens/whiteboard-screen';
@@ -160,27 +159,6 @@ const DrawerNavigator = ({
           ),
         }}
       />
-
-      {Settings.dev && (
-        <Drawer.Screen
-          name="SharedNoteScreen"
-          component={UserNotesScreen}
-          options={{
-            title: t('app.notes.title'),
-            unmountOnBlur: true,
-            headerRight: () => (
-              <RecordingIndicator recordMeeting={recordMeeting} />
-            ),
-            drawerIcon: (config) => (
-              <Styled.DrawerIcon
-                icon="file-document"
-                size={24}
-                iconColor={config.color}
-              />
-            ),
-          }}
-        />
-      )}
 
       { !isBreakout && (
       <Drawer.Screen
