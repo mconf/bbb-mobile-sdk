@@ -22,7 +22,7 @@ const Screenshare = () => {
       <>
         <Styled.ScreenshareIconContainer />
         <Styled.ScreenshareText>
-          {t('Screenshare')}
+          {t('app.actionsBar.actionsDropdown.desktopShareLabel')}
         </Styled.ScreenshareText>
       </>
 

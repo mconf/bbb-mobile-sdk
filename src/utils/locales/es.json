@@ -184,5 +184,6 @@
     "mobileSdk.poll.createPoll.responseOptions": "Opciones de respuesta",
     "mobileSdk.poll.createPoll.anonymousPoll": "Encuesta anónima.",
     "mobileSdk.poll.createPoll.anonymousPollSubtitle": "No podrás ver las respuestas de los usuarios individuales.",
-    "app.poll.userResponse.label" : "Respuesta escrita"
+    "app.poll.userResponse.label" : "Respuesta escrita",
+    "app.actionsBar.actionsDropdown.desktopShareLabel": "Compartir tu pantalla"
   }
