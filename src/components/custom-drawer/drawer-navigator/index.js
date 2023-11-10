@@ -290,7 +290,7 @@ const DrawerNavigator = ({
             title: 'Test Component',
             drawerIcon: (config) => (
               <Styled.DrawerIcon
-                icon="brush"
+                icon="dev-to"
                 size={24}
                 iconColor={config.color}
               />
