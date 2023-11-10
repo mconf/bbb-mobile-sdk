@@ -12,7 +12,7 @@ const Container = styled.View`
   padding: 8px;
   gap: 12px;
   border-radius: 12px;
-  transform: scale(0.9)
+  transform: scale(0.9);
 `;
 
 const SecretLabel = styled.Text`

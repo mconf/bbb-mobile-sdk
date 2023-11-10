@@ -5,10 +5,9 @@ const Container = styled.View`
   display: flex;
   flex-direction: column;
   background-color: ${Colors.white}
-  margin: 12px;
-  padding: 12px;
   border-radius: 12px;
   gap: 12px;
+  transform: scale(0.65);
 `;
 
 export default {
