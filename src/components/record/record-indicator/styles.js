@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-import Colors from '../../constants/colors';
+import Colors from '../../../constants/colors';
 
 const RecordingIndicatorIcon = styled.View`
   width: 24px;

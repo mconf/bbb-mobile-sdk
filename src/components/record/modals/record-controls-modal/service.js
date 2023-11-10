@@ -1,5 +1,5 @@
-import makeCall from '../../../services/api/makeCall';
-import logger from '../../../services/logger';
+import makeCall from '../../../../services/api/makeCall';
+import logger from '../../../../services/logger';
 
 // TODO ADD CUSTOM USER SETTING CHECK
 const mayIRecord = (amIModerator, allowStartStopRecording) => {

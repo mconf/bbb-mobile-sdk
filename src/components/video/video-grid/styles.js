@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet } from 'react-native';
 import VideoContainer from '../video-container';
 import contentArea from '../../content-area';
 
@@ -17,44 +17,44 @@ const Item = styled.View`
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: ${parseInt(Dimensions.get('window').height / 2.3, 10)}px;
-
-
-  ${({ usersCount, orientation }) => usersCount % 2 === 0 && usersCount > 2
+  height: 10%;
+  ${({ height, dimensionHeight }) => height
   && `
-      width: 50%;
-      height: ${parseInt(
-    Dimensions.get('window').height
-      / ((orientation === 'LANDSCAPE')
-        ? 2.3
-        : (usersCount > 2 && usersCount < 5)
-          ? 2.3
-          : (usersCount > 4 && usersCount < 7)
-            ? 3.4
-            : (usersCount > 6)
-              ? 4.5
-              : 0.00),
-    10
-  )}px;
+    height: ${parseInt(dimensionHeight / 2.3, 10)}px;
   `}
 
-  ${({ usersCount, orientation }) => usersCount % 2 === 1 && usersCount > 2
+
+  ${({ usersCount, dimensionHeight }) => usersCount % 2 === 0 && usersCount > 2
   && `
       width: 50%;
-      flex-grow: 1;
-      flex-shrink: 1;
-      flex-basis: 0;
       height: ${parseInt(
-    Dimensions.get('window').height
-    / ((orientation === 'LANDSCAPE')
-      ? 2.3
-      : (usersCount > 2 && usersCount < 5)
+    dimensionHeight
+      / ((usersCount > 2 && usersCount < 5)
         ? 2.3
         : (usersCount > 4 && usersCount < 7)
           ? 3.4
           : (usersCount > 6)
             ? 4.5
             : 0.00),
+    10
+  )}px;
+  `}
+
+  ${({ usersCount, dimensionHeight }) => usersCount % 2 === 1 && usersCount > 2
+  && `
+      width: 50%;
+      flex-grow: 1;
+      flex-shrink: 1;
+      flex-basis: 0;
+      height: ${parseInt(
+    dimensionHeight
+    / ((usersCount > 2 && usersCount < 5)
+      ? 2.3
+      : (usersCount > 4 && usersCount < 7)
+        ? 3.4
+        : (usersCount > 6)
+          ? 4.5
+          : 0.00),
     10
   )}px;
   `}
