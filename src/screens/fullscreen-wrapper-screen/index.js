@@ -50,10 +50,7 @@ const FullscreenWrapperScreen = ({ navigation }) => {
             onLongPress={() => dispatch(trigDetailedInfo())}
           >
             {layoutStore.focusedElement === 'videoStream' && (
-              <>
-                <OrientationLocker orientation={LANDSCAPE} />
-                <Styled.VideoStream streamURL={layoutStore.focusedId} />
-              </>
+              <Styled.VideoStream streamURL={layoutStore.focusedId} />
             )}
             {layoutStore.focusedElement === 'avatar' && <Styled.UserAvatar source={{ uri: layoutStore.focusedId }} />}
             {layoutStore.focusedElement === 'contentArea'
