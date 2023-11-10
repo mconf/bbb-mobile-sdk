@@ -8,13 +8,14 @@ import {
 } from '@react-navigation/drawer';
 import Colors from '../../constants/colors';
 import { selectCurrentUser } from '../../store/redux/slices/current-user';
+import { setProfile } from '../../store/redux/slices/wide-app/modal';
 import Styled from './styles';
 import logger from '../../services/api';
 import * as api from '../../services/api';
 import { leave } from '../../store/redux/slices/wide-app/client';
 
 const CustomDrawer = (props) => {
-  const { meetingUrl } = props;
+  const { meetingUrl, navigation } = props;
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const currentUserObj = useSelector(selectCurrentUser);
@@ -22,6 +23,11 @@ const CustomDrawer = (props) => {
 
   const leaveSession = () => {
     dispatch(leave(api));
+  };
+
+  const onClickFeatureNotImplemented = () => {
+    dispatch(setProfile({ profile: 'not_implemented' }));
+    navigation.closeDrawer();
   };
 
   const onClickShare = async () => {
@@ -67,6 +73,14 @@ const CustomDrawer = (props) => {
         </Styled.ContainerDrawerItemList>
       </DrawerContentScrollView>
       <Styled.ContainerCustomBottomButtons>
+        <DrawerItem
+          label={t('app.notes.title')}
+          labelStyle={Styled.TextButtonLabel}
+          onPress={onClickFeatureNotImplemented}
+          inactiveTintColor={Colors.lightGray400}
+          inactiveBackgroundColor={Colors.lightGray100}
+          icon={() => <Styled.DrawerIcon name="notes" size={24} color="#1C1B1F" />}
+        />
         {!isBreakout && (
         <DrawerItem
           label={t('mobileSdk.drawer.shareButtonLabel')}
