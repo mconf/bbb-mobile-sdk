@@ -5,6 +5,10 @@ import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { selectCurrentUser } from '../../../store/redux/slices/current-user';
+import { selectWaitingUsers } from '../../../store/redux/slices/guest-users';
+import { selectRecordMeeting } from '../../../store/redux/slices/record-meetings';
+import usePrevious from '../../../hooks/use-previous';
+import logger from '../../../services/logger';
 // screens
 import PollNavigator from '../../../screens/poll-screen/navigator';
 import UserParticipantsNavigator from '../../../screens/user-participants-screen/navigator';
@@ -15,18 +19,12 @@ import SelectLanguageScreen from '../../../screens/select-language-screen';
 import InsideBreakoutRoomScreen from '../../../screens/inside-breakout-room-screen';
 import FullscreenWrapperScreen from '../../../screens/fullscreen-wrapper-screen';
 import RecordingIndicator from '../../record/record-indicator';
-import Colors from '../../../constants/colors';
-import Styled from './styles';
-import usePrevious from '../../../hooks/use-previous';
-import { selectWaitingUsers } from '../../../store/redux/slices/guest-users';
-import { selectRecordMeeting } from '../../../store/redux/slices/record-meetings';
-import logger from '../../../services/logger';
-
 // components
 import CustomDrawer from '../index';
-
-// configs
+// constants
 import Settings from '../../../../settings.json';
+import Colors from '../../../constants/colors';
+import Styled from './styles';
 
 const DrawerNavigator = ({
   onLeaveSession, jUrl, navigationRef, meetingUrl
