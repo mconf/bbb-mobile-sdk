@@ -69,7 +69,6 @@ const BottomSheetActionsBar = () => {
             <DebugControl />
           </Styled.ControlsContainer>
         </BottomSheetScrollView>
-
       </View>
     </BottomSheet>
   );
