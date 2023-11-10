@@ -80,6 +80,19 @@ const CustomDrawer = (props) => {
           </>
         )}
       />
+      <DrawerItem
+        label={t('app.actionsBar.actionsDropdown.streamOptions')}
+        labelStyle={Styled.TextButtonLabel}
+        onPress={onClickFeatureNotImplemented}
+        inactiveTintColor={Colors.lightGray400}
+        inactiveBackgroundColor={Colors.lightGray100}
+        icon={() => (
+          <>
+            <Styled.BetaTag>DEV</Styled.BetaTag>
+            <Styled.DrawerIcon name="connected-tv" size={24} color="#1C1B1F" />
+          </>
+        )}
+      />
     </>
   );
 

@@ -70,6 +70,7 @@ const ViewShareContainer = styled.View`
 
 const TextButtonLabel = {
   paddingLeft: 12,
+  paddingRight: 20,
   color: Colors.lightGray400,
   fontSize: 16,
   fontWeight: 400,
@@ -78,6 +79,7 @@ const TextButtonLabel = {
 
 const TextButtonActive = {
   paddingLeft: 12,
+  paddingRight: 20,
   color: Colors.white,
   fontSize: 16,
   fontWeight: 400,

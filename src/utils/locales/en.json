@@ -187,5 +187,6 @@
   "mobileSdk.poll.createPoll.anonymousPoll": "Anonymous Poll.",
   "mobileSdk.poll.createPoll.anonymousPollSubtitle": "You will not be able to view individual user responses.",
   "app.poll.userResponse.label" : "Typed Response",
-  "app.actionsBar.actionsDropdown.desktopShareLabel": "Share your screen"
+  "app.actionsBar.actionsDropdown.desktopShareLabel": "Share your screen",
+  "app.actionsBar.actionsDropdown.streamOptions": "Broadcast session"
 }
