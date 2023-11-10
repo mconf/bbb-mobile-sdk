@@ -52,6 +52,37 @@ const CustomDrawer = (props) => {
     }
   };
 
+  const renderNotImplementedItem = () => (
+    <>
+      <DrawerItem
+        label={t('mobileSdk.whiteboard.label')}
+        labelStyle={Styled.TextButtonLabel}
+        onPress={onClickFeatureNotImplemented}
+        inactiveTintColor={Colors.lightGray400}
+        inactiveBackgroundColor={Colors.lightGray100}
+        icon={() => (
+          <>
+            <Styled.BetaTag>DEV</Styled.BetaTag>
+            <Styled.DrawerIcon name="brush" size={24} color="#1C1B1F" />
+          </>
+        )}
+      />
+      <DrawerItem
+        label={t('app.notes.title')}
+        labelStyle={Styled.TextButtonLabel}
+        onPress={onClickFeatureNotImplemented}
+        inactiveTintColor={Colors.lightGray400}
+        inactiveBackgroundColor={Colors.lightGray100}
+        icon={() => (
+          <>
+            <Styled.BetaTag>DEV</Styled.BetaTag>
+            <Styled.DrawerIcon name="notes" size={24} color="#1C1B1F" />
+          </>
+        )}
+      />
+    </>
+  );
+
   return (
     <Styled.ViewContainer>
       <DrawerContentScrollView
@@ -70,30 +101,12 @@ const CustomDrawer = (props) => {
         </Styled.CustomDrawerContainer>
         <Styled.ContainerDrawerItemList>
           <DrawerItemList {...props} />
+          {renderNotImplementedItem()}
         </Styled.ContainerDrawerItemList>
       </DrawerContentScrollView>
       <Styled.ContainerCustomBottomButtons>
 
-        {/* NOT_IMPLEMENTED YET */}
-        <DrawerItem
-          label={t('mobileSdk.whiteboard.label')}
-          labelStyle={Styled.TextButtonLabel}
-          onPress={onClickFeatureNotImplemented}
-          inactiveTintColor={Colors.lightGray400}
-          inactiveBackgroundColor={Colors.lightGray100}
-          icon={() => <Styled.DrawerIcon name="brush" size={24} color="#1C1B1F" />}
-        />
-
-        <DrawerItem
-          label={t('app.notes.title')}
-          labelStyle={Styled.TextButtonLabel}
-          onPress={onClickFeatureNotImplemented}
-          inactiveTintColor={Colors.lightGray400}
-          inactiveBackgroundColor={Colors.lightGray100}
-          icon={() => <Styled.DrawerIcon name="notes" size={24} color="#1C1B1F" />}
-        />
-
-        {/* FIXED ITEMS */}
+        {/* DEFAULT ITEMS */}
         {!isBreakout && (
         <DrawerItem
           label={t('mobileSdk.drawer.shareButtonLabel')}

@@ -1,6 +1,7 @@
 import styled from 'styled-components/native';
 import { css } from 'styled-components';
 import Icon from '@expo/vector-icons/MaterialIcons';
+import Tag from '../tag';
 import userAvatar from '../user-avatar';
 import Colors from '../../constants/colors';
 import Pressable from '../pressable';
@@ -88,6 +89,11 @@ const DrawerIcon = styled(Icon)`
   margin: 12px;
 `;
 
+const BetaTag = styled(Tag)`
+  position: absolute;
+  right: 12px;
+`;
+
 export default {
   ViewContainer,
   CustomDrawerContainer,
@@ -101,5 +107,6 @@ export default {
   TextButtonLabel,
   TextButtonActive,
   ViewShareContainer,
+  BetaTag,
   DrawerIcon,
 };
