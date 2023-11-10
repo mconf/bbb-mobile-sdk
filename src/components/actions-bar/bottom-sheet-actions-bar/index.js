@@ -9,6 +9,7 @@ import { useOrientation } from '../../../hooks/use-orientation';
 import ActionsBar from '../index';
 import { setDetailedInfo } from '../../../store/redux/slices/wide-app/layout';
 import DebugControl from '../debug-control';
+import Screenshare from '../screenshare-button';
 import DeviceSelectorControl from '../audio-device-selector-control';
 import Styled from './styles';
 
@@ -22,13 +23,15 @@ const BottomSheetActionsBar = () => {
   const detailedInfo = useSelector((state) => state.layout.detailedInfo);
 
   const isFullscreen = route.name === 'FullscreenWrapperScreen';
+  const isAndroid = Platform.OS === 'android';
 
   // variables
   const snapPoints = useMemo(() => {
     if (orientation === 'PORTRAIT') {
-      if (Platform.OS === 'android') {
-        return [110, 270];
+      if (isAndroid) {
+        return [110, 350];
       }
+      return [110, 270];
     }
     return [110];
   }, [orientation]);
@@ -65,7 +68,8 @@ const BottomSheetActionsBar = () => {
         <ActionsBar />
         <BottomSheetScrollView>
           <Styled.ControlsContainer>
-            <DeviceSelectorControl />
+            {isAndroid && <DeviceSelectorControl />}
+            <Screenshare />
             <DebugControl />
           </Styled.ControlsContainer>
         </BottomSheetScrollView>
