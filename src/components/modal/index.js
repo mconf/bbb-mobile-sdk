@@ -7,6 +7,7 @@ import RecordStatusModal from '../record/modals/record-status-modal';
 import ReceivePollModal from '../../screens/poll-screen/modals/receive-poll';
 import PublishedPollModal from '../../screens/poll-screen/modals/published-poll';
 import AudioDeviceSelectorModal from '../actions-bar/audio-device-selector-control/audio-device-selector-modal';
+import NotImplementedModal from './not-implemented';
 import Settings from '../../../settings.json';
 
 const ModalControllerComponent = () => {
@@ -20,6 +21,11 @@ const ModalControllerComponent = () => {
   if (modalCollection.profile === 'audio_device_selector') {
     return (
       <AudioDeviceSelectorModal />
+    );
+  }
+  if (modalCollection.profile === 'not_implemented') {
+    return (
+      <NotImplementedModal />
     );
   }
   if (modalCollection.profile === 'create_poll_permission') {
