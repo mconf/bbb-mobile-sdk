@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
 });
 
 const ControlsContainer = styled.View`
-  padding: 32px 8px 0 8px;
+  padding: 22px 8px 0 8px;
   gap: 12px;
 `;
 
