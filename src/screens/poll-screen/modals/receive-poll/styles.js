@@ -4,14 +4,16 @@ import Colors from '../../../../constants/colors';
 import button from '../../../../components/button';
 import textInput from '../../../../components/text-input';
 
-const Container = styled.View`
+const Container = styled.Pressable`
   display: flex;
   flex-direction: column;
-  background-color: ${Colors.white}
-  margin: 24px;
-  padding: 24px;
-  gap: 24px;
+`;
+
+const InsideContainer = styled.Pressable`
+  transform: scale(0.8);
+  background-color: ${Colors.white};
   border-radius: 12px;
+  padding: 24px;
 `;
 
 const SecretLabel = styled.Text`
@@ -22,20 +24,21 @@ const SecretLabel = styled.Text`
 `;
 
 const Title = styled.Text`
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   text-align: center;
 `;
 
-const ButtonsContainer = styled.View``;
+const ButtonsContainer = styled.View`
+`;
 
 const OptionsButton = styled(button)`
   background-color: ${Colors.lightGray200}
   color: ${Colors.lightGray400};
   font-size: 16px;
   font-weight: 400;
-  padding: 12px;
   border-radius: 12px;
+  padding: 2px;
 
   ${({ selected }) => selected
     && `
@@ -47,7 +50,6 @@ const OptionsButton = styled(button)`
 const TextInput = styled(textInput)``;
 
 const ButtonCreate = styled(Button)`
-  margin-top: 48px;
 `;
 
 const PressableButton = ({
@@ -62,9 +64,10 @@ const PressableButton = ({
       textColor={Colors.white}
       style={{
         width: '100%',
+        height: 40
       }}
       labelStyle={{
-        fontSize: 18,
+        fontSize: 14,
         fontWeight: 500,
       }}
     >
@@ -75,6 +78,7 @@ const PressableButton = ({
 
 export default {
   Container,
+  InsideContainer,
   SecretLabel,
   TextInput,
   OptionsButton,

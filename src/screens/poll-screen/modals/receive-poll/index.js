@@ -109,8 +109,10 @@ const ReceivePollModal = () => {
       visible={isShow}
       onDismiss={() => dispatch(hide())}
     >
-      <Styled.Container>
-        {renderMethod()}
+      <Styled.Container onPress={() => dispatch(hide())}>
+        <Styled.InsideContainer>
+          {renderMethod()}
+        </Styled.InsideContainer>
       </Styled.Container>
     </Modal>
   );

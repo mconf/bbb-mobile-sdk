@@ -10,6 +10,11 @@ const Container = styled.View`
   padding: 24px;
   gap: 24px;
   border-radius: 12px;
+
+  ${({ orientation }) => orientation === 'LANDSCAPE'
+  && `
+    margin: 0 200px;
+  `}
 `;
 
 const TitleModal = styled.Text`

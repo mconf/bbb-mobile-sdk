@@ -15,8 +15,10 @@ const PublishedPollModal = () => {
       visible={isShow}
       onDismiss={() => dispatch(hide())}
     >
-      <Styled.Container>
-        <PreviousPollCard pollObj={extraInfo} />
+      <Styled.Container onPress={() => dispatch(hide())}>
+        <Styled.InsideContainer>
+          <PreviousPollCard pollObj={extraInfo} />
+        </Styled.InsideContainer>
       </Styled.Container>
     </Modal>
   );
