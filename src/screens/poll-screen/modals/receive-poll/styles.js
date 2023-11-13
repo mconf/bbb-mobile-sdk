@@ -4,15 +4,16 @@ import Colors from '../../../../constants/colors';
 import button from '../../../../components/button';
 import textInput from '../../../../components/text-input';
 
-const Container = styled.View`
+const Container = styled.Pressable`
   display: flex;
   flex-direction: column;
-  background-color: ${Colors.white}
-  margin: 24px;
-  padding: 8px;
-  gap: 12px;
+`;
+
+const InsideContainer = styled.Pressable`
+  transform: scale(0.8);
+  background-color: ${Colors.white};
   border-radius: 12px;
-  transform: scale(0.9);
+  padding: 24px;
 `;
 
 const SecretLabel = styled.Text`
@@ -77,6 +78,7 @@ const PressableButton = ({
 
 export default {
   Container,
+  InsideContainer,
   SecretLabel,
   TextInput,
   OptionsButton,

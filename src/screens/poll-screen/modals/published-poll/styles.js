@@ -1,15 +1,17 @@
 import styled from 'styled-components/native';
-import Colors from '../../../../constants/colors';
 
-const Container = styled.View`
+const Container = styled.Pressable`
   display: flex;
   flex-direction: column;
-  background-color: ${Colors.white}
   border-radius: 12px;
   gap: 12px;
+`;
+
+const InsideContainer = styled.View`
   transform: scale(0.65);
 `;
 
 export default {
   Container,
+  InsideContainer
 };

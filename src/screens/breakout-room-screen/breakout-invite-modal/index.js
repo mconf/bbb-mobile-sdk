@@ -21,7 +21,6 @@ const BreakoutInviteModal = () => {
   const orientation = useOrientation();
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  console.log(orientation);
 
   const joinSession = (breakoutRoomJoinUrl) => {
     AudioManager.exitAudio();
