@@ -69,8 +69,8 @@ const BottomSheetActionsBar = () => {
         <BottomSheetScrollView>
           <Styled.ControlsContainer>
             {isAndroid && <DeviceSelectorControl />}
-            <Screenshare />
             <DebugControl />
+            <Screenshare />
           </Styled.ControlsContainer>
         </BottomSheetScrollView>
 

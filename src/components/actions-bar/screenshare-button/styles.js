@@ -14,6 +14,7 @@ const ContainerPressable = styled(TouchableRipple)`
   padding: 12px;
   width: 100%;
   gap: 12px;
+  opacity: 0.3;
 `;
 
 const ScreenshareIcon = styled(MaterialIcons)`
