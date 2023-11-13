@@ -17,8 +17,8 @@ const Item = styled.View`
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 10%;
-  ${({ height, dimensionHeight }) => height
+  height: 100%;
+  ${({ dimensionHeight }) => dimensionHeight
   && `
     height: ${parseInt(dimensionHeight / 2.3, 10)}px;
   `}
