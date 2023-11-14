@@ -18,7 +18,7 @@ export class CurrentPollModule extends Module {
   // TODO FIX THIS
   onConnected() {
     this.topics.forEach((topic) => {
-      this.subscribeToCollection(topic, false, true);
+      this.subscribeToCollection(topic, store.getState().currentPollCollection.secretPoll, true);
     });
   }
 

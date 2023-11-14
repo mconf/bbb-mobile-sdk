@@ -13,6 +13,7 @@ const PublishedPollModal = () => {
   const amIPresenter = useSelector(isPresenter);
 
   if (amIPresenter) {
+    dispatch(hide());
     return null;
   }
 
