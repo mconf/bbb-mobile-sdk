@@ -120,9 +120,9 @@ const CreatePoll = () => {
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <Styled.ContainerView orientation={orientation}>
+        <Styled.ContainerView>
           <Styled.ContainerPollCard>
-            <Styled.ContainerViewPadding>
+            <Styled.ContainerViewPadding onPress={() => dispatch(trigDetailedInfo())}>
               {renderMethod()}
             </Styled.ContainerViewPadding>
           </Styled.ContainerPollCard>

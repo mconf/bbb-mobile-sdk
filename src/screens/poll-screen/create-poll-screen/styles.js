@@ -1,5 +1,4 @@
 import styled from 'styled-components/native';
-import { View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Switch, Button } from 'react-native-paper';
 import button from '../../../components/button';
@@ -70,19 +69,13 @@ const PreviousPollsButton = styled(button)`
   border-radius: 12px;
 `;
 
-const ContainerView = styled.View`
+const ContainerView = styled.Pressable`
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: space-around;
   padding: 10px;
-
-  ${({ orientation }) => orientation === 'LANDSCAPE'
-  && `
-    flex-direction: row;
-    justify-content: center;
-  `}
 `;
 
 const ContainerPollCard = styled.ScrollView`
@@ -157,29 +150,6 @@ const ToggleOptionsLabel = ({
 const ButtonCreate = styled(Button)`
   margin-top: 48px;
 `;
-
-const PressableButton = ({
-  onPress, children, disabled, onPressDisabled
-}) => {
-  return (
-    <ButtonCreate
-      mode="contained"
-      icon="plus"
-      onPress={disabled ? onPressDisabled : onPress}
-      buttonColor={disabled ? Colors.lightGray300 : Colors.orange}
-      textColor={Colors.white}
-      style={{
-        width: '75%',
-      }}
-      labelStyle={{
-        fontSize: 18,
-        fontWeight: 500,
-      }}
-    >
-      {children}
-    </ButtonCreate>
-  );
-};
 
 export default {
   Title,
