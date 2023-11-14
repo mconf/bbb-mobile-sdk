@@ -8,7 +8,7 @@ const Container = styled.View`
   background-color: ${Colors.white}
   margin: 24px;
   padding: 24px;
-  gap: 24px;
+  gap: 12px;
   border-radius: 12px;
 `;
 
@@ -16,12 +16,14 @@ const TitleModal = styled.Text`
   font-size: 18px;
   font-weight: 500;
   color: ${Colors.lightGray400}
+  text-align: center;
 `;
 
 const TitleDesc = styled.Text`
   font-size: 16px;
   font-weight: 400;
   color: ${Colors.lightGray300}
+  text-align: center;
 `;
 
 const RoomName = styled.Text`
@@ -40,10 +42,19 @@ const Button = styled(button)`
   width: 100%;
 `;
 
+const AnimationContainer = styled.View`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  transform: scale(1.5);
+`;
+
 export default {
   Container,
   TitleModal,
   TitleDesc,
   Button,
-  RoomName
+  RoomName,
+  AnimationContainer
 };
