@@ -61,6 +61,7 @@ const RecordStatusModal = () => {
           </Styled.TimeText>
           <Styled.Divider />
           <Styled.Description>{description}</Styled.Description>
+          <Styled.NoRecordPermission>{t('mobileSdk.record.noPermission.label')}</Styled.NoRecordPermission>
         </Styled.ModalContent>
       </Styled.ModalContainer>
     </Modal>

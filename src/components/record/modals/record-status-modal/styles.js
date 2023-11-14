@@ -38,6 +38,14 @@ const Description = styled(Text)`
   margin-top: 20px;
   margin-bottom: 20px;
   font-weight: 400;
+  text-align: center;
+  color: ${Colors.lightGray300};
+`;
+
+const NoRecordPermission = styled(Text)`
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
   color: ${Colors.lightGray300};
 `;
 
@@ -55,4 +63,5 @@ export default {
   Description,
   TimeText,
   Divider,
+  NoRecordPermission
 };
