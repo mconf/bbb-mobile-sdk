@@ -64,7 +64,8 @@ const PressableButton = ({
       textColor={Colors.white}
       style={{
         width: '100%',
-        height: 40
+        height: 40,
+        marginTop: 12
       }}
       labelStyle={{
         fontSize: 14,

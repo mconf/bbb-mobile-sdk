@@ -13,18 +13,16 @@ const PollNavigator = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    if (!activePollObject) {
-      navigation.reset({
-        index: 1,
-        routes: [{ name: 'PreviousPollsScreen' }]
-      });
-    }
-    else if (activePollObject) {
+    if (activePollObject) {
       navigation.reset({
         index: 1,
         routes: [{ name: 'AnswerPollScreen' }]
       });
     }
+    navigation.reset({
+      index: 1,
+      routes: [{ name: 'PreviousPollsScreen' }]
+    });
   }, [Boolean(activePollObject)]);
 
   return (

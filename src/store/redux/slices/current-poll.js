@@ -6,6 +6,7 @@ const currentPollSlice = createSlice({
   name: 'current-poll',
   initialState: {
     currentPollCollection: {},
+    secretPoll: false,
     ready: false,
   },
   reducers: {
@@ -23,6 +24,9 @@ const currentPollSlice = createSlice({
         ...state.currentPollCollection[currentPollObject.id],
         ...action.payload.currentPollObject.fields,
       };
+    },
+    editSecretPoll: (state, action) => {
+      state.secretPoll = action.payload;
     },
     readyStateChanged: (state, action) => {
       state.ready = action.payload;
@@ -59,6 +63,7 @@ export const {
   addCurrentPoll,
   removeCurrentPoll,
   editCurrentPoll,
+  editSecretPoll,
   readyStateChanged,
   cleanupStaleData,
 } = currentPollSlice.actions;

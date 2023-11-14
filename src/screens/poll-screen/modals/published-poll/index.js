@@ -3,12 +3,19 @@ import { Modal } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import PreviousPollCard from '../../previous-polls-screen/poll-card';
 import { hide } from '../../../../store/redux/slices/wide-app/modal';
+import { isPresenter } from '../../../../store/redux/slices/current-user';
 import Styled from './styles';
 
 const PublishedPollModal = () => {
   const dispatch = useDispatch();
   const isShow = useSelector((state) => state.modal.isShow);
   const extraInfo = useSelector((state) => state.modal.extraInfo);
+  const amIPresenter = useSelector(isPresenter);
+
+  if (amIPresenter) {
+    dispatch(hide());
+    return null;
+  }
 
   return (
     <Modal
