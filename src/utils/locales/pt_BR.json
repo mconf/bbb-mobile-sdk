@@ -184,5 +184,7 @@
   "mobileSdk.poll.createPoll.responseOptions": "Opções de Resposta",
   "mobileSdk.poll.createPoll.anonymousPoll": "Enquete anônima.",
   "mobileSdk.poll.createPoll.anonymousPollSubtitle": "Você não poderá visualizar respostas individuais dos usuários.",
-  "app.poll.userResponse.label" : "Resposta digitada"
+  "app.poll.userResponse.label" : "Resposta digitada",
+  "app.actionsBar.actionsDropdown.desktopShareLabel": "Compartilhar sua tela",
+  "app.actionsBar.actionsDropdown.streamOptions": "Transmitir sessão"
 }

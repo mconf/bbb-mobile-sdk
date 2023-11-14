@@ -130,7 +130,6 @@
   "mobileSdk.webcam.blockedLabel": "Webcam sharing blocked",
   "mobileSdk.webcam.permissionLabel": "We need your permission so the webcam can be shared.",
   "mobileSdk.whiteboard.label": "Whiteboard",
-  "app.actionsBar.actionsDropdown.desktopShareLabel": "Share your screen",
   "app.audioModal.settingsTitle": "Change your audio settings",
   "app.audio.leaveAudio": "Leave audio",
   "mobileSdk.drawer.shareButtonLabel": "Share meeting",
@@ -187,5 +186,7 @@
   "mobileSdk.poll.createPoll.responseOptions": "Response Options",
   "mobileSdk.poll.createPoll.anonymousPoll": "Anonymous Poll.",
   "mobileSdk.poll.createPoll.anonymousPollSubtitle": "You will not be able to view individual user responses.",
-  "app.poll.userResponse.label" : "Typed Response"
+  "app.poll.userResponse.label" : "Typed Response",
+  "app.actionsBar.actionsDropdown.desktopShareLabel": "Share your screen",
+  "app.actionsBar.actionsDropdown.streamOptions": "Broadcast session"
 }
