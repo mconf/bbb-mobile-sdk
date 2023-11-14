@@ -154,6 +154,7 @@
   "mobileSdk.upload.notification.header": "Um arquivo foi carregado:",
   "mobileSdk.upload.notification.disclaimer": "Caso você queira abrir este arquivo, tente usar a versão web.",
   "mobileSdk.notification.recordLabel": "Gravação",
+  "mobileSdk.record.noPermission.label": "Você não possui permissão para gravar reuniões.",
   "mobileSdk.breakout.durationLabel": "Duração da sala de apoio",
   "mobileSdk.breakout.noBreakoutsTitle": "Não há Salas de Apoio disponíveis no momento.",
   "mobileSdk.breakout.noBreakoutsSubtitle": "Quando você for adicionado à uma Sala de Apoio, ela estará disponível para acesso por aqui.",

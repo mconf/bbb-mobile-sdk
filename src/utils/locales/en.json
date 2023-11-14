@@ -155,6 +155,7 @@
   "mobileSdk.upload.notification.header": "A file was uploaded:",
   "mobileSdk.upload.notification.disclaimer": "In case you want to open this file, try using the web version.",
   "mobileSdk.notification.recordLabel": "Recording",
+  "mobileSdk.record.noPermission.label": "You do not have permission to record meetings",
   "mobileSdk.breakout.durationLabel": "Breakout rooms time remaining",
   "mobileSdk.breakout.noBreakoutsTitle": "There are no Breakout Rooms available at this time.",
   "mobileSdk.breakout.noBreakoutsSubtitle": "When you are added to a Breakout Room, it will be available to access here.",
