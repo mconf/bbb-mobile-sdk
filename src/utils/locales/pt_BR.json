@@ -187,5 +187,8 @@
   "mobileSdk.poll.createPoll.anonymousPollSubtitle": "Você não poderá visualizar respostas individuais dos usuários.",
   "app.poll.userResponse.label" : "Resposta digitada",
   "app.actionsBar.actionsDropdown.desktopShareLabel": "Compartilhar sua tela",
-  "app.actionsBar.actionsDropdown.streamOptions": "Transmitir sessão"
+  "app.actionsBar.actionsDropdown.streamOptions": "Transmitir sessão",
+  "mobileSdk.notImplemented.modal.title": "Funcionalidade não implementada",
+  "mobileSdk.notImplemented.modal.desc": "Funcionalidade ainda não disponível no aplicativo.",
+  "mobileSdk.notImplemented.modal.bottom": "Por favor utilize a versão web."
 }

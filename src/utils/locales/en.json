@@ -189,5 +189,8 @@
   "mobileSdk.poll.createPoll.anonymousPollSubtitle": "You will not be able to view individual user responses.",
   "app.poll.userResponse.label" : "Typed Response",
   "app.actionsBar.actionsDropdown.desktopShareLabel": "Share your screen",
-  "app.actionsBar.actionsDropdown.streamOptions": "Broadcast session"
+  "app.actionsBar.actionsDropdown.streamOptions": "Broadcast session",
+  "mobileSdk.notImplemented.modal.title": "Feature not implemented",
+  "mobileSdk.notImplemented.modal.desc": "Feature not yet available in the application.",
+  "mobileSdk.notImplemented.modal.bottom": "Please use the web version."
 }

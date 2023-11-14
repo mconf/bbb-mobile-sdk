@@ -2,6 +2,7 @@ import React from 'react';
 import { Modal } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import LottieView from 'lottie-react-native';
 import { hide } from '../../../store/redux/slices/wide-app/modal';
 import Styled from './styles';
 
@@ -17,11 +18,21 @@ const NotImplementedModal = () => {
     >
       <Styled.Container>
         <Styled.TitleModal>
-          Funcionalidade não implementada
+          {t('mobileSdk.notImplemented.modal.title')}
         </Styled.TitleModal>
+        <Styled.AnimationContainer>
+          <LottieView
+            source={require('../../../assets/application/lotties/working.json')}
+            autoPlay
+            loop
+            style={{ width: 200, height: 200, }}
+          />
+        </Styled.AnimationContainer>
         <Styled.TitleDesc>
-          Poxa, infelizmente ainda essa funcionalidade ainda não foi implementada no aplicativo,
-          mas não se preocupe, estamos planejando lançar essa funcionalidade até o final de 2024
+          {t('mobileSdk.notImplemented.modal.desc')}
+        </Styled.TitleDesc>
+        <Styled.TitleDesc>
+          {t('mobileSdk.notImplemented.modal.bottom')}
         </Styled.TitleDesc>
         <Styled.Button
           onPress={() => {
