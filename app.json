@@ -24,7 +24,10 @@
       "supportsTablet": true,
       "usesIcloudStorage": true,
       "bitcode": false,
-      "bundleIdentifier": "org.bbb.mobilesdk"
+      "bundleIdentifier": "org.bbb.mobilesdk",
+      "infoPlist": {
+        "UIBackgroundModes": ["audio", "fetch", "voip"]
+      }
     },
     "plugins": [
       "@config-plugins/react-native-webrtc",
