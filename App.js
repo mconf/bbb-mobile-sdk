@@ -1,6 +1,7 @@
 import {
   useEffect, useRef, useState
 } from 'react';
+import RNCallKeep from 'react-native-callkeep';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import notifee, { EventType } from '@notifee/react-native';
@@ -60,6 +61,14 @@ notifee.registerForegroundService((notification) => {
   });
 });
 
+const options = {
+  ios: {
+    appName: 'My app name',
+  },
+};
+
+RNCallKeep.setup(options).then(accepted => {});
+
 const AppContent = ({
   onLeaveSession: _onLeaveSession,
   jUrl,
@@ -101,6 +110,12 @@ const AppContent = ({
   useEffect(() => {
     leaveOnUnmountRef.current = leaveOnUnmount;
   }, [leaveOnUnmount]);
+
+  useEffect(() => {
+    RNCallKeep.startCall('6688a33e-e7c0-4a85-9687-8bdb2b4f532f', '123123', 'contactIdentifier', 'number', false);
+
+    return () => RNCallKeep.endCall('6688a33e-e7c0-4a85-9687-8bdb2b4f532f');
+  }, []);
 
   useEffect(() => {
     logger.info({
