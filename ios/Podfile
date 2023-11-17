@@ -37,6 +37,8 @@ elsif podfile_properties.key?('ios.flipper') then
   end
 end
 
+pod 'RNCallKeep', :path => '../node_modules/react-native-callkeep'
+
 target 'bbbmobile' do
   use_expo_modules!
   config = use_native_modules!
