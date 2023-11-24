@@ -1,6 +1,6 @@
 
 #  bbb-mobile-sdk
-The bbb-mobile-sdk is a software development kit (SDK) designed for mobile applications that integrate with BigBlueButton. This SDK provides developers with a set of tools and libraries to easily build mobile apps that can interact with the features and functionalities of BBB. 
+The bbb-mobile-sdk is a software development kit (SDK) designed for mobile applications that integrate with BigBlueButton. This SDK provides developers with a set of tools and libraries to easily build mobile apps that can interact with the features and functionalities of BBB.
 
 ## **Table of Contents**
 
@@ -17,18 +17,18 @@ The bbb-mobile-sdk is a software development kit (SDK) designed for mobile appli
 -   Breakout rooms
 -   Chat and messaging functionality
 
-Check the full list of features present in HTML5 and bbb-mobile-sdk here
+Check the full list of features present in HTML5 and bbb-mobile-sdk [here](https://github.com/mconf/bbb-mobile-sdk/wiki/Features-table)
 
 ## Code dependencies
-Android: here
+Android: [here](https://github.com/mconf/bbb-mobile-sdk/wiki/Android-installation)
 
-iOS: here
+iOS: [here](https://github.com/mconf/bbb-mobile-sdk/wiki/iOS-installation)
 
 
 ## How to integrate with my own BBB server
 Currently, the bbb-mobile-sdk can only integrate if the server is version 2.5 / 2.6 and 2.7 (experimental). We are very excited about version 3.0, and we believe that things will get easier, but for now, we don't support this version yet.
 
-`bbb-mobile-sdk` does not yet have all the features that BBB's HTML5 client provides, so see the equivalence table to check if it makes sense for you to integrate this project.
+`bbb-mobile-sdk` does not yet have all the features that BBB's HTML5 client provides, so see the [equivalence table](https://github.com/mconf/bbb-mobile-sdk/wiki/Features-table) to check if it makes sense for you to integrate this project.
 
 If you are not a mobile developer, it may take a little time to install simulators and Android SDKs, however, after the initial installation the **ONLY** thing you need to join a session is the Join link.
 
