@@ -190,5 +190,6 @@
   "app.actionsBar.actionsDropdown.streamOptions": "Transmitir sessão",
   "mobileSdk.notImplemented.modal.title": "Funcionalidade não implementada",
   "mobileSdk.notImplemented.modal.desc": "Funcionalidade ainda não disponível no aplicativo.",
-  "mobileSdk.notImplemented.modal.bottom": "Por favor utilize a versão web."
+  "mobileSdk.notImplemented.modal.bottom": "Por favor utilize a versão web.",
+  "app.userList.menu.makePresenter.label": "Tornar apresentador"
 }

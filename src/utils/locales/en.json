@@ -192,5 +192,6 @@
   "app.actionsBar.actionsDropdown.streamOptions": "Broadcast session",
   "mobileSdk.notImplemented.modal.title": "Feature not implemented",
   "mobileSdk.notImplemented.modal.desc": "Feature not yet available in the application.",
-  "mobileSdk.notImplemented.modal.bottom": "Please use the web version."
+  "mobileSdk.notImplemented.modal.bottom": "Please use the web version.",
+  "app.userList.menu.makePresenter.label": "Make presenter"
 }
