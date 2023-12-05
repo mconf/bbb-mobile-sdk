@@ -3,6 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { selectActivePoll } from '../../store/redux/slices/polls';
+import { isPresenter } from '../../store/redux/slices/current-user';
 import CreatePollScreen from './create-poll-screen';
 import PreviousPollsScreen from './previous-polls-screen';
 import AnswerPollScreen from './answer-poll-screen';
@@ -10,6 +11,7 @@ import AnswerPollScreen from './answer-poll-screen';
 const PollNavigator = () => {
   const Stack = createStackNavigator();
   const activePollObject = useSelector(selectActivePoll);
+  const amIPresenter = useSelector(isPresenter);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -23,7 +25,7 @@ const PollNavigator = () => {
       index: 1,
       routes: [{ name: 'PreviousPollsScreen' }]
     });
-  }, [Boolean(activePollObject)]);
+  }, [Boolean(activePollObject), amIPresenter]);
 
   return (
     <Stack.Navigator
