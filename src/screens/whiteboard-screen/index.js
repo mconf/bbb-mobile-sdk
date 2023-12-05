@@ -39,6 +39,7 @@ const WhiteboardScreen = () => {
   useEffect(() => {
     webViewRef.current.reload();
   }, [presentationOnlyJoinUrl]);
+
   return (
     <View style={{ flex: 1 }}>
       <WebView
