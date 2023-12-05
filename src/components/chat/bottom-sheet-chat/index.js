@@ -1,10 +1,13 @@
 import {
   useCallback, useRef, useMemo, useState
 } from 'react';
+import {
+  Pressable, KeyboardAvoidingView, Platform, Text
+} from 'react-native';
+import HTMLView from 'react-native-htmlview';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useTranslation } from 'react-i18next';
-import { Pressable, KeyboardAvoidingView, Platform } from 'react-native';
 import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import { useBottomSheetBackHandler } from '../../../hooks/useBottomSheetBackHandler';
 import { setHasUnreadMessages, setBottomChatOpen } from '../../../store/redux/slices/wide-app/chat';
@@ -38,17 +41,16 @@ const BottomSheetChat = () => {
   useBottomSheetBackHandler(chatStore.isBottomChatOpen, sheetRef, () => {});
 
   const handleMessage = (message) => {
-    if ((/^https?:/.test(message))) {
+    if ((/<a\b[^>]*>/.test(message))) {
       return (
-        <Styled.LinkPreviewCustom
-          text={message}
-          containerStyle={Styled.linkPreviewContainerStyle}
-          metadataContainerStyle={Styled.metadataContainerStyle}
-          enableAnimation
-        />
+        <HTMLView value={message} />
       );
     }
-    return <Styled.MessageContent>{message}</Styled.MessageContent>;
+    return (
+      <Text selectable>
+        {message}
+      </Text>
+    );
   };
 
   const renderItem = ({ item }) => {
@@ -63,7 +65,7 @@ const BottomSheetChat = () => {
           />
           <Styled.Card>
             <Styled.MessageTopContainer>
-              <Styled.MessageAuthor>{item.author}</Styled.MessageAuthor>
+              <Styled.MessageAuthor selectable>{item.author}</Styled.MessageAuthor>
               <Styled.MessageTimestamp>
                 {`${String(timestamp.getHours()).padStart(2, '0')}:${String(
                   timestamp.getMinutes()
@@ -99,6 +101,7 @@ const BottomSheetChat = () => {
         {renderEmptyChatHandler()}
         <BottomSheetFlatList
           ref={flatListRef}
+          removeClippedSubviews={false}
           data={messages}
           renderItem={renderItem}
           onContentSizeChange={() => {

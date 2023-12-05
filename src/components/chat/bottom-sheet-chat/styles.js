@@ -1,5 +1,4 @@
 import styled from 'styled-components/native';
-import { LinkPreview } from '@flyerhq/react-native-link-preview';
 import { StyleSheet } from 'react-native';
 import userAvatar from '../../user-avatar';
 import textInput from '../../text-input';
@@ -70,23 +69,6 @@ const TextInput = styled(textInput)`
   width: 85%;
 `;
 
-const LinkPreviewCustom = styled(LinkPreview)``;
-
-const StyleSheetStyles = StyleSheet.create({
-  linkPreviewContainerStyle: {
-    backgroundColor: '#f7f7f8',
-    borderRadius: 12,
-    marginTop: 16,
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
-    overflow: 'hidden',
-  },
-
-  metadataContainerStyle: {
-    display: 'none'
-  },
-});
-
 export default {
   Card,
   FlatList,
@@ -100,7 +82,4 @@ export default {
   MessageTimestamp,
   MessageTopContainer,
   NoMessageText,
-  LinkPreviewCustom,
-  linkPreviewContainerStyle: StyleSheetStyles.linkPreviewContainerStyle,
-  metadataContainerStyle: StyleSheetStyles.metadataContainerStyle
 };

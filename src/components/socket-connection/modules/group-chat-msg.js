@@ -58,17 +58,6 @@ export class GroupChatMsgModule extends Module {
               })
             );
           }
-          // hyperlink
-          if (msgObj.message.toString().includes('href=')) {
-            const path = msgObj.message.toString();
-            const regex = /<a[^>]+href=['"](https?:\/\/[^'"]+)['"][^>]*>(<u>)?[^<]+(<\/u>)?<\/a>/gi;
-            const linkMessage = path.replace(regex, '$1');
-            return store.dispatch(
-              addGroupChatMsgBeforeJoin({
-                groupChatMsgObject: { ...msgObj, message: linkMessage },
-              })
-            );
-          }
           return store.dispatch(
             addGroupChatMsgBeforeJoin({
               groupChatMsgObject: msgObj,
@@ -119,20 +108,6 @@ export class GroupChatMsgModule extends Module {
       store.dispatch(
         addGroupChatMsg({
           groupChatMsgObject: msgObj,
-        })
-      );
-    }
-    // hyperlink
-    if (msgObj.fields.message.toString().includes('href=')) {
-      const path = msgObj.fields.message.toString();
-      const regex = /<a[^>]+href=['"](https?:\/\/[^'"]+)['"][^>]*>(<u>)?[^<]+(<\/u>)?<\/a>/gi;
-      const linkMessage = path.replace(regex, '$1');
-      return store.dispatch(
-        addGroupChatMsg({
-          groupChatMsgObject: {
-            ...msgObj,
-            fields: { ...msgObj.fields, message: linkMessage },
-          },
         })
       );
     }
