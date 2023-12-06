@@ -22,6 +22,7 @@ import { ScreenshareModule } from './modules/screenshare';
 import { GuestUsersModule } from './modules/guest-users';
 import { RecordMeetingsModule } from './modules/record-meetings';
 import { UsersSettingsModule } from './modules/users-settings';
+import { UploadedFileModule } from './modules/uploaded-file';
 import {
   getRandomDigits,
   getRandomAlphanumericWithCaps,
@@ -220,6 +221,7 @@ const setupModules = (ws) => {
     breakouts: new BreakoutsModule(messageSender),
     'record-meetings': new RecordMeetingsModule(messageSender),
     'users-settings': new UsersSettingsModule(messageSender),
+    'uploaded-file': new UploadedFileModule(messageSender),
   };
 
   /*
