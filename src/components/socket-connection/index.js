@@ -222,6 +222,7 @@ const setupModules = (ws) => {
     'record-meetings': new RecordMeetingsModule(messageSender),
     'users-settings': new UsersSettingsModule(messageSender),
     'uploaded-file': new UploadedFileModule(messageSender),
+    'external-video-meetings': new ExternalVideoMeetingsModule(messageSender),
   };
 
   /*
