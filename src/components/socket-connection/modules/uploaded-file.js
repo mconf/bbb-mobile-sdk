@@ -17,7 +17,6 @@ export class UploadedFileModule extends Module {
 
   // eslint-disable-next-line class-methods-use-this
   _add(msgObj) {
-    console.log(msgObj);
     store.dispatch(
       addUploadedFile({
         uploadedFileObj: msgObj,
@@ -26,7 +25,7 @@ export class UploadedFileModule extends Module {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  _remove() {
+  _remove(msgObj) {
     if (!this._ignoreDeletions) {
       return store.dispatch(
         removeUploadedFile({

@@ -57,8 +57,6 @@ const AudioPlayer = (props) => {
     initializeAudio();
   }, []);
 
-  console.log(position / duration);
-
   return (
     <View>
       <Text>{`Position: ${Math.floor(position / 1000)}s / ${Math.floor(duration / 1000)}s`}</Text>
