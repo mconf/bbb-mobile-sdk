@@ -15,33 +15,6 @@ const AudioPlayerScreen = () => {
   const host = useSelector((state) => state.client.meetingData.host);
   const sessionToken = useSelector((state) => state.client.meetingData.sessionToken);
 
-  const [sound, setSound] = useState(null);
-
-  console.log(sound);
-
-  const playSound = async (uploadId, filename) => {
-    const soundUri = {
-      uri: `https://${host}/bigbluebutton/download/media/${uploadId}?filename=${filename}&sessionToken=${sessionToken}`
-    };
-    console.log('Loading Sound');
-    const { sound } = await Audio.Sound.createAsync(soundUri);
-    setSound(sound);
-
-    console.log('Playing Sound');
-    await sound.playAsync();
-  };
-
-  const stopSound = () => {
-    console.log('stopping');
-    console.log(sound);
-    return sound?._loaded
-      ? () => {
-        console.log('Stopping Sound');
-        sound.unloadAsync();
-      }
-      : undefined;
-  };
-
   if (uploadedFilesList.length === 0) {
     return (
       <ScreenWrapper>
@@ -78,7 +51,7 @@ const AudioPlayerScreen = () => {
             </Text>
             <View>
 
-            <AudioSlider audio={soundUri} />
+              <AudioSlider audioSource={soundUri} />
             </View>
           </Styled.Card>
         );
