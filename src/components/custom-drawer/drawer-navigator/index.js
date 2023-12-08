@@ -236,7 +236,7 @@ const DrawerNavigator = ({
           unmountOnBlur: true,
           drawerIcon: (config) => (
             <Styled.DrawerIcon
-              icon="web"
+              icon="music"
               size={24}
               iconColor={config.color}
             />
