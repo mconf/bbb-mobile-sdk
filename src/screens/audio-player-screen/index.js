@@ -1,10 +1,9 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { useTranslation } from 'react-i18next';
-import { Audio } from 'expo-av';
-import { useState } from 'react';
-import { View, Text, Button } from 'react-native';
+import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { View, Text } from 'react-native';
 import ScreenWrapper from '../../components/screen-wrapper';
 import AudioSlider from '../../components/audio-player/AudioSlider';
+import AudioPlayerService from './service';
 import Styled from './styles';
 
 const AudioPlayerScreen = () => {
@@ -13,7 +12,14 @@ const AudioPlayerScreen = () => {
   );
   const uploadedFilesList = Object.values(uploadedFileCollection);
   const host = useSelector((state) => state.client.meetingData.host);
+  const externalVideoStream = useSelector(
+    (state) => state.externalVideoMeetingsCollection.streamExternalVideoMeeting
+  );
   const sessionToken = useSelector((state) => state.client.meetingData.sessionToken);
+
+  useEffect(() => {
+    AudioPlayerService.handleStreamExternalVideosSubscription();
+  }, [uploadedFileCollection]);
 
   if (uploadedFilesList.length === 0) {
     return (
@@ -47,17 +53,14 @@ const AudioPlayerScreen = () => {
           <Styled.Card key={fileObj.uploadId}>
             <Text>
               {fileObj.filename}
-
             </Text>
             <View>
-
               <AudioSlider audioSource={soundUri} />
             </View>
           </Styled.Card>
         );
       })}
     </Styled.ContainerCentralizedView>
-
   );
 };
 

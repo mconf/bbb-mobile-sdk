@@ -1,6 +1,7 @@
 import { getRandomAlphanumericWithCaps } from "../utils";
 import Module from '../modules/module';
 import { store } from '../../../store/redux/store';
+import { editStreamExternalVideoMeeting } from "../../../store/redux/slices/external-video-meetings";
 
 export class StreamExternalVideoModule extends Module {
   constructor(messageSender) {
@@ -9,7 +10,7 @@ export class StreamExternalVideoModule extends Module {
 
   subscribeToCollection() {
     const meetingId = (store.getState().client.meetingData.meetingID);
-    this.messageSender.sendMessage({
+    this.messageSender?.sendMessage({
       msg: 'sub',
       id: getRandomAlphanumericWithCaps(17),
       name: `stream-external-videos-${meetingId}`,
@@ -20,7 +21,7 @@ export class StreamExternalVideoModule extends Module {
         }
       ],
     });
-    this.messageSender.sendMessage({
+    this.messageSender?.sendMessage({
       msg: 'sub',
       id: getRandomAlphanumericWithCaps(17),
       name: `stream-external-videos-${meetingId}`,
@@ -31,7 +32,7 @@ export class StreamExternalVideoModule extends Module {
         }
       ],
     });
-    this.messageSender.sendMessage({
+    this.messageSender?.sendMessage({
       msg: 'sub',
       id: getRandomAlphanumericWithCaps(17),
       name: `stream-external-videos-${meetingId}`,
@@ -42,7 +43,7 @@ export class StreamExternalVideoModule extends Module {
         }
       ],
     });
-    this.messageSender.sendMessage({
+    this.messageSender?.sendMessage({
       msg: 'sub',
       id: getRandomAlphanumericWithCaps(17),
       name: `stream-external-videos-${meetingId}`,
@@ -55,24 +56,17 @@ export class StreamExternalVideoModule extends Module {
     });
   }
 
-  // TODO FIX THIS
   onConnected() {
     this.subscribeToCollection();
   }
 
   // eslint-disable-next-line class-methods-use-this
-  _add(msgObj) {
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  _remove(msgObj) {
-    if (!this._ignoreDeletions) {
-    }
-    return false;
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  _update(msgObj) {
+  update(msgObj) {
+    return store.dispatch(
+      editStreamExternalVideoMeeting({
+        streamExternalVideoMeetingObject: msgObj,
+      })
+    );
   }
 
   // eslint-disable-next-line class-methods-use-this
