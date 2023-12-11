@@ -4,7 +4,7 @@ import Slider from '@react-native-community/slider';
 import { Audio } from 'expo-av';
 
 const AudioPlayer = (props) => {
-  const { audioSource } = props;
+  const { audioSource, positionFromServer, isPlayingFromServer } = props;
   const [sound, setSound] = useState();
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
@@ -18,27 +18,29 @@ const AudioPlayer = (props) => {
     };
   }, [sound]);
 
-  const handlePlayPause = async () => {
+  useEffect(() => {
+    setIsPlaying(isPlayingFromServer);
+  }, [isPlayingFromServer]);
+
+  useEffect(() => {
     if (sound) {
-      if (isPlaying) {
-        await sound.pauseAsync();
-      } else {
-        await sound.playAsync();
+      setPosition(positionFromServer * 1000);
+    }
+  }, [positionFromServer]);
+
+  useEffect(() => {
+    const handlePlayPause = async () => {
+      if (sound) {
+        if (!isPlaying) {
+          await sound.pauseAsync();
+        } else {
+          await sound.playAsync();
+        }
       }
-      setIsPlaying(!isPlaying);
-    }
-  };
+    };
 
-  const handleSliderChange = (value) => {
-    if (sound) {
-      sound.setPositionAsync(value * duration);
-      setPosition(value * duration);
-    }
-  };
-
-  const updatePosition = (status) => {
-    setPosition(status.positionMillis);
-  };
+    handlePlayPause();
+  }, [isPlaying, sound]);
 
   const initializeAudio = async () => {
     const { sound, status } = await Audio.Sound.createAsync(audioSource);
@@ -48,9 +50,6 @@ const AudioPlayer = (props) => {
     // Get the duration of the audio
     const { durationMillis } = status;
     setDuration(durationMillis);
-
-    // Set up position updates
-    sound.setOnPlaybackStatusUpdate(updatePosition);
   };
 
   useEffect(() => {
@@ -63,14 +62,14 @@ const AudioPlayer = (props) => {
       <Slider
         style={{ width: 200, height: 40 }}
         minimumValue={0}
+        disabled
         maximumValue={1}
         value={(position / duration) || 0}
-        onValueChange={handleSliderChange}
         thumbTintColor="#000"
         minimumTrackTintColor="#000"
         maximumTrackTintColor="#888"
       />
-      <Button title={isPlaying ? 'Pause' : 'Play'} onPress={handlePlayPause} />
+      <Button title={isPlaying ? 'Playing' : 'Paused'} />
     </View>
   );
 };

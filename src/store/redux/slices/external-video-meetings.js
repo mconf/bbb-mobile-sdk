@@ -4,6 +4,7 @@ const externalVideoMeetingsSlice = createSlice({
   name: 'external-video-meetings',
   initialState: {
     externalVideoMeetingsCollection: {},
+    eventName: '',
     streamExternalVideoMeeting: {
       meetingId: '',
       userId: '',
@@ -36,8 +37,9 @@ const externalVideoMeetingsSlice = createSlice({
       const { streamExternalVideoMeetingObject } = action.payload;
       state.streamExternalVideoMeeting[streamExternalVideoMeetingObject.id] = {
         ...state.streamExternalVideoMeeting[streamExternalVideoMeetingObject.id],
-        ...action.payload.streamExternalVideoMeetingObject.fields,
+        ...action.payload.streamExternalVideoMeetingObject.fields.args[0],
       };
+      state.eventName = streamExternalVideoMeetingObject.fields.eventName;
     },
 
     readyStateChanged: (state, action) => {

@@ -15,10 +15,17 @@ const AudioPlayerScreen = () => {
   const externalVideoStream = useSelector(
     (state) => state.externalVideoMeetingsCollection.streamExternalVideoMeeting
   );
+  const currTime = useSelector(
+    (state) => state.externalVideoMeetingsCollection.streamExternalVideoMeeting?.id?.time
+  );
+  const currEvent = useSelector((state) => state.externalVideoMeetingsCollection.eventName);
   const sessionToken = useSelector((state) => state.client.meetingData.sessionToken);
 
   useEffect(() => {
     AudioPlayerService.handleStreamExternalVideosSubscription();
+  }, [uploadedFileCollection]);
+
+  useEffect(() => {
   }, [uploadedFileCollection]);
 
   if (uploadedFilesList.length === 0) {
@@ -55,7 +62,11 @@ const AudioPlayerScreen = () => {
               {fileObj.filename}
             </Text>
             <View>
-              <AudioSlider audioSource={soundUri} />
+              <AudioSlider
+                audioSource={soundUri}
+                positionFromServer={currTime}
+                isPlayingFromServer={currEvent === 'play' || externalVideoStream?.id?.state === 1}
+              />
             </View>
           </Styled.Card>
         );
