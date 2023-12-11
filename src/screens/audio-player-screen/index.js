@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { View, Text } from 'react-native';
 import ScreenWrapper from '../../components/screen-wrapper';
-import AudioSlider from '../../components/audio-player/AudioSlider';
+import AudioSlider from '../../components/audio-player/audio-slider/AudioSlider';
 import AudioPlayerService from './service';
 import Styled from './styles';
 

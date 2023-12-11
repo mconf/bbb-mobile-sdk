@@ -3,7 +3,7 @@ import { View, Text, Button } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { Audio } from 'expo-av';
 
-const AudioPlayer = (props) => {
+const AudioSlider = (props) => {
   const { audioSource, positionFromServer, isPlayingFromServer } = props;
   const [sound, setSound] = useState();
   const [isPlaying, setIsPlaying] = useState(false);
@@ -74,4 +74,4 @@ const AudioPlayer = (props) => {
   );
 };
 
-export default AudioPlayer;
+export default AudioSlider;
