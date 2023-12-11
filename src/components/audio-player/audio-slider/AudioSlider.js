@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button } from 'react-native';
-import Slider from '@react-native-community/slider';
 import { Audio } from 'expo-av';
+import ActivityBar from '../../activity-bar';
+import Styled from './styles';
 
 const AudioSlider = (props) => {
-  const { audioSource, positionFromServer, isPlayingFromServer } = props;
+  const {
+    audioSource, positionFromServer, isPlayingFromServer, filename
+  } = props;
   const [sound, setSound] = useState();
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
@@ -57,20 +59,17 @@ const AudioSlider = (props) => {
   }, []);
 
   return (
-    <View>
-      <Text>{`Position: ${Math.floor(position / 1000)}s / ${Math.floor(duration / 1000)}s`}</Text>
-      <Slider
-        style={{ width: 200, height: 40 }}
-        minimumValue={0}
-        disabled
-        maximumValue={1}
-        value={(position / duration) || 0}
-        thumbTintColor="#000"
-        minimumTrackTintColor="#000"
-        maximumTrackTintColor="#888"
-      />
-      <Button title={isPlaying ? 'Playing' : 'Paused'} />
-    </View>
+    <Styled.Container>
+      <Styled.FileNameText>{filename}</Styled.FileNameText>
+      <Styled.SliderContainer>
+        <Styled.DurationText>{`${Math.floor(position / 1000)}`}</Styled.DurationText>
+        <ActivityBar
+          width={`${Math.floor((Math.floor(position / 1000) / Math.floor(duration / 1000)) * 100)}%`}
+          style={{ width: '80%' }}
+        />
+        <Styled.DurationText>{`${Math.floor(duration / 1000)}`}</Styled.DurationText>
+      </Styled.SliderContainer>
+    </Styled.Container>
   );
 };
 

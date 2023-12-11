@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import ScreenWrapper from '../../components/screen-wrapper';
 import VideoGrid from '../../components/video/video-grid';
 import Styled from './styles';
+import MiniAudioPlayerIcon from '../../components/audio-player/mini-audio-player-icon';
 
 const MainConferenceScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -24,6 +25,7 @@ const MainConferenceScreen = () => {
       <ScreenWrapper>
         <Styled.ContainerView>
           <VideoGrid />
+          <MiniAudioPlayerIcon />
         </Styled.ContainerView>
       </ScreenWrapper>
     );
