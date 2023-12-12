@@ -49,7 +49,7 @@ const MiniAudioPlayer = () => {
           profile: 'audio_player',
         }))}
       />
-      <View>
+      <View style={{ display: 'none', position: 'absolute' }}>
         <AudioSlider
           filename={filename}
           audioSource={soundUri}
