@@ -1,7 +1,8 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import { Modal } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { selectCurrentExternalVideo } from '../../../store/redux/slices/external-video-meetings';
 import { hide } from '../../../store/redux/slices/wide-app/modal';
 import Styled from './styles';
 import AudioSlider from '../audio-slider/AudioSlider';
@@ -9,13 +10,11 @@ import AudioPlayerService from '../service';
 
 const AudioPlayerModal = () => {
   const modalCollection = useSelector((state) => state.modal);
-  const dispatch = useDispatch();
-  const { t } = useTranslation();
+  const host = useSelector((state) => state.client.meetingData.host);
+  const { externalVideoUrl } = useSelector(selectCurrentExternalVideo);
   const uploadedFileCollection = useSelector(
     (state) => state.uploadedFileCollection.uploadedFileCollection
   );
-  const uploadedFilesList = Object.values(uploadedFileCollection);
-  const host = useSelector((state) => state.client.meetingData.host);
   const externalVideoStream = useSelector(
     (state) => state.externalVideoMeetingsCollection.streamExternalVideoMeeting
   );
@@ -25,8 +24,15 @@ const AudioPlayerModal = () => {
   const currEvent = useSelector((state) => state.externalVideoMeetingsCollection.eventName);
   const sessionToken = useSelector((state) => state.client.meetingData.sessionToken);
   const soundUri = {
-    uri: `https://${host}/bigbluebutton/download/media/${uploadedFilesList[0].uploadId}?filename=${uploadedFilesList[0].filename}&sessionToken=${sessionToken}`
+    uri: `https://${host}${externalVideoUrl}&sessionToken=${sessionToken}`
   };
+
+  // get the filename
+  const url = new URL(`https://${host}${externalVideoUrl}&sessionToken=${sessionToken}`);
+  const params = new URLSearchParams(url.search);
+  const filename = params.get('filename');
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     AudioPlayerService.handleStreamExternalVideosSubscription();
@@ -52,7 +58,7 @@ const AudioPlayerModal = () => {
         </Styled.TitleDesc>
         <Styled.DividerTinyBottom />
         <AudioSlider
-          filename={uploadedFilesList[0].filename}
+          filename={filename}
           audioSource={soundUri}
           positionFromServer={currTime}
           isPlayingFromServer={currEvent === 'play' || externalVideoStream?.id?.state === 1}

@@ -14,50 +14,62 @@ const AudioSlider = (props) => {
   const [position, setPosition] = useState(0);
 
   useEffect(() => {
-    return () => {
-      if (sound) {
-        sound.unloadAsync();
-      }
-    };
-  }, [sound]);
-
-  useEffect(() => {
     setIsPlaying(isPlayingFromServer);
   }, [isPlayingFromServer]);
 
   useEffect(() => {
     if (sound) {
-      setPosition(positionFromServer * 1000);
+      if (!isCloseEnough(position, positionFromServer * 1000, 3000)) {
+        setPosition(positionFromServer * 1000);
+        sound.setPositionAsync(positionFromServer * 1000);
+      }
     }
   }, [positionFromServer]);
 
   useEffect(() => {
     const handlePlayPause = async () => {
-      if (sound) {
-        if (!isPlaying) {
-          await sound.pauseAsync();
-        } else {
-          await sound.playAsync();
-        }
+      if (!isPlaying) {
+        await pauseSound();
+      } else {
+        await playSound();
       }
     };
 
     handlePlayPause();
-  }, [isPlaying, sound]);
+  }, [isPlaying]);
 
-  const initializeAudio = async () => {
-    const { sound, status } = await Audio.Sound.createAsync(audioSource);
-
-    setSound(sound);
-
-    // Get the duration of the audio
-    const { durationMillis } = status;
-    setDuration(durationMillis);
+  const updatePosition = (status) => {
+    setPosition(Math.floor(status.positionMillis / 1000) * 1000);
   };
 
-  useEffect(() => {
-    initializeAudio();
-  }, []);
+  const isCloseEnough = (number, target, threshold) => {
+    return Math.abs(number - target) <= threshold;
+  };
+
+  const playSound = async () => {
+    if (sound) {
+      await sound.unloadAsync();
+    }
+
+    const { sound: newSound, status } = await Audio.Sound.createAsync(
+      audioSource,
+      { positionMillis: positionFromServer * 1000 },
+
+    );
+
+    setSound(newSound);
+    setDuration(status.durationMillis);
+    await newSound.playAsync();
+
+    // Set up position updates
+    newSound.setOnPlaybackStatusUpdate(updatePosition);
+  };
+
+  const pauseSound = async () => {
+    if (sound) {
+      await sound.pauseAsync();
+    }
+  };
 
   return (
     <Styled.Container>

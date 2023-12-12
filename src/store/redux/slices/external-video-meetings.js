@@ -63,6 +63,11 @@ const externalVideoMeetingsSlice = createSlice({
   },
 });
 
+// Selectors
+const selectCurrentExternalVideo = (state) => Object.values(
+  state.externalVideoMeetingsCollection?.externalVideoMeetingsCollection
+)[0];
+
 export const {
   addExternalVideoMeeting,
   removeExternalVideoMeeting,
@@ -72,4 +77,9 @@ export const {
   // stream
   editStreamExternalVideoMeeting,
 } = externalVideoMeetingsSlice.actions;
+
+export {
+  selectCurrentExternalVideo
+};
+
 export default externalVideoMeetingsSlice.reducer;
