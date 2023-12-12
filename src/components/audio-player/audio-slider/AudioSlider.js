@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Audio } from 'expo-av';
 import ActivityBar from '../../activity-bar';
+import UtilsService from '../../../utils/functions/index';
 import Styled from './styles';
 
 const AudioSlider = (props) => {
@@ -62,12 +63,16 @@ const AudioSlider = (props) => {
     <Styled.Container>
       <Styled.FileNameText>{filename}</Styled.FileNameText>
       <Styled.SliderContainer>
-        <Styled.DurationText>{`${Math.floor(position / 1000)}`}</Styled.DurationText>
+        <Styled.DurationText>
+          {`${UtilsService.humanizeSeconds(position / 1000)}`}
+        </Styled.DurationText>
         <ActivityBar
           width={`${Math.floor((Math.floor(position / 1000) / Math.floor(duration / 1000)) * 100)}%`}
           style={{ width: '80%' }}
         />
-        <Styled.DurationText>{`${Math.floor(duration / 1000)}`}</Styled.DurationText>
+        <Styled.DurationText>
+          {`${UtilsService.humanizeSeconds(Math.floor((duration / 1000)))}`}
+        </Styled.DurationText>
       </Styled.SliderContainer>
     </Styled.Container>
   );
