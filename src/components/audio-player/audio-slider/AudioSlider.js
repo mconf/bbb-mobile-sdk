@@ -19,7 +19,7 @@ const AudioSlider = (props) => {
 
   useEffect(() => {
     if (sound) {
-      if (!isCloseEnough(position, positionFromServer * 1000, 3000)) {
+      if (!isCloseEnough(position, positionFromServer * 1000, 1000)) {
         setPosition(positionFromServer * 1000);
         sound.setPositionAsync(positionFromServer * 1000);
       }
