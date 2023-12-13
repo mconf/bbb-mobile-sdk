@@ -191,5 +191,8 @@
     "mobileSdk.notImplemented.modal.title": "Funcionalidad no implementada",
     "mobileSdk.notImplemented.modal.desc": "Funcionalidad aún no disponible en la aplicación.",
     "mobileSdk.notImplemented.modal.bottom": "Utilice la versión web.",
-    "app.userList.menu.makePresenter.label": "Hacer presentador"
+    "app.userList.menu.makePresenter.label": "Hacer presentador",
+    "mobileSdk.audioPlayer.modal.title": "Audio player",
+    "mobileSdk.audioPlayer.modal.desc": "La funcionalidad permite compartir audio sincronizado durante la sesión.",
+    "mobileSdk.audioPlayer.modal.desc2": "El audio lo controla el presentador de la sesión."
   }

@@ -33,6 +33,7 @@ const AudioPlayerModal = () => {
   const filename = params.get('filename');
 
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   useEffect(() => {
     AudioPlayerService.handleStreamExternalVideosSubscription();
@@ -48,13 +49,13 @@ const AudioPlayerModal = () => {
     >
       <Styled.Container>
         <Styled.TitleModal>
-          Audio Player
+          {t('mobileSdk.audioPlayer.modal.title')}
         </Styled.TitleModal>
         <Styled.TitleDesc>
-          A funcionalidade possibilita o compartilhamento de áudios sincronizados durante a sessão.
+          {t('mobileSdk.audioPlayer.modal.desc')}
         </Styled.TitleDesc>
         <Styled.TitleDesc>
-          O aúdio é controlado pelo apresentador da sessão.
+          {t('mobileSdk.audioPlayer.modal.desc2')}
         </Styled.TitleDesc>
         <Styled.DividerTinyBottom />
         <AudioSlider
