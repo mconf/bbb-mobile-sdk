@@ -19,7 +19,6 @@ import SelectLanguageScreen from '../../../screens/select-language-screen';
 import InsideBreakoutRoomScreen from '../../../screens/inside-breakout-room-screen';
 import FullscreenWrapperScreen from '../../../screens/fullscreen-wrapper-screen';
 import RecordingIndicator from '../../record/record-indicator';
-import AudioPlayerScreen from '../../../screens/audio-player-screen';
 // components
 import CustomDrawer from '../index';
 // constants
@@ -227,22 +226,6 @@ const DrawerNavigator = ({
         }}
       />
       )}
-
-      <Drawer.Screen
-        name="AudioPlayer"
-        component={AudioPlayerScreen}
-        options={{
-          title: 'Audio player',
-          unmountOnBlur: true,
-          drawerIcon: (config) => (
-            <Styled.DrawerIcon
-              icon="music"
-              size={24}
-              iconColor={config.color}
-            />
-          ),
-        }}
-      />
 
       {!isBreakout && Settings.showBreakouts && (
       <Drawer.Screen
