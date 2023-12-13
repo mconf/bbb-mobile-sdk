@@ -83,7 +83,7 @@ const AudioSlider = (props) => {
           {`${UtilsService.humanizeSeconds(position / 1000)}`}
         </Styled.DurationText>
         <ActivityBar
-          width={`${Math.floor((Math.floor(position / 1000) / Math.floor(duration / 1000)) * 100)}%`}
+          width={`${Math.floor((Math.floor(position / 1000) / Math.floor(duration / 1000)) * 100) || 0}%`}
           style={{ flex: 1 }}
         />
         <Styled.DurationText>
