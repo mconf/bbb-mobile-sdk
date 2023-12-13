@@ -9,7 +9,7 @@ import Styled from './styles';
 
 const MiniAudioPlayer = () => {
   const host = useSelector((state) => state.client.meetingData.host);
-  const { externalVideoUrl } = useSelector(selectCurrentExternalVideo);
+  const externalVideoStreamUrl = useSelector(selectCurrentExternalVideo)?.externalVideoUrl;
   const uploadedFileCollection = useSelector(
     (state) => state.uploadedFileCollection.uploadedFileCollection
   );
@@ -23,11 +23,11 @@ const MiniAudioPlayer = () => {
   const currEvent = useSelector((state) => state.externalVideoMeetingsCollection.eventName);
   const sessionToken = useSelector((state) => state.client.meetingData.sessionToken);
   const soundUri = {
-    uri: `https://${host}${externalVideoUrl}&sessionToken=${sessionToken}`
+    uri: `https://${host}${externalVideoStreamUrl}&sessionToken=${sessionToken}`
   };
 
   // get the filename
-  const url = new URL(`https://${host}${externalVideoUrl}&sessionToken=${sessionToken}`);
+  const url = new URL(`https://${host}${externalVideoStreamUrl}&sessionToken=${sessionToken}`);
   const params = new URLSearchParams(url.search);
   const filename = params.get('filename');
 
