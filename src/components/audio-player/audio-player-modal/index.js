@@ -60,6 +60,7 @@ const AudioPlayerModal = () => {
         <AudioSlider
           filename={filename}
           audioSource={soundUri}
+          noAudio
           positionFromServer={currTime}
           isPlayingFromServer={currEvent === 'play' || externalVideoStream?.id?.state === 1}
         />

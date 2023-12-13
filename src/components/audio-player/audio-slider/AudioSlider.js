@@ -6,7 +6,7 @@ import Styled from './styles';
 
 const AudioSlider = (props) => {
   const {
-    audioSource, positionFromServer, isPlayingFromServer, filename
+    audioSource, positionFromServer, isPlayingFromServer, filename, noAudio
   } = props;
   const [sound, setSound] = useState();
   const [isPlaying, setIsPlaying] = useState(false);
@@ -54,11 +54,15 @@ const AudioSlider = (props) => {
     const { sound: newSound, status } = await Audio.Sound.createAsync(
       audioSource,
       { positionMillis: positionFromServer * 1000 },
-
     );
 
     setSound(newSound);
     setDuration(status.durationMillis);
+
+    if (noAudio) {
+      await newSound.setVolumeAsync(0);
+    }
+
     await newSound.playAsync();
 
     // Set up position updates
