@@ -77,7 +77,7 @@ const AudioSlider = (props) => {
 
   return (
     <Styled.Container>
-      <Styled.FileNameText>{filename}</Styled.FileNameText>
+      <Styled.FileNameText numberOfLines={1}>{filename}</Styled.FileNameText>
       <Styled.SliderContainer>
         <Styled.DurationText>
           {`${UtilsService.humanizeSeconds(position / 1000)}`}
