@@ -152,7 +152,6 @@
   "mobileSdk.notificationBar.microphoneOff": "Você está silenciado(a). Clique no microfone para ativá-lo.",
   "mobileSdk.notificationBar.handsUp": "Você está com a mão levantada.",
   "mobileSdk.upload.notification.header": "Um arquivo foi carregado:",
-  "mobileSdk.upload.notification.disclaimer": "Caso você queira abrir este arquivo, tente usar a versão web.",
   "mobileSdk.notification.recordLabel": "Gravação",
   "mobileSdk.record.noPermission.label": "Você não possui permissão para gravar reuniões.",
   "mobileSdk.breakout.durationLabel": "Duração da sala de apoio",
@@ -195,5 +194,6 @@
   "mobileSdk.audioPlayer.modal.title": "Audio player",
   "mobileSdk.audioPlayer.modal.desc": "A funcionalidade possibilita o compartilhamento de áudios sincronizados durante a sessão.",
   "mobileSdk.audioPlayer.modal.desc2": "O áudio é controlado pelo apresentador da sessão.",
-  "mobileSdk.audioPlayer.modal.loading": "Não há nenhum áudio ativo..."
+  "mobileSdk.audioPlayer.modal.loading": "Não há nenhum áudio ativo...",
+  "mobileSdk.upload.notification.disclaimer": "Caso você queira subir um arquivo, tente usar a versão web."
 }
