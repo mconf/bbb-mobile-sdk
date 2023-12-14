@@ -194,5 +194,6 @@
     "app.userList.menu.makePresenter.label": "Hacer presentador",
     "mobileSdk.audioPlayer.modal.title": "Audio player",
     "mobileSdk.audioPlayer.modal.desc": "La funcionalidad permite compartir audio sincronizado durante la sesión.",
-    "mobileSdk.audioPlayer.modal.desc2": "El audio lo controla el presentador de la sesión."
+    "mobileSdk.audioPlayer.modal.desc2": "El audio lo controla el presentador de la sesión.",
+    "mobileSdk.audioPlayer.modal.loading": "No hay audio activo..."
   }

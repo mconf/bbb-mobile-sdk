@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Audio } from 'expo-av';
 import ActivityBar from '../../activity-bar';
 import UtilsService from '../../../utils/functions/index';
@@ -12,6 +13,7 @@ const AudioSlider = (props) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
   const [position, setPosition] = useState(0);
+  const { t } = useTranslation();
 
   useEffect(() => {
     setIsPlaying(isPlayingFromServer);
@@ -36,7 +38,7 @@ const AudioSlider = (props) => {
     };
 
     handlePlayPause();
-  }, [isPlaying]);
+  }, [isPlaying, filename]);
 
   const updatePosition = (status) => {
     setPosition(Math.floor(status.positionMillis / 1000) * 1000);
@@ -77,7 +79,9 @@ const AudioSlider = (props) => {
 
   return (
     <Styled.Container>
-      <Styled.FileNameText numberOfLines={1}>{filename}</Styled.FileNameText>
+      <Styled.FileNameText numberOfLines={1}>
+        {filename || t('mobileSdk.audioPlayer.modal.loading')}
+      </Styled.FileNameText>
       <Styled.SliderContainer>
         <Styled.DurationText>
           {`${UtilsService.humanizeSeconds(position / 1000)}`}

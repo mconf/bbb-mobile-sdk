@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { View } from 'react-native';
 import AudioPlayerService from '../service';
 import { setProfile } from '../../../store/redux/slices/wide-app/modal';
-import AudioSlider from '../audio-slider/AudioSlider';
+import AudioSlider from '../audio-slider';
 import { selectCurrentExternalVideo } from '../../../store/redux/slices/external-video-meetings';
 import Styled from './styles';
 

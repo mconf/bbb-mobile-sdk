@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { selectCurrentExternalVideo } from '../../../store/redux/slices/external-video-meetings';
 import { hide } from '../../../store/redux/slices/wide-app/modal';
 import Styled from './styles';
-import AudioSlider from '../audio-slider/AudioSlider';
+import AudioSlider from '../audio-slider';
 import AudioPlayerService from '../service';
 
 const AudioPlayerModal = () => {
