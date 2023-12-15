@@ -12,7 +12,9 @@ import Animated, {
   Extrapolate,
 } from 'react-native-reanimated';
 
-const ExpandedCard = ({ content, expandedContent, expandableHeight }) => {
+const ExpandedCard = ({
+  content, expandedContent, expandableHeight, clickableWidth
+}) => {
   const [isExpanded, setIsExpanded] = useState(false);
   useFocusEffect(
     useCallback(() => {
@@ -53,7 +55,7 @@ const ExpandedCard = ({ content, expandedContent, expandableHeight }) => {
 
   return (
     <View>
-      <TouchableOpacity onPress={toggleExpansion}>
+      <TouchableOpacity onPress={toggleExpansion} style={{ width: clickableWidth }}>
         {content}
       </TouchableOpacity>
       <Animated.View style={cardStyle}>

@@ -58,6 +58,7 @@ const MiniAudioPlayer = () => {
           </Styled.Card>
           )}
         expandableHeight={180}
+        clickableWidth={48}
       />
 
     </Styled.Container>

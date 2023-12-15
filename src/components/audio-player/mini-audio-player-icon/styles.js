@@ -19,7 +19,7 @@ const Container = styled.View`
   display: flex;
   top: 0;
   left: 0;
-  width: 70%;
+  width: 300px;
   height: 200px;
   margin: 8px;
   gap: 12px;
