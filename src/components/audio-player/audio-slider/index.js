@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Audio } from 'expo-av';
+import Slider from '@react-native-community/slider';
 import ActivityBar from '../../activity-bar';
 import UtilsService from '../../../utils/functions/index';
 import Styled from './styles';
+import Colors from '../../../constants/colors';
 
 const AudioSlider = (props) => {
   const {
-    audioSource, positionFromServer, isPlayingFromServer, filename, noAudio
+    audioSource, positionFromServer, isPlayingFromServer, filename
   } = props;
   const [sound, setSound] = useState();
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
   const [position, setPosition] = useState(0);
+  const [volume, setVolume] = useState(1);
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -48,6 +51,13 @@ const AudioSlider = (props) => {
     return Math.abs(number - target) <= threshold;
   };
 
+  const handleVolumeChange = async (_volume) => {
+    setVolume(Number(_volume.toFixed(2)));
+    if (sound) {
+      await sound.setVolumeAsync(Number(_volume.toFixed(2)));
+    }
+  };
+
   const playSound = async () => {
     if (sound) {
       await sound.unloadAsync();
@@ -61,10 +71,7 @@ const AudioSlider = (props) => {
     setSound(newSound);
     setDuration(status.durationMillis);
 
-    if (noAudio) {
-      await newSound.setVolumeAsync(0);
-    }
-
+    await newSound.setVolumeAsync(volume);
     await newSound.playAsync();
 
     // Set up position updates
@@ -94,6 +101,24 @@ const AudioSlider = (props) => {
           {`${UtilsService.humanizeSeconds(Math.floor((duration / 1000)))}`}
         </Styled.DurationText>
       </Styled.SliderContainer>
+      <Styled.VolumeContainer>
+        <Styled.VolumeComponent
+          volumeLevel={volume}
+          onPress={() => handleVolumeChange(volume > 0 ? 0 : 0.5)}
+        />
+        <Slider
+          style={{ width: 150, height: 40 }}
+          minimumValue={0}
+          maximumValue={1}
+          value={volume}
+          step={0.1}
+          thumbTintColor={Colors.lightBlue}
+          disabled={sound === undefined}
+          minimumTrackTintColor={Colors.lightBlue}
+          maximumTrackTintColor={Colors.lightGray100}
+          onValueChange={handleVolumeChange}
+        />
+      </Styled.VolumeContainer>
     </Styled.Container>
   );
 };
