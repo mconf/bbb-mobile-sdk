@@ -1,10 +1,11 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import AudioPlayerService from '../service';
 import { setProfile } from '../../../store/redux/slices/wide-app/modal';
 import AudioSlider from '../audio-slider';
 import { selectCurrentExternalVideo } from '../../../store/redux/slices/external-video-meetings';
+import ExpandedCard from '../../expandable-card';
 import Styled from './styles';
 
 const MiniAudioPlayer = () => {
@@ -31,8 +32,6 @@ const MiniAudioPlayer = () => {
   const params = new URLSearchParams(url.search);
   const filename = params.get('filename');
 
-  const dispatch = useDispatch();
-
   useEffect(() => {
     AudioPlayerService.handleStreamExternalVideosSubscription();
   }, [uploadedFileCollection]);
@@ -43,21 +42,25 @@ const MiniAudioPlayer = () => {
   }
 
   return (
-    <>
-      <Styled.PlayIcon
-        onPress={() => dispatch(setProfile({
-          profile: 'audio_player',
-        }))}
+    <Styled.Container>
+      <ExpandedCard
+        content={(
+          <Styled.PlayIcon />
+      )}
+        expandedContent={(
+          <Styled.Card>
+            <AudioSlider
+              filename={filename}
+              audioSource={soundUri}
+              positionFromServer={currTime}
+              isPlayingFromServer={currEvent === 'play' || externalVideoStream?.id?.state === 1}
+            />
+          </Styled.Card>
+          )}
+        expandableHeight={180}
       />
-      <View style={{ display: 'none', position: 'absolute' }}>
-        <AudioSlider
-          filename={filename}
-          audioSource={soundUri}
-          positionFromServer={currTime}
-          isPlayingFromServer={currEvent === 'play' || externalVideoStream?.id?.state === 1}
-        />
-      </View>
-    </>
+
+    </Styled.Container>
   );
 };
 

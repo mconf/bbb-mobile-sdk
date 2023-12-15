@@ -9,7 +9,6 @@ import PublishedPollModal from '../../screens/poll-screen/modals/published-poll'
 import AudioDeviceSelectorModal from '../actions-bar/audio-device-selector-control/audio-device-selector-modal';
 import NotImplementedModal from './not-implemented';
 import Settings from '../../../settings.json';
-import AudioPlayerModal from '../audio-player/audio-player-modal';
 
 const ModalControllerComponent = () => {
   const modalCollection = useSelector((state) => state.modal);
@@ -52,11 +51,6 @@ const ModalControllerComponent = () => {
   if (modalCollection.profile === 'record_status') {
     return (
       <RecordStatusModal />
-    );
-  }
-  if (modalCollection.profile === 'audio_player') {
-    return (
-      <AudioPlayerModal />
     );
   }
 
