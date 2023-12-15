@@ -51,7 +51,7 @@ const MiniAudioPlayer = () => {
           <Styled.Card>
             <AudioSlider
               filename={filename}
-              audioSource={soundUri}
+              audioSource={host && externalVideoStreamUrl && sessionToken && soundUri}
               positionFromServer={currTime}
               isPlayingFromServer={currEvent === 'play' || externalVideoStream?.id?.state === 1}
             />

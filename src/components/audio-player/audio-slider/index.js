@@ -6,6 +6,7 @@ import ActivityBar from '../../activity-bar';
 import UtilsService from '../../../utils/functions/index';
 import Styled from './styles';
 import Colors from '../../../constants/colors';
+import logger from '../../../services/logger';
 
 const AudioSlider = (props) => {
   const {
@@ -63,19 +64,22 @@ const AudioSlider = (props) => {
       await sound.unloadAsync();
     }
 
-    const { sound: newSound, status } = await Audio.Sound.createAsync(
-      audioSource,
-      { positionMillis: positionFromServer * 1000 },
-    );
+    try {
+      const { sound: newSound, status } = await Audio.Sound.createAsync(
+        audioSource,
+        { positionMillis: positionFromServer * 1000 },
+      );
+      setSound(newSound);
+      setDuration(status.durationMillis);
 
-    setSound(newSound);
-    setDuration(status.durationMillis);
-
-    await newSound.setVolumeAsync(volume);
-    await newSound.playAsync();
-
-    // Set up position updates
-    newSound.setOnPlaybackStatusUpdate(updatePosition);
+      await newSound.setVolumeAsync(volume);
+      await newSound.playAsync();
+      newSound.setOnPlaybackStatusUpdate(updatePosition);
+    } catch (error) {
+      logger.warn({
+        logCode: 'audio_player_play',
+      }, `${error}`);
+    }
   };
 
   const pauseSound = async () => {
