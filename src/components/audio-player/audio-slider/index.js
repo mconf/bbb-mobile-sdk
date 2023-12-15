@@ -24,13 +24,19 @@ const AudioSlider = (props) => {
   }, [isPlayingFromServer]);
 
   useEffect(() => {
-    if (sound) {
+    if (sound?._loaded) {
       if (!isCloseEnough(position, positionFromServer * 1000, 1000)) {
         setPosition(positionFromServer * 1000);
         sound.setPositionAsync(positionFromServer * 1000);
       }
     }
   }, [positionFromServer]);
+
+  useEffect(() => {
+    if (sound && audioSource === null) {
+      setSound(null);
+    }
+  }, [audioSource]);
 
   useEffect(() => {
     const handlePlayPause = async () => {
