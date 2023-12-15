@@ -31,6 +31,7 @@
     "@notifee/react-native": "^7.7.1",
     "@openspacelabs/react-native-zoomable-view": "^2.1.1",
     "@react-native-community/netinfo": "9.3.7",
+    "@react-native-community/slider": "4.4.2",
     "@react-navigation/drawer": "^6.4.1",
     "@react-navigation/native": "^6.0.10",
     "@react-navigation/native-stack": "^6.6.2",

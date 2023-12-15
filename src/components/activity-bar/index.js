@@ -2,10 +2,10 @@ import React from 'react';
 import Styled from './styles';
 
 const ActivityBar = (props) => {
-  const { width } = props;
+  const { width, style } = props;
 
   return (
-    <Styled.OutsideBar>
+    <Styled.OutsideBar style={style}>
       <Styled.InsideBar width={width} />
     </Styled.OutsideBar>
   );

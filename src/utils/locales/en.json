@@ -153,7 +153,6 @@
   "mobileSdk.notificationBar.microphoneOff": "You are silenced. Click on the microphone to activate it.",
   "mobileSdk.notificationBar.handsUp": "You have your hand raised.",
   "mobileSdk.upload.notification.header": "A file was uploaded:",
-  "mobileSdk.upload.notification.disclaimer": "In case you want to open this file, try using the web version.",
   "mobileSdk.notification.recordLabel": "Recording",
   "mobileSdk.record.noPermission.label": "You do not have permission to record meetings",
   "mobileSdk.breakout.durationLabel": "Breakout rooms time remaining",
@@ -193,5 +192,10 @@
   "mobileSdk.notImplemented.modal.title": "Feature not implemented",
   "mobileSdk.notImplemented.modal.desc": "Feature not yet available in the application.",
   "mobileSdk.notImplemented.modal.bottom": "Please use the web version.",
-  "app.userList.menu.makePresenter.label": "Make presenter"
+  "app.userList.menu.makePresenter.label": "Make presenter",
+  "mobileSdk.audioPlayer.modal.title": "Audio player",
+  "mobileSdk.audioPlayer.modal.desc": "The functionality makes it possible to share synchronized audio during the session.",
+  "mobileSdk.audioPlayer.modal.desc2": "Audio is controlled by the session presenter.",
+  "mobileSdk.audioPlayer.modal.loading": "There is no active audio...",
+  "mobileSdk.upload.notification.disclaimer": "In case you want to upload a file, try using the web version."
 }
