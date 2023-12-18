@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createSelector } from '@reduxjs/toolkit';
 
 const usersSlice = createSlice({
   name: 'users',
@@ -68,10 +68,17 @@ const selectUsersName = (state) => {
 };
 
 // exclude the users from breakouts
-const selectMainUsers = (state) => {
+const selectUsersNoBreakout = (state) => {
   const allUsers = Object.values(state.usersCollection.usersCollection);
   return allUsers.filter((user) => user?.breakoutProps?.isBreakoutUser === false);
 };
+
+const selectMainUsers = createSelector(
+  [selectUsersNoBreakout],
+  (allUsers) => {
+    return allUsers;
+  }
+);
 
 const selectUserByIntId = (state, userId) => selectUsers(state)
   .find((user) => user.intId === userId);
