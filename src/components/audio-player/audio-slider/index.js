@@ -39,6 +39,13 @@ const AudioSlider = (props) => {
   }, [audioSource]);
 
   useEffect(() => {
+    if (sound && audioSource === null) {
+      setSound(null);
+    }
+    setPosition(0);
+  }, [filename]);
+
+  useEffect(() => {
     const handlePlayPause = async () => {
       if (!isPlaying) {
         await pauseSound();
@@ -51,7 +58,7 @@ const AudioSlider = (props) => {
   }, [isPlaying, filename]);
 
   const updatePosition = (status) => {
-    setPosition(Math.floor(status.positionMillis / 1000) * 1000);
+    setPosition((Math.floor(status.positionMillis / 1000) * 1000) || 0);
   };
 
   const isCloseEnough = (number, target, threshold) => {
@@ -73,7 +80,7 @@ const AudioSlider = (props) => {
     try {
       const { sound: newSound, status } = await Audio.Sound.createAsync(
         audioSource,
-        { positionMillis: positionFromServer * 1000 },
+        { positionMillis: 0 },
       );
       setSound(newSound);
       setDuration(status.durationMillis);
