@@ -16,6 +16,7 @@ import ProblemFeedbackScreen from '../screens/feedback-screen/problem-feedback-s
 import EmailFeedbackScreen from '../screens/feedback-screen/email-feedback-screen';
 import TestComponentsScreen from '../screens/test-components-screen';
 import GuestScreen from '../screens/guest-screen';
+import TransferScreen from '../screens/transfer-screen';
 import InCallManagerController from './in-call-manager';
 import LocalesController from './locales';
 import NotifeeController from './notifee';
@@ -45,6 +46,7 @@ const AppContent = ({
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const guestStatus = useSelector((state) => state.client.guestStatus);
+  const transferUrl = useSelector((state) => state.client.transferUrl);
   const isBreakout = useSelector((state) => state.client.meetingData.isBreakout);
   const navigationRef = useRef(null);
 
@@ -113,6 +115,12 @@ const AppContent = ({
       });
     };
   }, []);
+
+  if (transferUrl) {
+    return (
+      <TransferScreen transferUrl={transferUrl} />
+    );
+  }
 
   return (
     <>

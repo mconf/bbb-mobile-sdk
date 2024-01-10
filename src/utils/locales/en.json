@@ -197,5 +197,9 @@
   "mobileSdk.audioPlayer.modal.desc": "The functionality makes it possible to share synchronized audio during the session.",
   "mobileSdk.audioPlayer.modal.desc2": "Audio is controlled by the session presenter.",
   "mobileSdk.audioPlayer.modal.loading": "There is no active audio...",
-  "mobileSdk.upload.notification.disclaimer": "In case you want to upload a file, try using the web version."
+  "mobileSdk.upload.notification.disclaimer": "In case you want to upload a file, try using the web version.",
+  "mobileSdk.transfer.title": "You are being directed to the transfer room",
+  "mobileSdk.transfer.subtitle": "The session you are trying to access is full.",
+  "mobileSdk.transfer.subtitle2": "The moderator defined that new participants should be directed to the transfer room.",
+  "mobileSdk.transfer.button.title": "Join"
 }

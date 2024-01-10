@@ -16,7 +16,9 @@ const initialState = {
     endReason: null,
     terminated: false,
     initialChatMsgsFetched: false,
+    transfer: false,
   },
+  transferUrl: null,
   guestStatus: null, // oneof 'WAIT'|'ALLOW'|'DENY'|'FAILED'
   meetingData: {
     host: null,
@@ -122,6 +124,11 @@ const clientSlice = createSlice({
       })
       .addCase(join.fulfilled, (state, action) => {
         const { payload: joinResponse } = action;
+        if (joinResponse.isTransfer) {
+          state.sessionState.transfer = true;
+          state.sessionState.loggingIn = false;
+          state.transferUrl = joinResponse.transferUrl;
+        }
         const joinGuestStatus = joinResponse.waitingForApproval ? 'WAIT' : 'ALLOW';
         state.guestStatus = joinGuestStatus;
         state.meetingData = joinResponse;
@@ -243,6 +250,13 @@ const join = createAsyncThunk(
         joinUrl: joinResponseUrl,
         host,
         sessionToken,
+      };
+    }
+
+    if (joinResponseUrl.includes('transfer/?sessionToken=')) {
+      return {
+        isTransfer: true,
+        transferUrl: joinResponseUrl
       };
     }
 
