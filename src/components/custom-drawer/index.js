@@ -114,7 +114,7 @@ const CustomDrawer = (props) => {
       <Styled.ContainerCustomBottomButtons>
 
         {/* DEFAULT ITEMS */}
-        {!isBreakout && (
+        {!isBreakout && meetingUrl && (
         <DrawerItem
           label={t('mobileSdk.drawer.shareButtonLabel')}
           labelStyle={Styled.TextButtonLabel}
