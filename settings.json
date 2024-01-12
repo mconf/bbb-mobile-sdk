@@ -6,6 +6,7 @@
   "showLanguageScreen": true,
   "showDebugToggle": false,
   "showBreakouts": false,
+  "showNotImplementedFeatures": false,
   "clientLog": {
     "server": {
       "enabled": false,
