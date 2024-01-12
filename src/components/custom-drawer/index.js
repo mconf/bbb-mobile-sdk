@@ -13,6 +13,7 @@ import Styled from './styles';
 import logger from '../../services/api';
 import * as api from '../../services/api';
 import { leave } from '../../store/redux/slices/wide-app/client';
+import Settings from '../../../settings.json';
 
 const CustomDrawer = (props) => {
   const { meetingUrl, navigation } = props;
@@ -108,7 +109,7 @@ const CustomDrawer = (props) => {
         </Styled.CustomDrawerContainer>
         <Styled.ContainerDrawerItemList>
           <DrawerItemList {...props} />
-          {renderNotImplementedItem()}
+          {Settings.showNotImplementedFeatures && renderNotImplementedItem()}
         </Styled.ContainerDrawerItemList>
       </DrawerContentScrollView>
       <Styled.ContainerCustomBottomButtons>
