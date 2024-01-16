@@ -43,6 +43,10 @@ const padsSessionsSlice = createSlice({
   },
 });
 
+const selectPadSession = (state) => Object.values(
+  state.padsSessionsCollection.padsSessionsCollection
+)[0]?.sessions[0].notes;
+
 export const {
   addPadSession,
   removePadSession,
@@ -50,5 +54,9 @@ export const {
   readyStateChanged,
   cleanupStaleData,
 } = padsSessionsSlice.actions;
+
+export {
+  selectPadSession,
+};
 
 export default padsSessionsSlice.reducer;
