@@ -32,8 +32,8 @@ const UserNotesScreen = () => {
   }, []);
 
   return (
-    <ScreenWrapper>
-      <View style={{ flex: 1 }}>
+    <ScreenWrapper alwaysShowActionBar>
+      <View style={{ flex: 1, paddingBottom: 100 }}>
         <WebView source={{ uri: url }} />
       </View>
     </ScreenWrapper>
