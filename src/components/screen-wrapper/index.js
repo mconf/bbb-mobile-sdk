@@ -1,7 +1,7 @@
-import { Pressable } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { useIsFocused } from '@react-navigation/native';
-import { trigDetailedInfo } from '../../store/redux/slices/wide-app/layout';
+import { trigDetailedInfo, setDetailedInfo } from '../../store/redux/slices/wide-app/layout';
 import BottomSheetChat from '../chat/bottom-sheet-chat';
 import NotificationBar from '../bar-notification';
 import BottomSheetActionsBar from '../actions-bar/bottom-sheet-actions-bar';
@@ -9,15 +9,32 @@ import ModalControllerComponent from '../modal';
 import ChatPopupList from '../chat/chat-popup';
 import DebugWindow from '../debug-window';
 
-const ScreenWrapper = ({ children }) => {
+const ScreenWrapper = ({ children, alwaysShowActionBar }) => {
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
 
+  if (alwaysShowActionBar) {
+    dispatch(setDetailedInfo(true));
+  }
+
+  const handleRenderChildren = () => {
+    if (!alwaysShowActionBar) {
+      return (
+        <Pressable onPress={() => dispatch(trigDetailedInfo())} style={{ flex: 1 }}>
+          {children}
+        </Pressable>
+      );
+    }
+    return (
+      <View style={{ flex: 1 }}>
+        {children}
+      </View>
+    );
+  };
+
   return (
     <>
-      <Pressable onPress={() => dispatch(trigDetailedInfo())} style={{ flex: 1 }}>
-        {children}
-      </Pressable>
+      {handleRenderChildren()}
       <ModalControllerComponent />
       <NotificationBar />
       <DebugWindow />
@@ -25,7 +42,7 @@ const ScreenWrapper = ({ children }) => {
       So, we will disable them from rendering when is not focused */}
       {isFocused && (
         <>
-          <BottomSheetActionsBar />
+          <BottomSheetActionsBar alwaysOpen={alwaysShowActionBar} />
           <BottomSheetChat />
           <ChatPopupList />
         </>
