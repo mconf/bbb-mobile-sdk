@@ -254,18 +254,13 @@ const DrawerNavigator = ({
         name="UserNotesScreen"
         component={UserNotesScreen}
         options={{
-          title: t('Shared notes'),
+          title: t('app.notes.title'),
           unmountOnBlur: true,
           drawerIcon: (config) => (
             <>
               <Styled.BetaTag>BETA</Styled.BetaTag>
-              <Styled.DrawerIcon
-                icon="account-group"
-                size={24}
-                iconColor={config.color}
-              />
+              <Styled.IconMaterial name="notes" size={24} color={config.color} />
             </>
-
           ),
         }}
       />
