@@ -12,9 +12,7 @@ const UserNotesScreen = () => {
   const host = useSelector((state) => state.client.meetingData.host);
   const [padId, setPadId] = useState('');
 
-  console.log('padSession', padSession);
-  console.log('host', host);
-  console.log('padId', padId);
+  const url = `https://${host}/pad/auth_session?padName=${padId}&sessionID=${padSession}&lang=pt-br&rtl=false&sessionToken=${sessionToken}`;
 
   const getPadId = () => {
     makeCall('getPadId', 'notes').then((response) => {
@@ -25,14 +23,8 @@ const UserNotesScreen = () => {
   };
 
   const createSession = () => {
-    makeCall('createSession', 'notes').then((response) => {
-      if (response) {
-        console.log('response', response);
-      }
-    });
+    makeCall('createSession', 'notes');
   };
-
-  const url = `https://${host}/pad/auth_session?padName=${padId}&sessionID=${padSession}&lang=pt-br&rtl=false&sessionToken=${sessionToken}`;
 
   useEffect(() => {
     createSession();
