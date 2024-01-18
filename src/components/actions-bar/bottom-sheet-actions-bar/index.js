@@ -11,6 +11,7 @@ import { setDetailedInfo } from '../../../store/redux/slices/wide-app/layout';
 import DebugControl from '../debug-control';
 import Screenshare from '../screenshare-button';
 import DeviceSelectorControl from '../audio-device-selector-control';
+import Settings from '../../../../settings.json';
 import Styled from './styles';
 
 const BottomSheetActionsBar = () => {
@@ -24,14 +25,17 @@ const BottomSheetActionsBar = () => {
 
   const isFullscreen = route.name === 'FullscreenWrapperScreen';
   const isAndroid = Platform.OS === 'android';
+  const { showDebugToggle, showNotImplementedFeatures } = Settings;
 
   // variables
+  const handleSizeOfActionsBar = () => {
+    const variables = [showDebugToggle, showNotImplementedFeatures, isAndroid];
+    return variables.reduce((base, item) => base + (item ? 85 : 0), 110);
+  };
+
   const snapPoints = useMemo(() => {
     if (orientation === 'PORTRAIT') {
-      if (isAndroid) {
-        return [110, 350];
-      }
-      return [110, 270];
+      return [110, handleSizeOfActionsBar()];
     }
     return [110];
   }, [orientation]);
