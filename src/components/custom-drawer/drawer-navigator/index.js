@@ -236,7 +236,7 @@ const DrawerNavigator = ({
           unmountOnBlur: true,
           drawerIcon: (config) => (
             <>
-              <Styled.BetaTag>BETA</Styled.BetaTag>
+              <Styled.BetaTag>{t('mobileSdk.tag.new')}</Styled.BetaTag>
               <Styled.DrawerIcon
                 icon="account-group"
                 size={24}

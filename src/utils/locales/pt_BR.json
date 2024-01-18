@@ -195,5 +195,6 @@
   "mobileSdk.audioPlayer.modal.desc": "A funcionalidade possibilita o compartilhamento de áudios sincronizados durante a sessão.",
   "mobileSdk.audioPlayer.modal.desc2": "O áudio é controlado pelo apresentador da sessão.",
   "mobileSdk.audioPlayer.modal.loading": "Não há nenhum áudio ativo...",
-  "mobileSdk.upload.notification.disclaimer": "Caso você queira subir um arquivo, tente usar a versão web."
+  "mobileSdk.upload.notification.disclaimer": "Caso você queira subir um arquivo, tente usar a versão web.",
+  "mobileSdk.tag.new": "NOVO"
 }
