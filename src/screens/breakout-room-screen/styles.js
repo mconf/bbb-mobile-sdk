@@ -22,7 +22,6 @@ const ContainerCentralizedView = styled.View`
 
 const CardView = styled.View`
   background-color: ${Colors.white};
-  height: 12%;
   border-radius: 12px;
   padding: 16px 8px;
   margin: 24px 16px;
