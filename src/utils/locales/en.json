@@ -167,8 +167,6 @@
   "mobileSdk.breakout.inviteModal.button": "Join breakout room",
   "mobileSdk.breakout.inviteModal.moderatorContent": "Breakout rooms have started, click the button to view the rooms.",
   "mobileSdk.breakout.inviteModal.moderatorButton": "Breakout rooms",
-  "mobileSdk.breakout.endSession.modal.title": "This breakout room has been closed",
-  "mobileSdk.breakout.endSession.modal.subtitle": "You will be redirected to the main room shortly.",
   "mobileSdk.breakout.endSession.modal.buttonLabel": "Access Main Room",
   "mobileSdk.poll.noPollsTitle": "There are no published polls at the time.",
   "mobileSdk.poll.noPollsSubtitle": "When new polls are published, you can follow the results here.",
@@ -198,5 +196,7 @@
   "mobileSdk.audioPlayer.modal.desc2": "Audio is controlled by the session presenter.",
   "mobileSdk.audioPlayer.modal.loading": "There is no active audio...",
   "mobileSdk.upload.notification.disclaimer": "In case you want to upload a file, try using the web version.",
-  "mobileSdk.tag.new": "NEW"
+  "mobileSdk.tag.new": "NEW",
+  "mobileSdk.breakout.endSession.modal.title": "Breakout room end screen",
+  "mobileSdk.breakout.endSession.modal.subtitle": "Click the button below to be directed to the main room."
 }

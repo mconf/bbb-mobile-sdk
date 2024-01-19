@@ -165,8 +165,6 @@
   "mobileSdk.breakout.inviteModal.button": "Acessar Sala de Apoio",
   "mobileSdk.breakout.inviteModal.moderatorContent": "As salas de apoio foram iniciadas, clique no botão para visualizar as salas.",
   "mobileSdk.breakout.inviteModal.moderatorButton": "Salas de Apoio",
-  "mobileSdk.breakout.endSession.modal.title": "Essa sala de apoio foi fechada",
-  "mobileSdk.breakout.endSession.modal.subtitle": "Você será redirecionado para a Sala Principal em breve.",
   "mobileSdk.breakout.endSession.modal.buttonLabel": "Acessar Sala Principal",
   "mobileSdk.poll.noPollsTitle": "Não há enquetes publicadas no momento.",
   "mobileSdk.poll.noPollsSubtitle": "Quando novas enquetes forem publicadas, você poderá acompanhar os resultados por aqui.",
@@ -196,5 +194,7 @@
   "mobileSdk.audioPlayer.modal.desc2": "O áudio é controlado pelo apresentador da sessão.",
   "mobileSdk.audioPlayer.modal.loading": "Não há nenhum áudio ativo...",
   "mobileSdk.upload.notification.disclaimer": "Caso você queira subir um arquivo, tente usar a versão web.",
-  "mobileSdk.tag.new": "NOVO"
+  "mobileSdk.tag.new": "NOVO",
+  "mobileSdk.breakout.endSession.modal.title": "Sala de grupo",
+  "mobileSdk.breakout.endSession.modal.subtitle": "Clique no botão abaixo para ser direcionado para a sala principal."
 }
