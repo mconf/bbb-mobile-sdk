@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { selectCurrentUserRole, selectCurrentUserId } from '../../../store/redux/slices/current-user';
+import { useOrientation } from '../../../hooks/use-orientation';
 import { hide } from '../../../store/redux/slices/wide-app/modal';
 import AudioManager from '../../../services/webrtc/audio-manager';
 import VideoManager from '../../../services/webrtc/video-manager';
@@ -17,6 +18,7 @@ const BreakoutInviteModal = () => {
   const modalCollection = useSelector((state) => state.modal);
 
   const navigation = useNavigation();
+  const orientation = useOrientation();
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
@@ -29,7 +31,7 @@ const BreakoutInviteModal = () => {
   // *** RENDER FUNCTIONS *** //
 
   const renderIsModeratorView = () => (
-    <Styled.Container>
+    <Styled.Container orientation={orientation}>
       <Styled.TitleModal>
         {t('mobileSdk.breakout.inviteModal.title')}
       </Styled.TitleModal>

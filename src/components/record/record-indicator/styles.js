@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-import Colors from '../../constants/colors';
+import Colors from '../../../constants/colors';
 
 const RecordingIndicatorIcon = styled.View`
   width: 24px;
@@ -19,7 +19,6 @@ const Container = styled.View`
 
   ${({ neverRecorded }) => !neverRecorded && `
     background-color: ${Colors.white};
-    box-shadow: 10px 5px 5px black;
   `}
 `;
 

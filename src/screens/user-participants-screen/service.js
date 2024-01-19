@@ -8,6 +8,11 @@ const handleChangeRole = async (userId, role) => {
   await makeCall('changeRole', userId, 'VIEWER');
 };
 
+const makePresenter = (userId) => {
+  makeCall('assignPresenter', userId);
+};
+
 export default {
-  handleChangeRole
+  handleChangeRole,
+  makePresenter
 };

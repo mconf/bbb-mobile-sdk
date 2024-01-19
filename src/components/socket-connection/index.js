@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Settings from '../../../settings.json';
+// collections
 import { BreakoutsModule } from './modules/breakouts';
 import { UsersModule } from './modules/users';
 import { GroupChatModule } from './modules/group-chat';
@@ -22,6 +23,9 @@ import { ScreenshareModule } from './modules/screenshare';
 import { GuestUsersModule } from './modules/guest-users';
 import { RecordMeetingsModule } from './modules/record-meetings';
 import { UsersSettingsModule } from './modules/users-settings';
+import { UploadedFileModule } from './modules/uploaded-file';
+// streams
+import { StreamExternalVideoModule } from './stream/external-videos';
 import {
   getRandomDigits,
   getRandomAlphanumericWithCaps,
@@ -220,6 +224,8 @@ const setupModules = (ws) => {
     breakouts: new BreakoutsModule(messageSender),
     'record-meetings': new RecordMeetingsModule(messageSender),
     'users-settings': new UsersSettingsModule(messageSender),
+    'uploaded-file': new UploadedFileModule(messageSender),
+    'external-video-meetings': new ExternalVideoMeetingsModule(messageSender),
   };
 
   /*
@@ -567,6 +573,11 @@ const SocketConnectionComponent = (props) => {
 
       case 'changed': {
         const currentModule = modules.current[msgObj.collection];
+        // BAD
+        if (msgObj.collection.includes("stream-external-videos")) {
+          const SEVModule = new StreamExternalVideoModule(GLOBAL_MESSAGE_SENDER);
+          SEVModule.update(msgObj);
+        }
         if (currentModule) {
           currentModule.update(msgObj);
         }

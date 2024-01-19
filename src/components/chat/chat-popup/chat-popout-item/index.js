@@ -1,7 +1,15 @@
+import HTMLView from 'react-native-htmlview';
 import Styled from './styles';
 
 const ChatPopupItem = (props) => {
   const { userName, userText, onPress } = props;
+
+  const renderMessage = (message) => {
+    if (/<a\b[^>]*>/.test(message)) {
+      return <HTMLView value={message} />;
+    }
+    return <Styled.UserMessage numberOfLines={1}>{message}</Styled.UserMessage>;
+  };
 
   return (
     <Styled.ContainerPressable onPress={onPress}>
@@ -12,9 +20,7 @@ const ChatPopupItem = (props) => {
             {userName}
           </Styled.UserNameText>
         </Styled.AuthorContainer>
-        <Styled.UserMessage numberOfLines={1}>
-          {userText}
-        </Styled.UserMessage>
+        {renderMessage(userText)}
       </Styled.TextContainer>
     </Styled.ContainerPressable>
   );

@@ -16,7 +16,6 @@ import Colors from '../../constants/colors';
 import Styled from './styles';
 
 const UserParticipantsScreen = () => {
-  const usersStore = useSelector((state) => state.usersCollection);
   const amIModerator = useSelector(isModerator);
   // Here we select the users... cause everyone will be breakout users
   const mainUsers = useSelector(selectUsers);
@@ -39,6 +38,7 @@ const UserParticipantsScreen = () => {
         role: user.role,
         color: user.color,
         userId: user.intId,
+        presenter: user.presenter,
         // ...other properties
       };
     }),
@@ -71,6 +71,7 @@ const UserParticipantsScreen = () => {
           userName={item.name}
           userRole={item.role}
           userColor={item.color}
+          userId={item.userId}
         />
         <Styled.UserName numberOfLines={1}>{item.name}</Styled.UserName>
       </Styled.CardPressable>
@@ -115,6 +116,7 @@ const UserParticipantsScreen = () => {
 
   const renderMenuView = () => {
     const isViewer = selectedUser.role === 'VIEWER';
+    const isPresenter = selectedUser.presenter;
 
     return (
       <Menu
@@ -124,13 +126,24 @@ const UserParticipantsScreen = () => {
       >
         {amIModerator
           && (
-            <Menu.Item
-              onPress={() => {
-                UserParticipantsService.handleChangeRole(selectedUser.userId, selectedUser.role);
-                setShowMenu(false);
-              }}
-              title={isViewer ? t('app.userList.menu.promoteUser.label') : t('app.userList.menu.demoteUser.label')}
-            />
+            <>
+              <Menu.Item
+                onPress={() => {
+                  UserParticipantsService.handleChangeRole(selectedUser.userId, selectedUser.role);
+                  setShowMenu(false);
+                }}
+                title={isViewer ? t('app.userList.menu.promoteUser.label') : t('app.userList.menu.demoteUser.label')}
+              />
+              {!isPresenter && (
+              <Menu.Item
+                onPress={() => {
+                  UserParticipantsService.makePresenter(selectedUser.userId);
+                  setShowMenu(false);
+                }}
+                title={t('app.userList.menu.makePresenter.label')}
+              />
+              )}
+            </>
           )}
       </Menu>
     );

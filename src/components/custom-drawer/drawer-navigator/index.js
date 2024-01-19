@@ -5,30 +5,26 @@ import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { selectCurrentUser } from '../../../store/redux/slices/current-user';
+import { selectWaitingUsers } from '../../../store/redux/slices/guest-users';
+import { selectRecordMeeting } from '../../../store/redux/slices/record-meetings';
+import usePrevious from '../../../hooks/use-previous';
+import logger from '../../../services/logger';
 // screens
-import UserNotesScreen from '../../../screens/user-notes-screen';
 import PollNavigator from '../../../screens/poll-screen/navigator';
 import UserParticipantsNavigator from '../../../screens/user-participants-screen/navigator';
-import WhiteboardScreen from '../../../screens/whiteboard-screen';
 import TestComponentsScreen from '../../../screens/test-components-screen';
 import BreakoutRoomScreen from '../../../screens/breakout-room-screen';
 import MainConferenceScreen from '../../../screens/main-conference-screen';
 import SelectLanguageScreen from '../../../screens/select-language-screen';
 import InsideBreakoutRoomScreen from '../../../screens/inside-breakout-room-screen';
 import FullscreenWrapperScreen from '../../../screens/fullscreen-wrapper-screen';
-import RecordingIndicator from '../../recording-indicator';
-import Colors from '../../../constants/colors';
-import Styled from './styles';
-import usePrevious from '../../../hooks/use-previous';
-import { selectWaitingUsers } from '../../../store/redux/slices/guest-users';
-import { selectRecordMeeting } from '../../../store/redux/slices/record-meetings';
-import logger from '../../../services/logger';
-
+import RecordingIndicator from '../../record/record-indicator';
 // components
 import CustomDrawer from '../index';
-
-// configs
+// constants
 import Settings from '../../../../settings.json';
+import Colors from '../../../constants/colors';
+import Styled from './styles';
 
 const DrawerNavigator = ({
   onLeaveSession, jUrl, navigationRef, meetingUrl
@@ -147,6 +143,7 @@ const DrawerNavigator = ({
         component={MainConferenceScreen}
         options={{
           title: meetingData?.confname || t('mobileSdk.meeting.label'),
+          unmountOnBlur: true,
           headerRight: () => (
             <RecordingIndicator recordMeeting={recordMeeting} />
           ),
@@ -160,32 +157,13 @@ const DrawerNavigator = ({
         }}
       />
 
-      {Settings.dev && (
-        <Drawer.Screen
-          name="SharedNoteScreen"
-          component={UserNotesScreen}
-          options={{
-            title: t('app.notes.title'),
-            headerRight: () => (
-              <RecordingIndicator recordMeeting={recordMeeting} />
-            ),
-            drawerIcon: (config) => (
-              <Styled.DrawerIcon
-                icon="file-document"
-                size={24}
-                iconColor={config.color}
-              />
-            ),
-          }}
-        />
-      )}
-
       { !isBreakout && (
       <Drawer.Screen
         name="PollScreen"
         component={PollNavigator}
         options={{
           title: t('mobileSdk.poll.label'),
+          unmountOnBlur: true,
           headerRight: () => (
             <RecordingIndicator recordMeeting={recordMeeting} />
           ),
@@ -205,6 +183,7 @@ const DrawerNavigator = ({
         component={UserParticipantsNavigator}
         options={{
           title: t('app.userList.label'),
+          unmountOnBlur: true,
           headerRight: () => (
             <RecordingIndicator recordMeeting={recordMeeting} />
           ),
@@ -227,32 +206,13 @@ const DrawerNavigator = ({
         }}
       />
 
-      {Settings.dev && (
-        <Drawer.Screen
-          name="WhiteboardScreen"
-          component={WhiteboardScreen}
-          options={{
-            title: t('mobileSdk.whiteboard.label'),
-            headerRight: () => (
-              <RecordingIndicator recordMeeting={recordMeeting} />
-            ),
-            drawerIcon: (config) => (
-              <Styled.DrawerIcon
-                icon="brush"
-                size={24}
-                iconColor={config.color}
-              />
-            ),
-          }}
-        />
-      )}
-
       {Settings.showLanguageScreen && (
       <Drawer.Screen
         name="Language"
         component={SelectLanguageScreen}
         options={{
           title: t('mobileSdk.locales.label'),
+          unmountOnBlur: true,
           headerRight: () => (
             <RecordingIndicator recordMeeting={recordMeeting} />
           ),
@@ -273,9 +233,10 @@ const DrawerNavigator = ({
         component={BreakoutRoomScreen}
         options={{
           title: t('app.createBreakoutRoom.title'),
+          unmountOnBlur: true,
           drawerIcon: (config) => (
             <>
-              <Styled.BetaTag>BETA</Styled.BetaTag>
+              <Styled.BetaTag>{t('mobileSdk.tag.new')}</Styled.BetaTag>
               <Styled.DrawerIcon
                 icon="account-group"
                 size={24}
@@ -313,6 +274,7 @@ const DrawerNavigator = ({
         component={FullscreenWrapperScreen}
         options={{
           headerShown: false,
+          unmountOnBlur: true,
           drawerItemStyle: { display: 'none' },
 
         }}
@@ -326,7 +288,7 @@ const DrawerNavigator = ({
             title: 'Test Component',
             drawerIcon: (config) => (
               <Styled.DrawerIcon
-                icon="brush"
+                icon="dev-to"
                 size={24}
                 iconColor={config.color}
               />
