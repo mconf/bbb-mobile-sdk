@@ -25,6 +25,12 @@ const ExpandedCard = ({
     }, [])
   );
 
+  useFocusEffect(
+    useCallback(() => {
+      height.value = expandableHeight;
+    }, [expandableHeight])
+  );
+
   // Define animated values
   const height = useSharedValue(0);
 
