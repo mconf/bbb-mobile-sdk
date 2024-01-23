@@ -66,17 +66,6 @@ const CustomDrawer = (props) => {
         )}
       />
       <DrawerItem
-        label={t('app.notes.title')}
-        labelStyle={Styled.TextButtonLabel}
-        style={{ opacity: 0.3 }}
-        onPress={onClickFeatureNotImplemented}
-        inactiveTintColor={Colors.lightGray400}
-        inactiveBackgroundColor={Colors.lightGray100}
-        icon={() => (
-          <Styled.DrawerIcon name="notes" size={24} color="#1C1B1F" />
-        )}
-      />
-      <DrawerItem
         label={t('app.actionsBar.actionsDropdown.streamOptions')}
         labelStyle={Styled.TextButtonLabel}
         style={{ opacity: 0.3 }}

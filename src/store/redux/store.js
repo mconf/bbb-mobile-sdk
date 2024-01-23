@@ -23,6 +23,7 @@ import breakoutsReducer from './slices/breakouts';
 import recordMeetingsReducer from './slices/record-meetings';
 import usersSettingsReducer from './slices/users-settings';
 import uploadedFileReducer from './slices/uploaded-file';
+import padsSessionsReducer from './slices/pads-sessions';
 // app exclusive wide state collections
 import previousPollPublishedReducer from './slices/wide-app/previous-poll-published';
 import audioReducer from './slices/wide-app/audio';
@@ -74,6 +75,7 @@ const appReducer = combineReducers({
   recordMeetingsCollection: recordMeetingsReducer,
   usersSettingsCollection: usersSettingsReducer,
   uploadedFileCollection: uploadedFileReducer,
+  padsSessionsCollection: padsSessionsReducer,
   // ...other collections
 
   // app exclusive wide state collections

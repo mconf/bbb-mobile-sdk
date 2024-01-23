@@ -1,4 +1,4 @@
-import { Pressable } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { useIsFocused } from '@react-navigation/native';
 import { trigDetailedInfo } from '../../store/redux/slices/wide-app/layout';
@@ -9,15 +9,28 @@ import ModalControllerComponent from '../modal';
 import ChatPopupList from '../chat/chat-popup';
 import DebugWindow from '../debug-window';
 
-const ScreenWrapper = ({ children }) => {
+const ScreenWrapper = ({ children, renderWithView }) => {
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
 
+  const handleRenderChildren = () => {
+    if (!renderWithView) {
+      return (
+        <Pressable onPress={() => dispatch(trigDetailedInfo())} style={{ flex: 1 }}>
+          {children}
+        </Pressable>
+      );
+    }
+    return (
+      <View style={{ flex: 1 }}>
+        {children}
+      </View>
+    );
+  };
+
   return (
     <>
-      <Pressable onPress={() => dispatch(trigDetailedInfo())} style={{ flex: 1 }}>
-        {children}
-      </Pressable>
+      {handleRenderChildren()}
       <ModalControllerComponent />
       <NotificationBar />
       <DebugWindow />

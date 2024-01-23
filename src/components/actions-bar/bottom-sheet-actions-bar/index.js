@@ -13,7 +13,7 @@ import Screenshare from '../screenshare-button';
 import DeviceSelectorControl from '../audio-device-selector-control';
 import Styled from './styles';
 
-const BottomSheetActionsBar = () => {
+const BottomSheetActionsBar = ({ alwaysOpen }) => {
   // ref
   const bottomSheetRef = useRef(null);
   const route = useRoute();
@@ -56,7 +56,7 @@ const BottomSheetActionsBar = () => {
     <BottomSheet
       ref={bottomSheetRef}
       index={detailedInfo ? 0 : -1}
-      enablePanDownToClose
+      enablePanDownToClose={!alwaysOpen}
       snapPoints={snapPoints}
       handleIndicatorStyle={Styled[isFullscreen ? 'fullscreenStyles' : 'styles'].indicatorStyle}
       style={Styled[isFullscreen ? 'fullscreenStyles' : 'styles'].style}

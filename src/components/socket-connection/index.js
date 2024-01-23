@@ -24,6 +24,7 @@ import { GuestUsersModule } from './modules/guest-users';
 import { RecordMeetingsModule } from './modules/record-meetings';
 import { UsersSettingsModule } from './modules/users-settings';
 import { UploadedFileModule } from './modules/uploaded-file';
+import { PadsSessionsModule } from './modules/pads-sessions';
 // streams
 import { StreamExternalVideoModule } from './stream/external-videos';
 import {
@@ -226,6 +227,8 @@ const setupModules = (ws) => {
     'users-settings': new UsersSettingsModule(messageSender),
     'uploaded-file': new UploadedFileModule(messageSender),
     'external-video-meetings': new ExternalVideoMeetingsModule(messageSender),
+    pads: new PadsModule(messageSender),
+    'pads-sessions': new PadsSessionsModule(messageSender),
   };
 
   /*
@@ -256,7 +259,6 @@ const setupModules = (ws) => {
    *  whiteboard-multi-user:
    */
   if (Settings.dev) {
-    modules.pads = new PadsModule(messageSender);
     modules['external-video-meetings'] = new ExternalVideoMeetingsModule(messageSender);
   }
 
