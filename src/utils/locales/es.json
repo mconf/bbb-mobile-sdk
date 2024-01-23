@@ -4,6 +4,8 @@
     "app.audioNotificaion.reconnectingAsListenOnly": "El micrófono ha sido bloqueado para todos los espectadores, tu conexión es en modo 'solo escuchar'",
     "app.chat.clearPublicChatMessage": "El chat público fue borrado por un moderador",
     "app.chat.submitLabel": "Enviar mensaje",
+    "app.content.presentation":"Presentación",
+    "app.content.screenshare":"Compartir pantalla",
     "app.customFeedback.defaultButtons.next": "Siguiente",
     "app.customFeedback.defaultButtons.skip": "Saltar",
     "app.customFeedback.email.contact": "¿Te gustaría dejar tu correo electrónico para ponernos en contacto contigo?",
