@@ -4,6 +4,8 @@
   "app.audioNotificaion.reconnectingAsListenOnly": "O microfone foi bloqueado para participantes, você está sendo conectado como ouvinte",
   "app.chat.clearPublicChatMessage": "O histórico do bate-papo público foi apagado por um moderador",
   "app.chat.submitLabel": "Enviar mensagem",
+  "app.content.presentation":"Apresentação",
+  "app.content.screenshare":"Compartilhamento de Tela",
   "app.customFeedback.defaultButtons.next": "Próximo",
   "app.customFeedback.defaultButtons.skip": "Pular",
   "app.customFeedback.email.contact": "Gostaria de deixar seu e-mail para contato?",
