@@ -1,8 +1,10 @@
 import { KeyboardAvoidingView, Platform } from 'react-native';
+import { useDispatch } from 'react-redux';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
-import { useOrientation } from '../../../hooks/use-orientation';
+import { trigDetailedInfo } from '../../../store/redux/slices/wide-app/layout';
+import { editSecretPoll } from '../../../store/redux/slices/current-poll';
 import ScreenWrapper from '../../../components/screen-wrapper';
 import PollService from '../service';
 import Styled from './styles';
@@ -24,8 +26,8 @@ const CreatePoll = () => {
   const [secretPoll, setSecretPoll] = useState(false);
   const [isMultipleResponse, setIsMultipleResponse] = useState(false);
   const { t } = useTranslation();
-  const orientation = useOrientation();
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const handleCreatePoll = async () => {
     navigation.navigate('PreviousPollsScreen');
@@ -97,7 +99,10 @@ const CreatePoll = () => {
       </Styled.ToggleOptionsLabel>
       <Styled.ToggleOptionsLabel
         value={secretPoll}
-        onValueChange={(val) => setSecretPoll(val)}
+        onValueChange={(val) => {
+          dispatch(editSecretPoll(val));
+          setSecretPoll(val);
+        }}
         enableText={t('mobileSdk.poll.createPoll.anonymousPollSubtitle')}
       >
         {t('mobileSdk.poll.createPoll.anonymousPoll')}
@@ -120,9 +125,9 @@ const CreatePoll = () => {
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <Styled.ContainerView orientation={orientation}>
+        <Styled.ContainerView>
           <Styled.ContainerPollCard>
-            <Styled.ContainerViewPadding>
+            <Styled.ContainerViewPadding onPress={() => dispatch(trigDetailedInfo())}>
               {renderMethod()}
             </Styled.ContainerViewPadding>
           </Styled.ContainerPollCard>

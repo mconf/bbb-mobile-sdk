@@ -8,13 +8,15 @@ import {
 } from '@react-navigation/drawer';
 import Colors from '../../constants/colors';
 import { selectCurrentUser } from '../../store/redux/slices/current-user';
+import { setProfile } from '../../store/redux/slices/wide-app/modal';
 import Styled from './styles';
 import logger from '../../services/api';
 import * as api from '../../services/api';
 import { leave } from '../../store/redux/slices/wide-app/client';
+import Settings from '../../../settings.json';
 
 const CustomDrawer = (props) => {
-  const { meetingUrl } = props;
+  const { meetingUrl, navigation } = props;
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const currentUserObj = useSelector(selectCurrentUser);
@@ -22,6 +24,11 @@ const CustomDrawer = (props) => {
 
   const leaveSession = () => {
     dispatch(leave(api));
+  };
+
+  const onClickFeatureNotImplemented = () => {
+    dispatch(setProfile({ profile: 'not_implemented' }));
+    navigation.closeDrawer();
   };
 
   const onClickShare = async () => {
@@ -46,6 +53,44 @@ const CustomDrawer = (props) => {
     }
   };
 
+  const renderNotImplementedItem = () => (
+    <>
+      <DrawerItem
+        label={t('mobileSdk.whiteboard.label')}
+        labelStyle={Styled.TextButtonLabel}
+        style={{ opacity: 0.3 }}
+        onPress={onClickFeatureNotImplemented}
+        inactiveTintColor={Colors.lightGray400}
+        inactiveBackgroundColor={Colors.lightGray100}
+        icon={() => (
+          <Styled.DrawerIcon name="brush" size={24} color="#1C1B1F" />
+        )}
+      />
+      <DrawerItem
+        label={t('app.notes.title')}
+        labelStyle={Styled.TextButtonLabel}
+        style={{ opacity: 0.3 }}
+        onPress={onClickFeatureNotImplemented}
+        inactiveTintColor={Colors.lightGray400}
+        inactiveBackgroundColor={Colors.lightGray100}
+        icon={() => (
+          <Styled.DrawerIcon name="notes" size={24} color="#1C1B1F" />
+        )}
+      />
+      <DrawerItem
+        label={t('app.actionsBar.actionsDropdown.streamOptions')}
+        labelStyle={Styled.TextButtonLabel}
+        style={{ opacity: 0.3 }}
+        onPress={onClickFeatureNotImplemented}
+        inactiveTintColor={Colors.lightGray400}
+        inactiveBackgroundColor={Colors.lightGray100}
+        icon={() => (
+          <Styled.DrawerIcon name="connected-tv" size={24} color="#1C1B1F" />
+        )}
+      />
+    </>
+  );
+
   return (
     <Styled.ViewContainer>
       <DrawerContentScrollView
@@ -64,10 +109,13 @@ const CustomDrawer = (props) => {
         </Styled.CustomDrawerContainer>
         <Styled.ContainerDrawerItemList>
           <DrawerItemList {...props} />
+          {Settings.showNotImplementedFeatures && renderNotImplementedItem()}
         </Styled.ContainerDrawerItemList>
       </DrawerContentScrollView>
       <Styled.ContainerCustomBottomButtons>
-        {!isBreakout && (
+
+        {/* DEFAULT ITEMS */}
+        {!isBreakout && meetingUrl && (
         <DrawerItem
           label={t('mobileSdk.drawer.shareButtonLabel')}
           labelStyle={Styled.TextButtonLabel}
@@ -77,7 +125,6 @@ const CustomDrawer = (props) => {
           icon={() => <Styled.DrawerIcon name="share" size={24} color="#1C1B1F" />}
         />
         )}
-
         <DrawerItem
           label={isBreakout ? t('mobileSdk.breakout.leave') : t('app.navBar.settingsDropdown.leaveSessionLabel')}
           labelStyle={Styled.TextButtonLabel}

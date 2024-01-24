@@ -3,11 +3,11 @@ import { Pressable, Animated } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/core';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { setProfile } from '../../store/redux/slices/wide-app/modal';
-import { showNotificationWithTimeout } from '../../store/redux/slices/wide-app/notification-bar';
-import { isModerator } from '../../store/redux/slices/current-user';
-import usePrevious from '../../hooks/use-previous';
-import Colors from '../../constants/colors';
+import { setProfile } from '../../../store/redux/slices/wide-app/modal';
+import { showNotificationWithTimeout } from '../../../store/redux/slices/wide-app/notification-bar';
+import { isModerator } from '../../../store/redux/slices/current-user';
+import usePrevious from '../../../hooks/use-previous';
+import Colors from '../../../constants/colors';
 import Styled from './styles';
 
 const RecordingIndicator = (props) => {

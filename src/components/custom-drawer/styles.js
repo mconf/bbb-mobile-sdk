@@ -1,6 +1,7 @@
 import styled from 'styled-components/native';
 import { css } from 'styled-components';
 import Icon from '@expo/vector-icons/MaterialIcons';
+import Tag from '../tag';
 import userAvatar from '../user-avatar';
 import Colors from '../../constants/colors';
 import Pressable from '../pressable';
@@ -69,6 +70,7 @@ const ViewShareContainer = styled.View`
 
 const TextButtonLabel = {
   paddingLeft: 12,
+  paddingRight: 20,
   color: Colors.lightGray400,
   fontSize: 16,
   fontWeight: 400,
@@ -77,6 +79,7 @@ const TextButtonLabel = {
 
 const TextButtonActive = {
   paddingLeft: 12,
+  paddingRight: 20,
   color: Colors.white,
   fontSize: 16,
   fontWeight: 400,
@@ -86,6 +89,11 @@ const TextButtonActive = {
 const DrawerIcon = styled(Icon)`
   position: absolute;
   margin: 12px;
+`;
+
+const BetaTag = styled(Tag)`
+  position: absolute;
+  right: 12px;
 `;
 
 export default {
@@ -101,5 +109,6 @@ export default {
   TextButtonLabel,
   TextButtonActive,
   ViewShareContainer,
+  BetaTag,
   DrawerIcon,
 };

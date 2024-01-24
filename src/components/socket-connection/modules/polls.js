@@ -1,5 +1,6 @@
 import Module from './module';
 import { store } from '../../../store/redux/store';
+import { setProfile } from '../../../store/redux/slices/wide-app/modal';
 import {
   addPoll,
   removePoll,
@@ -17,6 +18,10 @@ export class PollsModule extends Module {
 
   // eslint-disable-next-line class-methods-use-this
   _add(msgObj) {
+    store.dispatch(setProfile({
+      profile: 'receive_poll',
+      extraInfo: msgObj.fields
+    }));
     store.dispatch(
       addPoll({
         pollObject: msgObj,

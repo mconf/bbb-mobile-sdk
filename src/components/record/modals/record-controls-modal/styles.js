@@ -1,8 +1,8 @@
 import styled from 'styled-components/native';
 import { View, Text, TouchableOpacity } from 'react-native';
 import Icon from '@expo/vector-icons/MaterialIcons';
-import Colors from '../../../constants/colors';
-import button from '../../button';
+import Colors from '../../../../constants/colors';
+import button from '../../../button';
 
 const ModalContainer = styled(View)`
   justify-content: center;

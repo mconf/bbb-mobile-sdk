@@ -38,7 +38,8 @@ const PreviousPollScreen = () => {
       >
         {t('mobileSdk.poll.createLabel')}
       </Styled.PressableButton>
-    ); };
+    );
+  };
 
   if (Object.keys(previousPollPublishedStore.previousPollPublishedCollection)
     .length === 0 && (isPresenter && !hasCurrentPoll)) {
