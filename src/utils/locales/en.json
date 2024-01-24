@@ -4,6 +4,8 @@
   "app.audioNotificaion.reconnectingAsListenOnly": "Microphone has been locked for viewers, you are being connected as listen only",
   "app.chat.clearPublicChatMessage": "The public chat history was cleared by a moderator",
   "app.chat.submitLabel": "Send message",
+  "app.content.presentation":"Presentation",
+  "app.content.screenshare":"Screenshare",
   "app.customFeedback.defaultButtons.next": "Next",
   "app.customFeedback.defaultButtons.skip": "Skip",
   "app.customFeedback.email.contact": "Would you like to leave your email for contact?",

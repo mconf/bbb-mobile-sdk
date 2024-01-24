@@ -42,6 +42,11 @@ const PresenterIcon = styled(IconButtonComponent)`
   height: 16px;
   border-radius: 3px;
   background-color: ${Colors.white};
+
+  ${({ mini }) => mini && `
+    width: 10px;
+    height: 10px;
+  `}
 `;
 
 const ImageBackground = styled.Image`
