@@ -2,13 +2,14 @@ import {
   useCallback, useRef, useMemo, useState
 } from 'react';
 import {
-  Pressable, KeyboardAvoidingView, Platform, Text
+  KeyboardAvoidingView, Platform, Text, View
 } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
 import HTMLView from 'react-native-htmlview';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useTranslation } from 'react-i18next';
-import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
+import BottomSheet from '@gorhom/bottom-sheet';
 import { useBottomSheetBackHandler } from '../../../hooks/useBottomSheetBackHandler';
 import { setHasUnreadMessages, setBottomChatOpen } from '../../../store/redux/slices/wide-app/chat';
 import UserAvatar from '../../user-avatar';
@@ -56,7 +57,7 @@ const BottomSheetChat = () => {
   const renderItem = ({ item }) => {
     const timestamp = new Date(item.timestamp);
     return (
-      <Pressable>
+      <View>
         <Styled.ContainerItem>
           <UserAvatar
             userName={item.author}
@@ -75,7 +76,7 @@ const BottomSheetChat = () => {
             {handleMessage(item.message)}
           </Styled.Card>
         </Styled.ContainerItem>
-      </Pressable>
+      </View>
     );
   };
 
@@ -99,16 +100,11 @@ const BottomSheetChat = () => {
         enablePanDownToClose
       >
         {renderEmptyChatHandler()}
-        <BottomSheetFlatList
+        <FlatList
           ref={flatListRef}
-          removeClippedSubviews={false}
-          data={messages}
+          data={messages.reverse()}
           renderItem={renderItem}
-          onContentSizeChange={() => {
-            if (messages.length > 0) {
-              flatListRef.current.scrollToEnd({ animated: true });
-            }
-          }}
+          inverted
         />
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
