@@ -9,7 +9,7 @@ import ModalControllerComponent from '../modal';
 import ChatPopupList from '../chat/chat-popup';
 import DebugWindow from '../debug-window';
 
-const ScreenWrapper = ({ children, renderWithView }) => {
+const ScreenWrapper = ({ children, renderWithView, alwaysOpen }) => {
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
 
@@ -38,7 +38,7 @@ const ScreenWrapper = ({ children, renderWithView }) => {
       So, we will disable them from rendering when is not focused */}
       {isFocused && (
         <>
-          <BottomSheetActionsBar />
+          <BottomSheetActionsBar alwaysOpen={alwaysOpen} />
           <BottomSheetChat />
           <ChatPopupList />
         </>

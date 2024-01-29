@@ -49,7 +49,12 @@ const UserNotesScreen = () => {
   useEffect(() => {
     if (keyboardIsVisible) {
       dispatch(setDetailedInfo(false));
+      return;
     }
+    // ? The dispatch is updated faster than the calculation of View outside keyboard
+    setTimeout(() => {
+      dispatch(setDetailedInfo(true));
+    }, 1);
   }, [keyboardIsVisible]);
 
   useEffect(() => {
@@ -58,7 +63,7 @@ const UserNotesScreen = () => {
   }, []);
 
   return (
-    <ScreenWrapper renderWithView>
+    <ScreenWrapper renderWithView alwaysOpen>
       <View style={{ flex: 1 }}>
         <WebView source={{ uri: url }} />
         {!keyboardIsVisible
