@@ -1,8 +1,8 @@
 import styled from 'styled-components/native';
 import { css } from 'styled-components';
 import { RTCView } from 'react-native-webrtc';
-import ContentLoader, { Rect } from 'react-content-loader/native';
 import { Ionicons } from '@expo/vector-icons';
+import { View } from 'react-native';
 import IconButtonComponent from '../../icon-button';
 import Colors from '../../../constants/colors';
 import Pressable from '../../pressable';
@@ -73,16 +73,7 @@ const NameLabel = styled.Text`
 `;
 
 const VideoSkeleton = () => (
-  <ContentLoader
-    speed={1}
-    width="100%"
-    height="100%"
-    viewBox="0 0 90 90"
-    backgroundColor={Colors.contentLetterboxColor}
-    foregroundColor={Colors.contentForegroundColor}
-  >
-    <Rect x="0" y="0" rx="3" ry="3" width="90" height="90" />
-  </ContentLoader>
+  <View style={{ backgroundColor: Colors.contentLetterboxColor, height: '100%', width: '100%' }} />
 );
 
 const ContainerPressableGrid = styled.Pressable`
