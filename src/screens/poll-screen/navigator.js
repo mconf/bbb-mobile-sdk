@@ -20,6 +20,7 @@ const PollNavigator = () => {
         index: 1,
         routes: [{ name: 'AnswerPollScreen' }]
       });
+      return;
     }
     navigation.reset({
       index: 1,
