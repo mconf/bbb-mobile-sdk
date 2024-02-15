@@ -28,7 +28,7 @@ const NotifeeController = () => {
 
   useEffect(() => {
     if (audioIsConnected) {
-      // Start/show the notification foreground service
+      // Start/show the notification service
       const getChannelIdAndDisplayNotification = async () => {
         const channelId = await notifee.createChannel({
           id: 'main_meeting_channel',
@@ -39,7 +39,7 @@ const NotifeeController = () => {
         const _notification = {
           title: t('mobileSdk.notification.title'),
           body: t('mobileSdk.notification.body'),
-          id: 'audio_foreground_notification',
+          id: 'audio_notification_main',
           android: {
             channelId,
             pressAction: {
@@ -136,7 +136,7 @@ const NotifeeController = () => {
     return () => {
       notifee.stopForegroundService();
     };
-  }, []);
+  }, [audioIsConnected]);
 
   useEffect(() => {
     // Foreground event = device unlocked || app in view

@@ -41,6 +41,7 @@ const AppContent = ({
   onLeaveSession: _onLeaveSession,
   jUrl,
   meetingUrl,
+  defaultLanguage,
 }) => {
   const Stack = createNativeStackNavigator();
   const dispatch = useDispatch();
@@ -152,7 +153,7 @@ const AppContent = ({
         </Stack.Navigator>
       </NavigationContainer>
       {!isBreakout && <InCallManagerController />}
-      {!isBreakout && <LocalesController />}
+      {!isBreakout && <LocalesController defaultLanguage={defaultLanguage} />}
       <NotifeeController />
     </>
   );

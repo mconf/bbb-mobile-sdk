@@ -39,7 +39,8 @@ const UserAvatar = (props) => {
       {(presenter || userPresenterByIntId) && (
         <Styled.PresenterIcon
           icon="presentation"
-          size={13}
+          size={mini ? 8 : 13}
+          mini={mini}
         />
       )}
     </Styled.Background>

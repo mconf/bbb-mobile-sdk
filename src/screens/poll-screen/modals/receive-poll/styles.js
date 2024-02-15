@@ -10,7 +10,7 @@ const Container = styled.Pressable`
 `;
 
 const InsideContainer = styled.Pressable`
-  transform: scale(0.8);
+  transform: scale(0.9);
   background-color: ${Colors.white};
   border-radius: 12px;
   padding: 24px;
@@ -24,7 +24,7 @@ const SecretLabel = styled.Text`
 `;
 
 const Title = styled.Text`
-  font-size: 14px;
+  font-size: 20px;
   font-weight: 600;
   text-align: center;
 `;

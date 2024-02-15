@@ -1,8 +1,8 @@
 import styled from 'styled-components/native';
 import { css } from 'styled-components';
 import { RTCView } from 'react-native-webrtc';
-import { ActivityIndicator } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
+import { View } from 'react-native';
 import IconButtonComponent from '../../icon-button';
 import Colors from '../../../constants/colors';
 import Pressable from '../../pressable';
@@ -73,17 +73,7 @@ const NameLabel = styled.Text`
 `;
 
 const VideoSkeleton = () => (
-  <ActivityIndicator
-    size="large"
-    color="white"
-    backgroundColor={Colors.contentLetterboxColor}
-    animating="true"
-    style={{
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-    }}
-  />
+  <View style={{ backgroundColor: Colors.contentLetterboxColor, height: '100%', width: '100%' }} />
 );
 
 const ContainerPressableGrid = styled.Pressable`
