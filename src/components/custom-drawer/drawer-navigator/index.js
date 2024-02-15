@@ -258,7 +258,7 @@ const DrawerNavigator = ({
           unmountOnBlur: true,
           drawerIcon: (config) => (
             <>
-              <Styled.BetaTag>BETA</Styled.BetaTag>
+              <Styled.BetaTag>{t('mobileSdk.tag.new')}</Styled.BetaTag>
               <Styled.IconMaterial name="notes" size={24} color={config.color} />
             </>
           ),
