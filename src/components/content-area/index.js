@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import { selectScreenshare } from '../../store/redux/slices/screenshare';
 import {
   setFocusedElement,
@@ -18,6 +19,7 @@ const ContentArea = (props) => {
   const detailedInfo = useSelector((state) => state.layout.detailedInfo);
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const { t } = useTranslation();
 
   const handleSlideAndPresentationActive = useCallback(() => {
     // TODO Review this collection after update the 2.6 code
@@ -81,7 +83,7 @@ const ContentArea = (props) => {
             <Styled.NameLabel
               numberOfLines={1}
             >
-              {screenshare ? 'Screenshare' : 'Presentation'}
+              {screenshare ? t('app.content.screenshare') : t('app.content.presentation')}
             </Styled.NameLabel>
           </Styled.NameLabelContainer>
 

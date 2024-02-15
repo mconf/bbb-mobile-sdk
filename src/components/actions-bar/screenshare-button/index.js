@@ -3,11 +3,16 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { setProfile } from '../../../store/redux/slices/wide-app/modal';
 import { trigDetailedInfo } from '../../../store/redux/slices/wide-app/layout';
+import Settings from '../../../../settings.json';
 import Styled from './styles';
 
 const Screenshare = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
+
+  if (!Settings.showNotImplementedFeatures) {
+    return null;
+  }
 
   return (
     <Styled.ContainerPressable

@@ -16,15 +16,15 @@ const ContainerPollCard = styled.Pressable`
 `;
 
 const KeyText = styled.Text`
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 400;
   color: ${Colors.lightGray300};
 `;
 
 const PercentageText = styled.Text`
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 400;
-  width: 30px;
+  width: 35px;
   color: ${Colors.lightGray300};
 `;
 
@@ -37,7 +37,7 @@ const AnswerContainer = styled.View`
 const LabelContainer = styled.View`
   display: flex;
   flex-direction: row;
-  gap: 8px;
+  gap: 4px;
 `;
 
 const TimestampText = styled.Text`
@@ -48,7 +48,7 @@ const TimestampText = styled.Text`
 `;
 
 const QuestionText = styled.Text`
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 400;
   color: ${Colors.lightGray300}
 `;
@@ -201,7 +201,7 @@ const PressableButton = ({
     >
       <Text
         style={{
-          fontSize: 12,
+          fontSize: 14,
           fontWeight: 500,
           color: Colors.white,
         }}

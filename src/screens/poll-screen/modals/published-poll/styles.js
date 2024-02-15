@@ -8,7 +8,7 @@ const Container = styled.Pressable`
 `;
 
 const InsideContainer = styled.View`
-  transform: scale(0.65);
+  transform: scale(0.9);
 `;
 
 export default {
