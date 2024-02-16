@@ -6,6 +6,7 @@ import {
   readyStateChanged,
   cleanupStaleData,
 } from '../../../store/redux/slices/voice-users';
+import { AppState } from 'react-native';
 import { store } from '../../../store/redux/store';
 
 const VOICE_USERS_TOPIC = 'voiceUsers';
@@ -17,21 +18,21 @@ export class VoiceUsersModule extends Module {
 
   // eslint-disable-next-line class-methods-use-this
   _add(msgObj) {
-    return store.dispatch(
-      addVoiceUser({
-        voiceUserObject: msgObj,
-      })
-    );
+    // return store.dispatch(
+    //   addVoiceUser({
+    //     voiceUserObject: msgObj,
+    //   })
+    // );
   }
 
   // eslint-disable-next-line class-methods-use-this
   _remove(msgObj) {
     if (!this._ignoreDeletions) {
-      return store.dispatch(
-        removeVoiceUser({
-          voiceUserObject: msgObj,
-        })
-      );
+      // return store.dispatch(
+      //   removeVoiceUser({
+      //     voiceUserObject: msgObj,
+      //   })
+      // );
     }
 
     return false;
@@ -39,11 +40,15 @@ export class VoiceUsersModule extends Module {
 
   // eslint-disable-next-line class-methods-use-this
   _update(msgObj) {
-    return store.dispatch(
-      editVoiceUser({
-        voiceUserObject: msgObj,
-      })
-    );
+    // if (AppState.currentState === 'background'
+    // ) {
+    //   return;
+    // }
+    // return store.dispatch(
+    //   editVoiceUser({
+    //     voiceUserObject: msgObj,
+    //   })
+    // );
   }
 
   // eslint-disable-next-line class-methods-use-this
