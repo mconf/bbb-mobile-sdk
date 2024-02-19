@@ -45,7 +45,7 @@ const padsSessionsSlice = createSlice({
 
 const selectPadSession = (state) => Object.values(
   state.padsSessionsCollection.padsSessionsCollection
-)[0]?.sessions[0].notes;
+)[0]?.sessions[0]?.notes;
 
 export const {
   addPadSession,
