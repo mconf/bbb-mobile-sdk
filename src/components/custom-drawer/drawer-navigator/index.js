@@ -256,6 +256,9 @@ const DrawerNavigator = ({
         options={{
           title: t('app.notes.title'),
           unmountOnBlur: true,
+          drawerLabelStyle: {
+            maxWidth: 150, fontWeight: 'normal', fontSize: 15, paddingLeft: 12
+          },
           drawerIcon: (config) => (
             <>
               <Styled.BetaTag>{t('mobileSdk.tag.new')}</Styled.BetaTag>
