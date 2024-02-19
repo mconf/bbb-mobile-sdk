@@ -26,7 +26,7 @@ const UserAvatar = (props) => {
       userRole={userRole}
       userColor={userColor || userColorByIntId}
       userImage={userImage}
-      isTalking={isTalking}
+      // isTalking={isTalking}
       mini={mini}
     >
       {userImage
