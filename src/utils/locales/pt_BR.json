@@ -53,7 +53,7 @@
   "app.meeting.logout.permissionEjectReason": "Removido da conferência devido a uma violação de permissão",
   "app.meeting.logout.userInactivityEjectReason": "Participante inativo por muito tempo",
   "app.navBar.settingsDropdown.leaveSessionLabel": "Sair da sessão",
-  "app.notes.title": "Notas compartilhadas",
+  "app.notes.title": "Notas",
   "app.poll.a4": "A / B / C / D",
   "app.polling.responseNotSecret": "Enquete normal – o apresentador poderá ver sua resposta.",
   "app.polling.responseSecret": "Enquete anônima – o apresentador não poderá ver sua resposta.",
