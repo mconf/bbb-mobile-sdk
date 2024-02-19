@@ -38,7 +38,7 @@ const VideoContainer = (props) => {
   });
   const mediaStreamId = useSelector((state) => state.video.videoStreams[cameraId]);
   const signalingTransportOpen = useSelector((state) => state.video.signalingTransportOpen);
-  // const isTalking = useSelector((state) => isTalkingByUserId(state, userId));
+  const isTalking = useSelector((state) => isTalkingByUserId(state, userId));
   const mediaServer = useSelector((state) => selectMetadata(state, 'media-server-video'));
 
   useEffect(() => {
@@ -69,7 +69,7 @@ const VideoContainer = (props) => {
           userId={userId}
           userColor={userColor}
           userImage={userAvatar}
-          // isTalking={isTalking}
+          isTalking={isTalking}
           userRole={userRole}
         />
         )}
@@ -114,11 +114,11 @@ const VideoContainer = (props) => {
     >
       {renderVideo()}
 
-      {/* always show talking indicator */}
-      {/* {isTalking && (
+      {isTalking && (
       <Styled.TalkingIndicatorContainer>
+        <Styled.TalkingIndicatorIcon />
       </Styled.TalkingIndicatorContainer>
-      )} */}
+      )}
 
       {detailedInfo && (
         <>
