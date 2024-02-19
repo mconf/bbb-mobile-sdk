@@ -9,7 +9,6 @@ import {
 } from '../../../store/redux/slices/wide-app/layout';
 import { isTalkingByUserId } from '../../../store/redux/slices/voice-users';
 import { selectMetadata } from '../../../store/redux/slices/meeting';
-import SoundWaveAnimation from '../../animations/sound-wave-animation';
 import UserAvatar from '../../user-avatar';
 import VideoManager from '../../../services/webrtc/video-manager';
 import Styled from './styles';
@@ -39,7 +38,7 @@ const VideoContainer = (props) => {
   });
   const mediaStreamId = useSelector((state) => state.video.videoStreams[cameraId]);
   const signalingTransportOpen = useSelector((state) => state.video.signalingTransportOpen);
-  // const isTalking = useSelector((state) => isTalkingByUserId(state, userId));
+  const isTalking = useSelector((state) => isTalkingByUserId(state, userId));
   const mediaServer = useSelector((state) => selectMetadata(state, 'media-server-video'));
 
   useEffect(() => {
@@ -70,7 +69,7 @@ const VideoContainer = (props) => {
           userId={userId}
           userColor={userColor}
           userImage={userAvatar}
-          // isTalking={isTalking}
+          isTalking={isTalking}
           userRole={userRole}
         />
         )}
@@ -115,12 +114,11 @@ const VideoContainer = (props) => {
     >
       {renderVideo()}
 
-      {/* always show talking indicator */}
-      {/* {isTalking && (
+      {isTalking && (
       <Styled.TalkingIndicatorContainer>
-        <SoundWaveAnimation />
+        <Styled.TalkingIndicatorIcon />
       </Styled.TalkingIndicatorContainer>
-      )} */}
+      )}
 
       {detailedInfo && (
         <>
