@@ -257,7 +257,7 @@ const DrawerNavigator = ({
           title: t('app.notes.title'),
           unmountOnBlur: true,
           drawerLabelStyle: {
-            maxWidth: 150, fontWeight: 'normal', fontSize: 15, paddingLeft: 12
+            maxWidth: 150, fontWeight: '400', fontSize: 16, paddingLeft: 12
           },
           drawerIcon: (config) => (
             <>
