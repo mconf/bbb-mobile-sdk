@@ -92,8 +92,11 @@ const NotifeeController = () => {
       await notifee.requestPermission();
     };
 
-    requestNotificationPermission();
-  }, []);
+    if (audioIsConnected) {
+      requestNotificationPermission();
+    }
+
+  }, [audioIsConnected]);
 
   useEffect(() => {
     if (notification) {
