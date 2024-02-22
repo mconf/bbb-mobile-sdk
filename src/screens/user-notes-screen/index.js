@@ -62,10 +62,22 @@ const UserNotesScreen = () => {
     getPadId();
   }, []);
 
+  const INJECTED_JAVASCRIPT = `(function() {
+    var elem = document.querySelector('li[data-key="import_export"]')
+    elem.style.display = 'none';
+    return false;
+  })();`;
+
   return (
     <ScreenWrapper renderWithView alwaysOpen>
       <View style={{ flex: 1 }}>
-        <WebView source={{ uri: url }} />
+        <WebView
+          source={{ uri: url }}
+          javaScriptEnabled={true}
+          sharedCookiesEnabled={true}
+          thirdPartyCookiesEnabled={true}
+          injectedJavaScript={INJECTED_JAVASCRIPT}
+        />
         {!keyboardIsVisible
         && <Pressable style={{ height: 100 }} onPress={() => dispatch(trigDetailedInfo())} />}
       </View>
