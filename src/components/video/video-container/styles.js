@@ -1,7 +1,7 @@
 import styled from 'styled-components/native';
 import { css } from 'styled-components';
 import { RTCView } from 'react-native-webrtc';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, Feather } from '@expo/vector-icons';
 import { View } from 'react-native';
 import IconButtonComponent from '../../icon-button';
 import Colors from '../../../constants/colors';
@@ -105,6 +105,7 @@ const TalkingIndicatorContainer = styled.View`
     margin: 5px;
     border-radius: 20px;
     position: absolute;
+    padding: 4px;
     left: 0;
 `;
 
@@ -134,6 +135,10 @@ const HandRaisedIcon = () => (
   </IconContainer>
 );
 
+const TalkingIndicatorIcon = () => (
+  <Feather name="activity" size={24} color="white" />
+);
+
 export default {
   ContainerPressable,
   UserAvatar,
@@ -147,4 +152,5 @@ export default {
   FullscreenIcon,
   HandRaisedIcon,
   TalkingIndicatorContainer,
+  TalkingIndicatorIcon,
 };
