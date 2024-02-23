@@ -13,7 +13,13 @@ const TransferScreen = (props) => {
   if (joinTransfer) {
     return (
       <View style={{ flex: 1 }}>
-        <WebView source={{ uri: transferUrl }} allowsFullscreenVideo />
+        <WebView
+          source={{ uri: transferUrl }}
+          allowsFullscreenVideo
+          javaScriptEnabled
+          sharedCookiesEnabled
+          thirdPartyCookiesEnabled
+        />
       </View>
     );
   }
