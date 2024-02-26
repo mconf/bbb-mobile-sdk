@@ -57,7 +57,7 @@ const BottomSheetChat = () => {
   const renderItem = ({ item }) => {
     const timestamp = new Date(item.timestamp);
     return (
-      <View>
+      <View style={Styled.styles.item}>
         <Styled.ContainerItem>
           <UserAvatar
             userName={item.author}
@@ -104,7 +104,7 @@ const BottomSheetChat = () => {
           ref={flatListRef}
           data={messages.reverse()}
           renderItem={renderItem}
-          inverted
+          style={Styled.styles.list}
         />
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
