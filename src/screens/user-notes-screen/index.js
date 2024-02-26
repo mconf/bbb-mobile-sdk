@@ -1,9 +1,9 @@
-import { View, Pressable, Keyboard } from 'react-native';
+import { View, Keyboard, Platform } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { useDispatch, useSelector } from 'react-redux';
 import { useCallback, useEffect, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/core';
-import { trigDetailedInfo, setDetailedInfo } from '../../store/redux/slices/wide-app/layout';
+import { setDetailedInfo } from '../../store/redux/slices/wide-app/layout';
 import makeCall from '../../services/api/makeCall';
 import { selectPadSession } from '../../store/redux/slices/pads-sessions';
 import ScreenWrapper from '../../components/screen-wrapper';
@@ -19,6 +19,7 @@ const UserNotesScreen = () => {
   const dispatch = useDispatch();
 
   const url = `https://${host}/pad/auth_session?padName=${padId}&sessionID=${padSession}&lang=pt-br&rtl=false&sessionToken=${sessionToken}`;
+  const isAndroid = Platform.OS === 'android';
 
   useFocusEffect(useCallback(() => {
     const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
@@ -47,15 +48,23 @@ const UserNotesScreen = () => {
   };
 
   useEffect(() => {
-    if (keyboardIsVisible) {
+    if (keyboardIsVisible && !isAndroid) {
       dispatch(setDetailedInfo(false));
       return;
     }
     // ? The dispatch is updated faster than the calculation of View outside keyboard
     setTimeout(() => {
-      dispatch(setDetailedInfo(true));
+      if (!isAndroid) {
+        dispatch(setDetailedInfo(true));
+      }
     }, 1);
   }, [keyboardIsVisible]);
+
+  useFocusEffect(useCallback(() => {
+    if (isAndroid) {
+      dispatch(setDetailedInfo(true));
+    }
+  }, []));
 
   useEffect(() => {
     createSession();
@@ -70,16 +79,14 @@ const UserNotesScreen = () => {
 
   return (
     <ScreenWrapper renderWithView alwaysOpen>
-      <View style={{ flex: 1 }}>
+      <View style={isAndroid ? { flex: 1, paddingBottom: 100 } : { flex: 1 }}>
         <WebView
           source={{ uri: url }}
-          javaScriptEnabled={true}
-          sharedCookiesEnabled={true}
-          thirdPartyCookiesEnabled={true}
+          javaScriptEnabled
+          sharedCookiesEnabled
+          thirdPartyCookiesEnabled
           injectedJavaScript={INJECTED_JAVASCRIPT}
         />
-        {!keyboardIsVisible
-        && <Pressable style={{ height: 100 }} onPress={() => dispatch(trigDetailedInfo())} />}
       </View>
     </ScreenWrapper>
   );
