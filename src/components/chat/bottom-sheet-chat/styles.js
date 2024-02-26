@@ -69,6 +69,16 @@ const TextInput = styled(textInput)`
   width: 85%;
 `;
 
+// ? Rotate 180 degrees using transform, workaround for bug in Android 13
+const styles = StyleSheet.create({
+  list: {
+    transform: [{ rotate: '180deg' }],
+  },
+  item: {
+    transform: [{ rotate: '180deg' }],
+  },
+});
+
 export default {
   Card,
   FlatList,
@@ -82,4 +92,5 @@ export default {
   MessageTimestamp,
   MessageTopContainer,
   NoMessageText,
+  styles
 };
