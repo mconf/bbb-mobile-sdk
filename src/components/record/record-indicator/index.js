@@ -70,14 +70,14 @@ const RecordingIndicator = (props) => {
   if (!recordMeeting?.record) return null;
 
   const handleIcon = () => {
-    if (neverRecorded) {
+    if (neverRecorded || recording) {
       return (<MaterialCommunityIcons name="record-circle-outline" size={24} color={Colors.white} />);
     }
     return (<MaterialCommunityIcons name="record-circle-outline" size={24} color={Colors.orange} />);
   };
 
   return (
-    <Styled.Container neverRecorded={neverRecorded}>
+    <Styled.Container neverRecorded={neverRecorded} recording={recording}>
       <Styled.RecordingIndicatorIcon>
         <Pressable
           onPress={hasRecordingPermission
