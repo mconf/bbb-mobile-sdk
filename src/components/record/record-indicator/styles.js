@@ -20,6 +20,10 @@ const Container = styled.View`
   ${({ neverRecorded }) => !neverRecorded && `
     background-color: ${Colors.white};
   `}
+
+  ${({ recording }) => recording && `
+    background-color: ${Colors.recordingRed};
+  `}
 `;
 
 export default {

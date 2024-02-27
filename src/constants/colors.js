@@ -4,6 +4,7 @@ const Colors = {
   green: '#00BF6F',
   orange: '#F18700',
   red: '#CD545B',
+  recordingRed: '#B01C1C',
   white: '#FFFFFF',
   lightGray100: '#EEF1F4',
   lightGray200: '#D4DDE4',
