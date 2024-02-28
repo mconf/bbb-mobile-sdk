@@ -18,12 +18,14 @@ const TextContainer = styled.View`
   flex-direction: row;
   aling-items: center;
   justify-content: center;
+  align-self: flex-end;
 `;
 
 const Text = styled.Text`
   color: ${Colors.white}
   font-size: 14px;
-  font-weight: 800;
+  font-weight: 600;
+  max-width: 150px;
 `;
 
 const MicIcon = () => (

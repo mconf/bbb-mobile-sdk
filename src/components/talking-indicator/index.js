@@ -7,14 +7,13 @@ const TalkingIndicator = () => {
   );
   const callersTalking = Object.values(VoiceUsersCollection)
     .filter((call) => call.talking)
-    .map((call) => call.callerName);
-
+    .map((call) => ({ callerName: call.callerName, voiceUserId: call.voiceUserId }));
   return (
     <Styled.Container>
-      {callersTalking.map((userName) => (
-        <Styled.TextContainer>
+      {callersTalking.map((userObj) => (
+        <Styled.TextContainer key={userObj.voiceUserId}>
           <Styled.MicIcon />
-          <Styled.Text>{userName}</Styled.Text>
+          <Styled.Text numberOfLines={1}>{userObj.callerName}</Styled.Text>
         </Styled.TextContainer>
       ))}
     </Styled.Container>
