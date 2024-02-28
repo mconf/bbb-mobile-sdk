@@ -1,77 +1,64 @@
 import styled from 'styled-components/native';
+import { Button } from 'react-native-paper';
 import Colors from '../../constants/colors';
-import PrimaryButton from '../../components/button';
 
 const ContainerView = styled.View`
   width: 100%;
   height: 100%;
   display: flex;
-  align-items: center;
   justify-content: center;
-  padding: 10px;
-
-  ${({ orientation }) => orientation === 'LANDSCAPE'
-  && `
-    flex-direction: row;
-    justify-content: center;
-  `}
-`;
-
-const ContainerEndSessionCard = styled.View`
-  background-color: ${Colors.white};
-  width: 100%;
-  max-height: 85%;
-  padding: 16px;
-  border-radius: 12px;
-  display: flex;
   align-items: center;
+  padding: 16px;
+  gap: 24px;
 `;
 
 const Title = styled.Text`
+  color: ${Colors.white};
   font-size: 21px;
-  font-weight: 500;
   text-align: center;
-  color: ${Colors.lightGray400};
-  padding-bottom: 10px;
+  font-weight: 500;
 `;
 
 const Image = styled.Image`
-  width: 250px;
-  height: 250px;
-
-  ${({ orientation }) => orientation === 'LANDSCAPE'
-  && `
-    display: none;
-  `}
+  width: 150px;
+  height: 150px;
 `;
 
-const ConfirmButton = styled(PrimaryButton)`
-  background-color: ${Colors.blue};
-  color: ${Colors.white};
-  font-size: 16px;
-  font-weight: 400;
-  padding: 12px;
-  border-radius: 12px;
+const ButtonCreate = styled(Button)`
 `;
+
+const ConfirmButton = ({
+  onPress, children
+}) => {
+  return (
+    <ButtonCreate
+      mode="contained"
+      onPress={onPress}
+      buttonColor={Colors.orange}
+      textColor={Colors.white}
+      labelStyle={{
+        fontSize: 18,
+        fontWeight: 500,
+      }}
+    >
+      {children}
+    </ButtonCreate>
+  );
+};
 
 const Subtitle = styled.Text`
-  font-size: 18px;
-  font-weight: 500;
+  color: ${Colors.white};
+  font-size: 16px;
   text-align: center;
-  color: #667080;
-  padding-bottom: 40px;
 `;
 
 const ButtonContainer = styled.View`
-  position: absolute;
-  bottom: -25px;
   width: 100%;
 `;
 
 export default {
   ConfirmButton,
   ContainerView,
-  ContainerEndSessionCard,
   Title,
   Subtitle,
   ButtonContainer,

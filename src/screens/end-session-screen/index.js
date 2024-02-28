@@ -20,20 +20,18 @@ const EndSessionScreen = (props) => {
 
   return (
     <Styled.ContainerView>
-      <Styled.ContainerEndSessionCard>
-        <Styled.Image
-          source={require('../../assets/application/endSessionImage.png')}
-          resizeMode="contain"
-          orientation={orientation}
-        />
-        <Styled.Title>{title}</Styled.Title>
-        <Styled.Subtitle>{subtitle}</Styled.Subtitle>
-        <Styled.ButtonContainer>
-          <Styled.ConfirmButton onPress={handleLeaveSessionButtonPress}>
-            {leaveText}
-          </Styled.ConfirmButton>
-        </Styled.ButtonContainer>
-      </Styled.ContainerEndSessionCard>
+      <Styled.Image
+        source={require('../../assets/application/endSessionImage.png')}
+        resizeMode="contain"
+        orientation={orientation}
+      />
+      <Styled.Title>{title}</Styled.Title>
+      <Styled.Subtitle>{subtitle}</Styled.Subtitle>
+      <Styled.ButtonContainer>
+        <Styled.ConfirmButton onPress={handleLeaveSessionButtonPress}>
+          {leaveText}
+        </Styled.ConfirmButton>
+      </Styled.ButtonContainer>
     </Styled.ContainerView>
   );
 };
