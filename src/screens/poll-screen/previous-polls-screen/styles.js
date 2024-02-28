@@ -65,9 +65,6 @@ const PressableButton = ({
       onPress={disabled ? onPressDisabled : onPress}
       buttonColor={disabled ? Colors.lightGray300 : Colors.orange}
       textColor={Colors.white}
-      style={{
-        width: '75%',
-      }}
       labelStyle={{
         fontSize: 18,
         fontWeight: 500,
