@@ -1,8 +1,8 @@
 import styled from 'styled-components/native';
+import { Button } from 'react-native-paper';
 import { View, Text, TouchableOpacity } from 'react-native';
 import Icon from '@expo/vector-icons/MaterialIcons';
 import Colors from '../../../../constants/colors';
-import button from '../../../button';
 
 const ModalContainer = styled(View)`
   justify-content: center;
@@ -27,19 +27,28 @@ const CloseButton = styled(Icon)`
   margin: 0px;
 `;
 
-const ConfirmButton = styled(button)`
-  background-color: ${Colors.orange};
-  color: ${Colors.white};
-  font-size: 18px;
-  font-weight: 500;
-  padding: 12px;
-  border-radius: 40px;
+const ButtonCreate = styled(Button)`
+  margin-left: 8px;
 `;
 
-const ConfirmButtonIcon = styled(Icon)`
-  padding: 0px;
-  margin: 0px;
-`;
+const ConfirmButton = ({
+  onPress, children
+}) => {
+  return (
+    <ButtonCreate
+      mode="contained"
+      onPress={onPress}
+      buttonColor={Colors.orange}
+      textColor={Colors.white}
+      labelStyle={{
+        fontSize: 18,
+        fontWeight: 500,
+      }}
+    >
+      {children}
+    </ButtonCreate>
+  );
+};
 
 const CloseButtonText = styled(Text)`
   font-size: 18px;
@@ -72,17 +81,6 @@ const ButtonContainer = styled(View)`
   display: flex;
   justify-content: flex-end;
   align-items: center;
-`;
-
-const Button = styled(TouchableOpacity)`
-  margin-left: 15px;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  background-color: ${Colors.orange};
-  padding: 8px 24px;
-  gap: 8px;
-  border-radius: 40px;
 `;
 
 const ButtonText = styled(Text)`
@@ -131,7 +129,6 @@ export default {
   CloseButton,
   CloseButtonText,
   ConfirmButton,
-  ConfirmButtonIcon,
   ModalContent,
   Title,
   Description,

@@ -1,41 +1,58 @@
 import styled from 'styled-components/native';
-import button from '../../../components/button';
+import { Button } from 'react-native-paper';
 import textInput from '../../../components/text-input';
 import Colors from '../../../constants/colors';
 
 const ButtonsContainer = styled.View``;
 
-const OptionsButton = styled(button)`
-  background-color: ${Colors.lightGray200}
-  color: ${Colors.lightGray400};
-  font-size: 16px;
-  font-weight: 400;
-  padding: 12px;
-  border-radius: 12px;
-
-  ${({ selected }) => selected
-    && `
-      background-color: #003399;
-      color: ${Colors.white};
-  `}
+const ButtonCreate = styled(Button)`
+  margin: 4px 0;
 `;
 
-const ConfirmButton = styled(button)`
-  background-color: ${Colors.orange};
-  color: ${Colors.white};
-  font-size: 16px;
-  font-weight: 400;
-  padding: 12px;
-  margin-bottom: 16px;
-  border-radius: 12px;
-  margin-top: 32px;
-`;
+const ConfirmButton = ({
+  onPress, children
+}) => {
+  return (
+    <ButtonCreate
+      mode="contained"
+      onPress={onPress}
+      buttonColor={Colors.orange}
+      textColor={Colors.white}
+      labelStyle={{
+        fontSize: 18,
+        fontWeight: 500,
+      }}
+    >
+      {children}
+    </ButtonCreate>
+  );
+};
+
+const OptionsButton = ({
+  onPress, children, selected
+}) => {
+  return (
+    <ButtonCreate
+      mode="contained"
+      onPress={onPress}
+      buttonColor={selected ? Colors.blue : Colors.white}
+      textColor={selected ? Colors.white : Colors.lightGray400}
+      labelStyle={{
+        fontSize: 18,
+        fontWeight: 500,
+      }}
+    >
+      {children}
+    </ButtonCreate>
+  );
+};
 
 const Title = styled.Text`
   font-size: 24px;
   font-weight: 600;
   text-align: center;
   padding-bottom: 24px;
+  color: ${Colors.white}
 `;
 
 const SecretLabel = styled.Text`
@@ -43,19 +60,20 @@ const SecretLabel = styled.Text`
   font-size: 12px;
   text-align: center;
   font-style: italic;
+  color: ${Colors.white}
 `;
 
 const TextInput = styled(textInput)``;
 
 const ContainerViewPadding = styled.View`
-  padding: 12px;
+  display: flex;
+  gap: 8px;
+  padding: 24px;
 `;
 
 const ContainerPollCard = styled.ScrollView`
-  background-color: ${Colors.white};
+  height: 100%;
   width: 100%;
-  border-radius: 12px;
-  display: flex;
 `;
 
 const ContainerView = styled.View`
@@ -64,13 +82,6 @@ const ContainerView = styled.View`
   display: flex;
   align-items: center;
   justify-content: space-around;
-  padding: 10px;
-
-  ${({ orientation }) => orientation === 'LANDSCAPE'
-  && `
-    flex-direction: row;
-    justify-content: center;
-  `}
 `;
 
 export default {

@@ -27,6 +27,7 @@ const NameUserAvatar = styled.Text`
   color: ${Colors.white};
   font-size: 18px;
   padding-left: 20px;
+  flex: 1;
 `;
 
 const ContainerDrawerItemList = styled.View`

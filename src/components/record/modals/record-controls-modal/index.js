@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { hide } from '../../../../store/redux/slices/wide-app/modal';
 import { selectRecordMeeting } from '../../../../store/redux/slices/record-meetings';
-import Colors from '../../../../constants/colors';
 import ViewerService from '../record-status-modal/service';
 import Service from './service';
 import Styled from './styles';
@@ -75,7 +74,6 @@ const RecordControlsModal = () => {
         <Styled.ModalContent>
           <Styled.ModalTop>
             <Styled.Title>{title}</Styled.Title>
-            <Styled.CloseButton name="close" size={24} color="#1C1B1F" onPress={() => dispatch(hide())} />
           </Styled.ModalTop>
           <Styled.TimeText>
             {ViewerService.humanizeSeconds(time)}
@@ -88,14 +86,12 @@ const RecordControlsModal = () => {
             <Pressable onPress={() => dispatch(hide())}>
               <Styled.CancelText>{t('app.settings.main.cancel.label')}</Styled.CancelText>
             </Pressable>
-            <Styled.Button activeOpacity={0.8} onPress={handleToggleRecording}>
-              <Styled.CloseButton
-                name={recordMeeting?.recording ? 'pause' : 'radio-button-checked'}
-                size={24}
-                color={Colors.white}
-              />
-              <Styled.ButtonText>{title.split(' ')[0]}</Styled.ButtonText>
-            </Styled.Button>
+            <Styled.ConfirmButton
+              onPress={handleToggleRecording}
+              recording={recordMeeting?.recording}
+            >
+              {title.split(' ')[0]}
+            </Styled.ConfirmButton>
           </Styled.ButtonContainer>
         </Styled.ModalContent>
       </Styled.ModalContainer>

@@ -1,22 +1,28 @@
 import styled from 'styled-components/native';
-import button from '../../../button';
+import { Button } from 'react-native-paper';
 import Colors from '../../../../constants/colors';
 
-const OptionsButton = styled(button)`
-  background-color: ${Colors.lightGray200}
-  color: ${Colors.lightGray400};
-  font-size: 16px;
-  font-weight: 400;
-  padding: 12px;
-  border-radius: 12px;
-  width: 100%;
-
-  ${({ selected }) => selected
-  && `
-      background-color: #003399;
-      color: ${Colors.white};
-  `}
+const ButtonCreate = styled(Button)`
 `;
+
+const OptionsButton = ({
+  onPress, children, selected
+}) => {
+  return (
+    <ButtonCreate
+      mode="outlined"
+      onPress={onPress}
+      buttonColor={selected ? Colors.blue : Colors.white}
+      textColor={selected ? Colors.white : Colors.lightGray400}
+      labelStyle={{
+        fontSize: 18,
+        fontWeight: 500,
+      }}
+    >
+      {children}
+    </ButtonCreate>
+  );
+};
 
 const ButtonContainer = styled.View`
   display: flex;

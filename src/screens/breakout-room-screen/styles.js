@@ -1,6 +1,5 @@
 import styled from 'styled-components/native';
-import { Divider } from 'react-native-paper';
-import button from '../../components/button';
+import { Divider, Button } from 'react-native-paper';
 import Colors from '../../constants/colors';
 import UserAvatar from '../../components/user-avatar';
 
@@ -143,15 +142,27 @@ const ParticipantsContainer = styled.View`
   flex-direction: row;
 `;
 
-const JoinBreakoutButton = styled(button)`
-  background-color: ${Colors.orange}
-  color: ${Colors.white};
-  font-size: 16px;
-  font-weight: 400;
-  padding: 12px 0;
-  border-radius: 12px;
-  width: 100%;
+const ButtonCreate = styled(Button)`
 `;
+
+const JoinBreakoutButton = ({
+  onPress, children
+}) => {
+  return (
+    <ButtonCreate
+      mode="contained"
+      onPress={onPress}
+      buttonColor={Colors.orange}
+      textColor={Colors.white}
+      labelStyle={{
+        fontSize: 18,
+        fontWeight: 500,
+      }}
+    >
+      {children}
+    </ButtonCreate>
+  );
+};
 
 const ButtonContainer = styled.View`
   width: 100%;

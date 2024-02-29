@@ -1,6 +1,6 @@
+import { Button } from 'react-native-paper';
 import styled from 'styled-components/native';
 import Colors from '../../../constants/colors';
-import button from '../../../components/button';
 
 const Container = styled.View`
   display: flex;
@@ -35,15 +35,27 @@ const RoomName = styled.Text`
   color: ${Colors.lightGray300}
 `;
 
-const JoinBreakoutButton = styled(button)`
-  background-color: ${Colors.orange}
-  color: ${Colors.white};
-  font-size: 16px;
-  font-weight: 400;
-  padding: 12px 0;
-  border-radius: 12px;
-  width: 100%;
+const ButtonCreate = styled(Button)`
 `;
+
+const JoinBreakoutButton = ({
+  onPress, children
+}) => {
+  return (
+    <ButtonCreate
+      mode="contained"
+      onPress={onPress}
+      buttonColor={Colors.orange}
+      textColor={Colors.white}
+      labelStyle={{
+        fontSize: 18,
+        fontWeight: 500,
+      }}
+    >
+      {children}
+    </ButtonCreate>
+  );
+};
 
 export default {
   Container,

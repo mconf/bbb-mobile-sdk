@@ -1,7 +1,6 @@
 import styled from 'styled-components/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Switch, Button } from 'react-native-paper';
-import button from '../../../components/button';
 import textInput from '../../../components/text-input';
 import Colors from '../../../constants/colors';
 
@@ -9,65 +8,81 @@ const ButtonsContainer = styled.View`
   gap: 12px;
 `;
 
-const OptionsButton = styled(button)`
-  background-color: ${Colors.lightGray100}
-  color: ${Colors.lightGray400};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  font-weight: 400;
-  padding: 12px;
-  border-radius: 8px;
-
-  ${({ selected }) => selected
-    && `
-      background-color: #003399;
-      color: ${Colors.white};
-  `}
+const ButtonCreate = styled(Button)`
 `;
 
-const ConfirmButton = styled(button)`
-  background-color: ${Colors.orange};
-  color: ${Colors.white};
-  font-size: 16px;
-  font-weight: 400;
-  padding: 12px;
-  border-radius: 8px;
-`;
+const OptionsButton = ({
+  onPress, children, selected
+}) => {
+  return (
+    <ButtonCreate
+      mode="contained"
+      onPress={onPress}
+      buttonColor={selected ? Colors.blue : Colors.white}
+      textColor={selected ? Colors.white : Colors.lightGray400}
+      labelStyle={{
+        fontSize: 18,
+        fontWeight: 500,
+      }}
+    >
+      {children}
+    </ButtonCreate>
+  );
+};
 
-const SeePublishPollsButton = styled(button)`
-  background-color: ${Colors.blue};
-  color: ${Colors.white};
-  font-size: 16px;
-  font-weight: 400;
-  padding: 12px;
-  border-radius: 8px;
-`;
+const ConfirmButton = ({
+  onPress, children
+}) => {
+  return (
+    <ButtonCreate
+      mode="contained"
+      onPress={onPress}
+      buttonColor={Colors.orange}
+      textColor={Colors.white}
+      labelStyle={{
+        fontSize: 18,
+        fontWeight: 500,
+      }}
+    >
+      {children}
+    </ButtonCreate>
+  );
+};
+
+const SeePublishPollsButton = ({
+  onPress, children
+}) => {
+  return (
+    <ButtonCreate
+      mode="contained"
+      onPress={onPress}
+      icon="poll"
+      buttonColor={Colors.orange}
+      textColor={Colors.white}
+      labelStyle={{
+        fontSize: 18,
+        fontWeight: 500,
+      }}
+    >
+      {children}
+    </ButtonCreate>
+  );
+};
 
 const Title = styled.Text`
   font-size: 24px;
   font-weight: 600;
-  color: ${Colors.lightGray400}
+  color: ${Colors.white}
 `;
 
 const AnswerTitle = styled.Text`
   font-weight: 500;
   font-size: 18px;
   height: 24px;
-  color: ${Colors.lightGray400}
+  color: ${Colors.white}
 `;
 
 const TextInput = styled(textInput)``;
-
-const PreviousPollsButton = styled(button)`
-  background-color: ${Colors.blue}
-  color: ${Colors.white};
-  font-size: 16px;
-  font-weight: 400;
-  padding: 12px;
-  border-radius: 12px;
-`;
 
 const ContainerView = styled.Pressable`
   width: 100%;
@@ -75,11 +90,9 @@ const ContainerView = styled.Pressable`
   display: flex;
   align-items: center;
   justify-content: space-around;
-  padding: 10px;
 `;
 
 const ContainerPollCard = styled.ScrollView`
-  background-color: ${Colors.white};
   width: 100%;
   border-radius: 12px;
   display: flex;
@@ -91,7 +104,7 @@ const ContainerViewPadding = styled.Pressable`
 `;
 
 const IconPoll = () => (
-  <MaterialCommunityIcons name="poll" size={20} color={Colors.lightGray400} />
+  <MaterialCommunityIcons name="poll" size={20} color={Colors.white} />
 );
 
 const HeaderContainer = styled.View`
@@ -104,14 +117,14 @@ const HeaderContainer = styled.View`
 const LabelText = styled.Text`
   font-weight: 400;
   font-size: 16px;
-  color: ${Colors.lightGray400}
+  color: ${Colors.white}
   flex: 1;
 `;
 
 const DescLabelText = styled.Text`
   font-weight: 400;
   font-size: 12px;
-  color: ${Colors.lightGray300}
+  color: ${Colors.white}
   ${({ showText }) => !showText
   && `
     display: none;
@@ -147,10 +160,6 @@ const ToggleOptionsLabel = ({
   </ToggleOptionsContainer>
 );
 
-const ButtonCreate = styled(Button)`
-  margin-top: 48px;
-`;
-
 export default {
   Title,
   OptionsButton,
@@ -158,7 +167,6 @@ export default {
   ButtonsContainer,
   ConfirmButton,
   TextInput,
-  PreviousPollsButton,
   ContainerViewPadding,
   ContainerPollCard,
   ContainerView,

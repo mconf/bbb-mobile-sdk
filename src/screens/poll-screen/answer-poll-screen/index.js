@@ -4,14 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Platform } from 'react-native';
 import { selectActivePoll } from '../../../store/redux/slices/polls';
 import ScreenWrapper from '../../../components/screen-wrapper';
-import { useOrientation } from '../../../hooks/use-orientation';
 import PollService from '../service';
 import Styled from './styles';
 
 const AnswerPollScreen = () => {
   const [selectedAnswers, setSelectedAnswers] = useState([]);
   const activePollObject = useSelector(selectActivePoll);
-  const orientation = useOrientation();
   const scrollViewRef = useRef();
   const { t } = useTranslation();
 
@@ -95,16 +93,14 @@ const AnswerPollScreen = () => {
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <Styled.ContainerView orientation={orientation}>
-          <Styled.ContainerPollCard
-            ref={scrollViewRef}
-            onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
-          >
-            <Styled.ContainerViewPadding>
-              {renderMethod()}
-            </Styled.ContainerViewPadding>
-          </Styled.ContainerPollCard>
-        </Styled.ContainerView>
+        <Styled.ContainerPollCard
+          ref={scrollViewRef}
+          onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
+        >
+          <Styled.ContainerViewPadding>
+            {renderMethod()}
+          </Styled.ContainerViewPadding>
+        </Styled.ContainerPollCard>
       </KeyboardAvoidingView>
     </ScreenWrapper>
   );

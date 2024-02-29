@@ -34,13 +34,13 @@ const NotImplementedModal = () => {
         <Styled.TitleDesc>
           {t('mobileSdk.notImplemented.modal.bottom')}
         </Styled.TitleDesc>
-        <Styled.Button
+        <Styled.OkButton
           onPress={() => {
             dispatch(hide());
           }}
         >
           Ok
-        </Styled.Button>
+        </Styled.OkButton>
       </Styled.Container>
     </Modal>
   );

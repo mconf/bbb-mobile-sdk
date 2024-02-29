@@ -4,7 +4,6 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
-import { useOrientation } from '../../../hooks/use-orientation';
 import logger from '../../../services/logger';
 import Settings from '../../../../settings.json';
 import Colors from '../../../constants/colors';
@@ -17,7 +16,6 @@ const CUSTOMER_METADATA = Settings.feedback.custom.customerMetadata;
 const ProblemFeedbackScreen = ({ route }) => {
   const { t } = useTranslation();
   const height = useHeaderHeight();
-  const orientation = useOrientation();
   const navigation = useNavigation();
 
   const questionTitle = t('mobileSdk.feedback.questionTitle');
@@ -109,7 +107,6 @@ const ProblemFeedbackScreen = ({ route }) => {
     } = route.params.meetingData;
 
     const getDeviceType = () => {
-      // https://reactnative.dev/docs/platform
       if (Platform.OS === 'ios') {
         return Platform.constants.interfaceIdiom;
       }
@@ -175,61 +172,54 @@ const ProblemFeedbackScreen = ({ route }) => {
   };
 
   return (
-    <Styled.ContainerView orientation={orientation}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}
-        keyboardVerticalOffset={height + 47}
-        enabled
-      >
-        <Styled.ContainerFeedbackCard
-          contentContainerStyle={Styled.ContentContainerStyle}
-          orientation={orientation}
-        >
-          <Styled.ContainerTitle>
-            <Styled.Title>{questionTitle}</Styled.Title>
-            <Styled.Progress>1/2</Styled.Progress>
-          </Styled.ContainerTitle>
-          <Styled.OptionsContainer>
-            {
-            problems.map((option) => {
-              return (
+    <Styled.ContainerView>
+      <Styled.Title>{questionTitle}</Styled.Title>
+
+      <Styled.OptionsContainer>
+        {
+          problems.map((option) => {
+            return (
+              <Styled.CheckContainerItem key={option.code}>
                 <Styled.Option
-                  key={option.code}
                   status={optionsStatus[option.code] ? 'checked' : 'unchecked'}
-                  label={option.label}
-                  position="leading"
-                  color={Colors.blue}
+                  color={Colors.white}
                   onPress={() => flipOption(option.code)}
                 />
-              );
-            })
+                <Styled.LabelOption>{option.label}</Styled.LabelOption>
+              </Styled.CheckContainerItem>
+            );
+          })
           }
-            <Styled.TextInputContainer>
-              <Styled.TextInput
-                onFocus={() => checkOption('other')}
-                multiline
-                onChangeText={(newText) => setMessageText(newText)}
-              />
-            </Styled.TextInputContainer>
-          </Styled.OptionsContainer>
-          <Styled.ButtonContainer>
-            <Styled.ConfirmButton
-              disabled={!isAnyOptionChecked()}
-              onPress={handleSendProblem}
-            >
-              {t('app.customFeedback.defaultButtons.next')}
-            </Styled.ConfirmButton>
-          </Styled.ButtonContainer>
-          <Styled.QuitSessionButtonContainer>
-            <Styled.QuitSessionButton
-              onPress={handleSkip}
-            >
-              {skipButton}
-            </Styled.QuitSessionButton>
-          </Styled.QuitSessionButtonContainer>
-        </Styled.ContainerFeedbackCard>
+      </Styled.OptionsContainer>
+
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={height + 100}
+        style={{ width: '100%' }}
+      >
+        <Styled.TextInputOther
+          onFocus={() => checkOption('other')}
+          multiline
+          onChangeText={(newText) => setMessageText(newText)}
+        />
       </KeyboardAvoidingView>
+
+      <Styled.ButtonContainer>
+        <Styled.ConfirmButton
+          disabled={!isAnyOptionChecked()}
+          onPress={handleSendProblem}
+        >
+          {t('app.customFeedback.defaultButtons.next')}
+        </Styled.ConfirmButton>
+      </Styled.ButtonContainer>
+
+      <Styled.QuitSessionButtonContainer>
+        <Styled.QuitSessionButton
+          onPress={handleSkip}
+        >
+          {skipButton}
+        </Styled.QuitSessionButton>
+      </Styled.QuitSessionButtonContainer>
     </Styled.ContainerView>
   );
 };
