@@ -7,7 +7,7 @@ const TalkingIndicator = () => {
   );
   const callersTalking = Object.values(VoiceUsersCollection)
     .filter((call) => call.talking)
-    .map((call) => ({ callerName: call.callerName, voiceUserId: call.voiceUserId }));
+    .map((call) => ({ callerName: call.callerName.replaceAll('+', ' '), voiceUserId: call.voiceUserId }));
 
   return (
     <Styled.Container>
