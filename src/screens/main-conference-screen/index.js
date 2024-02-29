@@ -25,9 +25,9 @@ const MainConferenceScreen = () => {
     return (
       <ScreenWrapper>
         <Styled.ContainerView>
+          <TalkingIndicator />
           <VideoGrid />
           <MiniAudioPlayerIcon />
-          <TalkingIndicator />
         </Styled.ContainerView>
       </ScreenWrapper>
     );

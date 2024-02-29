@@ -3,11 +3,12 @@ import { MaterialIcons } from '@expo/vector-icons';
 import Colors from '../../constants/colors';
 
 const Container = styled.View`
-  position: absolute;
-  top: 5px;
-  right: 5px;
   display: flex;
+  flex-direction: row;
   gap: 8px;
+  height: 30px;
+  align-self: flex-start;
+  padding: 0 2px;
 `;
 
 const TextContainer = styled.View`
@@ -25,7 +26,7 @@ const Text = styled.Text`
   color: ${Colors.white}
   font-size: 14px;
   font-weight: 600;
-  max-width: 150px;
+  max-width: 75px;
 `;
 
 const MicIcon = () => (
