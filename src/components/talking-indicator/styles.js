@@ -26,7 +26,7 @@ const Text = styled.Text`
   color: ${Colors.white}
   font-size: 14px;
   font-weight: 600;
-  max-width: 75px;
+  max-width: 100px;
 `;
 
 const MicIcon = () => (
