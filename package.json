@@ -63,7 +63,7 @@
     "react-native-htmlview": "^0.17.0",
     "react-native-incall-manager": "^4.1.0",
     "react-native-orientation-locker": "github:pawlitos/react-native-orientation-locker",
-    "react-native-paper": "5.0.0-rc.3",
+    "react-native-paper": "5.12.3",
     "react-native-reanimated": "~2.14.4",
     "react-native-safe-area-context": "4.5.0",
     "react-native-screens": "~3.20.0",
