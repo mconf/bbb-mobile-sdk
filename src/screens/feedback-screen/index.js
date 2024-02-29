@@ -119,8 +119,16 @@ const FeedbackScreen = () => {
               thumbStyle={Styled.ThumbStyle}
               trackStyle={Styled.TrackStyle}
               minimumTrackTintColor={Colors.blue}
-              maximumTrackTintColor={Colors.lightGray100}
-              renderAboveThumbComponent={() => (<Styled.ThumbLabel>{rating}</Styled.ThumbLabel>)}
+              maximumTrackTintColor={Colors.white}
+              renderAboveThumbComponent={
+                () => (
+                  <Styled.ThumbContainer>
+                    <Styled.ThumbLabel>
+                      {rating || 5}
+                    </Styled.ThumbLabel>
+                  </Styled.ThumbContainer>
+                )
+              }
               onValueChange={(value) => setRating(value[0])}
             />
           </Styled.SliderContainer>
