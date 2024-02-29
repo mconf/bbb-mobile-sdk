@@ -7,7 +7,6 @@ import {
   trigDetailedInfo,
   setIsFocused
 } from '../../../store/redux/slices/wide-app/layout';
-import { isTalkingByUserId } from '../../../store/redux/slices/voice-users';
 import { selectMetadata } from '../../../store/redux/slices/meeting';
 import UserAvatar from '../../user-avatar';
 import VideoManager from '../../../services/webrtc/video-manager';
@@ -38,7 +37,6 @@ const VideoContainer = (props) => {
   });
   const mediaStreamId = useSelector((state) => state.video.videoStreams[cameraId]);
   const signalingTransportOpen = useSelector((state) => state.video.signalingTransportOpen);
-  const isTalking = useSelector((state) => isTalkingByUserId(state, userId));
   const mediaServer = useSelector((state) => selectMetadata(state, 'media-server-video'));
 
   useEffect(() => {
@@ -69,7 +67,6 @@ const VideoContainer = (props) => {
           userId={userId}
           userColor={userColor}
           userImage={userAvatar}
-          isTalking={isTalking}
           userRole={userRole}
         />
         )}
@@ -113,12 +110,6 @@ const VideoContainer = (props) => {
       userColor={userColor}
     >
       {renderVideo()}
-
-      {isTalking && (
-      <Styled.TalkingIndicatorContainer>
-        <Styled.TalkingIndicatorIcon />
-      </Styled.TalkingIndicatorContainer>
-      )}
 
       {detailedInfo && (
         <>
