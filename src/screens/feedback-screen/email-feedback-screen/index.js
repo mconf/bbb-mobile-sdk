@@ -64,28 +64,17 @@ const EmailFeedbackScreen = ({ route }) => {
 
   return (
     <Styled.ContainerView>
-      <Styled.ContainerFeedbackCard>
-        <Styled.ContainerTitle>
-          <Styled.Title>{title}</Styled.Title>
-          <Styled.Progress>2/2</Styled.Progress>
-        </Styled.ContainerTitle>
-        <Styled.ContentContainer>
-          <Styled.Subtitle>{subtitle}</Styled.Subtitle>
-          <Styled.TextInputContainer>
-            <Styled.TextInput
-              onChangeText={(newText) => setEmail(newText)}
-              label={optionalQuestion.label}
-            />
-          </Styled.TextInputContainer>
-        </Styled.ContentContainer>
-        <Styled.ButtonContainer>
-          <Styled.ConfirmButton
-            onPress={() => { handleSend(); }}
-          >
-            {concludeButton}
-          </Styled.ConfirmButton>
-        </Styled.ButtonContainer>
-      </Styled.ContainerFeedbackCard>
+      <Styled.Title>{title}</Styled.Title>
+      <Styled.Subtitle>{subtitle}</Styled.Subtitle>
+      <Styled.EmailTextInput
+        onChangeText={(newText) => setEmail(newText)}
+        label={optionalQuestion.label}
+      />
+      <Styled.ConfirmButton
+        onPress={() => { handleSend(); }}
+      >
+        {concludeButton}
+      </Styled.ConfirmButton>
     </Styled.ContainerView>
   );
 };
