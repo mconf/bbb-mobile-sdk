@@ -10,7 +10,7 @@ const OptionsButton = ({
 }) => {
   return (
     <ButtonCreate
-      mode="contained"
+      mode="outlined"
       onPress={onPress}
       buttonColor={selected ? Colors.blue : Colors.white}
       textColor={selected ? Colors.white : Colors.lightGray400}
