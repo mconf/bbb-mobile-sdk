@@ -53,6 +53,7 @@ const ConfirmButton = ({
 
 const TextInputOther = styled(TextInput)`
   max-height: 150px;
+  width: 100%;
 `;
 
 const ButtonContainer = styled.View`
