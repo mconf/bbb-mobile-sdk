@@ -77,6 +77,10 @@ const FeedbackScreen = () => {
 
   const sendStarRating = () => {
     const { host, authToken } = meetingData.current;
+    if (user.current === undefined) {
+      navigation.navigate('EndSessionScreen');
+      return;
+    }
     const { role, name, intId } = user.current;
     const payload = {
       rating,
