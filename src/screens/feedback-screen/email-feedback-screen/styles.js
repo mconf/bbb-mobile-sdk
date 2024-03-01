@@ -15,6 +15,7 @@ const ContainerView = styled.View`
 const Title = styled.Text`
   font-size: 24px;
   font-weight: 500;
+  text-align: center;
   color: ${Colors.white};
 `;
 

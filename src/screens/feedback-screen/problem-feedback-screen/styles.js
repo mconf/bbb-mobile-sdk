@@ -16,6 +16,7 @@ const Title = styled.Text`
   font-size: 24px;
   font-weight: 500;
   color: ${Colors.white};
+  text-align: center;
 `;
 
 const CheckContainerItem = styled.View`
