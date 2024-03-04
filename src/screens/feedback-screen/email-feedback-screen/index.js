@@ -76,11 +76,13 @@ const EmailFeedbackScreen = ({ route }) => {
             onChangeText={(newText) => setEmail(newText)}
             label={optionalQuestion.label}
           />
-          <Styled.ConfirmButton
-            onPress={() => { handleSend(); }}
-          >
-            {concludeButton}
-          </Styled.ConfirmButton>
+          <Styled.ButtonContainer>
+            <Styled.ConfirmButton
+              onPress={() => handleSend()}
+            >
+              {concludeButton}
+            </Styled.ConfirmButton>
+          </Styled.ButtonContainer>
         </Styled.ContainerView>
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>

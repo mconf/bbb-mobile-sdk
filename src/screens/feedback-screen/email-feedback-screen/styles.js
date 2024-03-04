@@ -48,6 +48,10 @@ const ConfirmButton = ({
   );
 };
 
+const ButtonContainer = styled.View`
+  width: 100%;
+`;
+
 const EmailTextInput = styled(TextInput)`
   width: 100%;
 `;
@@ -58,4 +62,5 @@ export default {
   Title,
   Subtitle,
   EmailTextInput,
+  ButtonContainer,
 };
