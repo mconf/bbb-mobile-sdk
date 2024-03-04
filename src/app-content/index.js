@@ -131,7 +131,8 @@ const AppContent = ({
         <Stack.Navigator
           screenOptions={{
             headerShown: false,
-            contentStyle: { backgroundColor: '#06172A' }
+            contentStyle: { backgroundColor: '#06172A' },
+            gestureEnabled: false,
           }}
         >
           <Stack.Screen name="DrawerNavigator">
