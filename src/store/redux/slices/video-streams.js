@@ -1,5 +1,5 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit';
-import { selectUsers } from './users';
+import { selectMainUsers } from './users';
 import { sortVideoUsers } from '../../../services/sorts/video';
 import { selectLocalCameraId } from './wide-app/video';
 import VideoManager from '../../../services/webrtc/video-manager';
@@ -55,7 +55,7 @@ const selectVideoStreams = (state) => Object.values(
 );
 
 const selectSortedVideoUsers = createSelector(
-  [selectVideoStreams, selectUsers, selectLocalCameraId],
+  [selectVideoStreams, selectMainUsers, selectLocalCameraId],
   (videoStreams, users, localCameraId) => {
     return sortVideoUsers(users.map((user) => {
       const {
@@ -77,6 +77,7 @@ const selectSortedVideoUsers = createSelector(
         userRole: user.role,
         userAvatar: user.avatar,
         userColor: user.color,
+        userEmoji: user.emoji,
         local,
       };
     }), Settings.media.videoPageSize);
@@ -87,13 +88,18 @@ const selectVideoStreamByDocumentId = (state, documentId) => {
   return state.videoStreamsCollection.videoStreamsCollection[documentId];
 };
 
-const selectLocalVideoStreams = (state) => {
-  const currentUserId = state.client.meetingData?.internalUserID;
+const selectCurrentUserId = (state) => state.client.meetingData?.internalUserID;
 
-  if (currentUserId == null) return [];
+const selectLocalVideoStreams = createSelector(
+  [selectVideoStreams, selectCurrentUserId],
+  (videoStreams, currentUserId) => {
+    if (!currentUserId) {
+      return [];
+    }
 
-  return selectVideoStreams(state).filter(({ userId }) => userId === currentUserId);
-};
+    return videoStreams.filter(({ userId }) => userId === currentUserId);
+  }
+);
 
 // Middleware effects and listeners
 const videoStreamCleanupListener = (action, listenerApi) => {

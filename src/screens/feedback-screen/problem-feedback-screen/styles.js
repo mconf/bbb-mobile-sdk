@@ -1,71 +1,64 @@
 import styled from 'styled-components/native';
-import { Checkbox } from 'react-native-paper';
+import { Button, Checkbox, TextInput } from 'react-native-paper';
 import Colors from '../../../constants/colors';
-import PrimaryButton from '../../../components/button';
-import textInput from '../../../components/text-input';
 
 const ContainerView = styled.View`
   width: 100%;
   height: 100%;
   align-items: center;
-  justify-content: space-around;
+  justify-content: center;
+  padding: 12px;
+  gap: 16px;
   display: flex;
-  padding: 10px;
-  background-color: #06172A;
-
-  ${({ orientation }) => orientation === 'LANDSCAPE'
-  && `
-    flex-direction: row;
-    justify-content: center;
-  `}
-`;
-
-const ContainerFeedbackCard = styled.ScrollView`
-  background-color: ${Colors.white};
-  width: 100%;
-  border-radius: 12px;
-  display: flex;
-  margin: 16px;
-  padding: 16px;
-
-  ${({ orientation }) => orientation === 'LANDSCAPE'
-  && `
-    margin: 8px 0;
-  `}
-`;
-
-const ContainerTitle = styled.View`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  width: 90%;
 `;
 
 const Title = styled.Text`
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 500;
-  color: ${Colors.lightGray400};
-  padding-bottom: 10px;
-  max-width: 95%;
+  color: ${Colors.white};
+  text-align: center;
 `;
 
-const ConfirmButton = styled(PrimaryButton)`
-  background-color: ${Colors.blue};
-  color: ${Colors.white};
-  font-size: 16px;
-  font-weight: 400;
-  padding: 12px;
-  border-radius: 20px;
-  margin-top: 10%;
+const CheckContainerItem = styled.View`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+`;
 
-  ${({ disabled }) => disabled
-  && `
-    background-color: ${Colors.lightGray300};
-  `}
+const Option = styled(Checkbox.Android)`
+`;
+
+const LabelOption = styled.Text`
+  color: ${Colors.white};
+`;
+
+const ConfirmButton = ({
+  onPress, children, disabled
+}) => {
+  return (
+    <ButtonCreate
+      mode="contained"
+      onPress={onPress}
+      buttonColor={disabled ? Colors.lightGray300 : Colors.orange}
+      textColor={Colors.white}
+      labelStyle={{
+        fontSize: 18,
+        fontWeight: 500,
+      }}
+    >
+      {children}
+    </ButtonCreate>
+  );
+};
+
+const TextInputOther = styled(TextInput)`
+  max-height: 150px;
+  width: 100%;
 `;
 
 const ButtonContainer = styled.View`
-  width: 90%;
+  width: 100%;
 `;
 
 const QuitSessionButtonContainer = styled(ButtonContainer)`
@@ -73,56 +66,45 @@ const QuitSessionButtonContainer = styled(ButtonContainer)`
   align-items: flex-end;
 `;
 
-const QuitSessionButton = styled(PrimaryButton)`
-  color: #667080;
-  font-size: 15px;
-  text-decoration: underline;
+const ButtonCreate = styled(Button)`
 `;
+
+const QuitSessionButton = ({
+  onPress, children, disabled
+}) => {
+  return (
+    <ButtonCreate
+      mode="text"
+      disabled={disabled}
+      onPress={onPress}
+      textColor={Colors.white}
+      labelStyle={{
+        fontSize: 16,
+        fontWeight: 400,
+      }}
+    >
+      {children}
+    </ButtonCreate>
+  );
+};
 
 const OptionsContainer = styled.View`
   display: flex;
   align-items: flex-start;
-  justify-content: center;
+  justify-content: flex-start;
   width: 100%;
 `;
-
-const Option = styled(Checkbox.Item)`
-  border-radius: 20px;
-`;
-
-const TextInputContainer = styled.View`
-  width: 100%;
-  max-height: 300px;
-  align-items: center;
-`;
-
-const TextInput = styled(textInput)`
-  width: 85%;
-`;
-
-const Progress = styled.Text`
-  color: ${Colors.lightGray400};
-`;
-
-const ContentContainerStyle = {
-  alignItems: 'center',
-  justifyContent: 'center',
-  flexGrow: 1,
-};
 
 export default {
   ConfirmButton,
   ContainerView,
-  ContainerFeedbackCard,
-  ContainerTitle,
   Title,
   ButtonContainer,
   QuitSessionButtonContainer,
   QuitSessionButton,
   OptionsContainer,
   Option,
-  TextInputContainer,
-  TextInput,
-  Progress,
-  ContentContainerStyle,
+  TextInputOther,
+  LabelOption,
+  CheckContainerItem,
 };

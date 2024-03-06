@@ -16,7 +16,9 @@ const initialState = {
     endReason: null,
     terminated: false,
     initialChatMsgsFetched: false,
+    transfer: false,
   },
+  transferUrl: null,
   guestStatus: null, // oneof 'WAIT'|'ALLOW'|'DENY'|'FAILED'
   meetingData: {
     host: null,
@@ -28,7 +30,11 @@ const initialState = {
     fullname: null,
     externUserID: null,
     confname: null,
+    isBreakout: null,
     customdata: null,
+  },
+  breakoutData: {
+    parentMeetingJoinUrl: null,
   },
   connectionStatus: {
     isConnected: null,
@@ -68,6 +74,9 @@ const clientSlice = createSlice({
     },
     setMeetingData: (state, action) => {
       state.meetingData = action.payload;
+    },
+    setBreakoutData: (state, action) => {
+      state.breakoutData = action.payload;
     },
     setJoinUrl: (state, action) => {
       state.meetingData.joinUrl = action.payload;
@@ -115,6 +124,11 @@ const clientSlice = createSlice({
       })
       .addCase(join.fulfilled, (state, action) => {
         const { payload: joinResponse } = action;
+        if (joinResponse.isTransfer) {
+          state.sessionState.transfer = true;
+          state.sessionState.loggingIn = false;
+          state.transferUrl = joinResponse.transferUrl;
+        }
         const joinGuestStatus = joinResponse.waitingForApproval ? 'WAIT' : 'ALLOW';
         state.guestStatus = joinGuestStatus;
         state.meetingData = joinResponse;
@@ -239,6 +253,13 @@ const join = createAsyncThunk(
       };
     }
 
+    if (joinResponseUrl.includes('transfer/?sessionToken=')) {
+      return {
+        isTransfer: true,
+        transferUrl: joinResponseUrl
+      };
+    }
+
     if (joinResponseUrl.includes('html5client/join')) {
       try {
         const enterUrl = `${parsedResponseURL.protocol}//${parsedResponseURL.host}/bigbluebutton/api/enter?sessionToken=${sessionToken}`;
@@ -346,12 +367,15 @@ const isClientReady = ({ client }) => {
     && client.sessionState.loggedIn;
 };
 
+const isBreakout = (state) => state?.client?.meetingData?.isBreakout;
+
 export {
   refreshConnectionStatus,
   fetchGuestStatus,
   join,
   leave,
   isClientReady,
+  isBreakout,
 };
 
 export const {
@@ -362,6 +386,7 @@ export const {
   setInitialChatMsgsFetched,
   setSessionTerminated,
   setMeetingData,
+  setBreakoutData,
   setJoinUrl,
   setFeedbackEnabled,
   sessionStateChanged,

@@ -25,6 +25,13 @@ const Background = styled.View`
           && `
      background-color: ${userColor};
   `}
+
+  ${({ mini }) => mini && `
+    margin: 0 0 0 -7px;
+    width: 24px;
+    height: 24px;
+    font-size: 8px;
+  `}
 `;
 
 const PresenterIcon = styled(IconButtonComponent)`
@@ -35,6 +42,11 @@ const PresenterIcon = styled(IconButtonComponent)`
   height: 16px;
   border-radius: 3px;
   background-color: ${Colors.white};
+
+  ${({ mini }) => mini && `
+    width: 10px;
+    height: 10px;
+  `}
 `;
 
 const ImageBackground = styled.Image`
@@ -61,6 +73,10 @@ const ImageContainer = styled.View`
 const UserName = styled.Text`
   color: ${Colors.white};
   font-size: 18px;
+
+  ${({ mini }) => mini && `
+    font-size: 11px;
+  `}
 `;
 
 export default {

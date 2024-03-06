@@ -1,12 +1,15 @@
 import {
   useCallback, useRef, useMemo, useState
 } from 'react';
+import {
+  KeyboardAvoidingView, Platform, Text, View
+} from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
+import HTMLView from 'react-native-htmlview';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useTranslation } from 'react-i18next';
-import { useNavigation } from '@react-navigation/native';
-import { Pressable, KeyboardAvoidingView, Platform } from 'react-native';
-import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
+import BottomSheet from '@gorhom/bottom-sheet';
 import { useBottomSheetBackHandler } from '../../../hooks/useBottomSheetBackHandler';
 import { setHasUnreadMessages, setBottomChatOpen } from '../../../store/redux/slices/wide-app/chat';
 import UserAvatar from '../../user-avatar';
@@ -19,11 +22,10 @@ import Styled from './styles';
 const BottomSheetChat = () => {
   const messages = useChatMsgs();
   const height = useHeaderHeight();
-  const reverseMessages = messages.reverse();
-  const navigation = useNavigation();
   const { t } = useTranslation();
 
   const sheetRef = useRef(null);
+  const flatListRef = useRef(null);
   const [messageText, setMessageText] = useState('');
   const dispatch = useDispatch();
   const chatStore = useSelector((state) => state.chat);
@@ -39,36 +41,32 @@ const BottomSheetChat = () => {
 
   useBottomSheetBackHandler(chatStore.isBottomChatOpen, sheetRef, () => {});
 
-  const handleMessagePressed = (message) => {
-    if (message.message === t('mobileSdk.poll.postedMsg')) {
-      sheetRef.current?.close();
-      navigation.navigate('PollScreen');
-    }
-  };
-
   const handleMessage = (message) => {
-    if ((/^https?:/.test(message))) {
+    if ((/<a\b[^>]*>/.test(message))) {
       return (
-        <Styled.LinkPreviewCustom
-          text={message}
-          containerStyle={Styled.linkPreviewContainerStyle}
-          metadataContainerStyle={Styled.metadataContainerStyle}
-          enableAnimation
-        />
+        <HTMLView value={message} />
       );
     }
-    return <Styled.MessageContent>{message}</Styled.MessageContent>;
+    return (
+      <Text selectable>
+        {message}
+      </Text>
+    );
   };
 
   const renderItem = ({ item }) => {
     const timestamp = new Date(item.timestamp);
     return (
-      <Pressable onPress={() => handleMessagePressed(item)}>
+      <View style={Styled.styles.item}>
         <Styled.ContainerItem>
-          <UserAvatar userName={item.author} userRole={item.role} />
+          <UserAvatar
+            userName={item.author}
+            userRole={item.role}
+            userId={item.senderUserId}
+          />
           <Styled.Card>
             <Styled.MessageTopContainer>
-              <Styled.MessageAuthor>{item.author}</Styled.MessageAuthor>
+              <Styled.MessageAuthor selectable>{item.author}</Styled.MessageAuthor>
               <Styled.MessageTimestamp>
                 {`${String(timestamp.getHours()).padStart(2, '0')}:${String(
                   timestamp.getMinutes()
@@ -78,7 +76,7 @@ const BottomSheetChat = () => {
             {handleMessage(item.message)}
           </Styled.Card>
         </Styled.ContainerItem>
-      </Pressable>
+      </View>
     );
   };
 
@@ -102,9 +100,12 @@ const BottomSheetChat = () => {
         enablePanDownToClose
       >
         {renderEmptyChatHandler()}
-
-        <BottomSheetFlatList data={reverseMessages} renderItem={renderItem} />
-
+        <FlatList
+          ref={flatListRef}
+          data={messages.reverse()}
+          renderItem={renderItem}
+          style={Styled.styles.list}
+        />
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           keyboardVerticalOffset={height + 47}

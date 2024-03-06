@@ -1,14 +1,14 @@
 import React, { useCallback, useState } from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, Dimensions } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
 import { selectSortedVideoUsers } from '../../../store/redux/slices/video-streams';
-import { useOrientation } from '../../../hooks/use-orientation';
 import Styled from './styles';
+
+const DEVICE_HEIGHT = parseInt(Dimensions.get('window').height, 10);
 
 const GridView = () => {
   const videoUsers = useSelector(selectSortedVideoUsers);
-  const orientation = useOrientation();
 
   const contentAreaUserItem = {
     cameraId: 'ContentArea',
@@ -36,18 +36,19 @@ const GridView = () => {
       visible,
       userRole,
       contentArea,
+      userEmoji,
     } = vuItem;
 
     if (contentArea) {
       return (
-        <Styled.Item usersCount={mescleGridItems.length} orientation={orientation}>
+        <Styled.Item usersCount={mescleGridItems.length} dimensionHeight={DEVICE_HEIGHT}>
           <Styled.ContentArea />
         </Styled.Item>
       );
     }
 
     return (
-      <Styled.Item usersCount={mescleGridItems.length} orientation={orientation}>
+      <Styled.Item usersCount={mescleGridItems.length} dimensionHeight={DEVICE_HEIGHT}>
         <Styled.VideoListItem
           cameraId={cameraId}
           userId={userId}
@@ -59,6 +60,7 @@ const GridView = () => {
           isGrid
           usersCount={mescleGridItems.length}
           userRole={userRole}
+          userEmoji={userEmoji}
         />
       </Styled.Item>
     );

@@ -1,42 +1,34 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  activeModal: null,
-  isModalVisible: false,
+  isShow: false,
+  extraInfo: {},
+  titleText: '',
+  contentText: '',
+  profile: ''
 };
 
 const modalSlice = createSlice({
   name: 'modal',
   initialState,
   reducers: {
-    openModal: (state) => {
-      state.isModalVisible = true;
+    show: (state) => {
+      state.isShow = true;
     },
-    closeModal: (state) => {
-      state.isModalVisible = false;
+    hide: (state) => {
+      state.isShow = false;
     },
-    setActiveModal: (state, action) => {
-      state.activeModal = action.payload;
-    },
-    clearActiveModal: (state) => {
-      state.activeModal = null;
-    },
-  },
+    setProfile: (state, action) => {
+      state.profile = action.payload.profile;
+      state.extraInfo = action.payload.extraInfo;
+      state.isShow = true;
+    }
+  }
 });
 
-const selectIsModalVisible = (state) => state.modal.isModalVisible;
-const selectActiveModal = (state) => state.modal.activeModal;
-
 export const {
-  openModal,
-  closeModal,
-  setActiveModal,
-  clearActiveModal
+  show,
+  hide,
+  setProfile,
 } = modalSlice.actions;
-
-export {
-  selectIsModalVisible,
-  selectActiveModal,
-};
-
 export default modalSlice.reducer;

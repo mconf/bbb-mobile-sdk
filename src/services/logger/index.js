@@ -98,7 +98,7 @@ class ServerLoggerStream extends ServerStream {
     }
 
     this.rec = rec;
-    if (fullInfo.meetingId != null) {
+    if (fullInfo?.meetingId != null) {
       this.rec.userInfo = fullInfo;
     }
     this.rec.appVersion = APP_VERSION;
@@ -118,7 +118,7 @@ class MeteorStream {
     const fullInfo = getAuthInfo();
 
     this.rec = rec;
-    if (fullInfo.meetingId != null) {
+    if (fullInfo?.meetingId != null) {
       if (!this.rec.extraInfo) {
         this.rec.extraInfo = {};
       }

@@ -1,10 +1,18 @@
 import styled from 'styled-components/native';
+import Icon from '@expo/vector-icons/MaterialIcons';
 import iconButton from '../../icon-button';
 import Colors from '../../../constants/colors';
+import Tag from '../../tag';
 
 const DrawerIcon = styled(iconButton)`
   position: absolute;
   padding: 0px;
+`;
+
+const IconMaterial = styled(Icon)`
+  position: absolute;
+  left: 0px;
+  margin: 14px;
 `;
 
 const NotificationIcon = styled(iconButton)`
@@ -21,12 +29,6 @@ const HeaderTitleContainer = styled.View`
   justify-content: center;
   width: 100%;
   gap: 10px;
-
-  ${({ recordMeeting }) => recordMeeting 
-    && `
-      margin-left: 6%; 
-  `}
-
 `;
 
 const HeaderTitleText = styled.Text`
@@ -37,9 +39,16 @@ const HeaderTitleText = styled.Text`
   max-width: 80%;
 `;
 
+const BetaTag = styled(Tag)`
+  position: absolute;
+  right: 12px;
+`;
+
 export default {
   DrawerIcon,
   NotificationIcon,
   HeaderTitleContainer,
-  HeaderTitleText
+  HeaderTitleText,
+  BetaTag,
+  IconMaterial
 };

@@ -77,6 +77,10 @@ const FeedbackScreen = () => {
 
   const sendStarRating = () => {
     const { host, authToken } = meetingData.current;
+    if (user.current === undefined) {
+      navigation.navigate('EndSessionScreen');
+      return;
+    }
     const { role, name, intId } = user.current;
     const payload = {
       rating,
@@ -115,12 +119,20 @@ const FeedbackScreen = () => {
               value={rating || SLIDER_INITIAL_VALUE}
               step={1}
               animateTransitions
-              thumbImage={require('../../assets/star.png')}
+              thumbImage={require('../../assets/application/star.png')}
               thumbStyle={Styled.ThumbStyle}
               trackStyle={Styled.TrackStyle}
               minimumTrackTintColor={Colors.blue}
-              maximumTrackTintColor={Colors.lightGray100}
-              renderAboveThumbComponent={() => (<Styled.ThumbLabel>{rating}</Styled.ThumbLabel>)}
+              maximumTrackTintColor={Colors.white}
+              renderAboveThumbComponent={
+                () => (
+                  <Styled.ThumbContainer>
+                    <Styled.ThumbLabel>
+                      {rating || 5}
+                    </Styled.ThumbLabel>
+                  </Styled.ThumbContainer>
+                )
+              }
               onValueChange={(value) => setRating(value[0])}
             />
           </Styled.SliderContainer>

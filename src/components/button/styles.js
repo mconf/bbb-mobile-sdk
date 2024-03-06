@@ -17,7 +17,6 @@ const ButtonInnerContainer = styled(Pressable).attrs(() => ({
     justify-content: center;
     display: flex;
     border-radius: 40px;
-    min-height: 40px;
   `}
 `;
 
@@ -27,8 +26,16 @@ const ButtonText = styled.Text`
   font-size: 18px;
 `;
 
+const LoadingContainer = styled.View`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+`;
+
 export default {
   ButtonOuterContainer,
   ButtonInnerContainer,
   ButtonText,
+  LoadingContainer,
 };

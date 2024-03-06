@@ -1,5 +1,4 @@
 import styled from 'styled-components/native';
-import { LinkPreview } from '@flyerhq/react-native-link-preview';
 import { StyleSheet } from 'react-native';
 import userAvatar from '../../user-avatar';
 import textInput from '../../text-input';
@@ -70,20 +69,13 @@ const TextInput = styled(textInput)`
   width: 85%;
 `;
 
-const LinkPreviewCustom = styled(LinkPreview)``;
-
-const StyleSheetStyles = StyleSheet.create({
-  linkPreviewContainerStyle: {
-    backgroundColor: '#f7f7f8',
-    borderRadius: 12,
-    marginTop: 16,
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
-    overflow: 'hidden',
+// ? Rotate 180 degrees using transform, workaround for bug in Android 13
+const styles = StyleSheet.create({
+  list: {
+    transform: [{ rotate: '180deg' }],
   },
-
-  metadataContainerStyle: {
-    display: 'none'
+  item: {
+    transform: [{ rotate: '180deg' }],
   },
 });
 
@@ -100,7 +92,5 @@ export default {
   MessageTimestamp,
   MessageTopContainer,
   NoMessageText,
-  LinkPreviewCustom,
-  linkPreviewContainerStyle: StyleSheetStyles.linkPreviewContainerStyle,
-  metadataContainerStyle: StyleSheetStyles.metadataContainerStyle
+  styles
 };

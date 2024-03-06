@@ -1,7 +1,8 @@
 import styled from 'styled-components/native';
 import { css } from 'styled-components';
 import { RTCView } from 'react-native-webrtc';
-import { ActivityIndicator } from 'react-native-paper';
+import { Ionicons, Feather } from '@expo/vector-icons';
+import { View } from 'react-native';
 import IconButtonComponent from '../../icon-button';
 import Colors from '../../../constants/colors';
 import Pressable from '../../pressable';
@@ -72,17 +73,7 @@ const NameLabel = styled.Text`
 `;
 
 const VideoSkeleton = () => (
-  <ActivityIndicator
-    size="large"
-    color="white"
-    backgroundColor={Colors.contentLetterboxColor}
-    animating="true"
-    style={{
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-    }}
-  />
+  <View style={{ backgroundColor: Colors.contentLetterboxColor, height: '100%', width: '100%' }} />
 );
 
 const ContainerPressableGrid = styled.Pressable`
@@ -114,6 +105,7 @@ const TalkingIndicatorContainer = styled.View`
     margin: 5px;
     border-radius: 20px;
     position: absolute;
+    padding: 4px;
     left: 0;
 `;
 
@@ -121,6 +113,31 @@ const FullscreenIcon = styled(IconButtonComponent)`
   padding: 0;
   margin: 0;
 `;
+
+const IconContainer = styled.View`
+  padding: 0;
+  margin: 8px;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 32px;
+  bottom: 0px;
+  right: 0px;
+  width: 32px;
+  height: 32px;
+  background-color: white;
+`;
+
+const HandRaisedIcon = () => (
+  <IconContainer>
+    <Ionicons name="md-hand-right-sharp" size={20} color={Colors.blue} />
+  </IconContainer>
+);
+
+const TalkingIndicatorIcon = () => (
+  <Feather name="activity" size={24} color="white" />
+);
 
 export default {
   ContainerPressable,
@@ -133,5 +150,7 @@ export default {
   VideoSkeleton,
   ContainerPressableGrid,
   FullscreenIcon,
+  HandRaisedIcon,
   TalkingIndicatorContainer,
+  TalkingIndicatorIcon,
 };

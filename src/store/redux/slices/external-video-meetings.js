@@ -4,6 +4,14 @@ const externalVideoMeetingsSlice = createSlice({
   name: 'external-video-meetings',
   initialState: {
     externalVideoMeetingsCollection: {},
+    eventName: '',
+    streamExternalVideoMeeting: {
+      meetingId: '',
+      userId: '',
+      rate: 0,
+      time: 0,
+      state: 0,
+    },
     ready: false,
   },
   reducers: {
@@ -25,6 +33,15 @@ const externalVideoMeetingsSlice = createSlice({
         ...action.payload.externalVideoMeetingObject.fields,
       };
     },
+    editStreamExternalVideoMeeting: (state, action) => {
+      const { streamExternalVideoMeetingObject } = action.payload;
+      state.streamExternalVideoMeeting[streamExternalVideoMeetingObject.id] = {
+        ...state.streamExternalVideoMeeting[streamExternalVideoMeetingObject.id],
+        ...action.payload.streamExternalVideoMeetingObject.fields.args[0],
+      };
+      state.eventName = streamExternalVideoMeetingObject.fields.eventName;
+    },
+
     readyStateChanged: (state, action) => {
       state.ready = action.payload;
     },
@@ -46,11 +63,23 @@ const externalVideoMeetingsSlice = createSlice({
   },
 });
 
+// Selectors
+const selectCurrentExternalVideo = (state) => Object.values(
+  state.externalVideoMeetingsCollection?.externalVideoMeetingsCollection
+)[0];
+
 export const {
   addExternalVideoMeeting,
   removeExternalVideoMeeting,
   editExternalVideoMeeting,
   readyStateChanged,
   cleanupStaleData,
+  // stream
+  editStreamExternalVideoMeeting,
 } = externalVideoMeetingsSlice.actions;
+
+export {
+  selectCurrentExternalVideo
+};
+
 export default externalVideoMeetingsSlice.reducer;

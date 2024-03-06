@@ -1,6 +1,6 @@
+import { Button } from 'react-native-paper';
 import styled from 'styled-components/native';
 import Colors from '../../constants/colors';
-import button from '../../components/button';
 
 const ContainerView = styled.View`
   width: 100%;
@@ -21,6 +21,7 @@ const FlatList = styled.FlatList`
   border-radius: 12px;
   padding: 12px;
   display: flex;
+  height: 100%;
 `;
 
 const Block = styled.View`
@@ -35,20 +36,28 @@ const Block = styled.View`
   `}
 `;
 
-const OptionsButton = styled(button)`
-  background-color: ${Colors.lightGray200}
-  color: ${Colors.lightGray400};
-  font-size: 16px;
-  font-weight: 400;
-  padding: 12px;
-  border-radius: 12px;
-
-  ${({ selected }) => selected
-  && `
-      background-color: #003399;
-      color: ${Colors.white};
-  `}
+const ButtonCreate = styled(Button)`
+  margin: 4px 0;
 `;
+
+const OptionsButton = ({
+  onPress, children, selected
+}) => {
+  return (
+    <ButtonCreate
+      mode="contained"
+      onPress={onPress}
+      buttonColor={selected ? Colors.blue : Colors.lightGray100}
+      textColor={selected ? Colors.white : Colors.lightGray400}
+      labelStyle={{
+        fontSize: 18,
+        fontWeight: 500,
+      }}
+    >
+      {children}
+    </ButtonCreate>
+  );
+};
 
 export default {
   FlatList,

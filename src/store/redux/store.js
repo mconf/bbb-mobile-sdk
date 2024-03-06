@@ -19,18 +19,24 @@ import externalVideoMeetingsReducer from './slices/external-video-meetings';
 import videoStreamsReducer from './slices/video-streams';
 import screenshareReducer from './slices/screenshare';
 import guestUsersReducer from './slices/guest-users';
+import breakoutsReducer from './slices/breakouts';
 import recordMeetingsReducer from './slices/record-meetings';
 import usersSettingsReducer from './slices/users-settings';
+import uploadedFileReducer from './slices/uploaded-file';
+import padsSessionsReducer from './slices/pads-sessions';
 // app exclusive wide state collections
 import previousPollPublishedReducer from './slices/wide-app/previous-poll-published';
 import audioReducer from './slices/wide-app/audio';
 import videoReducer from './slices/wide-app/video';
+import debugReducer from './slices/wide-app/debug';
 import localScreenshareReducer from './slices/wide-app/screenshare';
 import chatReducer from './slices/wide-app/chat';
 import notificationBarReducer from './slices/wide-app/notification-bar';
+import modalReducer from './slices/wide-app/modal';
 import layoutReducer from './slices/wide-app/layout';
 import clientReducer, { setSessionTerminated, setConnected, sessionStateChanged } from './slices/wide-app/client';
-import modalReducer from './slices/wide-app/modal';
+// Loggers
+import ReduxDebug from '../../services/logger/redux-debug';
 // Middlewares
 import {
   screenshareCleanupObserver,
@@ -65,8 +71,11 @@ const appReducer = combineReducers({
   videoStreamsCollection: videoStreamsReducer,
   screenshareCollection: screenshareReducer,
   guestUsersCollection: guestUsersReducer,
+  breakoutsCollection: breakoutsReducer,
   recordMeetingsCollection: recordMeetingsReducer,
   usersSettingsCollection: usersSettingsReducer,
+  uploadedFileCollection: uploadedFileReducer,
+  padsSessionsCollection: padsSessionsReducer,
   // ...other collections
 
   // app exclusive wide state collections
@@ -76,9 +85,10 @@ const appReducer = combineReducers({
   screenshare: localScreenshareReducer,
   chat: chatReducer,
   notificationBar: notificationBarReducer,
-  layout: layoutReducer,
-  client: clientReducer,
   modal: modalReducer,
+  layout: layoutReducer,
+  debug: debugReducer,
+  client: clientReducer,
 });
 
 const flushStoreObserver = createListenerMiddleware();
@@ -112,6 +122,7 @@ flushStoreObserver.startListening({
 });
 
 const rootReducer = (state, action) => {
+  ReduxDebug.addToReduxLog(action);
   // Reset the store on logouts
   if (action.type === 'STORE_FLUSH') {
     logger.info({

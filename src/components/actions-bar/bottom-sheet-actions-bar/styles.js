@@ -1,7 +1,5 @@
-import { StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
-import button from '../../button';
-import Colors from '../../../constants/colors';
+import { StyleSheet } from 'react-native';
 
 const fullscreenStyles = StyleSheet.create({
   container: {
@@ -53,39 +51,13 @@ const styles = StyleSheet.create({
   }
 });
 
-const OptionsButton = styled(button)`
-  background-color: ${Colors.lightGray200}
-  color: ${Colors.lightGray400};
-  font-size: 16px;
-  font-weight: 400;
-  padding: 12px;
-  border-radius: 12px;
-  width: 100%;
-
-  ${({ selected }) => selected
-  && `
-      background-color: #003399;
-      color: ${Colors.white};
-  `}
-`;
-
-const ButtonContainer = styled.View`
-  width: 100%;
-  padding: 24px 0;
-  margin: 0;
-  border-radius: 16px;
-`;
-
-const DeviceSelectorTitle = styled.Text`
-  color: white;
-  text-align: center;
-  font-size: 20px;
+const ControlsContainer = styled.View`
+  padding: 22px 8px 0 8px;
+  gap: 12px;
 `;
 
 export default {
   styles,
   fullscreenStyles,
-  OptionsButton,
-  ButtonContainer,
-  DeviceSelectorTitle
+  ControlsContainer
 };

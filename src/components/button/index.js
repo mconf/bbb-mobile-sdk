@@ -1,3 +1,4 @@
+import { ActivityIndicator } from 'react-native-paper';
 import Styled from './styles';
 
 const PrimaryButton = (props) => {
@@ -5,8 +6,17 @@ const PrimaryButton = (props) => {
     children,
     onPress,
     style,
-    disabled
+    disabled,
+    loading,
   } = props;
+
+  if (loading) {
+    return (
+      <Styled.LoadingContainer>
+        <ActivityIndicator />
+      </Styled.LoadingContainer>
+    );
+  }
 
   return (
     <Styled.ButtonOuterContainer>

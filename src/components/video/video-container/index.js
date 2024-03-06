@@ -7,9 +7,7 @@ import {
   trigDetailedInfo,
   setIsFocused
 } from '../../../store/redux/slices/wide-app/layout';
-import { isTalkingByUserId } from '../../../store/redux/slices/voice-users';
 import { selectMetadata } from '../../../store/redux/slices/meeting';
-import SoundWaveAnimation from '../../animations/sound-wave-animation';
 import UserAvatar from '../../user-avatar';
 import VideoManager from '../../../services/webrtc/video-manager';
 import Styled from './styles';
@@ -26,6 +24,7 @@ const VideoContainer = (props) => {
     visible,
     isGrid,
     userRole,
+    userEmoji,
   } = props;
 
   const dispatch = useDispatch();
@@ -38,7 +37,6 @@ const VideoContainer = (props) => {
   });
   const mediaStreamId = useSelector((state) => state.video.videoStreams[cameraId]);
   const signalingTransportOpen = useSelector((state) => state.video.signalingTransportOpen);
-  const isTalking = useSelector((state) => isTalkingByUserId(state, userId));
   const mediaServer = useSelector((state) => selectMetadata(state, 'media-server-video'));
 
   useEffect(() => {
@@ -69,7 +67,6 @@ const VideoContainer = (props) => {
           userId={userId}
           userColor={userColor}
           userImage={userAvatar}
-          isTalking={isTalking}
           userRole={userRole}
         />
         )}
@@ -86,13 +83,22 @@ const VideoContainer = (props) => {
       dispatch(setFocusedElement('avatar'));
     } else {
       dispatch(setFocusedId({
-        userName, userColor, isTalking, userRole
+        userName, userColor, isTalking: false, userRole
       }));
       dispatch(setFocusedElement('color'));
     }
 
     dispatch(setIsFocused(true));
     navigation.navigate('FullscreenWrapperScreen');
+  };
+
+  const renderRaisedHand = () => {
+    if (userEmoji === 'raiseHand') {
+      return (
+        <Styled.HandRaisedIcon />
+      );
+    }
+    return null;
   };
 
   const renderGridVideoContainerItem = () => (
@@ -104,13 +110,6 @@ const VideoContainer = (props) => {
       userColor={userColor}
     >
       {renderVideo()}
-
-      {/* always show talking indicator */}
-      {isTalking && (
-      <Styled.TalkingIndicatorContainer>
-        <SoundWaveAnimation />
-      </Styled.TalkingIndicatorContainer>
-      )}
 
       {detailedInfo && (
         <>
@@ -131,6 +130,7 @@ const VideoContainer = (props) => {
           </Styled.PressableButton>
         </>
       )}
+      {renderRaisedHand()}
     </Styled.ContainerPressableGrid>
   );
 

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setBottomChatOpen, setHasShownInFastChat } from '../../../store/redux/slices/wide-app/chat';
 import { useChatMsgs } from '../../../hooks/selectors/chat/use-chat-msgs';
 import ChatPopupItem from './chat-popout-item';
+import Styled from './styles';
 
 const ChatPopupList = () => {
   const dispatch = useDispatch();
@@ -13,9 +14,14 @@ const ChatPopupList = () => {
   const detailedInfo = useSelector((state) => state.layout.detailedInfo);
   const hasUnreadMessages = useSelector((state) => state.chat.hasUnreadMessages);
   const hasShownInFastChat = useSelector((state) => state.chat.hasShownInFastChat);
+  const isBottomChatOpen = useSelector((state) => state.chat.isBottomChatOpen);
 
   useEffect(() => {
-    if (lastMessage?.message && !detailedInfo && hasUnreadMessages && !hasShownInFastChat) {
+    if (lastMessage?.message
+      && !detailedInfo
+      && hasUnreadMessages
+      && !hasShownInFastChat
+      && !isBottomChatOpen) {
       setShowMessage(true);
     }
     const timer = setTimeout(() => {
@@ -28,11 +34,17 @@ const ChatPopupList = () => {
 
   if (showMessage) {
     return (
-      <ChatPopupItem
-        userName={lastMessage?.author}
-        userText={lastMessage?.message}
-        onPress={() => dispatch(setBottomChatOpen(true))}
-      />
+      <Styled.Container>
+        <ChatPopupItem
+          userName={lastMessage?.author}
+          userText={lastMessage?.message}
+          onPress={() => {
+            dispatch(setBottomChatOpen(true));
+            setShowMessage(false);
+            dispatch(setHasShownInFastChat(true));
+          }}
+        />
+      </Styled.Container>
     );
   }
 

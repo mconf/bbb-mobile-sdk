@@ -1,5 +1,6 @@
 import { store } from '../../../store/redux/store';
 import Module from './module';
+import { setProfile } from '../../../store/redux/slices/wide-app/modal';
 import { setInitialChatMsgsFetched } from '../../../store/redux/slices/wide-app/client';
 import {
   addGroupChatMsg,
@@ -57,17 +58,6 @@ export class GroupChatMsgModule extends Module {
               })
             );
           }
-          // hyperlink
-          if (msgObj.message.toString().includes('href=')) {
-            const path = msgObj.message.toString();
-            const regex = /<a[^>]+href=['"](https?:\/\/[^'"]+)['"][^>]*>(<u>)?[^<]+(<\/u>)?<\/a>/gi;
-            const linkMessage = path.replace(regex, '$1');
-            return store.dispatch(
-              addGroupChatMsgBeforeJoin({
-                groupChatMsgObject: { ...msgObj, message: linkMessage },
-              })
-            );
-          }
           return store.dispatch(
             addGroupChatMsgBeforeJoin({
               groupChatMsgObject: msgObj,
@@ -102,6 +92,12 @@ export class GroupChatMsgModule extends Module {
 
     if (msgObj.fields.id.toString().includes('POLL_RESULT')) {
       store.dispatch(
+        setProfile({
+          profile: 'poll_published',
+          extraInfo: msgObj.fields.extra.pollResultData
+        })
+      );
+      store.dispatch(
         addPreviousPollPublishedViaChat({
           previousPollPublishedObject: msgObj,
         })
@@ -112,20 +108,6 @@ export class GroupChatMsgModule extends Module {
       store.dispatch(
         addGroupChatMsg({
           groupChatMsgObject: msgObj,
-        })
-      );
-    }
-    // hyperlink
-    if (msgObj.fields.message.toString().includes('href=')) {
-      const path = msgObj.fields.message.toString();
-      const regex = /<a[^>]+href=['"](https?:\/\/[^'"]+)['"][^>]*>(<u>)?[^<]+(<\/u>)?<\/a>/gi;
-      const linkMessage = path.replace(regex, '$1');
-      return store.dispatch(
-        addGroupChatMsg({
-          groupChatMsgObject: {
-            ...msgObj,
-            fields: { ...msgObj.fields, message: linkMessage },
-          },
         })
       );
     }

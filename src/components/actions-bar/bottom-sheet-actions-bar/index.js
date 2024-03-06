@@ -2,35 +2,40 @@ import React, {
   useCallback, useEffect, useMemo, useRef
 } from 'react';
 import { View, Platform } from 'react-native';
-import InCallManager from 'react-native-incall-manager';
-import BottomSheet from '@gorhom/bottom-sheet';
-import { useTranslation } from 'react-i18next';
+import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { useRoute } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useOrientation } from '../../../hooks/use-orientation';
 import ActionsBar from '../index';
 import { setDetailedInfo } from '../../../store/redux/slices/wide-app/layout';
+import DebugControl from '../debug-control';
+import Screenshare from '../screenshare-button';
+import DeviceSelectorControl from '../audio-device-selector-control';
+import Settings from '../../../../settings.json';
 import Styled from './styles';
 
-const BottomSheetActionsBar = () => {
+const BottomSheetActionsBar = ({ alwaysOpen }) => {
   // ref
   const bottomSheetRef = useRef(null);
   const route = useRoute();
   const orientation = useOrientation();
-  const { t } = useTranslation();
+  const dispatch = useDispatch();
+
   const detailedInfo = useSelector((state) => state.layout.detailedInfo);
-  const audioDevices = useSelector((state) => state.audio.audioDevices);
-  const selectedAudioDevice = useSelector((state) => state.audio.selectedAudioDevice);
 
   const isFullscreen = route.name === 'FullscreenWrapperScreen';
+  const isAndroid = Platform.OS === 'android';
+  const { showDebugToggle, showNotImplementedFeatures } = Settings;
 
   // variables
-  const dispatch = useDispatch();
+  const handleSizeOfActionsBar = () => {
+    const variables = [showDebugToggle, showNotImplementedFeatures, isAndroid];
+    return variables.reduce((base, item) => base + (item ? 85 : 0), 110);
+  };
+
   const snapPoints = useMemo(() => {
     if (orientation === 'PORTRAIT') {
-      if (Platform.OS === 'android') {
-        return [110, 380];
-      }
+      return [110, handleSizeOfActionsBar()];
     }
     return [110];
   }, [orientation]);
@@ -50,39 +55,12 @@ const BottomSheetActionsBar = () => {
     }
   }, [detailedInfo]);
 
-  const audioDeviceSelectorView = () => {
-    if (Platform.OS === 'android') {
-      return (
-        <Styled.ButtonContainer>
-          <Styled.DeviceSelectorTitle>{t('mobileSdk.audio.deviceSelector.title')}</Styled.DeviceSelectorTitle>
-          <Styled.OptionsButton onPress={() => InCallManager.chooseAudioRoute('EARPIECE')} selected={selectedAudioDevice === 'EARPIECE'}>
-            {t('mobileSdk.audio.deviceSelector.earpiece')}
-          </Styled.OptionsButton>
-          <Styled.OptionsButton onPress={() => InCallManager.chooseAudioRoute('SPEAKER_PHONE')} selected={selectedAudioDevice === 'SPEAKER_PHONE'}>
-            {t('mobileSdk.audio.deviceSelector.speakerPhone')}
-          </Styled.OptionsButton>
-          {audioDevices.includes('BLUETOOTH') && (
-          <Styled.OptionsButton onPress={() => InCallManager.chooseAudioRoute('BLUETOOTH')} selected={selectedAudioDevice === 'BLUETOOTH'}>
-            {t('mobileSdk.audio.deviceSelector.bluetooth')}
-          </Styled.OptionsButton>
-          )}
-          {audioDevices.includes('WIRED_HEADSET') && (
-          <Styled.OptionsButton onPress={() => InCallManager.chooseAudioRoute('WIRED_HEADSET')} selected={selectedAudioDevice === 'WIRED_HEADSET'}>
-            {t('mobileSdk.audio.deviceSelector.wiredHeadset')}
-          </Styled.OptionsButton>
-          )}
-        </Styled.ButtonContainer>
-      );
-    }
-    return null;
-  };
-
   // renders
   return (
     <BottomSheet
       ref={bottomSheetRef}
       index={detailedInfo ? 0 : -1}
-      enablePanDownToClose
+      enablePanDownToClose={!alwaysOpen}
       snapPoints={snapPoints}
       handleIndicatorStyle={Styled[isFullscreen ? 'fullscreenStyles' : 'styles'].indicatorStyle}
       style={Styled[isFullscreen ? 'fullscreenStyles' : 'styles'].style}
@@ -92,7 +70,13 @@ const BottomSheetActionsBar = () => {
     >
       <View style={Styled[isFullscreen ? 'fullscreenStyles' : 'styles'].contentContainer}>
         <ActionsBar />
-        {audioDeviceSelectorView()}
+        <BottomSheetScrollView>
+          <Styled.ControlsContainer>
+            {isAndroid && <DeviceSelectorControl />}
+            <DebugControl />
+            <Screenshare />
+          </Styled.ControlsContainer>
+        </BottomSheetScrollView>
       </View>
     </BottomSheet>
   );
