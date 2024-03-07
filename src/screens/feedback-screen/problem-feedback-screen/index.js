@@ -137,9 +137,9 @@ const ProblemFeedbackScreen = ({ route }) => {
     };
 
     if (problemOption) {
-      const nextStep = problemOption.next;
+      const problemType = problemOption.next;
       feedback.problemCode = problemCode;
-      feedback.nextStep = nextStep;
+      feedback.problemType = problemType;
     }
     return feedback;
   };

@@ -35,8 +35,8 @@ const SpecificProblemFeedbackScreen = ({ route }) => {
 
   useFocusEffect(
     useCallback(() => {
-      setStep(route.params.payload.nextStep);
-    }, [route.params.payload.nextStep]),
+      setStep(route.params.payload.problemType);
+    }, [route.params.payload.problemType]),
   );
 
   // disables android go back button
