@@ -11,10 +11,8 @@ import Styled from './styles';
 import customFeedbackData from '../customFeedback.json';
 
 const POST_ROUTE = Settings.feedback.custom.route;
-const APP_IDENTIFIER = Settings.feedback.custom.appIdentifier;
-const CUSTOMER_METADATA = Settings.feedback.custom.customerMetadata;
 
-const ProblemFeedbackScreen = ({ route }) => {
+const SpecificProblemFeedbackScreen = ({ route }) => {
   const { t } = useTranslation();
   const height = useHeaderHeight();
   const navigation = useNavigation();
@@ -32,7 +30,14 @@ const ProblemFeedbackScreen = ({ route }) => {
     initialState[problem.code] = false;
   });
 
-  const [optionsStatus, changeStatus] = useState(initialState);
+  const [step, setStep] = useState('');
+  const [optionsStatus, changeStatus] = useState({});
+
+  useFocusEffect(
+    useCallback(() => {
+      setStep(route.params.payload.nextStep);
+    }, [route.params.payload.nextStep]),
+  );
 
   // disables android go back button
   useFocusEffect(
@@ -88,65 +93,22 @@ const ProblemFeedbackScreen = ({ route }) => {
   };
 
   const buildFeedback = () => {
-    const {
-      rating,
-      userName,
-      userId,
-      userRole,
-      meetingId,
-    } = route.params.payload;
-    const {
-      confname,
-      metadata = {},
-    } = route.params.meetingData;
+    const payload = { ...route.params.payload };
+    const existingFeedback = { ...route.params.feedback };
 
-    const getDeviceType = () => {
-      if (Platform.OS === 'ios') {
-        return Platform.constants.interfaceIdiom;
-      }
-      return Platform.constants.uiMode;
-    };
-
-    const problemCode = getProblem().problem;
-    const problemOption = customFeedbackData.problem.options.find(
-      (option) => option.value === problemCode
-    );
-
-    const feedback = {
-      timestamp: new Date().toISOString(),
-      rating,
-      session: {
-        session_name: confname,
-        institution_name: metadata[CUSTOMER_METADATA.name],
-        institution_guid: metadata[CUSTOMER_METADATA.guid],
-        session_id: meetingId,
-      },
-      device: {
-        type: getDeviceType(),
-        os: Platform.OS,
-        browser: APP_IDENTIFIER,
-      },
-      user: {
-        name: userName,
-        id: userId,
-        role: userRole,
-      },
+    const newFeedback = {
+      ...existingFeedback,
       feedback: {
+        ...existingFeedback.feedback,
         ...getProblem(),
       },
     };
 
-    if (problemOption) {
-      const nextStep = problemOption.next;
-      feedback.problemCode = problemCode;
-      feedback.nextStep = nextStep;
-    }
-    return feedback;
+    return { ...payload, ...newFeedback };
   };
 
   const sendFeedback = () => {
-    const { host } = route.params.meetingData;
-    const payload = buildFeedback();
+    const { host, payload } = route.params;
 
     axios.post(`https://${host}${POST_ROUTE}`, payload).catch((e) => {
       logger.warn({
@@ -161,11 +123,11 @@ const ProblemFeedbackScreen = ({ route }) => {
 
   const handleSendProblem = () => {
     if (isAnyOptionChecked()) {
-      const { host } = route.params.meetingData;
+      const { host } = route.params;
       // There is one feedback screen left. Just aggregate the
       // information that we have and send it to the next screen
       const payload = buildFeedback();
-      navigation.navigate('SpecificProblemFeedbackScreen', { payload, host });
+      navigation.navigate('EmailFeedbackScreen', { payload, host });
     }
   };
 
@@ -175,25 +137,31 @@ const ProblemFeedbackScreen = ({ route }) => {
     navigation.navigate('EndSessionScreen');
   };
 
+  const renderOptions = () => {
+    const stepData = customFeedbackData[step];
+    if (!stepData || !stepData.options) return null;
+
+    return stepData.options.map((option) => {
+      const labelId = option.textLabel?.id;
+      return (
+        <Styled.CheckContainerItem key={option.value}>
+          <Styled.Option
+            status={optionsStatus[option.value] ? 'checked' : 'unchecked'}
+            color={Colors.white}
+            onPress={() => flipOption(option.value, option.next)}
+          />
+          <Styled.LabelOption>{labelId ? t(labelId) : ''}</Styled.LabelOption>
+        </Styled.CheckContainerItem>
+      );
+    });
+  };
+
   return (
     <Styled.ContainerView>
       <Styled.Title>{questionTitle}</Styled.Title>
 
       <Styled.OptionsContainer>
-        {
-          problems.map((option) => {
-            return (
-              <Styled.CheckContainerItem key={option.code}>
-                <Styled.Option
-                  status={optionsStatus[option.code] ? 'checked' : 'unchecked'}
-                  color={Colors.white}
-                  onPress={() => flipOption(option.code)}
-                />
-                <Styled.LabelOption>{option.label}</Styled.LabelOption>
-              </Styled.CheckContainerItem>
-            );
-          })
-          }
+        {renderOptions()}
       </Styled.OptionsContainer>
 
       <KeyboardAvoidingView
@@ -228,4 +196,4 @@ const ProblemFeedbackScreen = ({ route }) => {
   );
 };
 
-export default ProblemFeedbackScreen;
+export default SpecificProblemFeedbackScreen;

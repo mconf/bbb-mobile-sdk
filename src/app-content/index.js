@@ -13,6 +13,7 @@ import DrawerNavigator from '../components/custom-drawer/drawer-navigator';
 import EndSessionScreen from '../screens/end-session-screen';
 import FeedbackScreen from '../screens/feedback-screen';
 import ProblemFeedbackScreen from '../screens/feedback-screen/problem-feedback-screen';
+import SpecificProblemFeedbackScreen from '../screens/feedback-screen/specific-problem-feedback-screen';
 import EmailFeedbackScreen from '../screens/feedback-screen/email-feedback-screen';
 import TestComponentsScreen from '../screens/test-components-screen';
 import GuestScreen from '../screens/guest-screen';
@@ -149,6 +150,7 @@ const AppContent = ({
           </Stack.Screen>
           <Stack.Screen name="FeedbackScreen" component={FeedbackScreen} />
           <Stack.Screen name="ProblemFeedbackScreen" component={ProblemFeedbackScreen} />
+          <Stack.Screen name="SpecificProblemFeedbackScreen" component={SpecificProblemFeedbackScreen} />
           <Stack.Screen name="EmailFeedbackScreen" component={EmailFeedbackScreen} />
         </Stack.Navigator>
       </NavigationContainer>
