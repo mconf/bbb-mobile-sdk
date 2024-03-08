@@ -16,8 +16,9 @@ const SpecificProblemFeedbackScreen = ({ route }) => {
   const { t } = useTranslation();
   const height = useHeaderHeight();
   const navigation = useNavigation();
+  const { rating } = route.params.payload;
+  let questionTitle;
 
-  const questionTitle = t('mobileSdk.feedback.questionTitle');
   const skipButton = t('app.customFeedback.defaultButtons.skip');
   const problems = customFeedbackData.problem.options.map((option) => ({
     label: option.textLabel ? t(option.textLabel.id) : '',
@@ -25,6 +26,13 @@ const SpecificProblemFeedbackScreen = ({ route }) => {
     next: option.next,
   }));
   const problemDetalied = { text: '' };
+
+  if (rating >= 7) {
+    questionTitle = t('app.customFeedback.wish.title');
+  } else {
+    questionTitle = t('mobileSdk.feedback.questionTitle');
+  }
+
   const initialState = {};
   problems.forEach((problem) => {
     initialState[problem.code] = false;
@@ -138,6 +146,22 @@ const SpecificProblemFeedbackScreen = ({ route }) => {
   };
 
   const renderOptions = () => {
+    if (rating >= 7) {
+      const wishOptions = customFeedbackData.wish.options;
+      return wishOptions.map((option) => {
+        const labelId = option.textLabel?.id;
+        return (
+          <Styled.CheckContainerItem key={option.value}>
+            <Styled.Option
+              status={optionsStatus[option.value] ? 'checked' : 'unchecked'}
+              color={Colors.white}
+              onPress={() => flipOption(option.value, option.next)}
+            />
+            <Styled.LabelOption>{labelId ? t(labelId) : ''}</Styled.LabelOption>
+          </Styled.CheckContainerItem>
+        );
+      });
+    }
     const stepData = customFeedbackData[step];
     if (!stepData || !stepData.options) return null;
 

@@ -19,18 +19,34 @@ const ProblemFeedbackScreen = ({ route }) => {
   const height = useHeaderHeight();
   const navigation = useNavigation();
 
-  const questionTitle = t('mobileSdk.feedback.questionTitle');
+  let questionTitle;
+  let feedbackOptions;
   const skipButton = t('app.customFeedback.defaultButtons.skip');
-  const problems = customFeedbackData.problem.options.map((option) => ({
-    label: option.textLabel ? t(option.textLabel.id) : '',
-    code: option.value,
-    next: option.next,
-  }));
-  const problemDetalied = { text: '' };
+  const { rating } = route.params.payload;
+  if (rating >= 7) {
+    questionTitle = t('app.customFeedback.like.title');
+
+    feedbackOptions = customFeedbackData.like.options.map((option) => ({
+      label: option.textLabel ? t(option.textLabel.id) : '',
+      code: option.value,
+      next: option.next,
+    }));
+  } else {
+    questionTitle = t('mobileSdk.feedback.questionTitle');
+
+    feedbackOptions = customFeedbackData.problem.options.map((option) => ({
+      label: option.textLabel ? t(option.textLabel.id) : '',
+      code: option.value,
+      next: option.next,
+    }));
+  }
+
   const initialState = {};
-  problems.forEach((problem) => {
-    initialState[problem.code] = false;
+  feedbackOptions.forEach((option) => {
+    initialState[option.code] = false;
   });
+
+  const problemDetalied = { text: '' };
 
   const [optionsStatus, changeStatus] = useState(initialState);
 
@@ -89,7 +105,6 @@ const ProblemFeedbackScreen = ({ route }) => {
 
   const buildFeedback = () => {
     const {
-      rating,
       userName,
       userId,
       userRole,
@@ -181,7 +196,7 @@ const ProblemFeedbackScreen = ({ route }) => {
 
       <Styled.OptionsContainer>
         {
-          problems.map((option) => {
+          feedbackOptions.map((option) => {
             return (
               <Styled.CheckContainerItem key={option.code}>
                 <Styled.Option

@@ -29,6 +29,7 @@ const Option = styled(Checkbox.Android)`
 `;
 
 const LabelOption = styled.Text`
+  flex: 1;
   color: ${Colors.white};
 `;
 

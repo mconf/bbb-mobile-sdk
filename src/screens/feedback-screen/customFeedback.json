@@ -353,15 +353,6 @@
       },
       {
         "textLabel":{
-          "id": "app.customFeedback.like.installFree"
-        },
-        "type": "radio",
-        "next": "wish",
-        "key": "feedback.like",
-        "value": "installfree"
-      },
-      {
-        "textLabel":{
           "id": "app.customFeedback.like.audioCaptions"
         },
         "type": "radio",
@@ -377,10 +368,6 @@
         "next": "wish",
         "key": "feedback.like",
         "value": "other"
-      },
-      {
-        "type": "textArea",
-        "key": "feedback.like_described"
       }
     ]
   },
@@ -434,10 +421,6 @@
         "next": "email",
         "key": "feedback.wish",
         "value": "other"
-      },
-      {
-        "type": "textArea",
-        "key": "feedback.wish_described"
       }
     ]
   },
