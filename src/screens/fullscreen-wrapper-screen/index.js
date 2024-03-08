@@ -78,7 +78,6 @@ const FullscreenWrapperScreen = ({ navigation }) => {
         <Styled.PressableButton
           activeOpacity={0.6}
           onPress={onCloseFullscreen}
-          detailedInfo={layoutStore.detailedInfo}
         >
           <Styled.FullscreenIcon
             icon="fullscreen"
