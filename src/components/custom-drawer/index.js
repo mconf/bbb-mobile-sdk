@@ -1,12 +1,13 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { Share } from 'react-native';
+import { Share, Platform } from 'react-native';
 import {
   DrawerContentScrollView,
   DrawerItemList,
   DrawerItem,
 } from '@react-navigation/drawer';
 import Colors from '../../constants/colors';
+import { setExpandActionsBar } from '../../store/redux/slices/wide-app/layout';
 import { selectCurrentUser } from '../../store/redux/slices/current-user';
 import { setProfile } from '../../store/redux/slices/wide-app/modal';
 import Styled from './styles';
@@ -21,6 +22,7 @@ const CustomDrawer = (props) => {
   const { t } = useTranslation();
   const currentUserObj = useSelector(selectCurrentUser);
   const isBreakout = useSelector((state) => state.client.meetingData.isBreakout);
+  const isAndroid = Platform.OS === 'android';
 
   const leaveSession = () => {
     dispatch(leave(api));
@@ -28,6 +30,11 @@ const CustomDrawer = (props) => {
 
   const onClickFeatureNotImplemented = () => {
     dispatch(setProfile({ profile: 'not_implemented' }));
+    navigation.closeDrawer();
+  };
+
+  const onClickAudioSelector = () => {
+    dispatch(setExpandActionsBar(true));
     navigation.closeDrawer();
   };
 
@@ -104,6 +111,16 @@ const CustomDrawer = (props) => {
       <Styled.ContainerCustomBottomButtons>
 
         {/* DEFAULT ITEMS */}
+        {isAndroid && (
+        <DrawerItem
+          label={t('mobileSdk.audio.deviceSelector.title')}
+          labelStyle={Styled.TextButtonLabel}
+          onPress={onClickAudioSelector}
+          inactiveTintColor={Colors.lightGray400}
+          inactiveBackgroundColor={Colors.lightGray100}
+          icon={() => <Styled.DrawerIcon name="bluetooth-audio" size={24} color="#1C1B1F" />}
+        />
+        )}
         {!isBreakout && meetingUrl && (
         <DrawerItem
           label={t('mobileSdk.drawer.shareButtonLabel')}
