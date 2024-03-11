@@ -7,7 +7,7 @@ import { useRoute } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useOrientation } from '../../../hooks/use-orientation';
 import ActionsBar from '../index';
-import { setDetailedInfo } from '../../../store/redux/slices/wide-app/layout';
+import { setExpandActionsBar, setDetailedInfo } from '../../../store/redux/slices/wide-app/layout';
 import DebugControl from '../debug-control';
 import Screenshare from '../screenshare-button';
 import DeviceSelectorControl from '../audio-device-selector-control';
@@ -22,6 +22,8 @@ const BottomSheetActionsBar = ({ alwaysOpen }) => {
   const dispatch = useDispatch();
 
   const detailedInfo = useSelector((state) => state.layout.detailedInfo);
+  const expandedActionsBar = useSelector((state) => state.layout.expandActionsBar);
+  const isModalShow = useSelector((state) => state.modal.isShow);
 
   const isFullscreen = route.name === 'FullscreenWrapperScreen';
   const isAndroid = Platform.OS === 'android';
@@ -54,6 +56,20 @@ const BottomSheetActionsBar = ({ alwaysOpen }) => {
       bottomSheetRef.current?.close?.();
     }
   }, [detailedInfo]);
+
+  useEffect(() => {
+    if (expandedActionsBar) {
+      bottomSheetRef.current?.snapToIndex?.(1);
+      dispatch(setExpandActionsBar(false));
+    }
+  }, [expandedActionsBar]);
+
+  useEffect(() => {
+    if (isModalShow) {
+      dispatch(setDetailedInfo(false));
+      bottomSheetRef.current?.snapToIndex?.(-1);
+    }
+  }, [isModalShow]);
 
   // renders
   return (
