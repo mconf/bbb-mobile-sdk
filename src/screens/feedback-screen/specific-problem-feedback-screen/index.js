@@ -27,7 +27,7 @@ const SpecificProblemFeedbackScreen = ({ route }) => {
   }));
   const problemDetalied = { text: '' };
 
-  if (rating >= 7) {
+  if (rating >= 8) {
     questionTitle = t('app.customFeedback.wish.title');
   } else {
     questionTitle = t('mobileSdk.feedback.questionTitle');
@@ -43,8 +43,8 @@ const SpecificProblemFeedbackScreen = ({ route }) => {
 
   useFocusEffect(
     useCallback(() => {
-      setStep(route.params.payload.problemType);
-    }, [route.params.payload.problemType]),
+      setStep(route.params.problemData.problemType);
+    }, [route.params.problemData.problemType]),
   );
 
   // disables android go back button
@@ -90,7 +90,7 @@ const SpecificProblemFeedbackScreen = ({ route }) => {
     const answer = {};
     Object.entries(optionsStatus).forEach(([key, value]) => {
       if (value === true) {
-        answer.problem = key;
+        answer.problem_detailed = key;
         if (key === 'other') {
           answer.problem_described = problemDetalied.text;
         }
@@ -102,12 +102,12 @@ const SpecificProblemFeedbackScreen = ({ route }) => {
 
   const buildFeedback = () => {
     const payload = { ...route.params.payload };
-    const existingFeedback = { ...route.params.feedback };
+    const existingFeedback = { ...route.params.payload.feedback };
 
     const newFeedback = {
-      ...existingFeedback,
+      ...payload,
       feedback: {
-        ...existingFeedback.feedback,
+        ...existingFeedback,
         ...getProblem(),
       },
     };
@@ -135,7 +135,12 @@ const SpecificProblemFeedbackScreen = ({ route }) => {
       // There is one feedback screen left. Just aggregate the
       // information that we have and send it to the next screen
       const payload = buildFeedback();
-      navigation.navigate('EmailFeedbackScreen', { payload, host });
+
+      if (optionsStatus.other) {
+        navigation.navigate('EmailFeedbackScreen', { payload, host });
+      } else {
+        navigation.navigate('SpecificProblemFeedbackScreen', { payload, host });
+      }
     }
   };
 
@@ -146,7 +151,7 @@ const SpecificProblemFeedbackScreen = ({ route }) => {
   };
 
   const renderOptions = () => {
-    if (rating >= 7) {
+    if (rating >= 8) {
       const wishOptions = customFeedbackData.wish.options;
       return wishOptions.map((option) => {
         const labelId = option.textLabel?.id;

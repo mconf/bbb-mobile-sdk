@@ -23,7 +23,7 @@ const ProblemFeedbackScreen = ({ route }) => {
   let feedbackOptions;
   const skipButton = t('app.customFeedback.defaultButtons.skip');
   const { rating } = route.params.payload;
-  if (rating >= 7) {
+  if (rating >= 8) {
     questionTitle = t('app.customFeedback.like.title');
 
     feedbackOptions = customFeedbackData.like.options.map((option) => ({
@@ -103,6 +103,22 @@ const ProblemFeedbackScreen = ({ route }) => {
     return answer;
   };
 
+  const buildProblemData = () => {
+    const problemCode = getProblem().problem;
+    const problemOption = customFeedbackData.problem.options.find(
+      (option) => option.value === getProblem().problem
+    );
+    const problemType = problemOption.next;
+
+    const problemData = {
+      problemCode,
+      problemOption,
+      problemType,
+    };
+
+    return problemData;
+  };
+
   const buildFeedback = () => {
     const {
       userName,
@@ -121,11 +137,6 @@ const ProblemFeedbackScreen = ({ route }) => {
       }
       return Platform.constants.uiMode;
     };
-
-    const problemCode = getProblem().problem;
-    const problemOption = customFeedbackData.problem.options.find(
-      (option) => option.value === problemCode
-    );
 
     const feedback = {
       timestamp: new Date().toISOString(),
@@ -151,11 +162,6 @@ const ProblemFeedbackScreen = ({ route }) => {
       },
     };
 
-    if (problemOption) {
-      const problemType = problemOption.next;
-      feedback.problemCode = problemCode;
-      feedback.problemType = problemType;
-    }
     return feedback;
   };
 
@@ -177,10 +183,15 @@ const ProblemFeedbackScreen = ({ route }) => {
   const handleSendProblem = () => {
     if (isAnyOptionChecked()) {
       const { host } = route.params.meetingData;
+      const payload = buildFeedback();
+      const problemData = buildProblemData();
       // There is one feedback screen left. Just aggregate the
       // information that we have and send it to the next screen
-      const payload = buildFeedback();
-      navigation.navigate('SpecificProblemFeedbackScreen', { payload, host });
+      if (optionsStatus.other) {
+        navigation.navigate('EmailFeedbackScreen', { payload, host });
+      } else {
+        navigation.navigate('SpecificProblemFeedbackScreen', { payload, host, problemData });
+      }
     }
   };
 
