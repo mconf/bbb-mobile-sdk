@@ -8,6 +8,7 @@ import logger from '../../../services/logger';
 import Settings from '../../../../settings.json';
 import Colors from '../../../constants/colors';
 import Styled from './styles';
+import Service from '../service';
 import customFeedbackData from '../customFeedback.json';
 
 const POST_ROUTE = Settings.feedback.custom.route;
@@ -43,8 +44,8 @@ const SpecificProblemFeedbackScreen = ({ route }) => {
 
   useFocusEffect(
     useCallback(() => {
-      setStep(route.params.problemData.problemType);
-    }, [route.params.problemData.problemType]),
+      setStep(route.params.stepData.stepType);
+    }, [route.params.stepData.stepType]),
   );
 
   // disables android go back button
@@ -74,16 +75,6 @@ const SpecificProblemFeedbackScreen = ({ route }) => {
     if (!optionsStatus[optionCode]) {
       flipOption(optionCode);
     }
-  };
-
-  const setMessageText = (text) => {
-    problemDetalied.text = text;
-  };
-
-  const isAnyOptionChecked = () => {
-    return Object.values(optionsStatus).some((value) => {
-      return value;
-    });
   };
 
   const getProblem = () => {
@@ -130,17 +121,12 @@ const SpecificProblemFeedbackScreen = ({ route }) => {
   };
 
   const handleSendProblem = () => {
-    if (isAnyOptionChecked()) {
+    if (Service.isAnyOptionChecked(optionsStatus)) {
       const { host } = route.params;
       // There is one feedback screen left. Just aggregate the
       // information that we have and send it to the next screen
       const payload = buildFeedback();
-
-      if (optionsStatus.other) {
-        navigation.navigate('EmailFeedbackScreen', { payload, host });
-      } else {
-        navigation.navigate('SpecificProblemFeedbackScreen', { payload, host });
-      }
+      navigation.navigate('EmailFeedbackScreen', { payload, host });
     }
   };
 
@@ -201,13 +187,13 @@ const SpecificProblemFeedbackScreen = ({ route }) => {
         <Styled.TextInputOther
           onFocus={() => checkOption('other')}
           multiline
-          onChangeText={(newText) => setMessageText(newText)}
+          onChangeText={(newText) => Service.setMessageText(problemDetalied, newText)}
         />
       </KeyboardAvoidingView>
 
       <Styled.ButtonContainer>
         <Styled.ConfirmButton
-          disabled={!isAnyOptionChecked()}
+          disabled={!Service.isAnyOptionChecked(optionsStatus)}
           onPress={handleSendProblem}
         >
           {t('app.customFeedback.defaultButtons.next')}

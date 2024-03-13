@@ -9,6 +9,7 @@ import Settings from '../../../../settings.json';
 import Colors from '../../../constants/colors';
 import Styled from './styles';
 import customFeedbackData from '../customFeedback.json';
+import Service from '../service';
 
 const POST_ROUTE = Settings.feedback.custom.route;
 const APP_IDENTIFIER = Settings.feedback.custom.appIdentifier;
@@ -79,16 +80,6 @@ const ProblemFeedbackScreen = ({ route }) => {
     }
   };
 
-  const setMessageText = (text) => {
-    problemDetalied.text = text;
-  };
-
-  const isAnyOptionChecked = () => {
-    return Object.values(optionsStatus).some((value) => {
-      return value;
-    });
-  };
-
   const getProblem = () => {
     const answer = {};
     Object.entries(optionsStatus).forEach(([key, value]) => {
@@ -103,20 +94,21 @@ const ProblemFeedbackScreen = ({ route }) => {
     return answer;
   };
 
-  const buildProblemData = () => {
-    const problemCode = getProblem().problem;
-    const problemOption = customFeedbackData.problem.options.find(
+  const buildStepData = () => {
+    const stepCode = getProblem().problem;
+    const stepOption = customFeedbackData.problem.options.find(
       (option) => option.value === getProblem().problem
     );
-    const problemType = problemOption.next;
+    let stepType;
+    if (rating < 8) stepType = stepOption.next;
 
-    const problemData = {
-      problemCode,
-      problemOption,
-      problemType,
+    const stepData = {
+      stepCode,
+      stepOption,
+      stepType,
     };
 
-    return problemData;
+    return stepData;
   };
 
   const buildFeedback = () => {
@@ -181,16 +173,16 @@ const ProblemFeedbackScreen = ({ route }) => {
   };
 
   const handleSendProblem = () => {
-    if (isAnyOptionChecked()) {
+    if (Service.isAnyOptionChecked(optionsStatus)) {
       const { host } = route.params.meetingData;
       const payload = buildFeedback();
-      const problemData = buildProblemData();
+      const stepData = buildStepData();
       // There is one feedback screen left. Just aggregate the
       // information that we have and send it to the next screen
       if (optionsStatus.other) {
         navigation.navigate('EmailFeedbackScreen', { payload, host });
       } else {
-        navigation.navigate('SpecificProblemFeedbackScreen', { payload, host, problemData });
+        navigation.navigate('SpecificProblemFeedbackScreen', { payload, host, stepData });
       }
     }
   };
@@ -230,13 +222,13 @@ const ProblemFeedbackScreen = ({ route }) => {
         <Styled.TextInputOther
           onFocus={() => checkOption('other')}
           multiline
-          onChangeText={(newText) => setMessageText(newText)}
+          onChangeText={(newText) => Service.setMessageText(problemDetalied, newText)}
         />
       </KeyboardAvoidingView>
 
       <Styled.ButtonContainer>
         <Styled.ConfirmButton
-          disabled={!isAnyOptionChecked()}
+          disabled={!Service.isAnyOptionChecked(optionsStatus)}
           onPress={handleSendProblem}
         >
           {t('app.customFeedback.defaultButtons.next')}
