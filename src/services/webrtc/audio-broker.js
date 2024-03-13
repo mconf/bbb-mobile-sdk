@@ -78,8 +78,19 @@ class AudioBroker extends BaseBroker {
 
     if (localStream) {
       localStream.getAudioTracks().forEach((track) => {
+        // If the track is flagged as ended, this is a trailing request
+        // and we should just ignore it
+        if (track.readyState === 'ended') return;
+
+        // If the track is already in the desired state, skip it
+        // Separate from the above check to prevent accessing the `enabled`
+        // property of a track that is in the 'ended' state (even though
+        // JS will short-circuit the evaluation - paranoia)
+        if (track.enabled === shouldEnable) return;
+
         track.enabled = shouldEnable;
       });
+
       this.muted = !shouldEnable;
 
       return true;
