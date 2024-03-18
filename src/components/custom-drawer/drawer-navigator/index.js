@@ -295,13 +295,19 @@ const DrawerNavigator = ({
         component={WhiteboardScreen}
         options={{
           title: t('mobileSdk.whiteboard.label'),
+          drawerLabelStyle: {
+            maxWidth: 150, fontWeight: '400', fontSize: 16, paddingLeft: 12
+          },
           unmountOnBlur: true,
           drawerIcon: (config) => (
-            <Styled.DrawerIcon
-              icon="pen"
-              size={24}
-              iconColor={config.color}
-            />
+            <>
+              <Styled.BetaTag>{t('mobileSdk.tag.new')}</Styled.BetaTag>
+              <Styled.DrawerIcon
+                icon="pen"
+                size={24}
+                iconColor={config.color}
+              />
+            </>
           ),
         }}
       />
