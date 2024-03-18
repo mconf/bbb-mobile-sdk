@@ -31,9 +31,6 @@ const WhiteboardScreen = () => {
         },
       }, `Unable to get enforceLayout Join URL: ${e.message}`);
     });
-
-    return () => {
-    };
   }, []);
 
   useEffect(() => {

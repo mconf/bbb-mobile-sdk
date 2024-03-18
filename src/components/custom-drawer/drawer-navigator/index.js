@@ -19,6 +19,7 @@ import SelectLanguageScreen from '../../../screens/select-language-screen';
 import InsideBreakoutRoomScreen from '../../../screens/inside-breakout-room-screen';
 import FullscreenWrapperScreen from '../../../screens/fullscreen-wrapper-screen';
 import RecordingIndicator from '../../record/record-indicator';
+import WhiteboardScreen from '../../../screens/whiteboard-screen';
 import UserNotesScreen from '../../../screens/user-notes-screen';
 // components
 import CustomDrawer from '../index';
@@ -280,6 +281,24 @@ const DrawerNavigator = ({
           drawerIcon: (config) => (
             <Styled.DrawerIcon
               icon="account-group"
+              size={24}
+              iconColor={config.color}
+            />
+          ),
+        }}
+      />
+      )}
+
+      {Settings.showWhiteboardScreen && (
+      <Drawer.Screen
+        name="WhiteboardScreen"
+        component={WhiteboardScreen}
+        options={{
+          title: 'Whiteboard',
+          unmountOnBlur: true,
+          drawerIcon: (config) => (
+            <Styled.DrawerIcon
+              icon="pen"
               size={24}
               iconColor={config.color}
             />
