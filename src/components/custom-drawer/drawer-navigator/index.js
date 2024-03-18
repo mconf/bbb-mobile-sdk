@@ -294,7 +294,7 @@ const DrawerNavigator = ({
         name="WhiteboardScreen"
         component={WhiteboardScreen}
         options={{
-          title: 'Whiteboard',
+          title: t('mobileSdk.whiteboard.label'),
           unmountOnBlur: true,
           drawerIcon: (config) => (
             <Styled.DrawerIcon
