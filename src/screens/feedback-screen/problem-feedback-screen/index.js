@@ -12,8 +12,6 @@ import customFeedbackData from '../customFeedback.json';
 import Service from '../service';
 
 const POST_ROUTE = Settings.feedback.custom.route;
-const APP_IDENTIFIER = Settings.feedback.custom.appIdentifier;
-const CUSTOMER_METADATA = Settings.feedback.custom.customerMetadata;
 
 const ProblemFeedbackScreen = ({ route }) => {
   const { t } = useTranslation();
@@ -112,49 +110,16 @@ const ProblemFeedbackScreen = ({ route }) => {
   };
 
   const buildFeedback = () => {
-    const {
-      userName,
-      userId,
-      userRole,
-      meetingId,
-    } = route.params.payload;
-    const {
-      confname,
-      metadata = {},
-    } = route.params.meetingData;
+    const payload = { ...route.params.payload };
 
-    const getDeviceType = () => {
-      if (Platform.OS === 'ios') {
-        return Platform.constants.interfaceIdiom;
-      }
-      return Platform.constants.uiMode;
-    };
-
-    const feedback = {
-      timestamp: new Date().toISOString(),
-      rating,
-      session: {
-        session_name: confname,
-        institution_name: metadata[CUSTOMER_METADATA.name],
-        institution_guid: metadata[CUSTOMER_METADATA.guid],
-        session_id: meetingId,
-      },
-      device: {
-        type: getDeviceType(),
-        os: Platform.OS,
-        browser: APP_IDENTIFIER,
-      },
-      user: {
-        name: userName,
-        id: userId,
-        role: userRole,
-      },
+    const newFeedback = {
+      ...payload,
       feedback: {
         ...getProblem(),
       },
     };
 
-    return feedback;
+    return { ...payload, ...newFeedback };
   };
 
   const sendFeedback = () => {
