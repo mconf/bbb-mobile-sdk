@@ -1,5 +1,7 @@
 import React, { useCallback } from 'react';
-import { BackHandler } from 'react-native';
+import {
+  BackHandler, TouchableWithoutFeedback, KeyboardAvoidingView, Keyboard, Platform
+} from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
@@ -63,19 +65,27 @@ const EmailFeedbackScreen = ({ route }) => {
   };
 
   return (
-    <Styled.ContainerView>
-      <Styled.Title>{title}</Styled.Title>
-      <Styled.Subtitle>{subtitle}</Styled.Subtitle>
-      <Styled.EmailTextInput
-        onChangeText={(newText) => setEmail(newText)}
-        label={optionalQuestion.label}
-      />
-      <Styled.ConfirmButton
-        onPress={() => { handleSend(); }}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        {concludeButton}
-      </Styled.ConfirmButton>
-    </Styled.ContainerView>
+        <Styled.ContainerView>
+          <Styled.Title>{title}</Styled.Title>
+          <Styled.Subtitle>{subtitle}</Styled.Subtitle>
+          <Styled.EmailTextInput
+            onChangeText={(newText) => setEmail(newText)}
+            label={optionalQuestion.label}
+          />
+          <Styled.ButtonContainer>
+            <Styled.ConfirmButton
+              onPress={() => handleSend()}
+            >
+              {concludeButton}
+            </Styled.ConfirmButton>
+          </Styled.ButtonContainer>
+        </Styled.ContainerView>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 };
 

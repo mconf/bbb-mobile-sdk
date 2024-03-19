@@ -15,6 +15,7 @@ const ContainerView = styled.View`
 const Title = styled.Text`
   font-size: 24px;
   font-weight: 500;
+  text-align: center;
   color: ${Colors.white};
 `;
 
@@ -47,6 +48,10 @@ const ConfirmButton = ({
   );
 };
 
+const ButtonContainer = styled.View`
+  width: 100%;
+`;
+
 const EmailTextInput = styled(TextInput)`
   width: 100%;
 `;
@@ -57,4 +62,5 @@ export default {
   Title,
   Subtitle,
   EmailTextInput,
+  ButtonContainer,
 };

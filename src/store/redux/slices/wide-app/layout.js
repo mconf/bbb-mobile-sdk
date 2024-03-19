@@ -5,6 +5,7 @@ const initialState = {
   focusedId: '',
   focusedElement: '',
   detailedInfo: true,
+  expandActionsBar: false,
 };
 
 const layoutSlice = createSlice({
@@ -26,6 +27,9 @@ const layoutSlice = createSlice({
     setDetailedInfo: (state, action) => {
       state.detailedInfo = action.payload;
     },
+    setExpandActionsBar: (state, action) => {
+      state.expandActionsBar = action.payload;
+    },
   },
 });
 
@@ -35,5 +39,6 @@ export const {
   setFocusedElement,
   trigDetailedInfo,
   setDetailedInfo,
+  setExpandActionsBar,
 } = layoutSlice.actions;
 export default layoutSlice.reducer;

@@ -164,6 +164,7 @@ const FeedbackScreen = () => {
 
   const sendStarRating = () => {
     const payload = buildFeedback();
+    const { host } = meetingData.current;
     // sends partial feedback
     axios.post(`https://${host}${POST_ROUTE}`, payload).catch((e) => {
       logger.warn({
