@@ -9,6 +9,7 @@ const Container = styled.View`
   height: 30px;
   align-self: flex-start;
   padding: 0 2px;
+  margin: 2px;
 `;
 
 const TextContainer = styled.View`
