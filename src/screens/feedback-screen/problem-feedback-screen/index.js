@@ -45,7 +45,7 @@ const ProblemFeedbackScreen = ({ route }) => {
     initialState[option.code] = false;
   });
 
-  const problemDetalied = { text: '' };
+  const stepDetalied = { text: '' };
 
   const [optionsStatus, changeStatus] = useState(initialState);
 
@@ -84,7 +84,21 @@ const ProblemFeedbackScreen = ({ route }) => {
       if (value === true) {
         answer.problem = key;
         if (key === 'other') {
-          answer.problem_described = problemDetalied.text;
+          answer.problem_described = stepDetalied.text;
+        }
+      }
+    });
+
+    return answer;
+  };
+
+  const getLike = () => {
+    const answer = {};
+    Object.entries(optionsStatus).forEach(([key, value]) => {
+      if (value === true) {
+        answer.like = key;
+        if (key === 'other') {
+          answer.like_described = stepDetalied.text;
         }
       }
     });
@@ -93,12 +107,23 @@ const ProblemFeedbackScreen = ({ route }) => {
   };
 
   const buildStepData = () => {
-    const stepCode = getProblem().problem;
-    const stepOption = customFeedbackData.problem.options.find(
-      (option) => option.value === getProblem().problem
-    );
+    let stepCode;
+    let stepOption;
     let stepType;
-    if (rating < 8) stepType = stepOption.next;
+
+    if (rating < 8) {
+      stepCode = getProblem().problem;
+      stepOption = customFeedbackData.problem.options.find(
+        (option) => option.value === getProblem().problem
+      );
+      stepType = stepOption.next;
+    } else {
+      stepCode = getLike().like;
+      stepOption = customFeedbackData.like.options.find(
+        (option) => option.value === getLike().like
+      );
+      stepType = stepOption.next;
+    }
 
     const stepData = {
       stepCode,
@@ -111,11 +136,18 @@ const ProblemFeedbackScreen = ({ route }) => {
 
   const buildFeedback = () => {
     const payload = { ...route.params.payload };
+    let feedbackData;
+
+    if (payload.rating < 8) {
+      feedbackData = getProblem();
+    } else {
+      feedbackData = getLike();
+    }
 
     const newFeedback = {
       ...payload,
       feedback: {
-        ...getProblem(),
+        ...feedbackData,
       },
     };
 
@@ -186,7 +218,7 @@ const ProblemFeedbackScreen = ({ route }) => {
           <Styled.TextInputOther
             onFocus={() => checkOption('other')}
             multiline
-            onChangeText={(newText) => Service.setMessageText(problemDetalied, newText)}
+            onChangeText={(newText) => Service.setMessageText(stepDetalied, newText)}
           />
 
           <Styled.ButtonContainer>

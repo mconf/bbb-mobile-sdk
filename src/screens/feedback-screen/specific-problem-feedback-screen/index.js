@@ -26,7 +26,7 @@ const SpecificProblemFeedbackScreen = ({ route }) => {
     code: option.value,
     next: option.next,
   }));
-  const problemDetalied = { text: '' };
+  const stepDetalied = { text: '' };
 
   if (rating >= 8) {
     questionTitle = t('app.customFeedback.wish.title');
@@ -83,7 +83,21 @@ const SpecificProblemFeedbackScreen = ({ route }) => {
       if (value === true) {
         answer.problem_detailed = key;
         if (key === 'other') {
-          answer.problem_described = problemDetalied.text;
+          answer.problem_described = stepDetalied.text;
+        }
+      }
+    });
+
+    return answer;
+  };
+
+  const getWish = () => {
+    const answer = {};
+    Object.entries(optionsStatus).forEach(([key, value]) => {
+      if (value === true) {
+        answer.wish = key;
+        if (key === 'other') {
+          answer.wish_described = stepDetalied.text;
         }
       }
     });
@@ -94,12 +108,19 @@ const SpecificProblemFeedbackScreen = ({ route }) => {
   const buildFeedback = () => {
     const payload = { ...route.params.payload };
     const existingFeedback = { ...route.params.payload.feedback };
+    let feedbackData;
+
+    if (payload.rating < 8) {
+      feedbackData = getProblem();
+    } else {
+      feedbackData = getWish();
+    }
 
     const newFeedback = {
       ...payload,
       feedback: {
         ...existingFeedback,
-        ...getProblem(),
+        ...feedbackData,
       },
     };
 
@@ -187,7 +208,7 @@ const SpecificProblemFeedbackScreen = ({ route }) => {
         <Styled.TextInputOther
           onFocus={() => checkOption('other')}
           multiline
-          onChangeText={(newText) => Service.setMessageText(problemDetalied, newText)}
+          onChangeText={(newText) => Service.setMessageText(stepDetalied, newText)}
         />
       </KeyboardAvoidingView>
 

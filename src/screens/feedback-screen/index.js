@@ -23,23 +23,23 @@ const APP_IDENTIFIER = Settings.feedback.custom.appIdentifier;
 const CUSTOMER_METADATA = Settings.feedback.custom.customerMetadata;
 const CUSTOM_FEEDBACK_ENABLED = Settings.feedback.custom.enabled;
 
-const DEVICE_INFORMATION = {
-  brand: Device.brand,
-  designName: Device.designName,
-  name: Device.deviceName,
-  yearClass: Device.deviceYearClass,
-  manufacturer: Device.manufacturer,
-  modelId: Device.modelId,
-  modelName: Device.modelName,
-  osBuildId: Device.osBuildId,
-  osInternalBuildId: Device.osInternalBuildId,
-  osName: Device.osName,
-  osVersion: Device.osVersion,
-  platformApiLevel: Device.platformApiLevel,
-  productName: Device.productName,
-  suppCpuArch: Device.supportedCpuArchitectures,
-  totalMemory: Device.totalMemory
-};
+const {
+  brand,
+  designName,
+  deviceName,
+  deviceYearClass,
+  manufacturer,
+  modelId,
+  modelName,
+  osBuildId,
+  osInternalBuildId,
+  osName,
+  osVersion,
+  platformApiLevel,
+  productName,
+  supportedCpuArchitectures,
+  totalMemory
+} = Device;
 
 const FeedbackScreen = () => {
   const title = useEndReason();
@@ -134,21 +134,21 @@ const FeedbackScreen = () => {
         os: Platform.OS,
         browser: APP_IDENTIFIER,
         nativeAppDeviceInformation: {
-          brand: DEVICE_INFORMATION.brand,
-          designName: DEVICE_INFORMATION.designName,
-          name: DEVICE_INFORMATION.deviceName,
-          yearClass: DEVICE_INFORMATION.deviceYearClass,
-          manufacturer: DEVICE_INFORMATION.manufacturer,
-          modelId: DEVICE_INFORMATION.modelId,
-          modelName: DEVICE_INFORMATION.modelName,
-          osBuildId: DEVICE_INFORMATION.osBuildId,
-          osInternalBuildId: DEVICE_INFORMATION.osInternalBuildId,
-          osName: DEVICE_INFORMATION.osName,
-          osVersion: DEVICE_INFORMATION.osVersion,
-          platformApiLevel: DEVICE_INFORMATION.platformApiLevel,
-          productName: DEVICE_INFORMATION.productName,
-          suppCpuArch: DEVICE_INFORMATION.supportedCpuArchitectures,
-          totalMemory: DEVICE_INFORMATION.totalMemory
+          brand,
+          designName,
+          name: deviceName,
+          yearClass: deviceYearClass,
+          manufacturer,
+          modelId,
+          modelName,
+          osBuildId,
+          osInternalBuildId,
+          osName,
+          osVersion,
+          platformApiLevel,
+          productName,
+          suppCpuArch: supportedCpuArchitectures,
+          totalMemory
         },
       },
       user: {
@@ -156,7 +156,9 @@ const FeedbackScreen = () => {
         id: payload.userId,
         role: payload.userRole,
       },
-      feedback: 'Incomplete feedback',
+      feedback: {
+        incomplete: 'Incomplete Feedback'
+      },
     };
 
     return feedback;
