@@ -4,6 +4,7 @@
     "videoPageSize": 3
   },
   "showLanguageScreen": true,
+  "showWhiteboardScreen": true,
   "showDebugToggle": false,
   "showBreakouts": true,
   "showNotImplementedFeatures": false,
