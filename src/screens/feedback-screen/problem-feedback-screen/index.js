@@ -174,13 +174,8 @@ const ProblemFeedbackScreen = ({ route }) => {
       const { host } = route.params.meetingData;
       const payload = buildFeedback();
       const stepData = buildStepData();
-      // There is one feedback screen left. Just aggregate the
-      // information that we have and send it to the next screen
-      if (optionsStatus.other) {
-        navigation.navigate('EmailFeedbackScreen', { payload, host });
-      } else {
-        navigation.navigate('SpecificProblemFeedbackScreen', { payload, host, stepData });
-      }
+      sendFeedback();
+      navigation.navigate('SpecificProblemFeedbackScreen', { payload, host, stepData });
     }
   };
 

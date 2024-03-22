@@ -147,6 +147,7 @@ const SpecificProblemFeedbackScreen = ({ route }) => {
       // There is one feedback screen left. Just aggregate the
       // information that we have and send it to the next screen
       const payload = buildFeedback();
+      sendFeedback();
       navigation.navigate('EmailFeedbackScreen', { payload, host });
     }
   };
