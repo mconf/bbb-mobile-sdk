@@ -75,6 +75,7 @@ const EmailFeedbackScreen = ({ route }) => {
           <Styled.EmailTextInput
             onChangeText={(newText) => setEmail(newText)}
             label={optionalQuestion.label}
+            keyboardType="email-address"
           />
           <Styled.ButtonContainer>
             <Styled.ConfirmButton
