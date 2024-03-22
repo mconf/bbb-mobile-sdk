@@ -83,11 +83,6 @@ const FeedbackScreen = () => {
   };
 
   const nextScreen = (payload) => {
-    if (rating === 10) {
-      navigation.navigate('EndSessionScreen');
-      return;
-    }
-
     if (CUSTOM_FEEDBACK_ENABLED) {
       navigation.navigate('ProblemFeedbackScreen', { payload, meetingData: meetingData.current });
       return;
