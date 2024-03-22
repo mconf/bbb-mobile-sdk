@@ -9,34 +9,43 @@ import logger from '../../../services/logger';
 import Settings from '../../../../settings.json';
 import Colors from '../../../constants/colors';
 import Styled from './styles';
+import customFeedbackData from '../customFeedback.json';
+import Service from '../service';
 
 const POST_ROUTE = Settings.feedback.custom.route;
-const APP_IDENTIFIER = Settings.feedback.custom.appIdentifier;
-const CUSTOMER_METADATA = Settings.feedback.custom.customerMetadata;
 
 const ProblemFeedbackScreen = ({ route }) => {
   const { t } = useTranslation();
   const navigation = useNavigation();
 
-  const questionTitle = t('mobileSdk.feedback.questionTitle');
+  let questionTitle;
+  let feedbackOptions;
   const skipButton = t('app.customFeedback.defaultButtons.skip');
-  const problems = [
-    { label: t('app.settings.audioTab.label'), code: 'audio' },
-    { label: t('app.settings.videoTab.label'), code: 'camera' },
-    { label: t('app.customFeedback.problem.connection'), code: 'connection' },
-    { label: t('app.customFeedback.problem.microphone'), code: 'microphone' },
-    { label: t('mobileSdk.whiteboard.label'), code: 'whiteboard' },
-    { label: t('app.customFeedback.other'), code: 'other' },
-  ];
-  const problemDetalied = { text: '' };
-  const initialState = {
-    [problems[0].code]: false,
-    [problems[1].code]: false,
-    [problems[2].code]: false,
-    [problems[3].code]: false,
-    [problems[4].code]: false,
-    [problems[5].code]: false,
-  };
+  const { rating } = route.params.payload;
+  if (rating >= 8) {
+    questionTitle = t('app.customFeedback.like.title');
+
+    feedbackOptions = customFeedbackData.like.options.map((option) => ({
+      label: option.textLabel ? t(option.textLabel.id) : '',
+      code: option.value,
+      next: option.next,
+    }));
+  } else {
+    questionTitle = t('mobileSdk.feedback.questionTitle');
+
+    feedbackOptions = customFeedbackData.problem.options.map((option) => ({
+      label: option.textLabel ? t(option.textLabel.id) : '',
+      code: option.value,
+      next: option.next,
+    }));
+  }
+
+  const initialState = {};
+  feedbackOptions.forEach((option) => {
+    initialState[option.code] = false;
+  });
+
+  const stepDetalied = { text: '' };
 
   const [optionsStatus, changeStatus] = useState(initialState);
 
@@ -69,23 +78,13 @@ const ProblemFeedbackScreen = ({ route }) => {
     }
   };
 
-  const setMessageText = (text) => {
-    problemDetalied.text = text;
-  };
-
-  const isAnyOptionChecked = () => {
-    return Object.values(optionsStatus).some((value) => {
-      return value;
-    });
-  };
-
   const getProblem = () => {
     const answer = {};
     Object.entries(optionsStatus).forEach(([key, value]) => {
       if (value === true) {
         answer.problem = key;
         if (key === 'other') {
-          answer.problem_described = problemDetalied.text;
+          answer.problem_described = stepDetalied.text;
         }
       }
     });
@@ -93,51 +92,66 @@ const ProblemFeedbackScreen = ({ route }) => {
     return answer;
   };
 
-  const buildFeedback = () => {
-    const {
-      rating,
-      userName,
-      userId,
-      userRole,
-      meetingId,
-    } = route.params.payload;
-    const {
-      confname,
-      metadata = {},
-    } = route.params.meetingData;
-
-    const getDeviceType = () => {
-      if (Platform.OS === 'ios') {
-        return Platform.constants.interfaceIdiom;
+  const getLike = () => {
+    const answer = {};
+    Object.entries(optionsStatus).forEach(([key, value]) => {
+      if (value === true) {
+        answer.like = key;
+        if (key === 'other') {
+          answer.like_described = stepDetalied.text;
+        }
       }
-      return Platform.constants.uiMode;
+    });
+
+    return answer;
+  };
+
+  const buildStepData = () => {
+    let stepCode;
+    let stepOption;
+    let stepType;
+
+    if (rating < 8) {
+      stepCode = getProblem().problem;
+      stepOption = customFeedbackData.problem.options.find(
+        (option) => option.value === getProblem().problem
+      );
+      stepType = stepOption.next;
+    } else {
+      stepCode = getLike().like;
+      stepOption = customFeedbackData.like.options.find(
+        (option) => option.value === getLike().like
+      );
+      stepType = stepOption.next;
+    }
+
+    const stepData = {
+      stepCode,
+      stepOption,
+      stepType,
     };
 
-    const feedback = {
-      timestamp: new Date().toISOString(),
-      rating,
-      session: {
-        session_name: confname,
-        institution_name: metadata[CUSTOMER_METADATA.name],
-        institution_guid: metadata[CUSTOMER_METADATA.guid],
-        session_id: meetingId,
-      },
-      device: {
-        type: getDeviceType(),
-        os: Platform.OS,
-        browser: APP_IDENTIFIER,
-      },
-      user: {
-        name: userName,
-        id: userId,
-        role: userRole,
-      },
+    return stepData;
+  };
+
+  const buildFeedback = () => {
+    const payload = { ...route.params.payload };
+    let feedbackData;
+
+    if (payload.rating < 8) {
+      feedbackData = getProblem();
+    } else {
+      feedbackData = getLike();
+    }
+
+    const newFeedback = {
+      ...payload,
       feedback: {
-        ...getProblem()
+        ...feedbackData,
       },
     };
 
-    return feedback;
+    return { ...payload, ...newFeedback };
   };
 
   const sendFeedback = () => {
@@ -156,12 +170,12 @@ const ProblemFeedbackScreen = ({ route }) => {
   };
 
   const handleSendProblem = () => {
-    if (isAnyOptionChecked()) {
+    if (Service.isAnyOptionChecked(optionsStatus)) {
       const { host } = route.params.meetingData;
-      // There is one feedback screen left. Just aggregate the
-      // information that we have and send it to the next screen
       const payload = buildFeedback();
-      navigation.navigate('EmailFeedbackScreen', { payload, host });
+      const stepData = buildStepData();
+      sendFeedback();
+      navigation.navigate('SpecificProblemFeedbackScreen', { payload, host, stepData });
     }
   };
 
@@ -181,7 +195,7 @@ const ProblemFeedbackScreen = ({ route }) => {
 
           <Styled.OptionsContainer>
             {
-          problems.map((option) => {
+          feedbackOptions.map((option) => {
             return (
               <Styled.CheckContainerItem key={option.code}>
                 <Styled.Option
@@ -199,12 +213,12 @@ const ProblemFeedbackScreen = ({ route }) => {
           <Styled.TextInputOther
             onFocus={() => checkOption('other')}
             multiline
-            onChangeText={(newText) => setMessageText(newText)}
+            onChangeText={(newText) => Service.setMessageText(stepDetalied, newText)}
           />
 
           <Styled.ButtonContainer>
             <Styled.ConfirmButton
-              disabled={!isAnyOptionChecked()}
+              disabled={!Service.isAnyOptionChecked(optionsStatus)}
               onPress={handleSendProblem}
             >
               {t('app.customFeedback.defaultButtons.next')}

@@ -16,7 +16,6 @@ const Title = styled.Text`
   font-size: 24px;
   font-weight: 500;
   color: ${Colors.white};
-  text-align: center;
 `;
 
 const CheckContainerItem = styled.View`
@@ -55,7 +54,6 @@ const ConfirmButton = ({
 
 const TextInputOther = styled(TextInput)`
   max-height: 150px;
-  width: 100%;
 `;
 
 const ButtonContainer = styled.View`
