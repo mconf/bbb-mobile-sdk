@@ -2,6 +2,7 @@ import React, {
   useCallback, useEffect, useRef, useState
 } from 'react';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { PORTRAIT, OrientationLocker } from 'react-native-orientation-locker';
 import { useTranslation } from 'react-i18next';
 import { BackHandler, Platform } from 'react-native';
 import { useSelector } from 'react-redux';
@@ -224,6 +225,7 @@ const FeedbackScreen = () => {
           <Styled.QuitSessionButton onPress={() => { navigation.navigate('EndSessionScreen'); }}>{quitButton}</Styled.QuitSessionButton>
         </Styled.QuitSessionButtonContainer>
       </Styled.ContainerFeedbackCard>
+      <OrientationLocker orientation={PORTRAIT} />
     </Styled.ContainerView>
   );
 };
