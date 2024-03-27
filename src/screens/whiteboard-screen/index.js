@@ -1,6 +1,7 @@
 import { View } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { useSelector } from 'react-redux';
+import { OrientationLocker, LANDSCAPE } from 'react-native-orientation-locker';
 import {
   useEffect, useRef, useState
 } from 'react';
@@ -34,14 +35,23 @@ const WhiteboardScreen = () => {
   }, []);
 
   useEffect(() => {
-    webViewRef.current.reload();
+    webViewRef?.current?.reload();
   }, [presentationOnlyJoinUrl]);
+
+  if (presentationOnlyJoinUrl === '') {
+    return;
+  }
 
   return (
     <View style={{ flex: 1 }}>
+      <OrientationLocker orientation={LANDSCAPE} />
       <WebView
         ref={(ref) => { webViewRef.current = ref; }}
         source={{ uri: presentationOnlyJoinUrl }}
+        javaScriptEnabled
+        sharedCookiesEnabled
+        thirdPartyCookiesEnabled
+        allowsFullscreenVideo
       />
     </View>
   );
