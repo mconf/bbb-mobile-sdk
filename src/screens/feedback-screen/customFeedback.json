@@ -335,33 +335,6 @@
     "options":[
       {
         "textLabel":{
-          "id": "app.customFeedback.like.interactiveWhiteboard"
-        },
-        "type": "radio",
-        "next": "wish",
-        "key": "feedback.like",
-        "value": "whiteboard"
-      },
-      {
-        "textLabel":{
-          "id": "app.customFeedback.like.multimediaSharing"
-        },
-        "type": "radio",
-        "next": "wish",
-        "key": "feedback.like",
-        "value": "multimediasharing"
-      },
-      {
-        "textLabel":{
-          "id": "app.customFeedback.like.audioCaptions"
-        },
-        "type": "radio",
-        "next": "wish",
-        "key": "feedback.like",
-        "value": "audioCaptions"
-      },
-      {
-        "textLabel":{
           "id": "app.customFeedback.other"
         },
         "type": "radio",
