@@ -1,11 +1,12 @@
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useCallback, useEffect, useState } from 'react';
 import { Dimensions } from 'react-native';
 import { useOrientation } from '../../hooks/use-orientation';
 import AudioManager from '../../services/webrtc/audio-manager';
 import VideoManager from '../../services/webrtc/video-manager';
+import { disconnectLiveKitRoom } from '../../services/livekit';
 import ScreenWrapper from '../../components/screen-wrapper';
 import UtilsService from '../../utils/functions';
 import Styled from './styles';
@@ -16,12 +17,14 @@ import {
   BREAKOUT_ROOM_REQUEST_JOIN_URL,
   FIRST_BREAKOUT_DURATION_DATA_SUBSCRIPTION
 } from './queries.js'
+import { setMainRoomBlockedByBreakout } from '../../store/redux/slices/wide-app/client';
 
 const DEVICE_HEIGHT = parseInt(Dimensions.get("window").height, 10);
 const DEVICE_WIDTH = parseInt(Dimensions.get("window").width, 10);
 
 //TODO: move breakoutTimeRemaining to a component
 const BreakoutRoomScreen = () => {
+  const dispatch = useDispatch();
   const localCameraId = useSelector((state) => state.video.localCameraId);
   const [time, setTime] = useState(-100);
   const [requestedUrl, setRequestedUrl] = useState(false);
@@ -107,11 +110,7 @@ const BreakoutRoomScreen = () => {
   // ***** FUNCTIONS *****
 
   const joinSession = (breakoutRoomJoinUrl) => {
-    // TODO: update when audio/video are working
     console.log(breakoutRoomJoinUrl);
-    // AudioManager.exitAudio();
-    // VideoManager.unpublish(localCameraId);
-    // navigation.navigate('InsideBreakoutRoomScreen', { joinURL: breakoutRoomJoinUrl });
   };
 
   const handleJoinButton = (breakoutId, breakoutRoomJoinUrl) => {

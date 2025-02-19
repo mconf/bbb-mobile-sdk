@@ -21,6 +21,7 @@ const initialState = {
     terminated: false,
     initialChatMsgsFetched: false,
     transfer: false,
+    mainRoomBlockedByBreakout: false,
   },
   transferUrl: null,
   guestStatus: null, // oneof 'WAIT'|'ALLOW'|'DENY'|'FAILED'
@@ -86,6 +87,9 @@ const clientSlice = createSlice({
     },
     setSessionTerminated: (state, action) => {
       state.sessionState.terminated = action.payload;
+    },
+    setMainRoomBlockedByBreakout: (state, action) => {
+      state.sessionState.mainRoomBlockedByBreakout = action.payload;
     },
     sessionStateChanged: (state, action) => {
       const { ended, endReason } = action.payload;
@@ -404,6 +408,7 @@ export const {
   setLoggedIn,
   setLoggingOut,
   setLoggingIn,
+  setMainRoomBlockedByBreakout,
   setInitialChatMsgsFetched,
   setSessionTerminated,
   setMeetingData,

@@ -33,6 +33,8 @@ const UserJoinScreen = () => {
   useEffect(() => {
     if (currentUser) {
       const handleNavigateToEndSessionScreen = () => {
+        dispatch(setConnected(false));
+        dispatch(setLoggedIn(false));
         disconnectLiveKitRoom({ final: true });
         navigation.navigate('EndSessionScreen');
       };

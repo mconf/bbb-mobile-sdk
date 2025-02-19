@@ -9,6 +9,7 @@ import InCallManagerController from './src/app-content/in-call-manager';
 import LocalesController from './src/app-content/locales';
 import AppStatusBar from './src/components/status-bar';
 import MainNavigator from './src/screens/main-navigator';
+import { disconnectLiveKitRoom } from './src/services/livekit';
 // inject stores
 import { injectStore as injectStoreVM } from './src/services/webrtc/video-manager';
 import { injectStore as injectStoreSM } from './src/services/webrtc/screenshare-manager';
@@ -31,16 +32,19 @@ const MyTheme = {
   },
 };
 
-// ! Define this values if running sdk only
-const defaultOnLeaveSession = () => console.log('leave session not defined');
+const leaveSessionFactory = (callback = () => {}) => {
+  return () => {
+    disconnectLiveKitRoom({ final: true });
+    callback();
+  };
+};
 const defaultJoinURL = () => '';
 
 const App = (props) => {
   const { joinURL, defaultLanguage, onLeaveSession } = props;
   const _joinURL = joinURL
     || defaultJoinURL();
-  const _onLeaveSession = onLeaveSession
-    || defaultOnLeaveSession;
+  const _onLeaveSession = leaveSessionFactory(onLeaveSession);
 
   useEffect(() => {
     injectStore();

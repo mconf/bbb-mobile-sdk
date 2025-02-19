@@ -8,7 +8,7 @@ import LeaveQueries from '../components/custom-drawer/queries';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
+    shouldShowAlert: false,
     shouldPlaySound: false,
     shouldSetBadge: false,
   }),
@@ -89,14 +89,14 @@ const NotificationController = () => {
   }, []);
 
   // handle buttons
-    Notifications.addNotificationResponseReceivedListener((response) => {
-      Notifications.getNotificationCategoriesAsync().then((categories) => {
-        if (response.actionIdentifier === "leave") {
-          Notifications.dismissAllNotificationsAsync()
-          dispatchLeaveSession();
-        }
-      });
-    })
+  Notifications.addNotificationResponseReceivedListener((response) => {
+    Notifications.getNotificationCategoriesAsync().then((categories) => {
+      if (response.actionIdentifier === "leave") {
+        Notifications.dismissAllNotificationsAsync()
+        dispatchLeaveSession();
+      }
+    });
+  })
 
   return null;
 };

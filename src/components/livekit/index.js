@@ -71,8 +71,12 @@ const BBBLiveKitRoom = ({ children }) => {
   const { data: currentUserData } = useCurrentUser();
   const host = useSelector((state) => state.client.meetingData.host);
   const { joinAudio } = useAudioJoin();
-  const sessionToken = useSelector((state) => state.client.meetingData.sessionToken);
   const { data: meetingData, loading: meetingLoading } = useMeeting();
+  const sessionToken = useSelector((state) => state.client.meetingData.sessionToken);
+  const isClientConnected = useSelector((state) => state.client.sessionState.connected);
+  const isClientLoggedIn = useSelector((state) => state.client.sessionState.loggedIn);
+  const mainRoomBlockedByBreakout = useSelector((state) => state.client.sessionState.mainRoomBlockedByBreakout);
+  const connectionState = useConnectionState(liveKitRoom);
 
   const livekitToken = currentUserData?.user_current[0]?.livekit?.livekitToken;
   const userId = currentUserData?.user_current[0]?.userId;
@@ -106,8 +110,18 @@ const BBBLiveKitRoom = ({ children }) => {
       && userId
       && !meetingLoading
       && (audioBridge && cameraBridge && screenShareBridge)
+      && isClientConnected
+      && isClientLoggedIn
+      && connectionState === ConnectionState.Disconnected
+      && !mainRoomBlockedByBreakout
     ) {
       initializeMediaManagers({ audioBridge, cameraBridge, screenShareBridge })
+        .then(() => {
+          const connectOptions = { autoSubscribe: true };
+          const url = host ? `wss://${host}/livekit` : null;
+
+          return liveKitRoom.connect(url, livekitToken, connectOptions);
+        })
         .then(joinAudio)
         .catch((initError) => {
           logger.error({
@@ -119,7 +133,17 @@ const BBBLiveKitRoom = ({ children }) => {
           }, `Media manager initialization failed: ${initError.message}`);
         });
     }
-  }, [sessionToken, host, userId, meetingData, meetingLoading]);
+  }, [
+    sessionToken,
+    host,
+    userId,
+    meetingData,
+    meetingLoading,
+    isClientConnected,
+    isClientLoggedIn,
+    connectionState,
+    mainRoomBlockedByBreakout,
+  ]);
 
   useEffect(() => {
     return () => {
@@ -132,8 +156,8 @@ const BBBLiveKitRoom = ({ children }) => {
   return (
     <LiveKitRoom
       video={false}
-      audio={usingAudio}
-      connect={shouldUseLiveKit}
+      audio={false}
+      connect={false}
       token={livekitToken}
       serverUrl={host ? `wss://${host}/livekit` : null}
       room={liveKitRoom}
