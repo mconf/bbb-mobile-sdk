@@ -48,7 +48,10 @@
       ],
       "package": "org.bbb.mobilesdk"
     },
-    "plugins": ["@config-plugins/react-native-webrtc"],
+    "plugins": [
+      "@config-plugins/react-native-webrtc",
+      "expo-secure-store"
+    ],
     "web": {
       "favicon": "./src/assets/native/favicon.png"
     },

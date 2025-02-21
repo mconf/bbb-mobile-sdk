@@ -6,6 +6,13 @@ const USER_LEAVE_MEETING = gql`
   }
 `;
 
+const USER_SEND_ACTIVITY_SIGN = gql`
+  mutation UserSendActivitySign {
+    userSendActivitySign
+  }
+`;
+
 export default {
-  USER_LEAVE_MEETING
+  USER_LEAVE_MEETING,
+  USER_SEND_ACTIVITY_SIGN
 };

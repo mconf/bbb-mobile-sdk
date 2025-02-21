@@ -19,6 +19,7 @@ import useModalListener from '../../../hooks/listeners/use-modal-listener';
 import Styled from './styles';
 import NotificationController from '../../../app-content/notification';
 import useMeeting from '../../../graphql/hooks/useMeeting';
+import { ActivitySignProvider } from '../../../app-content/ActivitySign';
 
 const DrawerNavigator = ({
   onLeaveSession, jUrl, meetingUrl
@@ -66,7 +67,7 @@ const DrawerNavigator = ({
           }}
         />
 
-        { !isBreakout && (
+        {!isBreakout && (
           <Drawer.Screen
             name="PollScreen"
             component={PollNavigator}
@@ -191,6 +192,7 @@ const DrawerNavigator = ({
         />
       </Drawer.Navigator>
       <NotificationController />
+      <ActivitySignProvider />
     </>
   );
 };
