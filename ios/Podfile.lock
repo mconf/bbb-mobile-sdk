@@ -1,30 +1,30 @@
 PODS:
   - boost (1.84.0)
   - DoubleConversion (1.1.6)
-  - EXApplication (6.0.1):
+  - EXApplication (6.0.2):
     - ExpoModulesCore
-  - EXAV (15.0.1):
+  - EXAV (15.0.2):
     - ExpoModulesCore
     - ReactCommon/turbomodule/core
-  - EXConstants (17.0.3):
+  - EXConstants (17.0.5):
     - ExpoModulesCore
-  - EXNotifications (0.29.11):
+  - EXNotifications (0.29.13):
     - ExpoModulesCore
-  - Expo (52.0.23):
+  - Expo (52.0.31):
     - ExpoModulesCore
-  - ExpoAsset (11.0.1):
+  - ExpoAsset (11.0.3):
     - ExpoModulesCore
-  - ExpoDevice (7.0.1):
+  - ExpoDevice (7.0.2):
     - ExpoModulesCore
-  - ExpoFileSystem (18.0.6):
+  - ExpoFileSystem (18.0.10):
     - ExpoModulesCore
-  - ExpoFont (13.0.2):
+  - ExpoFont (13.0.3):
     - ExpoModulesCore
-  - ExpoKeepAwake (14.0.1):
+  - ExpoKeepAwake (14.0.2):
     - ExpoModulesCore
-  - ExpoLinking (7.0.3):
+  - ExpoLinking (7.0.5):
     - ExpoModulesCore
-  - ExpoModulesCore (2.1.2):
+  - ExpoModulesCore (2.2.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -47,7 +47,9 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - ExpoSplashScreen (0.29.18):
+  - ExpoSecureStore (14.0.1):
+    - ExpoModulesCore
+  - ExpoSplashScreen (0.29.21):
     - ExpoModulesCore
   - FBLazyVector (0.76.5)
   - fmt (9.1.0)
@@ -1659,7 +1661,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNReanimated (3.16.6):
+  - RNReanimated (3.16.7):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1679,10 +1681,10 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNReanimated/reanimated (= 3.16.6)
-    - RNReanimated/worklets (= 3.16.6)
+    - RNReanimated/reanimated (= 3.16.7)
+    - RNReanimated/worklets (= 3.16.7)
     - Yoga
-  - RNReanimated/reanimated (3.16.6):
+  - RNReanimated/reanimated (3.16.7):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1702,9 +1704,9 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNReanimated/reanimated/apple (= 3.16.6)
+    - RNReanimated/reanimated/apple (= 3.16.7)
     - Yoga
-  - RNReanimated/reanimated/apple (3.16.6):
+  - RNReanimated/reanimated/apple (3.16.7):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1725,7 +1727,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNReanimated/worklets (3.16.6):
+  - RNReanimated/worklets (3.16.7):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1789,6 +1791,7 @@ DEPENDENCIES:
   - ExpoKeepAwake (from `../node_modules/expo-keep-awake/ios`)
   - ExpoLinking (from `../node_modules/expo-linking/ios`)
   - ExpoModulesCore (from `../node_modules/expo-modules-core`)
+  - ExpoSecureStore (from `../node_modules/expo-secure-store/ios`)
   - ExpoSplashScreen (from `../node_modules/expo-splash-screen/ios`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - fmt (from `../node_modules/react-native/third-party-podspecs/fmt.podspec`)
@@ -1903,6 +1906,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-linking/ios"
   ExpoModulesCore:
     :path: "../node_modules/expo-modules-core"
+  ExpoSecureStore:
+    :path: "../node_modules/expo-secure-store/ios"
   ExpoSplashScreen:
     :path: "../node_modules/expo-splash-screen/ios"
   FBLazyVector:
@@ -2060,19 +2065,20 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   boost: 1dca942403ed9342f98334bf4c3621f011aa7946
   DoubleConversion: f16ae600a246532c4020132d54af21d0ddb2a385
-  EXApplication: e1ad9c950c98b2b134578092c948b10b403f3ea7
-  EXAV: 9773c9799767c9925547b05e41a26a0240bb8ef2
-  EXConstants: dd2fe64c6cdb1383b694c309a63028a8e9f2be6d
-  EXNotifications: e27ed9ad086026ef0cdd5ddbf9be60abd18232c8
-  Expo: 37cea4167605a3a1b88fa0caf8349ae76c0d389c
-  ExpoAsset: 8138f2a9ec55ae1ad7c3871448379f7d97692d15
-  ExpoDevice: e24dd19a43065182eb246bc0e7f84186862f1e83
-  ExpoFileSystem: 179a0661fd6d3c4e5d7e500a99a9cd8b295d9566
-  ExpoFont: 260fb85279912421894060d9aea453cee4ffc01c
-  ExpoKeepAwake: 783e68647b969b210a786047c3daa7b753dcac1f
-  ExpoLinking: a8332a219379ba80f8e612d5a5de4a3da446886e
-  ExpoModulesCore: 7ca0054f09a5205c1dac65fa98c2430472db50e6
-  ExpoSplashScreen: aa5c5eba706a5686b91861b53ced2996f1dd080d
+  EXApplication: 27a524f5c3e671c6218220fba04752629466a1a9
+  EXAV: 57ea461614a714b8b8fcc72c6fbc298b8f1ec78b
+  EXConstants: aa93a3e70f8b37c81a80931cfd23f860b1819167
+  EXNotifications: 08cc7c5a100c2edc3a01227cfdfcaf17746189d7
+  Expo: f0d6d83fbc392a02f27972323e5b7f2a7e8969bf
+  ExpoAsset: 77e4579f19b48d6b3f4055c933e86ce45e80caeb
+  ExpoDevice: 82da2577196c2ddee18189da65f754ea83003d2e
+  ExpoFileSystem: dfca98dde30460788cb9f6f51f177888fa021934
+  ExpoFont: 8b14db1afebf62e9774613a082e402985f4e747c
+  ExpoKeepAwake: 1f74cdf53ab3b3aeb7110f18eb053c92e7c3e710
+  ExpoLinking: 0381341519ca7180a3a057d20edb1cf6a908aaf4
+  ExpoModulesCore: 0cdd8cd936fb309a81d37976a20e92e7111d9578
+  ExpoSecureStore: d006eea5e316283099d46f80a6b10055b89a6008
+  ExpoSplashScreen: 83f585abeb0506103f9309628634dbbcd9bc5573
   FBLazyVector: 1bf99bb46c6af9a2712592e707347315f23947aa
   fmt: 10c6e61f4be25dc963c36bd73fc7b1705fe975be
   glog: 08b301085f15bcbb6ff8632a8ebaf239aae04e6a
@@ -2145,7 +2151,7 @@ SPEC CHECKSUMS:
   ReactNativeIncallManager: bfc9c67358cd524882a7c4116dcb311ac2293d4b
   RNCallKeep: 94bbe46b807ccf58e9f6ec11bc4d6087323a1954
   RNGestureHandler: 511250b190a284388f9dd0d2e56c1df76f14cfb8
-  RNReanimated: ac21443586c889b6eae9e50d9011ced1a64eb548
+  RNReanimated: 849c4bfc1a185b123ca9a89f2a98d679b3d79b4e
   RNScreens: e6f9bc3a41be76af2ba0a815ea299a0000b1c838
   RNSVG: 8b1a777d54096b8c2a0fd38fc9d5a454332bbb4d
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
