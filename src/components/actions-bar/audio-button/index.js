@@ -12,6 +12,10 @@ const AudioButton = () => {
   const isConnecting = useSelector(({ audio }) => audio.isConnecting || audio.isReconnecting);
   const isActive = isConnected || isConnecting;
 
+  if (!Settings.showNotImplementedFeatures) {
+    return null;
+  };
+
   const onPressHeadphone = () => {
     if (isActive) {
       AudioManager.exitAudio();
