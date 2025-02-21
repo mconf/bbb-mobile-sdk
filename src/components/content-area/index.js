@@ -82,7 +82,8 @@ const ContentArea = (props) => {
           uri: currentSlide,
         }}
       />
-    ); };
+    );
+  };
 
   const screenshareView = useCallback(() => {
     switch (screenShareBridge) {
@@ -99,7 +100,7 @@ const ContentArea = (props) => {
   if (fullscreen) {
     return (
       <>
-        {!hasScreenshare && <WhiteboardScreen />}
+        {!hasScreenshare && <></>}
         {hasScreenshare && screenshareView()}
       </>
     );
