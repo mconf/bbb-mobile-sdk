@@ -129,8 +129,6 @@ const FeedbackScreen = (props) => {
     nextScreen(payload, host);
   };
 
-  const noRating = () => rating === undefined;
-
   if (isBackgrounded && isAndroid && isPiPEnabled) {
     return (
       <PiPView />
@@ -156,7 +154,7 @@ const FeedbackScreen = (props) => {
         </Styled.StarsRatingContainer>
         <Styled.ButtonContainer>
           <Styled.ConfirmButton
-            disabled={noRating()}
+            disabled={rating === undefined || rating === 0}
             onPress={handleNextButton}
           >
             {t('app.customFeedback.defaultButtons.next')}
