@@ -50,7 +50,7 @@ const PreviousPollScreen = () => {
     );
   };
 
-  if (!hasPublishedPolls && (amIPresenter && !hasCurrentPoll)) {
+  if (!hasPublishedPolls && !hasCurrentPoll) {
     return (
       <ScreenWrapper>
         <Styled.ContainerCentralizedView>
