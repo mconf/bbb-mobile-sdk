@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { useAudioJoin } from '../../../hooks/use-audio-join';
 import AudioManager from '../../../services/webrtc/audio-manager';
 import Styled from './styles';
+import Settings from '../../../../settings.json';
 
 const AudioButton = () => {
   const { t } = useTranslation();

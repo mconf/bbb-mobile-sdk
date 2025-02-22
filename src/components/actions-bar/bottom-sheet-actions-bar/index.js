@@ -27,13 +27,13 @@ const BottomSheetActionsBar = ({ alwaysOpen }) => {
   const isModalShow = useSelector((state) => state.modal.isShow);
 
   const renderWithOpacity = route.name === 'FullscreenWrapperScreen'
-  || route.name === 'UserNotesScreen';
+    || route.name === 'UserNotesScreen';
   const { showDebugToggle, showNotImplementedFeatures } = Settings;
 
   // variables
   const handleSizeOfActionsBar = () => {
     const variables = [showDebugToggle, showNotImplementedFeatures, true, true];
-    return variables.reduce((base, item) => base + (item ? 85 : 0), 110);
+    return variables.reduce((base, item) => base + (item ? 50 : 0), 110);
   };
 
   const snapPoints = useMemo(() => {
