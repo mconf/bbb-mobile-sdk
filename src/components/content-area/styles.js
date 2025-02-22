@@ -56,9 +56,9 @@ const IconContainerPiP = styled(TouchableRipple)`
   right: 70px;
 `;
 
-const FullscreenIcon = ({ onPress, isScreensharing }) => (
+const FullscreenIcon = ({ onPress }) => (
   <IconContainerFullscreen onPress={onPress}>
-    <MaterialIcons name={isScreensharing ? 'fullscreen' : 'draw'} size={16} color="#FFFFFF" />
+    <MaterialIcons name={'fullscreen'} size={16} color="#FFFFFF" />
   </IconContainerFullscreen>
 );
 
