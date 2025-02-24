@@ -1,6 +1,4 @@
-import DraggableView from 'react-native-draggable-reanimated';
 import { useSelector } from 'react-redux';
-import { View } from 'react-native';
 import useCurrentUser from '../../graphql/hooks/useCurrentUser';
 import Styled from './styles';
 
@@ -15,18 +13,7 @@ const DraggableCamera = () => {
 
   return (
     <Styled.Container>
-      <DraggableView
-        initValue={{ x: 42, y: 42 }}
-      >
-        <View style={{
-          width: 90 * 1.25,
-          height: 160 * 1.25,
-          zIndex: 1200
-        }}
-        >
-          <Styled.VideoStream streamURL={mediaStreamId} zOrder={2} />
-        </View>
-      </DraggableView>
+      <Styled.VideoStream streamURL={mediaStreamId} zOrder={2} />
     </Styled.Container>
   );
 };
