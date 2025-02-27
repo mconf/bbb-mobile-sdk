@@ -5,6 +5,7 @@ import { TouchableRipple } from 'react-native-paper';
 import presentation from '../presentation';
 import screenshare from '../screenshare';
 import Pressable from '../pressable';
+import Settings from '../../../settings.json';
 
 const Presentation = styled(presentation)``;
 const Screenshare = styled(screenshare)``;
@@ -58,7 +59,7 @@ const IconContainerPiP = styled(TouchableRipple)`
 
 const FullscreenIcon = ({ onPress }) => (
   <IconContainerFullscreen onPress={onPress}>
-    <MaterialIcons name={'fullscreen'} size={16} color="#FFFFFF" />
+    <MaterialIcons name={isScreensharing ? 'fullscreen' : Settings.whiteboard ? 'draw' : ''} size={16} color="#FFFFFF" />
   </IconContainerFullscreen>
 );
 

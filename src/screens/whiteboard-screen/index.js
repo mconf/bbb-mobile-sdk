@@ -22,7 +22,7 @@ const WhiteboardScreen = () => {
     }
 
     const url = new URL(joinUrl);
-    const getJoinUrlWithEnforceLayout = `https://${url.host}/bigbluebutton/api/getJoinUrl?sessionToken=${url.searchParams?.get('sessionToken')}&enforceLayout=presentationOnly`;
+    const getJoinUrlWithEnforceLayout = `https://${url.host}/bigbluebutton/api/getJoinUrl?sessionToken=${url.searchParams?.get('sessionToken')}&enforceLayout=PRESENTATION_ONLY`;
 
     axios.get(getJoinUrlWithEnforceLayout).then((response) => {
       const apiResponse = response.data.response;
