@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { Alert, NativeModules, Platform } from 'react-native';
 import useMeeting from '../../graphql/hooks/useMeeting';
+import WhiteboardScreen from '../../screens/whiteboard-screen';
 import {
   setDetailedInfo,
   setFocusedElement,
@@ -39,7 +40,7 @@ const ContentArea = (props) => {
 
   const handleFullscreenClick = () => {
     dispatch(setIsFocused(true));
-    dispatch(setFocusedId('screenshare'));
+    dispatch(setFocusedId(hasScreenshare ? 'screenshare' : 'whiteboard'));
     dispatch(setFocusedElement('contentArea'));
     navigation.navigate('FullscreenWrapperScreen');
   };
@@ -99,6 +100,7 @@ const ContentArea = (props) => {
   if (fullscreen) {
     return (
       <>
+        {!hasScreenshare && <WhiteboardScreen />}
         {hasScreenshare && screenshareView()}
       </>
     );
