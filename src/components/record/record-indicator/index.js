@@ -9,36 +9,42 @@ import { isModerator } from '../../../store/redux/slices/current-user';
 import usePrevious from '../../../hooks/use-previous';
 import Colors from '../../../constants/colors';
 import Styled from './styles';
+import useCurrentUser from '../../../graphql/hooks/useCurrentUser';
 
 const RecordingIndicator = (props) => {
-  const { recordMeeting } = props;
-  const recording = recordMeeting?.recording;
-  const previousRecording = usePrevious(recording);
-  const amIModerator = useSelector(isModerator);
-  const customData = useSelector((state) => state.client.meetingData.customdata);
-  const neverRecorded = (recordMeeting?.time === 0 || recordMeeting?.time === undefined)
-    ? !recordMeeting?.recording
+  const { recordMeeting, recordPolicies } = props;
+  const recording = recordMeeting?.isRecording;
+  const recordingEnabled = recordPolicies?.record;
+  const { data: userData } = useCurrentUser();
+  const amIModerator = userData?.user_current[0]?.isModerator;
+  const previousRecording = usePrevious(recording); // TODO: review this
+  // const customData = useSelector((state) => state.client.meetingData.customdata);
+  const neverRecorded = (recordMeeting?.previousRecordedTimeInSeconds === 0 || recordMeeting?.previousRecordedTimeInSeconds === undefined)
+    ? !recordMeeting?.isRecording
     : false;
 
   const dispatch = useDispatch();
   const anim = useRef(new Animated.Value(1));
 
-  const customRecord = customData?.find((item) => item.mconf_custom_record !== undefined);
-  const hasRecordingPermission = customRecord
-    ? JSON.parse(customRecord.mconf_custom_record)
-    : amIModerator;
+  // TODO: review this
+  // const customRecord = customData?.find((item) => item.mconf_custom_record !== undefined);
+  // const hasRecordingPermission = customRecord
+  //   ? JSON.parse(customRecord.mconf_custom_record)
+  //   : amIModerator;
+
+  const hasRecordingPermission = amIModerator;
 
   const handleOpenRecordingViewerModal = () => {
-    dispatch(setProfile({ profile: 'record_status' }));
+    // dispatch(setProfile({ profile: 'record_status' }));
   };
 
   const handleOpenRecordingControlsModal = () => {
-    dispatch(setProfile({ profile: 'record_controls' }));
+    // dispatch(setProfile({ profile: 'record_controls' }));
   };
 
   useEffect(() => {
     if ((recording !== undefined && previousRecording !== undefined)
-        && (recording !== previousRecording)
+      && (recording !== previousRecording)
     ) {
       if (recording) {
         dispatch(showNotificationWithTimeout('recordingStarted'));
@@ -67,7 +73,7 @@ const RecordingIndicator = (props) => {
     }, [recording])
   );
 
-  if (!recordMeeting?.record) return null;
+  if (!recordingEnabled) return null;
 
   const handleIcon = () => {
     if (neverRecorded || recording) {
@@ -90,7 +96,6 @@ const RecordingIndicator = (props) => {
         </Pressable>
       </Styled.RecordingIndicatorIcon>
     </Styled.Container>
-
   );
 };
 
