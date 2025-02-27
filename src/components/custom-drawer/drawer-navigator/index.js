@@ -29,7 +29,8 @@ const DrawerNavigator = ({
   const { t } = useTranslation();
   const { data: meetingData } = useMeeting();
   const meetingName = meetingData?.meeting[0]?.name;
-  const recordMeeting = false; // get the data from the meeting
+  const recordMeeting = meetingData?.meeting[0]?.recording;
+  const recordPolicies = meetingData?.meeting[0]?.recordingPolicies;
   const isBreakout = meetingData?.meeting[0]?.isBreakout;
 
   useModalListener();
@@ -55,7 +56,7 @@ const DrawerNavigator = ({
             unmountOnBlur: true,
             headerShown: appState !== 'background',
             headerRight: () => (
-              <RecordingIndicator recordMeeting={recordMeeting} />
+              <RecordingIndicator recordMeeting={recordMeeting} recordPolicies={recordPolicies} />
             ),
             drawerIcon: (config) => (
               <Styled.DrawerIcon
@@ -75,7 +76,7 @@ const DrawerNavigator = ({
               title: t('mobileSdk.poll.label'),
               unmountOnBlur: true,
               headerRight: () => (
-                <RecordingIndicator recordMeeting={recordMeeting} />
+                <RecordingIndicator recordMeeting={recordMeeting} recordPolicies={recordPolicies} />
               ),
               drawerIcon: (config) => (
                 <Styled.DrawerIcon
@@ -95,7 +96,7 @@ const DrawerNavigator = ({
             title: t('app.userList.label'),
             unmountOnBlur: true,
             headerRight: () => (
-              <RecordingIndicator recordMeeting={recordMeeting} />
+              <RecordingIndicator recordMeeting={recordMeeting} recordPolicies={recordPolicies} />
             ),
             drawerIcon: (config) => (
               <Styled.DrawerIcon
@@ -114,7 +115,7 @@ const DrawerNavigator = ({
             title: t('mobileSdk.locales.label'),
             unmountOnBlur: true,
             headerRight: () => (
-              <RecordingIndicator recordMeeting={recordMeeting} />
+              <RecordingIndicator recordMeeting={recordMeeting} recordPolicies={recordPolicies} />
             ),
             drawerIcon: (config) => (
               <Styled.DrawerIcon

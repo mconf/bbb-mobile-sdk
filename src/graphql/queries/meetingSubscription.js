@@ -15,6 +15,15 @@ const MEETING_SUBSCRIPTION = gql`
         }
         name
         isBreakout
+        recording {
+          isRecording
+          previousRecordedTimeInSeconds
+          startedAt
+        }
+        recordingPolicies {
+          allowStartStopRecording
+          record
+        }
         cameraBridge
         screenShareBridge
         audioBridge
