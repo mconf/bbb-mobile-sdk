@@ -33,28 +33,33 @@
     $ npm install
 
 ## How to run
-    To run the sdk as standalone just switch the flag on the settings.json:
-    $ "dev": true,
+To run the sdk as standalone just switch the flag on the settings.json:
 
-    Edit the App.js file and add your server join url to the defaultJoinURL string
+```json
+"dev": true,
+```
 
-    Android:
+Edit the App.js file and add your server join url to the defaultJoinURL string
+
+Android:
+
     $ npx expo run:android
     
-    if it crashes with an error message with something like: ANDROID_SDK_ENVIRONMENT missing...
+if it crashes with an error message with something like: ANDROID_SDK_ENVIRONMENT missing...
+
     $ export ANDROID_HOME=$HOME/Android/Sdk
     $ export PATH=$PATH:$ANDROID_HOME/tools
 
-    ```bash
-      # mac
-    export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
-      # linux
-    export ANDROID_SDK_ROOT="$HOME/Android/sdk"
-    ```
-    if it results in a error with gradle:
+```bash
+# mac
+export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
+# linux
+export ANDROID_SDK_ROOT="$HOME/Android/sdk"
+```
+if it results in a error with gradle:
     $ cd android && ./gradlew clean
           
-    iOS:
+iOS:
     $ npx expo run:ios
 
 ## License
