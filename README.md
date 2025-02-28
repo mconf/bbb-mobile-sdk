@@ -3,24 +3,25 @@
 ## Code dependencies
 
 ### Versions
-
     $ node -v
-    v18.15.0
+    v18.20.3
 
     $ npm -v
-    v9.5.0
+    v10.7.0
 
     ## For Android only:
     $ java -version 
-    openjdk version "11.0.16.1" 2022-08-12
-    OpenJDK Runtime Environment (build 11.0.16.1+1)
-    OpenJDK 64-Bit Server VM (build 11.0.16.1+1, mixed mode)
+    openjdk 17.0.0.1 2024-07-02
+    OpenJDK Runtime Environment (build 17.0.0.1+2-3)
+    OpenJDK 64-Bit Server VM (build 17.0.0.1+2-3, mixed mode, sharing)
 
-### 
+### Extra
     Run on android:
         Install Android Studio and setup a device with google play store
         Device info in android studio:
-            Pixel 4, API 30, android 11
+            Device: any device that has the play store icon
+            APIs: 35, 34...24 (the higher the better)
+            Android: 15, 14... (the higher the better)
     Run on iOS:
         Install XCode (ios only)
 
@@ -32,6 +33,10 @@
     $ npm install
 
 ## How to run
+    To run the sdk as standalone just switch the flag on the settings.json:
+    $ "dev": true,
+
+    Edit the App.js file and add your server join url to the defaultJoinURL string
 
     Android:
     $ npx expo run:android
@@ -40,6 +45,12 @@
     $ export ANDROID_HOME=$HOME/Android/Sdk
     $ export PATH=$PATH:$ANDROID_HOME/tools
 
+    ```bash
+      # mac
+    export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
+      # linux
+    export ANDROID_SDK_ROOT="$HOME/Android/sdk"
+    ```
     if it results in a error with gradle:
     $ cd android && ./gradlew clean
           
