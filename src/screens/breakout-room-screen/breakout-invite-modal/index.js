@@ -57,7 +57,7 @@ const BreakoutInviteModal = () => {
       </Styled.TitleDesc>
       <Styled.JoinBreakoutButton
         onPress={() => {
-          joinSession(modalCollection.extraInfo.joinURL);
+          navigation.navigate('BreakoutRoomScreen');
           dispatch(hide());
         }}
       >
