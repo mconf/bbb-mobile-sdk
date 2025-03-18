@@ -24,7 +24,7 @@
       "logTag": "bbb-app"
     }
   },
-  "whiteboard": true,
+  "whiteboard": false,
   "feedback": {
     "enabled": true,
     "route": "/feedback/submit",
