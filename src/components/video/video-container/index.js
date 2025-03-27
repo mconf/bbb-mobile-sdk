@@ -1,6 +1,12 @@
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
+import { Track } from 'livekit-client';
+import {
+  useTracks,
+  RoomContext,
+} from '@livekit/react-native';
+import { liveKitRoom } from '../../../services/livekit';
 import {
   setFocusedElement,
   setFocusedId,
@@ -13,7 +19,7 @@ import Styled from './styles';
 import SFUVideoStream from './video-stream';
 import LiveKitCameraViewContainer from '../../livekit/camera';
 
-const VideoContainer = (props) => {
+const VideoComponent = (props) => {
   const {
     cameraId,
     userId,
@@ -32,6 +38,11 @@ const VideoContainer = (props) => {
   const mediaStreamId = useSelector((state) => state.video.videoStreams[cameraId]);
   const { data: meetingData, loading: meetingLoading } = useMeeting();
   const { cameraBridge } = meetingData?.meeting[0] || {};
+
+  const tracks = useTracks([Track.Source.Camera]);
+  const cameraTrack = tracks.find(
+    (track) => track?.publication?.trackName === cameraId
+  );
 
   const renderPlaceholder = useCallback(() => (
     <Styled.UserColor userColor={userColor} isGrid={isGrid}>
@@ -74,10 +85,14 @@ const VideoContainer = (props) => {
   }, [cameraId, local, isGrid, renderPlaceholder, cameraBridge, meetingLoading]);
 
   const handleFullscreenClick = () => {
-    // FIXME TODO mediaStreamId LiveKit
-    if (typeof mediaStreamId === 'string') {
-      dispatch(setFocusedId(mediaStreamId));
-      dispatch(setFocusedElement('videoStream'));
+    if (mediaStreamId || cameraTrack) {
+      if (cameraBridge === 'livekit' && cameraId) {
+        dispatch(setFocusedId(cameraId));
+        dispatch(setFocusedElement('videoStream'));
+      } else if (cameraBridge === 'bbb-webrtc-sfu' && typeof mediaStreamId === 'string') {
+        dispatch(setFocusedId(mediaStreamId));
+        dispatch(setFocusedElement('videoStream'));
+      }
     } else {
       dispatch(setFocusedId({
         userName, userColor, isTalking: false, userRole, userImage: userAvatar
@@ -86,7 +101,7 @@ const VideoContainer = (props) => {
     }
 
     dispatch(setIsFocused(true));
-    navigation.navigate('FullscreenWrapperScreen');
+    navigation.navigate('FullscreenWrapperScreen', { cameraBridge });
   };
 
   const renderRaisedHand = () => {
@@ -130,6 +145,14 @@ const VideoContainer = (props) => {
 
   return (
     renderGridVideoContainerItem()
+  );
+};
+
+const VideoContainer = (props) => {
+  return (
+    <RoomContext.Provider value={liveKitRoom}>
+      <VideoComponent {...props} />
+    </RoomContext.Provider>
   );
 };
 
