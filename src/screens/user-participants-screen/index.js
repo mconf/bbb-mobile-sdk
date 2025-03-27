@@ -11,8 +11,8 @@ import ScreenWrapper from '../../components/screen-wrapper';
 import { isBreakout } from '../../store/redux/slices/wide-app/client';
 import Colors from '../../constants/colors';
 import Styled from './styles';
-import useGuestWaitingList from '../../graphql/hooks/useGuestWaitingList'
-import useCurrentUser from '../../graphql/hooks/useCurrentUser'
+import useGuestWaitingList from '../../graphql/hooks/useGuestWaitingList';
+import useCurrentUser from '../../graphql/hooks/useCurrentUser';
 import useUserList from '../../graphql/hooks/useUserList';
 import {
   SET_ROLE,
@@ -43,18 +43,18 @@ const UserParticipantsScreen = () => {
       variables: {
         userId
       }
-    })
+    });
   };
 
   const handleDispatchSetRole = (userId, role) => {
-    role = (role === "VIEWER") ? "MODERATOR" : "VIEWER";
+    role = (role === 'VIEWER') ? 'MODERATOR' : 'VIEWER';
 
     dispatchSetRole({
       variables: {
         userId,
         role,
       }
-    })
+    });
   };
 
   const onIconPress = (event, item) => {
@@ -140,7 +140,7 @@ const UserParticipantsScreen = () => {
             {isMe && !isPresenter && (
               <Menu.Item
                 onPress={() => {
-                  handleDispatchSetPresenter(selectedUser.userId)
+                  handleDispatchSetPresenter(selectedUser.userId);
                   setShowMenu(false);
                 }}
                 title={t('app.userList.menu.makePresenter.label')}
@@ -166,7 +166,7 @@ const UserParticipantsScreen = () => {
                 {!isPresenter && (
                   <Menu.Item
                     onPress={() => {
-                      handleDispatchSetPresenter(selectedUser.userId)
+                      handleDispatchSetPresenter(selectedUser.userId);
                       setShowMenu(false);
                     }}
                     title={t('app.userList.menu.makePresenter.label')}
@@ -180,12 +180,12 @@ const UserParticipantsScreen = () => {
     );
   };
 
-  if(!currentUser) {
+  if (!currentUser) {
     return (
       <Styled.LoadingWrapper>
-        <ActivityIndicator size={50}/>
+        <ActivityIndicator size={50} />
       </Styled.LoadingWrapper>
-    )
+    );
   }
 
   return (
@@ -194,7 +194,11 @@ const UserParticipantsScreen = () => {
         <Styled.ContainerView orientation={orientation}>
           <Styled.Block orientation={orientation}>
             {currentUser?.isModerator && !meetingIsBreakout && renderGuestPolicy()}
-            <Styled.FlatList data={userList} renderItem={renderItem} />
+            <Styled.FlatList
+              data={userList}
+              renderItem={renderItem}
+              contentContainerStyle={{ paddingBottom: 40 }}
+            />
             {renderMenuView()}
           </Styled.Block>
         </Styled.ContainerView>

@@ -2,6 +2,8 @@ import styled from 'styled-components/native';
 import { ReactNativeZoomableView } from '@openspacelabs/react-native-zoomable-view';
 import { IconButton } from 'react-native-paper';
 import { RTCView } from '@livekit/react-native-webrtc';
+import { VideoTrack } from '@livekit/react-native';
+import { StyleSheet } from 'react-native';
 import { OrientationLocker, LANDSCAPE } from 'react-native-orientation-locker';
 import { useDispatch, useSelector } from 'react-redux';
 import { trigDetailedInfo } from '../../store/redux/slices/wide-app/layout';
@@ -10,6 +12,14 @@ import UserAvatarComponent from '../../components/user-avatar';
 import ScreenWrapper from '../../components/screen-wrapper';
 import contentArea from '../../components/content-area';
 import Colors from '../../constants/colors';
+
+const styles = StyleSheet.create({
+  stream: {
+    width: '100%',
+    height: '100%',
+    overflow: 'hidden',
+  },
+});
 
 const Container = styled.View`
 width: 100%;
@@ -84,10 +94,16 @@ const ExitFullscreenIconButton = ({
   );
 };
 
-const DefaultElements = ({ focusedElement, focusedId }) => {
+const DefaultElements = ({
+  focusedElement, focusedId, cameraTrack, cameraBridge
+}) => {
   switch (focusedElement) {
     case 'videoStream':
-      return <VideoStream streamURL={focusedId} />;
+      return cameraBridge === 'livekit' ? (
+        <VideoTrack trackRef={cameraTrack} style={styles.stream} objectFit="contain" />
+      ) : (
+        <VideoStream streamURL={focusedId} />
+      );
     case 'contentArea':
       return (
         <>
@@ -113,11 +129,12 @@ const DefaultElements = ({ focusedElement, focusedId }) => {
   }
 };
 
-const RenderWithZoomable = ({ layoutStore, onCloseFullscreen }) => {
+const RenderWithZoomable = ({
+  layoutStore, onCloseFullscreen, cameraBridge, cameraTrack
+}) => {
   const dispatch = useDispatch();
   const screenshare = useSelector(selectScreenshare);
 
-  // * Special case for whiteboard view
   if (layoutStore.focusedElement === 'contentArea' && !screenshare) {
     return (
       <ScreenWrapper renderWithView>
@@ -128,13 +145,10 @@ const RenderWithZoomable = ({ layoutStore, onCloseFullscreen }) => {
               <ContentArea fullscreen />
             </>
           </Wrapper>
-          <ToggleActionsBarIconButton
-            onPress={() => dispatch(trigDetailedInfo())}
-          />
+          <ToggleActionsBarIconButton onPress={() => dispatch(trigDetailedInfo())} />
           <ExitFullscreenIconButton onPress={onCloseFullscreen} />
         </Container>
       </ScreenWrapper>
-
     );
   }
 
@@ -151,16 +165,15 @@ const RenderWithZoomable = ({ layoutStore, onCloseFullscreen }) => {
             <DefaultElements
               focusedElement={layoutStore.focusedElement}
               focusedId={layoutStore.focusedId}
+              cameraBridge={cameraBridge}
+              cameraTrack={cameraTrack}
             />
           </ReactNativeZoomableView>
         </Wrapper>
-        <ToggleActionsBarIconButton
-          onPress={() => dispatch(trigDetailedInfo())}
-        />
+        <ToggleActionsBarIconButton onPress={() => dispatch(trigDetailedInfo())} />
         <ExitFullscreenIconButton onPress={onCloseFullscreen} />
       </Container>
     </ScreenWrapper>
-
   );
 };
 
