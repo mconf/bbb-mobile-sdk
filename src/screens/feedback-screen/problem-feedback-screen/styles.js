@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-import { Button, Checkbox, TextInput } from 'react-native-paper';
+import { Button, RadioButton, TextInput } from 'react-native-paper';
 import Colors from '../../../constants/colors';
 
 const ContainerView = styled.View`
@@ -26,7 +26,7 @@ const CheckContainerItem = styled.View`
   align-items: center;
 `;
 
-const Option = styled(Checkbox.Android)`
+const Option = styled(RadioButton.Android)`
 `;
 
 const LabelOption = styled.Text`

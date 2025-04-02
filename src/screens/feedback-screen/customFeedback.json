@@ -291,15 +291,6 @@
     "options":[
       {
         "textLabel":{
-          "id": "app.customFeedback.interfaceProblem.loginUi"
-        },
-        "type": "radio",
-        "next": "email",
-        "key": "feedback.problem_detailed",
-        "value": "loginUi"
-      },
-      {
-        "textLabel":{
           "id": "app.customFeedback.interfaceProblem.pollUi"
         },
         "type": "radio",
@@ -388,30 +379,12 @@
       },
       {
         "textLabel":{
-          "id": "app.customFeedback.wish.whiteboardUse"
-        },
-        "type": "radio",
-        "next": "email",
-        "key": "feedback.wish",
-        "value": "whiteboardUse"
-      },
-      {
-        "textLabel":{
           "id": "app.customFeedback.wish.picture"
         },
         "type": "radio",
         "next": "email",
         "key": "feedback.wish",
         "value": "picture"
-      },
-      {
-        "textLabel":{
-          "id": "app.customFeedback.wish.outputDevice"
-        },
-        "type": "radio",
-        "next": "email",
-        "key": "feedback.wish",
-        "value": "outputDevice"
       },
       {
         "textLabel":{
