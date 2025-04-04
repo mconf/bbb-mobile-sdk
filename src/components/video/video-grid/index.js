@@ -32,7 +32,7 @@ const GridView = () => {
 
   useFocusEffect(
     useCallback(() => {
-      setNumOfColumns(1);
+      setNumOfColumns(userData?.user.length > 2 ? 2 : 1);
     }, [userData])
   );
 
