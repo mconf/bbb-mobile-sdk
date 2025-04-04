@@ -1,15 +1,13 @@
 import { useMutation, useSubscription } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
 import { Text } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect } from 'react';
 import { GET_USER_CURRENT, USER_JOIN_MUTATION } from './queries';
 import { setConnected, setInitialCurrentUser, setLoggedIn } from '../../store/redux/slices/wide-app/client';
 import { disconnectLiveKitRoom } from '../../services/livekit';
 import Styled from './styles';
-
-const r = Math.floor(Math.random() * 5) + 1;
 
 const UserJoinScreen = () => {
   const navigation = useNavigation();
@@ -80,7 +78,7 @@ const UserJoinScreen = () => {
       <Styled.ContainerView>
         <Styled.Loading />
         <Styled.TitleText>
-          {t(`mobileSdk.join.loading.label.${r}`)}
+          {t('mobileSdk.join.loadingSession.label')}
         </Styled.TitleText>
       </Styled.ContainerView>
     );
