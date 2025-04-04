@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { FlatList, Dimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -17,10 +17,11 @@ const GridView = () => {
   const videoUsersCopy = userData?.user.filter(() => true);
   const [numOfColumns, setNumOfColumns] = useState(1);
   const currentUserId = currentUserData?.user_current[0].userId;
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const { t } = useTranslation();
 
   const removeCurrentUserFromVideoUsers = () => {
-    return videoUsersCopy?.filter(user => user.userId !== currentUserId);
+    return videoUsersCopy?.filter((user) => user.userId !== currentUserId);
   };
 
   useFocusEffect(
@@ -31,9 +32,16 @@ const GridView = () => {
 
   useFocusEffect(
     useCallback(() => {
-      setNumOfColumns(userData?.user.length > 2 ? 2 : 1);
+      setNumOfColumns(1);
     }, [userData])
   );
+
+  useEffect(() => {
+    if (userData?.user) {
+      const updatedUsers = userData.user.filter((user) => user.userId !== currentUserId);
+      setFilteredUsers(updatedUsers);
+    }
+  }, [userData, currentUserId]);
 
   const renderItem = (videoUser) => {
     const { item: vuItem } = videoUser;
@@ -104,7 +112,7 @@ const GridView = () => {
         <Styled.ContentArea />
       </Styled.ContainerViewItem>
       <FlatList
-        data={videoUsersCopy}
+        data={filteredUsers}
         style={Styled.styles.container}
         renderItem={renderItem}
         numColumns={numOfColumns}
