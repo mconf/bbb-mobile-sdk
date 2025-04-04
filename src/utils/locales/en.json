@@ -239,11 +239,8 @@
   "mobileSdk.audio.deviceSelector.btPermissionOff": "You have not allowed the use of Bluetooth in this application",
   "mobileSdk.pip.permission.title": "Permission not granted",
   "mobileSdk.pip.permission.subtitle": "You have not permitted the use of Picture-in-Picture in this application",
-  "mobileSdk.join.loading.label.1": "Balancing recording coefficients",
-  "mobileSdk.join.loading.label.2": "Calculating server supply",
-  "mobileSdk.join.loading.label.3": "Adjusting internet quotients",
-  "mobileSdk.join.loading.label.4": "Normalizing audio devices",
-  "mobileSdk.join.loading.label.5": "Simulating session loading",
+  "mobileSdk.join.loadingSession.label": "Your session is being prepared",
+  "mobileSdk.join.genericLoading.label": "Loading",
   "mobileSdk.audio.join": "Join audio",
   "mobileSdk.mainscreen.foreveralone.title": "You are the only one here",
   "mobileSdk.mainscreen.foreveralone.desc": "Share the meeting link with anyone you want to attend."

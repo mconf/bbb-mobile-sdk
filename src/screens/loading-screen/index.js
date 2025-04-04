@@ -1,8 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import Styled from './styles';
 
-const r = Math.floor(Math.random() * 5) + 1;
-
 const LoadingScreen = () => {
   const { t } = useTranslation();
 
@@ -10,7 +8,7 @@ const LoadingScreen = () => {
     <Styled.ContainerView>
       <Styled.Loading />
       <Styled.TitleText>
-        {t(`mobileSdk.join.loading.label.${r}`)}
+        {t('mobileSdk.join.genericLoading.label')}
       </Styled.TitleText>
     </Styled.ContainerView>
   );
