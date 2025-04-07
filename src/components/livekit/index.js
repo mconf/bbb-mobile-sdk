@@ -120,6 +120,8 @@ const BBBLiveKitRoom = ({ children }) => {
           const connectOptions = { autoSubscribe: true };
           const url = host ? `wss://${host}/livekit` : null;
 
+          if (!shouldUseLiveKit) return;
+
           return liveKitRoom.connect(url, livekitToken, connectOptions);
         })
         .then(joinAudio)
