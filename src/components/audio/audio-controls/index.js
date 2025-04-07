@@ -41,14 +41,6 @@ const AudioControls = () => {
   }, [isMuted, currentUserVoiceLoading, localMutedState]);
 
   useEffect(() => {
-    if (!isConnected && !isConnecting) {
-      joinAudio().then(() => {
-        toggleVoice(true);
-      });
-    }
-  }, [isConnected, isConnecting]);
-
-  useEffect(() => {
     if (audioError) {
       switch (audioError) {
         case 'NotAllowedError':
