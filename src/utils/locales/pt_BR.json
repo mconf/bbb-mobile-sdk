@@ -246,7 +246,7 @@
   "mobileSdk.audio.deviceSelector.btPermissionOff": "Você não permitiu o uso do bluetooth nesse aplicativo",
   "mobileSdk.pip.permission.title": "Permissão não concedida",
   "mobileSdk.pip.permission.subtitle": "Você não permitiu o uso de Picture-in-Picture neste aplicativo",
-  "mobileSdk.join.loading.label": "Sua sessão está sendo preparada",
+  "mobileSdk.join.loadingSession.label": "Sua sessão está sendo preparada",
   "mobileSdk.join.genericLoading.label": "Carregando",
   "mobileSdk.audio.join": "Entrar no áudio",
   "mobileSdk.mainscreen.foreveralone.title": "Só você está aqui",
