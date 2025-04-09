@@ -92,9 +92,6 @@ const PreviousPollCard = (props) => {
       return (
         <Styled.PollInfoLabelContainer>
           <Styled.PollInfoText>
-            TODO / TODO
-          </Styled.PollInfoText>
-          <Styled.PollInfoText>
             {`${String(timestamp.getHours()).padStart(2, '0')}:${String(
               timestamp.getMinutes()
             ).padStart(2, '0')}`}
@@ -106,9 +103,6 @@ const PreviousPollCard = (props) => {
     return (
       <>
         <Styled.PollInfoLabelContainer>
-          <Styled.PollInfoText>
-            TODO / TODO
-          </Styled.PollInfoText>
           <Styled.PresenterContainerOptions>
             <Styled.PressableMinimizeAnswersText
               secretPoll={secret}
