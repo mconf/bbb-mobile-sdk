@@ -13,12 +13,13 @@ export const useAudioJoin = () => {
   const dispatch = useDispatch();
   const { data: meetingData } = useMeeting();
   const meeting = meetingData?.meeting[0];
+  const disableMic = meeting?.lockSettings?.disableMic;
+  const muteOnStart = meeting?.voiceProp?.muteOnStart;
+  const audioBridge = meeting?.audioBridge;
 
   const joinAudio = useCallback(async () => {
-    const micDisabled = meeting.lockSettings?.disableMic && isLocked();
+    const micDisabled = disableMic && isLocked();
     const transparentListenOnly = true;
-    const muteOnStart = meeting?.voiceProp?.muteOnStart;
-    const audioBridge = meeting?.audioBridge;
 
     if (Platform.OS === 'android' && Platform.Version >= ANDROID_SDK_MIN_BTCONNECT) {
       const checkStatus = await PermissionsAndroid.check(
@@ -54,7 +55,7 @@ export const useAudioJoin = () => {
       }, `Audio published failed: ${error.message}`);
       dispatch(setAudioError(error.name));
     });
-  }, [meeting]);
+  }, [disableMic, muteOnStart, audioBridge]);
 
   return { joinAudio };
 };

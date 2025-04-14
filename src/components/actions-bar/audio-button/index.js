@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useCallback, useSelector } from 'react-redux';
 import { useAudioJoin } from '../../../hooks/use-audio-join';
 import AudioManager from '../../../services/webrtc/audio-manager';
 import Styled from './styles';
@@ -17,13 +17,13 @@ const AudioButton = () => {
     return null;
   };
 
-  const onPressHeadphone = () => {
+  const onPressHeadphone = useCallback(() => {
     if (isActive) {
       AudioManager.exitAudio();
     } else {
       joinAudio();
     }
-  };
+  }, [isActive, joinAudio]);
 
   return (
     <Styled.ContainerPressable

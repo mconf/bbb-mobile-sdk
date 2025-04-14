@@ -13,6 +13,7 @@ import {
   type TrackPublishOptions,
 } from 'livekit-client';
 import { liveKitRoom } from '../livekit';
+import MediaStreamUtils from './media-stream-utils';
 
 const BRIDGE_NAME = 'livekit';
 const SENDRECV_ROLE = 'sendrecv';
@@ -378,10 +379,31 @@ export default class LiveKitAudioBridge {
 
       if (this.hasMicrophoneTrack()) await this.unpublish();
 
-      if (inputStream) {
+      if (inputStream && !inputStream.active) {
+        this.logger.warn({
+          logCode: 'livekit_audio_publish_inactive_stream',
+          extraInfo: {
+            bridgeName: this.bridgeName,
+            role: this.role,
+            inputDeviceId: this.inputDeviceId,
+            streamData: MediaStreamUtils.getMediaStreamLogData(inputStream),
+          },
+        }, 'LiveKit: audio stream is inactive, fallback');
+      }
+
+      if (inputStream && inputStream.active) {
         // Get tracks from the stream and publish them. Map into an array of
         // Promise objects and wait for all of them to resolve.
-        const trackPublishers = this.originalStream.getTracks()
+        this.logger.debug({
+          logCode: 'livekit_audio_publish_with_stream',
+          extraInfo: {
+            bridgeName: this.bridgeName,
+            role: this.role,
+            inputDeviceId: this.inputDeviceId,
+            streamData: MediaStreamUtils.getMediaStreamLogData(inputStream),
+          },
+        }, 'LiveKit: publishing audio track with stream');
+        const trackPublishers = inputStream.getTracks()
           .map((track) => {
             return this.liveKitRoom.localParticipant.publishTrack(track, publishOptions);
           });
@@ -393,6 +415,15 @@ export default class LiveKitAudioBridge {
           publishOptions,
         );
         this.originalStream = this.inputStream;
+        this.logger.debug({
+          logCode: 'livekit_audio_publish_without_stream',
+          extraInfo: {
+            bridgeName: this.bridgeName,
+            role: this.role,
+            inputDeviceId: this.inputDeviceId,
+            streamData: MediaStreamUtils.getMediaStreamLogData(this.originalStream),
+          },
+        }, 'LiveKit: published audio track without stream');
       }
 
       this.onpublished();
@@ -405,6 +436,8 @@ export default class LiveKitAudioBridge {
           errorStack: (error as Error).stack,
           bridgeName: this.bridgeName,
           role: this.role,
+          inputDeviceId: this.inputDeviceId,
+          streamData: MediaStreamUtils.getStreamData(inputStream || this.originalStream),
         },
       }, 'LiveKit: failed to publish audio track');
       throw error;
@@ -483,6 +516,8 @@ export default class LiveKitAudioBridge {
           errorStack: (error as Error).stack,
           bridgeName: this.bridgeName,
           role: this.role,
+          inputDeviceId: this.inputDeviceId,
+          streamData: MediaStreamUtils.getStreamData(inputStream || this.originalStream),
         },
       }, `LiveKit: activate audio failed: ${(error as Error).message}`);
       throw error;
@@ -492,7 +527,16 @@ export default class LiveKitAudioBridge {
   stop(): Promise<boolean> {
     return this.liveKitRoom.localParticipant.setMicrophoneEnabled(false)
       .then(() => this.unpublish())
-      .then(() => true)
+      .then(() => {
+        this.logger.info({
+          logCode: 'livekit_audio_exit',
+          extraInfo: {
+            bridgeName: this.bridgeName,
+            role: this.role,
+          },
+        }, 'LiveKit: audio exited');
+        return true;
+      })
       .catch((error) => {
         this.logger.error({
           logCode: 'livekit_audio_exit_error',
