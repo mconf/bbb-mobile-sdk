@@ -146,6 +146,9 @@ const BBBLiveKitRoom = ({ children }) => {
     isClientLoggedIn,
     connectionState,
     mainRoomBlockedByBreakout,
+    isAudioConnected,
+    isAudioConnecting,
+    joinAudio,
   ]);
 
   useEffect(() => {
