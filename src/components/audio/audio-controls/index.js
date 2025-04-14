@@ -93,7 +93,7 @@ const AudioControls = () => {
       // Error is handled, clean it up
       dispatch(setAudioError(null));
     }
-  }, [audioError]);
+  }, [audioError, joinAudio]);
 
   const toggleVoice = useCallback(async (mutedVal) => {
     const userId = currentUserVoiceData?.user_current[0]?.voice?.userId;
@@ -127,15 +127,15 @@ const AudioControls = () => {
     } else {
       toggleVoice();
     }
-  }, [micDisabled, audioPermissionTainted, toggleVoice]);
+  }, [micDisabled, audioPermissionTainted, toggleVoice, joinAudio]);
 
-  const onPressHeadphone = () => {
+  const onPressHeadphone = useCallback(() => {
     if (isActive) {
       AudioManager.exitAudio();
     } else {
       joinAudio();
     }
-  };
+  }, [isActive, joinAudio]);
 
   return (
     <Styled.AudioButtonComponent
