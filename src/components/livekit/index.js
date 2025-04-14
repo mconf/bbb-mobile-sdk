@@ -78,7 +78,9 @@ const BBBLiveKitRoom = ({ children }) => {
   const isClientLoggedIn = useSelector((state) => state.client.sessionState.loggedIn);
   const isAudioConnected = useSelector((state) => state.audio.isConnected);
   const isAudioConnecting = useSelector(({ audio }) => audio.isConnecting || audio.isReconnecting);
-  const mainRoomBlockedByBreakout = useSelector((state) => state.client.sessionState.mainRoomBlockedByBreakout);
+  const mainRoomBlockedByBreakout = useSelector(
+    (state) => state.client.sessionState.mainRoomBlockedByBreakout
+  );
   const connectionState = useConnectionState(liveKitRoom);
 
   const livekitToken = currentUserData?.user_current[0]?.livekit?.livekitToken;
