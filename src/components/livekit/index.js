@@ -75,6 +75,8 @@ const BBBLiveKitRoom = ({ children }) => {
   const sessionToken = useSelector((state) => state.client.meetingData.sessionToken);
   const isClientConnected = useSelector((state) => state.client.sessionState.connected);
   const isClientLoggedIn = useSelector((state) => state.client.sessionState.loggedIn);
+  const isAudioConnected = useSelector((state) => state.audio.isConnected);
+  const isAudioConnecting = useSelector(({ audio }) => audio.isConnecting || audio.isReconnecting);
   const mainRoomBlockedByBreakout = useSelector((state) => state.client.sessionState.mainRoomBlockedByBreakout);
   const connectionState = useConnectionState(liveKitRoom);
 
@@ -112,7 +114,6 @@ const BBBLiveKitRoom = ({ children }) => {
       && (audioBridge && cameraBridge && screenShareBridge)
       && isClientConnected
       && isClientLoggedIn
-      && connectionState === ConnectionState.Disconnected
       && !mainRoomBlockedByBreakout
     ) {
       initializeMediaManagers({ audioBridge, cameraBridge, screenShareBridge })
@@ -120,11 +121,15 @@ const BBBLiveKitRoom = ({ children }) => {
           const connectOptions = { autoSubscribe: true };
           const url = host ? `wss://${host}/livekit` : null;
 
-          if (!shouldUseLiveKit) return;
+          if (!shouldUseLiveKit || connectionState !== ConnectionState.Disconnected) return;
 
           return liveKitRoom.connect(url, livekitToken, connectOptions);
         })
-        .then(joinAudio)
+        .then(async () => {
+          if (isAudioConnected || isAudioConnecting) return;
+
+          await joinAudio();
+        })
         .catch((initError) => {
           logger.error({
             logCode: 'media_manager_init_failure',
@@ -139,12 +144,13 @@ const BBBLiveKitRoom = ({ children }) => {
     sessionToken,
     host,
     userId,
-    meetingData,
     meetingLoading,
     isClientConnected,
     isClientLoggedIn,
     connectionState,
     mainRoomBlockedByBreakout,
+    isAudioConnected,
+    isAudioConnecting,
   ]);
 
   useEffect(() => {

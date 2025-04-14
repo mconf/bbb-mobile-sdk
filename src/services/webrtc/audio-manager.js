@@ -231,6 +231,9 @@ class AudioManager {
     this._host = host;
     this._sessionToken = sessionToken;
     this.logger = logger;
+
+    if (this.initialized && this.iceServers) return;
+
     this.initialized = true;
     store.dispatch(setAudioManagerInitialized(true));
     try {
