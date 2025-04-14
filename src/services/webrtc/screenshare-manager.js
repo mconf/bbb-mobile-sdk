@@ -140,6 +140,9 @@ class ScreenshareManager {
     this._host = host;
     this._sessionToken = sessionToken;
     this.logger = logger;
+
+    if (this.initialized && this.iceServers) return;
+
     this.initialized = true;
     try {
       this.iceServers = await fetchIceServers(this._getStunFetchURL());
