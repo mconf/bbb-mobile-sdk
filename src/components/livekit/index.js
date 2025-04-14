@@ -151,6 +151,7 @@ const BBBLiveKitRoom = ({ children }) => {
     mainRoomBlockedByBreakout,
     isAudioConnected,
     isAudioConnecting,
+    joinAudio,
   ]);
 
   useEffect(() => {
