@@ -6,11 +6,12 @@ import { useDispatch } from 'react-redux';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { createClient } from 'graphql-ws';
 import { onError } from '@apollo/client/link/error';
+import uuid from 'react-native-uuid';
 import UrlUtils from '../../utils/functions';
 import {
   setJoinUrl, setApi, setHost, setSessionToken
 } from '../../store/redux/slices/wide-app/client';
-import uuid from 'react-native-uuid';
+import logger from '../../services/logger';
 
 const useJoinMeeting = (url) => {
   const [loginStage, setLoginStage] = useState(0);
@@ -21,7 +22,6 @@ const useJoinMeeting = (url) => {
   const [graphqlApiUrl, setGraphqlApiUrl] = useState(null);
   const [clientSettings, setClientSettings] = useState(null);
   const [host, setLocalHost] = useState('');
-  const activeSocket = useRef();
   const numberOfAttempts = useRef(20);
   const tsLastMessageRef = useRef(0);
   const tsLastPingMessageRef = useRef(0);
@@ -167,15 +167,24 @@ const useJoinMeeting = (url) => {
         },
         on: {
           error: (error) => {
+            logger.error({
+              logCode: 'main_websocket_error',
+              extraInfo: {
+                errorStack: error?.stack,
+                errorMessage: error?.message,
+                errorCode: error?.code,
+              },
+              message: 'Main websocket connection error',
+            });
             console.error(`Error: on subscription to server: ${JSON.stringify(error, null, 2)}`);
           },
           closed: () => {
             console.error('socket closed');
           },
-          connected: (socket) => {
-            activeSocket.current = socket;
-
-            console.log('socket connected');
+          connected: () => {
+            logger.info({
+              logCode: 'main_websocket_open',
+            }, 'Main websocket connection open');
           },
           connecting: () => {
             console.log('socket connecting');
