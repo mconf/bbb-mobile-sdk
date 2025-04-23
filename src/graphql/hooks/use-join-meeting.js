@@ -180,8 +180,7 @@ const useJoinMeeting = (url) => {
                 errorMessage: error?.message,
                 errorCode: error?.code,
               },
-              message: 'Main websocket connection error',
-            });
+            }, 'Main websocket connection error');
             console.error(`Error: on subscription to server: ${JSON.stringify(error, null, 2)}`);
           },
           closed: () => {
