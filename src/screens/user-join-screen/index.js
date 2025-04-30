@@ -1,11 +1,16 @@
 import { useMutation, useSubscription } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
 import { Text } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect } from 'react';
 import { GET_USER_CURRENT, USER_JOIN_MUTATION } from './queries';
-import { setConnected, setInitialCurrentUser, setLoggedIn } from '../../store/redux/slices/wide-app/client';
+import {
+  setConnected,
+  setInitialCurrentUser,
+  setLoggedIn,
+  setMeetingData,
+} from '../../store/redux/slices/wide-app/client';
 import { disconnectLiveKitRoom } from '../../services/livekit';
 import Styled from './styles';
 
@@ -14,9 +19,25 @@ const UserJoinScreen = () => {
   const [dispatchUserJoin] = useMutation(USER_JOIN_MUTATION);
   const { data, loading, error } = useSubscription(GET_USER_CURRENT);
   const currentUser = data?.user_current[0];
+  const sessionToken = useSelector((state) => state.client.meetingData.sessionToken);
+  const host = useSelector((state) => state.client.meetingData.host);
+  const joinUrl = useSelector((state) => state.client.meetingData.joinUrl);
 
   const dispatch = useDispatch();
   const { t } = useTranslation();
+
+  const meetingData = {
+    meetingID: currentUser?.meeting.meetingId,
+    sessionToken,
+    internalUserID: currentUser?.userId,
+    fullname: currentUser?.name,
+    externUserID: currentUser?.extId,
+    confname: currentUser?.meeting.name,
+    host,
+    joinUrl,
+  };
+
+  dispatch(setMeetingData(meetingData));
 
   const handleDispatchUserJoin = (authToken) => {
     dispatchUserJoin({
