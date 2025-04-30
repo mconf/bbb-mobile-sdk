@@ -1,9 +1,11 @@
-import { gql } from "@apollo/client";
+import { gql } from '@apollo/client';
 
 const GET_USER_CURRENT = gql`
   subscription getUserCurrent {
     user_current {
       userId
+      extId
+      name
       authToken
       joinErrorCode
       joinErrorMessage
