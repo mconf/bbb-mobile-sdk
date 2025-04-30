@@ -1,6 +1,6 @@
 {
   "name": "bbbmobile",
-  "version": "0.17.9",
+  "version": "0.18.0",
   "private": true,
   "description": "BigBlueButton mobile sdk",
   "main": "index.js",
@@ -41,7 +41,7 @@
     "@react-navigation/stack": "^6.3.4",
     "@reduxjs/toolkit": "^1.8.3",
     "axios": "^0.27.2",
-    "bbb-breakout-sdk": "git+https://github.com/mconf/bbb-mobile-sdk.git#2e32175a8d8eadcbc4c39761834b11b04970ae55",
+    "bbb-breakout-sdk": "git+https://github.com/mconf/bbb-mobile-sdk.git#988151c61e16a2ab2aa117ecfe1e1c401d36a775",
     "browser-bunyan": "^1.8.0",
     "ejson": "^2.2.3",
     "eventemitter2": "^6.4.7",
