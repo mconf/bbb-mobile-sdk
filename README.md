@@ -9,6 +9,9 @@
     $ npm -v
     v10.7.0
 
+    $ expo -V
+    52.x.x
+
     ## For Android only:
     $ java -version 
     openjdk 17.0.0.1 2024-07-02
@@ -24,6 +27,8 @@
             Android: 15, 14... (the higher the better)
     Run on iOS:
         Install XCode (ios only)
+        Required Xcode version: 16.2
+        You can check available versions here: https://xcodereleases.com/
 
     Install eas-cli globally (with npm) to build
         You can install with `npx expo`
