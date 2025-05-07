@@ -361,9 +361,9 @@ export default class LiveKitAudioBridge {
     try {
       // @ts-ignore
       const basePublishOptions: TrackPublishOptions = {
-        audioPreset: AudioPresets.speech,
-        dtx: true,
-        red: false,
+        audioPreset: AudioPresets.music,
+        dtx: false,
+        red: true,
         forceStereo: false,
       };
       const publishOptions = {
