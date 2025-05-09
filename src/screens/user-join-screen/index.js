@@ -12,6 +12,7 @@ import {
   setMeetingData,
 } from '../../store/redux/slices/wide-app/client';
 import { disconnectLiveKitRoom } from '../../services/livekit';
+import logger from '../../services/logger';
 import Styled from './styles';
 
 const UserJoinScreen = () => {
@@ -67,6 +68,10 @@ const UserJoinScreen = () => {
       dispatch(setInitialCurrentUser(currentUser));
       dispatch(setConnected(true));
       dispatch(setLoggedIn(true));
+
+      logger.info({
+        logCode: 'main_websocket_open',
+      }, 'Main websocket connection open');
 
       if (currentUser.guestStatus === 'WAIT') {
         navigation.navigate('GuestScreen');
