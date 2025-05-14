@@ -1,5 +1,5 @@
 import * as Linking from 'expo-linking';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useSubscription } from '@apollo/client';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
@@ -36,7 +36,19 @@ const ContentArea = (props) => {
 
   const currentSlide = currentPageData?.pres_page_curr[0]?.svgUrl;
   const hasScreenshare = screenshareData?.screenshare.length > 0;
+  const isPresentationOpen = useSelector((state) => state.layout.isPresentationOpen);
+  const prevHasScreenshareRef = useRef(hasScreenshare);
   const isAndroid = Platform.OS === 'android';
+
+  useEffect(() => {
+    const prevHasScreenshare = prevHasScreenshareRef.current;
+
+    if (!prevHasScreenshare && hasScreenshare && !isPresentationOpen) {
+      dispatch(setIsPresentationOpen(true));
+    }
+
+    prevHasScreenshareRef.current = hasScreenshare;
+  }, [hasScreenshare, isPresentationOpen, dispatch]);
 
   const handleFullscreenClick = () => {
     dispatch(setIsFocused(true));
