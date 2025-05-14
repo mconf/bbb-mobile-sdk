@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { Pressable, Animated } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/core';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { setProfile } from '../../../store/redux/slices/wide-app/modal';
 import { showNotificationWithTimeout } from '../../../store/redux/slices/wide-app/notification-bar';
-import { isModerator } from '../../../store/redux/slices/current-user';
 import usePrevious from '../../../hooks/use-previous';
 import Colors from '../../../constants/colors';
 import Styled from './styles';
@@ -19,7 +18,9 @@ const RecordingIndicator = (props) => {
   const amIModerator = userData?.user_current[0]?.isModerator;
   const previousRecording = usePrevious(recording); // TODO: review this
   // const customData = useSelector((state) => state.client.meetingData.customdata);
-  const neverRecorded = (recordMeeting?.previousRecordedTimeInSeconds === 0 || recordMeeting?.previousRecordedTimeInSeconds === undefined)
+  const neverRecorded = (
+    recordMeeting?.previousRecordedTimeInSeconds === 0
+    || recordMeeting?.previousRecordedTimeInSeconds === undefined)
     ? !recordMeeting?.isRecording
     : false;
 
@@ -35,11 +36,11 @@ const RecordingIndicator = (props) => {
   const hasRecordingPermission = amIModerator;
 
   const handleOpenRecordingViewerModal = () => {
-    // dispatch(setProfile({ profile: 'record_status' }));
+    dispatch(setProfile({ profile: 'record_status' }));
   };
 
   const handleOpenRecordingControlsModal = () => {
-    // dispatch(setProfile({ profile: 'record_controls' }));
+    dispatch(setProfile({ profile: 'record_controls' }));
   };
 
   useEffect(() => {
