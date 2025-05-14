@@ -1,67 +1,80 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { Modal } from 'react-native-paper';
 import { hide } from '../../../../store/redux/slices/wide-app/modal';
-import { selectRecordMeeting } from '../../../../store/redux/slices/record-meetings';
+import useMeeting from '../../../../graphql/hooks/useMeeting';
 import Styled from './styles';
 import Service from './service';
 
 const RecordStatusModal = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
+
   const isShow = useSelector((state) => state.modal.isShow);
-  const recordMeeting = useSelector(selectRecordMeeting);
+  const { data } = useMeeting();
 
-  const recordingTime = recordMeeting ? recordMeeting.time : 0;
-  const recording = recordMeeting?.recording;
+  const recordMeeting = data?.meeting?.[0]?.recording;
+  const recordingTimeFromServer = recordMeeting?.previousRecordedTimeInSeconds ?? 0;
+  const isRecording = recordMeeting?.isRecording ?? false;
 
-  const [time, setTime] = useState(recordingTime);
+  const [localTime, setLocalTime] = useState(recordingTimeFromServer);
+  const intervalRef = useRef(null);
 
   useEffect(() => {
-    let interval;
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
 
-    if (recording) {
-      interval = setInterval(() => {
-        setTime((prevTime) => prevTime + 1);
+    const startedAt = recordMeeting?.startedAt ? new Date(recordMeeting.startedAt).getTime() : null;
+
+    if (isRecording && startedAt) {
+      intervalRef.current = setInterval(() => {
+        const now = Date.now();
+        const elapsedSinceStart = Math.floor((now - startedAt) / 1000);
+        const updatedTime = recordingTimeFromServer + elapsedSinceStart;
+
+        setLocalTime(updatedTime);
       }, 1000);
     } else {
-      clearInterval(interval);
+      setLocalTime(recordingTimeFromServer);
     }
 
     return () => {
-      clearInterval(interval);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
     };
-  }, [recording]);
-
-  useEffect(() => {
-    if (recordingTime > time) {
-      setTime(recordingTime + 1);
-    }
-  }, [recordingTime]);
+  }, [isRecording, recordingTimeFromServer, recordMeeting?.startedAt]);
 
   const handleCloseModal = () => {
     dispatch(hide());
   };
 
-  const description = !recording
+  const description = !isRecording
     ? t('app.notification.recordingStop')
     : t('app.notification.recordingStart');
 
   return (
-    <Modal
-      visible={isShow}
-      onDismiss={() => dispatch(hide())}
-    >
+    <Modal visible={isShow} onDismiss={handleCloseModal}>
       <Styled.ModalContainer>
         <Styled.ModalContent>
-          <Styled.CloseButton name="close" size={24} color="#1C1B1F" onPress={handleCloseModal} />
+          <Styled.CloseButton
+            name="close"
+            size={24}
+            color="#1C1B1F"
+            onPress={handleCloseModal}
+          />
           <Styled.TimeText>
-            {Service.humanizeSeconds(time)}
+            {Service.humanizeSeconds(localTime)}
           </Styled.TimeText>
           <Styled.Divider />
           <Styled.Description>{description}</Styled.Description>
-          <Styled.NoRecordPermission>{t('mobileSdk.record.noPermission.label')}</Styled.NoRecordPermission>
+          <Styled.NoRecordPermission>
+            {t('mobileSdk.record.noPermission.label')}
+          </Styled.NoRecordPermission>
         </Styled.ModalContent>
       </Styled.ModalContainer>
     </Modal>
