@@ -187,9 +187,7 @@ const useJoinMeeting = (url) => {
             console.error('socket closed');
           },
           connected: () => {
-            logger.info({
-              logCode: 'main_websocket_open',
-            }, 'Main websocket connection open');
+            console.log('socket connected');
           },
           connecting: () => {
             console.log('socket connecting');
