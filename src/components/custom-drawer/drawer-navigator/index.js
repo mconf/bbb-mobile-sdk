@@ -12,6 +12,7 @@ import InsideBreakoutRoomScreen from '../../../screens/inside-breakout-room-scre
 import FullscreenWrapperScreen from '../../../screens/fullscreen-wrapper-screen';
 import RecordingIndicator from '../../record/record-indicator';
 import UserNotesScreen from '../../../screens/user-notes-screen';
+import TimerScreen from '../../../screens/timer-screen';
 // components
 import CustomDrawer from '../index';
 import useModalListener from '../../../hooks/listeners/use-modal-listener';
@@ -180,6 +181,24 @@ const DrawerNavigator = ({
             }}
           />
         )}
+
+        <Drawer.Screen
+          name="TimerScreen"
+          component={TimerScreen}
+          options={{
+            title: t('app.timer.title'),
+            unmountOnBlur: true,
+            headerRight: () => (
+              <RecordingIndicator recordMeeting={recordMeeting} recordPolicies={recordPolicies} />
+            ),
+            drawerLabelStyle: {
+              maxWidth: 150, fontWeight: '400', fontSize: 16, paddingLeft: 12
+            },
+            drawerIcon: (config) => (
+              <Styled.IconMaterial name="timer" size={24} color={config.color} />
+            ),
+          }}
+        />
 
         <Drawer.Screen
           name="FullscreenWrapperScreen"

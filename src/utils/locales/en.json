@@ -115,6 +115,7 @@
   "app.userList.label": "User list",
   "app.userList.menu.promoteUser.label": "Promote to Moderator",
   "app.userList.menu.demoteUser.label": "Demote to viewer",
+  "app.timer.title": "Timer",
   "app.createBreakoutRoom.title": "Breakout rooms",
   "app.createBreakoutRoom.askToJoin": "Ask to join",
   "app.createBreakoutRoom.join": "Join",
