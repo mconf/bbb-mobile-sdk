@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, Animated } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/core';
@@ -10,14 +10,13 @@ import Colors from '../../../constants/colors';
 import Styled from './styles';
 import useCurrentUser from '../../../graphql/hooks/useCurrentUser';
 
-const RecordingIndicator = (props) => {
-  const { recordMeeting, recordPolicies } = props;
-  const recording = recordMeeting?.isRecording;
+const RecordingIndicator = ({ recordMeeting, recordPolicies }) => {
+  const recording = recordMeeting?.isRecording ?? false;
   const recordingEnabled = recordPolicies?.record;
   const { data: userData } = useCurrentUser();
   const amIModerator = userData?.user_current[0]?.isModerator;
-  const previousRecording = usePrevious(recording); // TODO: review this
-  // const customData = useSelector((state) => state.client.meetingData.customdata);
+  const previousRecording = usePrevious(recording);
+
   const neverRecorded = (
     recordMeeting?.previousRecordedTimeInSeconds === 0
     || recordMeeting?.previousRecordedTimeInSeconds === undefined)
@@ -35,25 +34,69 @@ const RecordingIndicator = (props) => {
 
   const hasRecordingPermission = amIModerator;
 
+  const isRecording = recordMeeting?.isRecording;
+  const recordingTimeFromServer = recordMeeting?.previousRecordedTimeInSeconds ?? 0;
+  const startedAt = recordMeeting?.startedAt ? new Date(recordMeeting.startedAt).getTime() : null;
+
+  const [time, setTime] = useState(recordingTimeFromServer);
+  const intervalRef = useRef(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+
+      if (isRecording && startedAt) {
+        intervalRef.current = setInterval(() => {
+          const now = Date.now();
+          const elapsed = Math.floor((now - startedAt) / 1000);
+          const totalTime = recordingTimeFromServer + elapsed;
+          setTime(totalTime);
+        }, 1000);
+      } else {
+        setTime(recordingTimeFromServer);
+      }
+
+      return () => {
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+          intervalRef.current = null;
+        }
+      };
+    }, [isRecording, recordingTimeFromServer, startedAt])
+  );
+
   const handleOpenRecordingViewerModal = () => {
-    dispatch(setProfile({ profile: 'record_status' }));
+    dispatch(setProfile({
+      profile: 'record_status',
+      extraInfo: {
+        recordMeeting,
+        newTime: time
+      }
+    }));
   };
 
   const handleOpenRecordingControlsModal = () => {
-    dispatch(setProfile({ profile: 'record_controls' }));
+    dispatch(setProfile({
+      profile: 'record_controls',
+      extraInfo: {
+        recordMeeting,
+        newTime: time
+      }
+    }));
   };
 
   useEffect(() => {
-    if ((recording !== undefined && previousRecording !== undefined)
-      && (recording !== previousRecording)
+    if (
+      recording !== undefined &&
+      previousRecording !== undefined &&
+      recording !== previousRecording
     ) {
-      if (recording) {
-        dispatch(showNotificationWithTimeout('recordingStarted'));
-      } else {
-        dispatch(showNotificationWithTimeout('recordingStopped'));
-      }
+      dispatch(showNotificationWithTimeout(recording ? 'recordingStarted' : 'recordingStopped'));
     }
-  }, [recording]);
+  }, [recording, previousRecording, dispatch]);
 
   useFocusEffect(
     useCallback(() => {
@@ -76,12 +119,13 @@ const RecordingIndicator = (props) => {
 
   if (!recordingEnabled) return null;
 
-  const handleIcon = () => {
-    if (neverRecorded || recording) {
-      return (<MaterialCommunityIcons name="record-circle-outline" size={24} color={Colors.white} />);
-    }
-    return (<MaterialCommunityIcons name="record-circle-outline" size={24} color={Colors.orange} />);
-  };
+  const handleIcon = () => (
+    <MaterialCommunityIcons
+      name="record-circle-outline"
+      size={24}
+      color={neverRecorded || recording ? Colors.white : Colors.orange}
+    />
+  );
 
   return (
     <Styled.Container neverRecorded={neverRecorded} recording={recording}>

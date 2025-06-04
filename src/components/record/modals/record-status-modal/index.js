@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { Modal } from 'react-native-paper';
 import { hide } from '../../../../store/redux/slices/wide-app/modal';
-import useMeeting from '../../../../graphql/hooks/useMeeting';
 import Styled from './styles';
 import Service from './service';
 
@@ -11,14 +10,15 @@ const RecordStatusModal = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
-  const isShow = useSelector((state) => state.modal.isShow);
-  const { data } = useMeeting();
+  const modalCollection = useSelector((state) => state.modal);
+  const isShow = modalCollection.isShow;
+  const newTime = modalCollection?.extraInfo?.newTime;
 
-  const recordMeeting = data?.meeting?.[0]?.recording;
+  const recordMeeting = modalCollection?.extraInfo?.recordMeeting;
   const recordingTimeFromServer = recordMeeting?.previousRecordedTimeInSeconds ?? 0;
   const isRecording = recordMeeting?.isRecording ?? false;
 
-  const [localTime, setLocalTime] = useState(recordingTimeFromServer);
+  const [localTime, setLocalTime] = useState(newTime);
   const intervalRef = useRef(null);
 
   useEffect(() => {
@@ -72,9 +72,6 @@ const RecordStatusModal = () => {
           </Styled.TimeText>
           <Styled.Divider />
           <Styled.Description>{description}</Styled.Description>
-          <Styled.NoRecordPermission>
-            {t('mobileSdk.record.noPermission.label')}
-          </Styled.NoRecordPermission>
         </Styled.ModalContent>
       </Styled.ModalContainer>
     </Modal>
