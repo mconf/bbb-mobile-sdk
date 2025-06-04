@@ -5,7 +5,6 @@ import { Modal } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { hide } from '../../../../store/redux/slices/wide-app/modal';
-import useMeeting from '../../../../graphql/hooks/useMeeting';
 import ViewerService from '../record-status-modal/service';
 import useSetRecordingStatus from '../../../../graphql/hooks/useSetRecordingStatus';
 import Styled from './styles';
@@ -15,40 +14,27 @@ const RecordControlsModal = () => {
   const dispatch = useDispatch();
   const modalCollection = useSelector((state) => state.modal);
 
-  const { data } = useMeeting();
-  const recordMeeting = data?.meeting?.[0]?.recording;
+  const recordMeeting = modalCollection?.extraInfo?.recordMeeting;
+  const newTime = modalCollection?.extraInfo?.newTime;
 
-  const isRecording = recordMeeting?.isRecording ?? false;
+  const isRecording = recordMeeting?.isRecording;
   const recordingTimeFromServer = recordMeeting?.previousRecordedTimeInSeconds ?? 0;
   const startedAt = recordMeeting?.startedAt ? new Date(recordMeeting.startedAt).getTime() : null;
 
-  const [time, setTime] = useState(recordingTimeFromServer);
+  const [time, setTime] = useState(newTime);
   const intervalRef = useRef(null);
 
   const { toggleRecording } = useSetRecordingStatus();
 
   const handleToggleRecording = async () => {
     try {
-      const recording = data?.meeting?.[0]?.recording?.isRecording;
-      await toggleRecording(!recording);
+      await toggleRecording(!isRecording);
       dispatch(hide());
     } catch (err) {
-      console.error('[RecordControlsModal] Erro ao alternar gravação:', err);
+      console.error('[RecordControlsModal] Error toggling recording:', err);
     }
   };
 
-  // Define título e descrição de acordo com o estado
-  const title = !isRecording
-    ? recordingTimeFromServer > 0
-      ? t('app.recording.resumeTitle')
-      : t('app.recording.startTitle')
-    : t('app.recording.stopTitle');
-
-  const description = !isRecording
-    ? t('app.recording.startDescription')
-    : t('app.recording.stopDescription');
-
-  // Atualiza tempo com base no servidor e timestamp de início
   useFocusEffect(
     useCallback(() => {
       if (intervalRef.current) {
@@ -76,6 +62,22 @@ const RecordControlsModal = () => {
     }, [isRecording, recordingTimeFromServer, startedAt])
   );
 
+  const title = !isRecording
+    ? recordingTimeFromServer > 0
+      ? t('app.recording.resumeTitle')
+      : t('app.recording.startTitle')
+    : t('app.recording.stopTitle');
+
+  const buttonText = !isRecording
+    ? recordingTimeFromServer > 0
+      ? t('app.recording.resumeButton')
+      : t('app.recording.startButton')
+    : t('app.recording.stopButton');
+
+  const description = !isRecording
+    ? t('app.recording.startDescription')
+    : t('app.recording.stopDescription');
+
   return (
     <Modal
       visible={modalCollection.isShow}
@@ -87,13 +89,16 @@ const RecordControlsModal = () => {
             <Styled.Title>{title}</Styled.Title>
           </Styled.ModalTop>
 
-          <Styled.TimeText>
-            {ViewerService.humanizeSeconds(time)}
-          </Styled.TimeText>
-
-          <Styled.DividerContainer>
-            <Styled.Divider />
-          </Styled.DividerContainer>
+          {isRecording && (
+            <>
+              <Styled.TimeText>
+                {ViewerService.humanizeSeconds(time)}
+              </Styled.TimeText>
+              <Styled.DividerContainer>
+                <Styled.Divider />
+              </Styled.DividerContainer>
+            </>
+          )}
 
           <Styled.Description>{description}</Styled.Description>
 
@@ -105,7 +110,7 @@ const RecordControlsModal = () => {
               onPress={handleToggleRecording}
               recording={isRecording}
             >
-              {title.split(' ')[0]}
+              {buttonText}
             </Styled.ConfirmButton>
           </Styled.ButtonContainer>
         </Styled.ModalContent>
