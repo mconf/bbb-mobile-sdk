@@ -44,7 +44,7 @@
     "browser-bunyan": "^1.8.0",
     "ejson": "^2.2.3",
     "eventemitter2": "^6.4.7",
-    "expo": "^52.0.18",
+    "expo": "52.0.18",
     "expo-application": "~6.0.1",
     "expo-av": "~15.0.1",
     "expo-device": "~7.0.1",
