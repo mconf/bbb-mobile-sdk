@@ -18,6 +18,14 @@ const ContainerView = styled.View`
   `}
 `;
 
+const TopIndicatorBar = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 8px;
+`;
+
 // grid
 const ActionsBarGrid = styled(BottomSheetActionsBar)``;
 const ContentAreaGrid = styled(contentArea)`
@@ -93,6 +101,7 @@ const GridItemSkeletonLoading = ({ DEVICE_HEIGHT, DEVICE_WIDTH }) => (
 export default {
   ContainerView,
   // grid stuffs
+  TopIndicatorBar,
   ActionsBarGrid,
   ContentAreaGrid,
   // skeleton loading
