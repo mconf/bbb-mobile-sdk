@@ -186,7 +186,7 @@ const DrawerNavigator = ({
           name="TimerScreen"
           component={TimerScreen}
           options={{
-            title: t('app.timer.title'),
+            title: t('app.timerScreen.title'),
             unmountOnBlur: true,
             headerRight: () => (
               <RecordingIndicator recordMeeting={recordMeeting} recordPolicies={recordPolicies} />

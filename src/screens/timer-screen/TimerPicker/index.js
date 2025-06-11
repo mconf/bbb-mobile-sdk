@@ -1,5 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
+import {
+  Platform,
+  Modal,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import Styled from './styles'
 
 const TimerPicker = ({
   onSelect,
@@ -7,13 +13,65 @@ const TimerPicker = ({
   min = 0,
   max = 59,
 }) => {
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const pickerItems = Array.from({ length: max - min + 1 }, (_, i) => ({
+    label: `${i + min}`,
+    value: i + 1,
+  }));
+
+  if (Platform.OS === 'ios') {
+    return (
+      <>
+        <Styled.Button onPress={() => setModalVisible(true)}>
+          <Styled.ButtonText>
+            {pickerItems.find((item) => item.value === selectedValue)?.label ??
+              ''}
+          </Styled.ButtonText>
+        </Styled.Button>
+
+        <Modal
+          transparent
+          animationType="slide"
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+            <Styled.ModalOverlay>
+              <TouchableWithoutFeedback>
+                <Styled.ModalContent>
+                  <Picker
+                    selectedValue={selectedValue}
+                    onValueChange={(value) => onSelect(value)}
+                    style={{
+                      width: 100,
+                      alignSelf: 'center',
+                      fontSize: 24,
+                    }}
+                  >
+                    {pickerItems.map(({ label, value }) => (
+                      <Picker.Item
+                        key={value}
+                        label={label}
+                        value={value}
+                        style={{ textAlign: 'center', fontSize: 24 }}
+                      />
+                    ))}
+                  </Picker>
+                </Styled.ModalContent>
+              </TouchableWithoutFeedback>
+            </Styled.ModalOverlay>
+          </TouchableWithoutFeedback>
+        </Modal>
+      </>
+    );
+  }
+
   return (
     <Picker
       selectedValue={selectedValue}
-      onValueChange={(itemValue) => {
-        onSelect(itemValue);
-      }}
-      mode='dropdown'
+      onValueChange={(value) => onSelect(value)}
+      mode="dropdown"
       style={{
         width: 100,
         height: 80,
@@ -23,14 +81,16 @@ const TimerPicker = ({
         fontSize: 24,
       }}
     >
-      {Array.from({ length: max - min + 1 }, (_, i) => (
-        <Picker.Item
-          key={i + 1}
-          label={`${i + min}`}
-          value={i + 1}
-          style={{ textAlign: 'center', fontSize: 24 }}
-        />
-      ))}
+      {
+        pickerItems.map(({ label, value }) => (
+          <Picker.Item
+            key={value}
+            label={label}
+            value={value}
+            style={{ textAlign: 'center', fontSize: 24 }}
+          />
+        ))
+      }
     </Picker>
   );
 };

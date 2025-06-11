@@ -47,18 +47,13 @@ const TimerValue = styled.Text`
 const TimerPickerContainer = styled.View`
   display: flex;
   flex-direction: row;
+  gap: 16px;
+  justify-content: center;
 `;
 
 const TimerContainer = styled.View`
   display: flex;
   flex-direction: column;
-`;
-
-const TimerButtonCreate = styled(Button)`
-  margin: 0;
-  padding: 4px;
-  border-radius: 24px;
-  width: 48%;
 `;
 
 const TimerButton = ({ onPress, children }) => (
@@ -117,6 +112,7 @@ const DividerTimer = styled(Divider)`
   align-items: center;
   border-width: 1px;
   border-color: ${Colors.lightGray300};
+  margin-bottom: 24px;
 `;
 
 const ButtonText = styled.Text`
@@ -125,11 +121,15 @@ const ButtonText = styled.Text`
   color: ${Colors.white};
 `;
 
+const ButtonWrapper = styled.View`
+  flex: 1;
+  margin-right: ${({ isLast }) => (isLast ? '0px' : '16px')};
+`;
+
 const ButtonBodyCreate = styled(Button)`
   margin: 0;
   padding: 4px;
   border-radius: 24px;
-  width: 48%;
 `;
 
 const BodyButton = ({ onPress, children, selected }) => (
@@ -152,6 +152,7 @@ const ButtonContainer = styled.View`
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  marging-horizontal: 16px;
   margin-bottom: 24px;
 `;
 
@@ -175,10 +176,10 @@ const BottomButton = ({ onPress, children, reset, running }) => (
     style={
       reset
         ? {
-            borderWidth: 2,
-            borderColor: Colors.lightGray100,
-            backgroundColor: Colors.blueBackgroundColor,
-          }
+          borderWidth: 2,
+          borderColor: Colors.lightGray100,
+          backgroundColor: Colors.blueBackgroundColor,
+        }
         : {}
     }
   >
@@ -206,6 +207,7 @@ export default {
   TimerPickerContainer,
   BodyButton,
   BottomButton,
+  ButtonWrapper,
   ButtonText,
   Card,
   DividerTop,

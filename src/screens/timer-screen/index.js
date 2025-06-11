@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import ScreenWrapper from '../../components/screen-wrapper';
@@ -27,6 +28,7 @@ import { useSubscription, useMutation } from '@apollo/client';
 // 1 hour = 3600000
 
 const TimerScreen = () => {
+  const { t } = useTranslation();
   const orientation = useOrientation();
   const {
     data: timerData,
@@ -172,7 +174,7 @@ const TimerScreen = () => {
       <Styled.Block orientation={orientation}>
         <Styled.TimerHeader>
           <Icon name="timer" size={24} color={Colors.white} />
-          <Styled.TimerText>Timer</Styled.TimerText>
+          <Styled.TimerText>{t("mobileSdk.timer.title")}</Styled.TimerText>
         </Styled.TimerHeader>
         <Styled.DividerTop />
       </Styled.Block>
@@ -203,7 +205,7 @@ const TimerScreen = () => {
         <Styled.TimerPickerContainer>
           <TimerPicker
             selectedValue={pickerValues.hour + 1}
-            max={24}
+            max={23}
             onSelect={(val) => {
               const hour = val - 1;
               setPickerValues(val => ({ ...val, hour }));
@@ -246,24 +248,29 @@ const TimerScreen = () => {
   const renderButtonContainer = () => {
     return (
       <Styled.ButtonContainer>
-        <Styled.BodyButton
-          onPress={() => {
-            timerStop();
-            switchTimer(true);
-          }}
-          selected={stopwatch}
-        >
-          {"Stopwatch"}
-        </Styled.BodyButton>
-        <Styled.BodyButton
-          onPress={() => {
-            timerStop();
-            switchTimer(false);
-          }}
-          selected={!stopwatch}
-        >
-          {"Timer"}
-        </Styled.BodyButton>
+        <Styled.ButtonWrapper>
+          <Styled.BodyButton
+            onPress={() => {
+              timerStop();
+              switchTimer(true);
+            }}
+            selected={stopwatch}
+          >
+            {t("mobileSdk.timer.stopwatch")}
+          </Styled.BodyButton>
+        </Styled.ButtonWrapper>
+
+        <Styled.ButtonWrapper isLast>
+          <Styled.BodyButton
+            onPress={() => {
+              timerStop();
+              switchTimer(false);
+            }}
+            selected={!stopwatch}
+          >
+            {t('mobileSdk.timer.title')}
+          </Styled.BodyButton>
+        </Styled.ButtonWrapper>
       </Styled.ButtonContainer>
     );
   };
@@ -292,7 +299,7 @@ const TimerScreen = () => {
             }
           }}
         >
-          {running ? "Stop" : "Start"}
+          {running ? t("mobileSdk.timer.stop") : t("mobileSdk.timer.start")}
         </Styled.BottomButton>
         <Styled.BottomButton
           reset={true}
@@ -301,7 +308,7 @@ const TimerScreen = () => {
             timerReset();
           }}
         >
-          {"Reset"}
+          {t("mobileSdk.timer.reset")}
         </Styled.BottomButton>
       </Styled.BottomButtonContainer>
     );
