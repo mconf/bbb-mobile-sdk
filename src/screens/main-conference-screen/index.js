@@ -7,6 +7,7 @@ import ScreenWrapper from '../../components/screen-wrapper';
 import VideoGrid from '../../components/video/video-grid';
 import MiniAudioPlayerIcon from '../../components/audio-player/mini-audio-player-icon';
 import TalkingIndicator from '../../components/talking-indicator';
+import TimerIndicator from '../../components/timer/timerIndicator';
 import useAppState from '../../hooks/use-app-state';
 import PiPView from './pip-view';
 import Styled from './styles';
@@ -40,7 +41,10 @@ const MainConferenceScreen = () => {
     return (
       <ScreenWrapper>
         <Styled.ContainerView>
-          <TalkingIndicator />
+          <Styled.TopIndicatorBar>
+            <TalkingIndicator />
+            <TimerIndicator />
+          </Styled.TopIndicatorBar>
           <VideoGrid />
           <MiniAudioPlayerIcon />
         </Styled.ContainerView>

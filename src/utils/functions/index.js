@@ -1,3 +1,24 @@
+// TODO: review these humanize functions and cleanup
+
+// added from html code
+const humanizeSecondsLive = (time) => {
+  const hours = Math.floor(time / 3600);
+  const minutes = Math.floor((time % 3600) / 60);
+  const seconds = time % 60;
+  const formatNumber = (num) => {
+    if (num < 10) {
+      return `0${num}`;
+    }
+    return num.toString();
+  };
+
+  if (hours > 0) {
+    return `${formatNumber(hours)}:${formatNumber(minutes)}:${formatNumber(seconds)}`;
+  }
+  return `${formatNumber(minutes)}:${formatNumber(seconds)}`;
+};
+
+// old humanize that does not handle hours
 const humanizeSeconds = (time) => {
   if (!time) {
     return '00:00';
@@ -15,6 +36,7 @@ const humanizeSeconds = (time) => {
   },).join(':');
 };
 
+// update for breakouts to add hours
 const humanizeSecondsWithHours = (time) => {
   if (time == null || time < 0) {
     return '00:00';
@@ -103,6 +125,7 @@ function xml2json(xmlString) {
 
 export default {
   humanizeSeconds,
+  humanizeSecondsLive,
   humanizeSecondsWithHours,
   arraysEqual,
   parseQueryString,

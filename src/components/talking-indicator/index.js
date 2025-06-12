@@ -18,14 +18,23 @@ const TalkingIndicator = () => {
         onPress={() => dispatch(setIsPresentationOpen(true))}
       />
       <Styled.Container>
-        {callersTalking.map((userObj) => {
-          if (userObj.talking) {
-            return (
-              <Styled.TextContainer key={userObj.userId}>
-                <Styled.MicIcon />
-                <Styled.Text numberOfLines={1}>{userObj.user.name}</Styled.Text>
-              </Styled.TextContainer>
-            );
+        {callersTalking.map((userObj, idx) => {
+          if (!userObj.talking) {
+            if (idx < 2) {
+              return (
+                <Styled.TextContainer key={userObj.userId}>
+                  <Styled.MicIcon />
+                  <Styled.Text numberOfLines={1}>{userObj.user.name}</Styled.Text>
+                </Styled.TextContainer>
+              );
+            }
+            if (idx === 2) {
+              return (
+                <Styled.TextContainer key="more-users">
+                  <Styled.Text numberOfLines={1}>...</Styled.Text>
+                </Styled.TextContainer>
+              );
+            }
           }
           return null;
         })}
