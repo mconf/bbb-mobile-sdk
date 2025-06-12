@@ -21,6 +21,7 @@ import Styled from './styles';
 import NotificationController from '../../../app-content/notification';
 import useMeeting from '../../../graphql/hooks/useMeeting';
 import { ActivitySignProvider } from '../../../app-content/ActivitySign';
+import useCurrentUser from '../../../graphql/hooks/useCurrentUser';
 
 const DrawerNavigator = ({
   onLeaveSession, jUrl, meetingUrl
@@ -33,6 +34,8 @@ const DrawerNavigator = ({
   const recordMeeting = meetingData?.meeting[0]?.recording;
   const recordPolicies = meetingData?.meeting[0]?.recordingPolicies;
   const isBreakout = meetingData?.meeting[0]?.isBreakout;
+  const { data: userData } = useCurrentUser();
+  const amIModerator = userData?.user_current[0]?.isModerator;
 
   useModalListener();
 
@@ -182,23 +185,25 @@ const DrawerNavigator = ({
           />
         )}
 
-        <Drawer.Screen
-          name="TimerScreen"
-          component={TimerScreen}
-          options={{
-            title: t('app.timerScreen.title'),
-            unmountOnBlur: true,
-            headerRight: () => (
-              <RecordingIndicator recordMeeting={recordMeeting} recordPolicies={recordPolicies} />
-            ),
-            drawerLabelStyle: {
-              maxWidth: 150, fontWeight: '400', fontSize: 16, paddingLeft: 12
-            },
-            drawerIcon: (config) => (
-              <Styled.IconMaterial name="timer" size={24} color={config.color} />
-            ),
-          }}
-        />
+        {amIModerator && (
+          <Drawer.Screen
+            name="TimerScreen"
+            component={TimerScreen}
+            options={{
+              title: t('app.timerScreen.title'),
+              unmountOnBlur: true,
+              headerRight: () => (
+                <RecordingIndicator recordMeeting={recordMeeting} recordPolicies={recordPolicies} />
+              ),
+              drawerLabelStyle: {
+                maxWidth: 150, fontWeight: '400', fontSize: 16, paddingLeft: 12
+              },
+              drawerIcon: (config) => (
+                <Styled.IconMaterial name="timer" size={24} color={config.color} />
+              ),
+            }}
+          />
+        )}
 
         <Drawer.Screen
           name="FullscreenWrapperScreen"
