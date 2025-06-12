@@ -40,10 +40,15 @@ const TimerIndicator = () => {
   const adjustedCurrent = new Date(currentDate.getTime());
   const timeDifferenceMs = adjustedCurrent.getTime() - startedAtDate.getTime();
 
+  const safeAccumulated = Number.isFinite(accumulated) ? accumulated : 0;
+  const safeTimerTime = Number.isFinite(timerTime) ? timerTime : 0;
+  const safeTimeDifferenceMs = Number.isFinite(timeDifferenceMs) ? timeDifferenceMs : 0;
+
   const timePassed = stopwatch ? (
-    Math.floor(((running ? timeDifferenceMs : 0) + accumulated))
+    Math.floor(((running ? safeTimeDifferenceMs : 0) + safeAccumulated))
   ) : (
-    Math.floor(((timerTime) - (accumulated + (running ? timeDifferenceMs : 0)))));
+    Math.floor((safeTimerTime) - (safeAccumulated + (running ? safeTimeDifferenceMs : 0)))
+  );
 
   useFocusEffect(
     useCallback(() => {
@@ -90,9 +95,9 @@ const TimerIndicator = () => {
   return (
     <Styled.Container>
       {active && (
-        <Styled.TextContainer>
-          <Styled.TimerIcon />
-          <Styled.Text numberOfLines={1}>{UtilsService.humanizeSecondsLive(Math.floor(runningTime / 1000))}</Styled.Text>
+        <Styled.TextContainer running={running}>
+          <Styled.TimerIcon running={running} />
+          <Styled.Text running={running} numberOfLines={1}>{UtilsService.humanizeSecondsLive(Math.floor(runningTime / 1000))}</Styled.Text>
         </Styled.TextContainer>
       )}
     </Styled.Container>

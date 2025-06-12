@@ -16,6 +16,7 @@ const TimerPicker = ({
   const [modalVisible, setModalVisible] = useState(false);
 
   const pickerItems = Array.from({ length: max - min + 1 }, (_, i) => ({
+    key: i + 1,
     label: `${i + min}`,
     value: i + 1,
   }));
@@ -42,16 +43,16 @@ const TimerPicker = ({
                 <Styled.ModalContent>
                   <Picker
                     selectedValue={selectedValue}
-                    onValueChange={(value) => onSelect(value)}
+                    onValueChange={(itemValue) => onSelect(itemValue)}
                     style={{
                       width: 100,
                       alignSelf: 'center',
                       fontSize: 24,
                     }}
                   >
-                    {pickerItems.map(({ label, value }) => (
+                    {pickerItems.map(({ key, label, value }) => (
                       <Picker.Item
-                        key={value}
+                        key={key}
                         label={label}
                         value={value}
                         style={{ textAlign: 'center', fontSize: 24 }}
@@ -70,7 +71,7 @@ const TimerPicker = ({
   return (
     <Picker
       selectedValue={selectedValue}
-      onValueChange={(value) => onSelect(value)}
+      onValueChange={(itemValue) => onSelect(itemValue)}
       mode="dropdown"
       style={{
         width: 100,
@@ -82,9 +83,9 @@ const TimerPicker = ({
       }}
     >
       {
-        pickerItems.map(({ label, value }) => (
+        pickerItems.map(({ key, label, value }) => (
           <Picker.Item
-            key={value}
+            key={key}
             label={label}
             value={value}
             style={{ textAlign: 'center', fontSize: 24 }}

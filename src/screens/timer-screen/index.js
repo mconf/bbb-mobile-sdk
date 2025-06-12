@@ -43,6 +43,8 @@ const TimerScreen = () => {
 
   const [timerReset] = useMutation(TIMER_RESET);
   const [timerStart] = useMutation(TIMER_START);
+  const [timerActivate] = useMutation(TIMER_ACTIVATE);
+  const [timerDeactivate] = useMutation(TIMER_DEACTIVATE);
   const [timerStop] = useMutation(TIMER_STOP);
   const [timerSwitchMode] = useMutation(TIMER_SWITCH_MODE);
   const [timerSetTime] = useMutation(TIMER_SET_TIME);
@@ -55,7 +57,6 @@ const TimerScreen = () => {
     };
   }, [timerData, timerLoading, timerError]);
 
-  // active not being used
   const active = timerData?.timer[0]?.active ?? false;
   const running = timerData?.timer[0]?.running ?? false;
   const stopwatch = timerData?.timer[0]?.stopwatch ?? false;
@@ -70,10 +71,15 @@ const TimerScreen = () => {
   const adjustedCurrent = new Date(currentDate.getTime());
   const timeDifferenceMs = adjustedCurrent.getTime() - startedAtDate.getTime();
 
+  const safeAccumulated = Number.isFinite(accumulated) ? accumulated : 0;
+  const safeTimerTime = Number.isFinite(timerTime) ? timerTime : 0;
+  const safeTimeDifferenceMs = Number.isFinite(timeDifferenceMs) ? timeDifferenceMs : 0;
+
   const timePassed = stopwatch ? (
-    Math.floor(((running ? timeDifferenceMs : 0) + accumulated))
+    Math.floor(((running ? safeTimeDifferenceMs : 0) + safeAccumulated))
   ) : (
-    Math.floor(((timerTime) - (accumulated + (running ? timeDifferenceMs : 0)))));
+    Math.floor((safeTimerTime) - (safeAccumulated + (running ? safeTimeDifferenceMs : 0)))
+  );
 
   const setHours = useCallback((hours, time) => {
     if (!Number.isNaN(hours) && hours >= 0 && hours <= MAX_HOURS) {
@@ -296,6 +302,9 @@ const TimerScreen = () => {
               timerStop();
             } else {
               timerStart();
+              if (!active) {
+                timerActivate({ variables: { stopwatch, running, time: timerTime } });
+              };
             }
           }}
         >
