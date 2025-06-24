@@ -1,6 +1,11 @@
 import { ActivityIndicator } from 'react-native-paper';
 import Styled from './styles';
 
+// TODO: refactor the following and use primary-button instead and remove this button class
+// src/screens/user-participants-screen/waiting-users/styles.js|4 col 1| import button from '../../../components/button';
+// src/screens/user-participants-screen/guest-policy/styles.js|4 col 1| import button from '../../../components/button';
+// src/screens/poll-screen/modals/receive-poll/styles.js|4 col 1| import button from '../../../../components/button';
+
 const PrimaryButton = (props) => {
   const {
     children,

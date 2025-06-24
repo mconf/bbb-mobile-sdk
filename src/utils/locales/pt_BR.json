@@ -113,6 +113,7 @@
   "app.poll.answer.d": "D",
   "app.poll.answer.e": "E",
   "app.questions.modal.answerLabel": "Escreva sua resposta aqui",
+  "app.pickRandomUser.modal.title": "Usuário sorteado",
   "app.settings.audioTab.label": "Áudio",
   "app.settings.main.cancel.label": "Cancelar",
   "app.settings.main.cancel.label.description": "Descartar as alterações e fechar o menu de configurações",

@@ -104,6 +104,7 @@
   "app.poll.answer.d": "D",
   "app.poll.answer.e": "E",
   "app.questions.modal.answerLabel": "Enter your answer here",
+  "app.pickRandomUser.modal.title": "Randomly picked user",
   "app.settings.audioTab.label": "Audio",
   "app.settings.main.cancel.label": "Cancel",
   "app.settings.main.cancel.label.description": "Discards the changes and closes the settings menu",

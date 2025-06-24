@@ -6,6 +6,7 @@ import useCurrentUser from "../../graphql/hooks/useCurrentUser";
 import useCurrentPoll from "../../graphql/hooks/useCurrentPoll";
 import usePublishedPolls from "../../graphql/hooks/usePublishedPolls.js";
 import Queries from "./queries";
+import Settings from "../../../settings.json";
 
 const useModalListener = () => {
   const dispatch = useDispatch();
@@ -34,6 +35,45 @@ const useModalListener = () => {
   const publishedPollData = publishedData?.poll;
   const hasPublishedPolls = publishedPollData?.length > 0;
   const prevPublishedPollCount = useRef(undefined);
+
+  // PickRandomUserPlugin
+  const isPickRandomUserEnabled = Settings?.plugins?.pickRandomUser?.modal;
+  const {
+    data: pickRandomUserData,
+    loading: pickRandomUserLoading,
+    error: pickRandomUserError,
+  } = useSubscription(Queries.PLUGIN_DATA_CHANNEL_NEW_ITEMS, {
+    variables: {
+      pluginName: 'PickRandomUserPlugin',
+      channelName: 'pickRandomUser',
+      subChannelName: 'default',
+      createdAt: new Date().toUTCString(),
+    },
+    skip: !isPickRandomUserEnabled,
+  });
+
+  useEffect(() => {
+    if (!isPickRandomUserEnabled) return;
+    if (!pickRandomUserLoading) {
+      if (pickRandomUserError) {
+        console.error("PickRandomUserPlugin error: ", pickRandomUserError);
+      } else {
+        const pickedUserData = pickRandomUserData?.pluginDataChannelEntry_stream?.[0]?.payloadJson;
+
+        if (!pickedUserData || !pickedUserData.name) {
+          console.warn("Missing pickRandomUserPlugin data");
+          return;
+        };
+
+        handleDispatch("pick_random_user", {
+          selectedUserName: pickedUserData?.name,
+          selectedUserColor: pickedUserData?.color,
+        });
+
+        return;
+      };
+    };
+  }, [pickRandomUserData, pickRandomUserLoading, pickRandomUserError, isPickRandomUserEnabled]);
 
   useEffect(() => {
     // Breakouts
