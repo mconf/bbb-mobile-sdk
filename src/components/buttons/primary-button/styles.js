@@ -53,7 +53,7 @@ const ButtonInnerContainer = styled.Pressable`
 const ButtonText = styled.Text`
   color: ${Colors.white};
   text-align: center;
-  font-size: 18px;
+  font-size: 16px;
 
   ${({ variant }) => variant === 'secondary'
     && `
