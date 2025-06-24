@@ -7,7 +7,10 @@ import ReceivePollModal from '../../screens/poll-screen/modals/receive-poll';
 import PublishedPollModal from '../../screens/poll-screen/modals/published-poll';
 import AudioDeviceSelectorModal from '../actions-bar/audio-device-selector-control/audio-device-selector-modal';
 import NotImplementedModal from './not-implemented';
+import PickRandomUserModal from '../../screens/pick-random-user-screen/modal';
+
 const MODAL_COMPONENTS = {
+  pick_random_user: PickRandomUserModal,
   breakout_invite: BreakoutInviteModal,
   audio_device_selector: AudioDeviceSelectorModal,
   not_implemented: NotImplementedModal,

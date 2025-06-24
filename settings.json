@@ -5,6 +5,12 @@
   },
   "showDebugToggle": false,
   "showNotImplementedFeatures": false,
+  "plugins": {
+    "pickRandomUser": {
+      "modal": true,
+      "moderator": false
+    }
+  },
   "clientLog": {
     "server": {
       "enabled": false,
