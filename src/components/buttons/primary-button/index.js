@@ -8,6 +8,7 @@ const PrimaryButton = (props) => {
     disabled,
     loading,
     variant,
+    mode,
     fullWidth = true,
     icon,
   } = props;
@@ -25,13 +26,14 @@ const PrimaryButton = (props) => {
       <Styled.ButtonInnerContainer
         onPress={onPress}
         variant={variant}
+        mode={mode}
         disabled={disabled}
         // TODO: check styled-components api
         // handle "pressed" styled here until styled-components api should let us use inside styles.js
         style={({ pressed }) => (pressed ? { opacity: 0.75 } : null)}
       >
         {icon && <Styled.IconContainer>{icon}</Styled.IconContainer>}
-        <Styled.ButtonText variant={variant} disabled={disabled}>{children}</Styled.ButtonText>
+        <Styled.ButtonText variant={variant} mode={mode} disabled={disabled}>{children}</Styled.ButtonText>
       </Styled.ButtonInnerContainer>
     </Styled.ButtonOuterContainer>
   );
