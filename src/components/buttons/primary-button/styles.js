@@ -48,6 +48,11 @@ const ButtonInnerContainer = styled.Pressable`
     background-color: ${Colors.lightGray100};
     border: 2px solid ${Colors.lightGray100};
   `}
+
+  ${({ mode }) => mode === 'outlined'
+    && `
+    background-color: transparent;
+  `}
 `;
 
 const ButtonText = styled.Text`
@@ -58,6 +63,11 @@ const ButtonText = styled.Text`
   ${({ variant }) => variant === 'secondary'
     && `
     color: ${Colors.lightGray300};
+  `}
+
+  ${({ mode }) => mode === 'outlined'
+    && `
+    color: ${Colors.lightGray100};
   `}
 
   ${({ disabled }) => disabled

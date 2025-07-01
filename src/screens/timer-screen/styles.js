@@ -156,37 +156,6 @@ const ButtonContainer = styled.View`
   margin-bottom: 24px;
 `;
 
-const ButtonBottomCreate = styled(Button)`
-  margin: 0;
-  padding: 4px 0;
-  border-radius: 24px;
-  width: 100%;
-`;
-
-const BottomButton = ({ onPress, children, reset, running }) => (
-  <ButtonBottomCreate
-    mode={reset ? "outlined" : "contained"}
-    onPress={onPress}
-    buttonColor={reset ? Colors.white : running ? Colors.red : Colors.blue}
-    textColor={reset ? Colors.lightGray100 : Colors.white}
-    labelStyle={{
-      fontSize: 18,
-      fontWeight: '500',
-    }}
-    style={
-      reset
-        ? {
-          borderWidth: 2,
-          borderColor: Colors.lightGray100,
-          backgroundColor: Colors.blueBackgroundColor,
-        }
-        : {}
-    }
-  >
-    {children}
-  </ButtonBottomCreate>
-);
-
 const BottomButtonContainer = styled.View`
   width: 100%;
   flex-direction: column;
@@ -206,7 +175,6 @@ export default {
   TimerBody,
   TimerPickerContainer,
   BodyButton,
-  BottomButton,
   ButtonWrapper,
   ButtonText,
   Card,

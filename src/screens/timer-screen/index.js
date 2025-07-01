@@ -10,6 +10,7 @@ import Colors from '../../constants/colors';
 import UtilsService from '../../utils/functions';
 import { SafeAreaView } from 'react-native';
 import TimerPicker from './TimerPicker';
+import PrimaryButton from '../../components/buttons/primary-button';
 
 import {
   TIMER_SUBSCRIPTION,
@@ -294,9 +295,8 @@ const TimerScreen = () => {
   const renderBottom = () => {
     return (
       <Styled.BottomButtonContainer>
-        <Styled.BottomButton
-          reset={false}
-          running={running}
+        <PrimaryButton
+          variant={running ? "danger" : "primary"}
           onPress={() => {
             if (running) {
               timerStop();
@@ -309,16 +309,17 @@ const TimerScreen = () => {
           }}
         >
           {running ? t("mobileSdk.timer.stop") : t("mobileSdk.timer.start")}
-        </Styled.BottomButton>
-        <Styled.BottomButton
-          reset={true}
+        </PrimaryButton>
+        <PrimaryButton
+          variant={"secondary"}
+          mode={"outlined"}
           onPress={() => {
             timerStop();
             timerReset();
           }}
         >
           {t("mobileSdk.timer.reset")}
-        </Styled.BottomButton>
+        </PrimaryButton>
       </Styled.BottomButtonContainer>
     );
   };
