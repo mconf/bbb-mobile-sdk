@@ -37,6 +37,7 @@ const useModalListener = () => {
   const prevPublishedPollCount = useRef(undefined);
 
   // PickRandomUserPlugin
+  const createdAtRef = useRef(new Date().toISOString());
   const isPickRandomUserEnabled = Settings?.plugins?.pickRandomUser?.modal;
   const {
     data: pickRandomUserData,
@@ -47,7 +48,7 @@ const useModalListener = () => {
       pluginName: 'PickRandomUserPlugin',
       channelName: 'pickRandomUser',
       subChannelName: 'default',
-      createdAt: new Date().toUTCString(),
+      createdAt: createdAtRef.current,
     },
     skip: !isPickRandomUserEnabled,
   });
