@@ -25,7 +25,18 @@ const SCREENSHARE_SUBSCRIPTION = gql`
   }
 `;
 
+const HAS_EXTERNAL_VIDEO_SUBSCRIPTION = gql`
+  subscription externalVideo {
+    meeting {
+      externalVideo {
+        externalVideoUrl
+      }
+    }
+  }
+`;
+
 export default {
   CURRENT_PRESENTATION_PAGE_SUBSCRIPTION,
+  HAS_EXTERNAL_VIDEO_SUBSCRIPTION,
   SCREENSHARE_SUBSCRIPTION
 };

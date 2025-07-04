@@ -55,6 +55,7 @@
   "app.error.ejectedUser": "User has an invalid sessionToken due to ejection",
   "app.error.userBanned": "User has been banned",
   "app.error.userLoggedOut": "User has an invalid sessionToken due to log out",
+  "app.externalVideo.unsupported": "Video type is not supported",
   "app.feedback.subtitle": "We'd love to hear about your experience (optional)",
   "app.feedback.title": "You have logged out of the conference",
   "app.guest.firstPositionInWaitingQueue": "You are the first in line!",
