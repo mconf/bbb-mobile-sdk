@@ -50,10 +50,21 @@ const RestartIcon = ({ onPress }) => (
   </RestartIconContainer>
 );
 
+const MuteButton = styled.TouchableOpacity`
+  background-color: #28282d99;
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  padding: 8px;
+  border-radius: 24px;
+  z-index: 10;
+`;
+
 export default {
   Container,
   Overlay,
   VolumeContainer,
   RestartIconContainer,
-  RestartIcon
+  RestartIcon,
+  MuteButton
 };

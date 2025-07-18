@@ -5,6 +5,8 @@ import { Dimensions } from 'react-native';
 import Styled from './styles';
 import Colors from '../../../constants/colors';
 import Slider from '@react-native-community/slider';
+import { Platform } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
 
@@ -16,6 +18,7 @@ const YoutubePlayer = forwardRef(({ url, playing, playerCurrentTime, isPresenter
   const videoId = url.split('v=')[1]?.split('&')[0] || url.split('/').pop();
   const [showVolume, setShowVolume] = useState(false);
   const [volume, setVolume] = useState(0);
+  const [muted, setMuted] = useState(true);
   const volumeInitialized = useRef(false);
 
   const [webViewKey, setWebViewKey] = useState(0);
@@ -50,11 +53,22 @@ const YoutubePlayer = forwardRef(({ url, playing, playerCurrentTime, isPresenter
 
     const timeout = setTimeout(() => {
       setVolume(50);
+      setMuted(false);
       volumeInitialized.current = true;
     }, 2000);
 
     return () => clearTimeout(timeout);
   }, [ready, volume]);
+
+  const toggleMuteIOS = () => {
+    const newMuted = !muted;
+    setMuted(newMuted);
+    webViewRef.current?.injectJavaScript(`
+      document.dispatchEvent(new MessageEvent('message', {
+        data: JSON.stringify({ type: '${newMuted ? 'mute' : 'unmute'}' })
+      }));
+    `);
+  };
 
   return (
     <Styled.Container>
@@ -112,6 +126,12 @@ const YoutubePlayer = forwardRef(({ url, playing, playerCurrentTime, isPresenter
                           player.setVolume(data.volume);
                           if (data.volume > 0) player.unMute();
                         }
+                        if (data.type === 'unmute') {
+                          player.unMute();
+                        }
+                        if (data.type === 'mute') {
+                          player.mute();
+                        }
                       }
                     });
                   </script>
@@ -138,21 +158,32 @@ const YoutubePlayer = forwardRef(({ url, playing, playerCurrentTime, isPresenter
               onPress={handleRefreshPlayer}
             />
 
-            {showVolume && (
-              <Styled.VolumeContainer>
-                <Slider
-                  style={{ width: 150, height: 40 }}
-                  minimumValue={0}
-                  maximumValue={100}
-                  value={volume}
-                  step={10}
-                  thumbTintColor={Colors.lightBlue}
-                  minimumTrackTintColor={Colors.lightBlue}
-                  maximumTrackTintColor={Colors.lightGray100}
-                  onValueChange={setVolume}
+            {Platform.OS === 'ios' ? (
+              <Styled.MuteButton onPress={toggleMuteIOS}>
+                <MaterialIcons
+                  name={muted ? 'volume-off' : 'volume-up'}
+                  size={24}
+                  color={Colors.white}
                 />
-              </Styled.VolumeContainer>
+              </Styled.MuteButton>
+            ) : (
+              showVolume && (
+                <Styled.VolumeContainer>
+                  <Slider
+                    style={{ width: 150, height: 40 }}
+                    minimumValue={0}
+                    maximumValue={100}
+                    value={volume}
+                    step={10}
+                    thumbTintColor={Colors.lightBlue}
+                    minimumTrackTintColor={Colors.lightBlue}
+                    maximumTrackTintColor={Colors.lightGray100}
+                    onValueChange={setVolume}
+                  />
+                </Styled.VolumeContainer>
+              )
             )}
+
           </>
         )}
       </SafeAreaView>
