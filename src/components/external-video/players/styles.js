@@ -1,5 +1,8 @@
 import styled from 'styled-components/native';
 import { Dimensions } from 'react-native';
+import Colors from '../../../constants/colors';
+import { TouchableRipple } from 'react-native-paper';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
 
@@ -31,8 +34,37 @@ const VolumeContainer = styled.View`
   z-index: 10;
 `;
 
+const RestartIconContainer = styled(TouchableRipple)`
+  background-color: #28282d99;
+  margin: 5px;
+  padding: 8px;
+  border-radius: 4px;
+  position: absolute;
+  right: 70px;
+  z-index: 10;
+`;
+
+const RestartIcon = ({ onPress }) => (
+  <RestartIconContainer onPress={onPress}>
+    <MaterialIcons name="restart-alt" size={16} color={Colors.white} />
+  </RestartIconContainer>
+);
+
+const MuteButton = styled.TouchableOpacity`
+  background-color: #28282d99;
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  padding: 8px;
+  border-radius: 24px;
+  z-index: 10;
+`;
+
 export default {
   Container,
   Overlay,
   VolumeContainer,
+  RestartIconContainer,
+  RestartIcon,
+  MuteButton
 };
