@@ -140,7 +140,7 @@ const ContentArea = (props) => {
         <Styled.MinimizeIcon
           onPress={handleMinimizeClick}
         />
-        {isAndroid && !Settings.dev && (
+        {isAndroid && !Settings.dev && !externalVideoUrl && (
           <Styled.PIPIcon
             onPress={handleEnterPiPClick}
           />
