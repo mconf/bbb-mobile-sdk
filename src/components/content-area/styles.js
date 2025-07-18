@@ -37,6 +37,7 @@ const IconContainerFullscreen = styled(TouchableRipple)`
   border-radius: 4px;
   position: absolute;
   right: 35px;
+  z-index: 10;
 `;
 
 const IconContainerMinimize = styled(TouchableRipple)`
@@ -46,6 +47,7 @@ const IconContainerMinimize = styled(TouchableRipple)`
   border-radius: 4px;
   position: absolute;
   right: 0px;
+  z-index: 10;
 `;
 
 const IconContainerPiP = styled(TouchableRipple)`
@@ -55,6 +57,7 @@ const IconContainerPiP = styled(TouchableRipple)`
   border-radius: 4px;
   position: absolute;
   right: 70px;
+  z-index: 10;
 `;
 
 const FullscreenIcon = ({ onPress, isScreensharing }) => (
