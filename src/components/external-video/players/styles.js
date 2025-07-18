@@ -40,7 +40,7 @@ const RestartIconContainer = styled(TouchableRipple)`
   padding: 8px;
   border-radius: 4px;
   position: absolute;
-  right: 70px;
+  left: 0px;
   z-index: 10;
 `;
 
