@@ -31,17 +31,29 @@ const YoutubePlayer = forwardRef(({ url, playing, playerCurrentTime, isPresenter
 
   useEffect(() => {
     if (!ready || !webViewRef.current) return;
-    if (playing) {
-      webViewRef.current.injectJavaScript(`document.dispatchEvent(new MessageEvent('message', { data: JSON.stringify({ type: 'play' }) }));`);
-    } else {
-      webViewRef.current.injectJavaScript(`document.dispatchEvent(new MessageEvent('message', { data: JSON.stringify({ type: 'pause' }) }));`);
-    }
-  }, [playing, ready]);
 
-  useEffect(() => {
-    if (!ready || !webViewRef.current || playerCurrentTime == null) return;
-    webViewRef.current.injectJavaScript(`document.dispatchEvent(new MessageEvent('message', { data: JSON.stringify({ type: 'seek', time: ${playerCurrentTime} }) }));`);
-  }, [playerCurrentTime, ready]);
+    const commands = [];
+
+    if (playerCurrentTime != null) {
+      commands.push(`player.seekTo(${playerCurrentTime}, true);`);
+    }
+
+    if (playing) {
+      commands.push('player.playVideo();');
+    } else {
+      commands.push('player.pauseVideo();');
+    }
+
+    const script = commands
+      .map(cmd => `try { ${cmd} } catch(e) {}`)
+      .join('\n');
+
+    webViewRef.current.injectJavaScript(`
+    setTimeout(() => {
+      ${script}
+    }, 100);
+  `);
+  }, [ready, playerCurrentTime, playing]);
 
   useEffect(() => {
     if (!ready || !webViewRef.current) return;
@@ -99,7 +111,7 @@ const YoutubePlayer = forwardRef(({ url, playing, playerCurrentTime, isPresenter
                         width: '100%',
                         videoId: '${videoId}',
                         playerVars: {
-                        'autoplay': 1,
+                        'autoplay': 0,
                         'controls': 0,
                         'playsinline': 1,
                         'modestbranding': 1,
