@@ -55,6 +55,7 @@
   "app.error.ejectedUser": "El usuario tiene un Token de sesión no válido debido a su expulsión",
   "app.error.userBanned": "El usuario ha sido baneado",
   "app.error.userLoggedOut": "El usuario tiene un Token de sesión no válido debido al cierre de sesión",
+  "app.externalVideo.unsupported": "El tipo de video no es compatible",
   "app.feedback.subtitle": "Nos encantaría saber cual fué tu experiencia (opcional)",
   "app.feedback.title": "Has salido de la conferencia",
   "app.guest.firstPositionInWaitingQueue": "Eres el primero en la fila!",

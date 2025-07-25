@@ -19,12 +19,14 @@ import Styled from './styles';
 import Settings from '../../../settings.json';
 import Queries from './queries';
 import LiveKitScreenshareViewContainer from '../livekit/screenshare';
+import ExternalVideo from '../external-video';
 
 const ContentArea = (props) => {
   const { style, fullscreen } = props;
   const { PictureInPictureModule } = NativeModules;
 
   const isPiPEnabled = useSelector((state) => state.layout.isPiPEnabled);
+  const { data: externalVideoData } = useSubscription(Queries.HAS_EXTERNAL_VIDEO_SUBSCRIPTION);
   const { data: currentPageData } = useSubscription(Queries.CURRENT_PRESENTATION_PAGE_SUBSCRIPTION);
   const { data: screenshareData } = useSubscription(Queries.SCREENSHARE_SUBSCRIPTION);
   const { data: meetingData } = useMeeting();
@@ -36,6 +38,7 @@ const ContentArea = (props) => {
 
   const currentSlide = currentPageData?.pres_page_curr[0]?.svgUrl;
   const hasScreenshare = screenshareData?.screenshare.length > 0;
+  const externalVideoUrl = externalVideoData?.meeting[0]?.externalVideo?.externalVideoUrl;
   const isPresentationOpen = useSelector((state) => state.layout.isPresentationOpen);
   const prevHasScreenshareRef = useRef(hasScreenshare);
   const isAndroid = Platform.OS === 'android';
@@ -85,6 +88,11 @@ const ContentArea = (props) => {
   };
 
   // ** Content area views methods **
+  const externalVideoView = () => {
+    return (
+      <ExternalVideo url={externalVideoUrl} />
+    );
+  };
   const presentationView = () => {
     return (
       <Styled.Presentation
@@ -132,7 +140,7 @@ const ContentArea = (props) => {
         <Styled.MinimizeIcon
           onPress={handleMinimizeClick}
         />
-        {isAndroid && !Settings.dev && (
+        {isAndroid && !Settings.dev && !externalVideoUrl && (
           <Styled.PIPIcon
             onPress={handleEnterPiPClick}
           />
@@ -143,11 +151,19 @@ const ContentArea = (props) => {
 
   return (
     <Styled.ContentAreaPressable>
-      {!hasScreenshare && presentationView()}
-      {hasScreenshare && screenshareView()}
+      {{
+        externalVideoUrl: externalVideoUrl ? externalVideoView() : null,
+        screenshare: hasScreenshare ? screenshareView() : null,
+        default: presentationView(),
+      }[
+        externalVideoUrl
+          ? 'externalVideoUrl'
+          : hasScreenshare
+            ? 'screenshare'
+            : 'default'
+      ]}
       {renderIcons()}
     </Styled.ContentAreaPressable>
-
   );
 };
 
