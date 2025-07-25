@@ -37,6 +37,8 @@ const EXTERNAL_VIDEO_SUBSCRIPTION = gql`
         playerPlaying
         playerCurrentTime
         playerPlaybackRate
+        startedSharingAt
+        updatedAt
       }
     }
   }

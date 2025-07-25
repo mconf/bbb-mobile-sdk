@@ -42,13 +42,28 @@ const ExternalVideo = forwardRef(({ url }, ref) => {
     pause: () => playerRef.current?.pause?.(),
   }));
 
+  const calculateEffectiveTime = () => {
+    const now = Date.now();
+    const startedAt = new Date(externalVideoData?.meeting[0]?.externalVideo?.startedSharingAt).getTime();
+    const updatedAt = new Date(externalVideoData?.meeting[0]?.externalVideo?.updatedAt).getTime();
+    const currentTime = externalVideoData?.meeting[0]?.externalVideo?.playerCurrentTime;
+
+    if (now - updatedAt < 1000) {
+      return currentTime;
+    }
+
+    return currentTime + (now - startedAt) / 1000;
+  };
+
+  const effectivePlayerCurrentTime = calculateEffectiveTime();
+
   if (type === 'youtube') {
     return (
       <YouTubePlayer
         ref={playerRef}
         url={url}
         playing={playing}
-        playerCurrentTime={playerCurrentTime}
+        playerCurrentTime={effectivePlayerCurrentTime}
         isPresenter={currentUserData?.isPresenter || false}
       />
     );
