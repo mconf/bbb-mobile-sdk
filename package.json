@@ -1,6 +1,6 @@
 {
   "name": "bbbmobile",
-  "version": "0.16.6",
+  "version": "0.18.9",
   "private": true,
   "description": "BigBlueButton mobile sdk",
   "main": "index.js",
@@ -55,13 +55,13 @@
     "expo-status-bar": "~2.0.0",
     "graphql-ws": "^5.16.0",
     "he": "^1.2.0",
-    "i18next": "^22.4.10",
+    "i18next": "25.2.1",
     "lottie-react-native": "7.1.0",
     "p-retry": "5.1.2",
     "react": "18.3.1",
     "react-content-loader": "^6.2.0",
     "react-dom": "18.3.1",
-    "react-i18next": "^12.1.5",
+    "react-i18next": "15.5.3",
     "react-native": "0.76.5",
     "react-native-callkeep": "^4.3.14",
     "react-native-draggable-reanimated": "^1.0.5",
@@ -83,8 +83,7 @@
     "rn-android-keyboard-adjust": "^2.1.2",
     "styled-components": "^5.3.5",
     "url": "^0.11.0",
-    "util": "^0.12.4",
-    "expo-notifications": "~0.29.11"
+    "util": "^0.12.4"
   },
   "devDependencies": {
     "@babel/cli": "^7.19.3",
