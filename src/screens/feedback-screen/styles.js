@@ -119,7 +119,7 @@ const ThumbContainer = styled.View`
 const ThumbLabel = styled.Text`
   fontSize: 30px;
   text-align: center;
-  color: ${Colors.white}
+  color: ${Colors.white};
 `;
 
 const ThumbAboveContainer = styled.View`

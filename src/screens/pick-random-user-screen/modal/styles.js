@@ -21,13 +21,13 @@ const Container = styled.View`
 const TitleModal = styled.Text`
   font-size: 18px;
   font-weight: 500;
-  color: ${Colors.lightGray400}
+  color: ${Colors.lightGray400};
 `;
 
 const UserName = styled.Text`
   font-size: 16px;
   font-weight: 600;
-  color: ${Colors.lightGray300}
+  color: ${Colors.lightGray300};
 `;
 
 export default {

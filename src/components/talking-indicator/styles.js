@@ -16,7 +16,7 @@ const Container = styled.View`
 const TextContainer = styled.View`
   padding: 4px;
   border-radius: 12px;
-  background-color: ${Colors.blue}
+  background-color: ${Colors.blue};
   display: flex;
   flex-direction: row;
   aling-items: center;
@@ -25,7 +25,7 @@ const TextContainer = styled.View`
 `;
 
 const Text = styled.Text`
-  color: ${Colors.white}
+  color: ${Colors.white};
   font-size: 14px;
   font-weight: 600;
   max-width: 100px;
@@ -41,7 +41,7 @@ const IconContainerPresentation = styled(TouchableRipple)`
   border-radius: 16px;
   position: absolute;
   right: 4px;
-  background-color: ${Colors.orange}
+  background-color: ${Colors.orange};
   z-index: 2;
 `;
 

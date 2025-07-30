@@ -33,7 +33,7 @@ const ButtonsContainer = styled.View`
 `;
 
 const OptionsButton = styled(button)`
-  background-color: ${Colors.lightGray200}
+  background-color: ${Colors.lightGray200};
   color: ${Colors.lightGray400};
   font-size: 16px;
   font-weight: 400;

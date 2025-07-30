@@ -51,7 +51,7 @@ const BottomSheetChat = () => {
     });
   };
 
-  useBottomSheetBackHandler(isBottomChatOpen, sheetRef, () => {});
+  useBottomSheetBackHandler(isBottomChatOpen, sheetRef, () => { });
 
   const handleMessage = (message) => {
     if ((/<a\b[^>]*>/.test(message))) {
@@ -60,9 +60,9 @@ const BottomSheetChat = () => {
       );
     }
     return (
-      <Text selectable>
+      <Styled.MessageContent selectable>
         {message}
-      </Text>
+      </Styled.MessageContent>
     );
   };
 
