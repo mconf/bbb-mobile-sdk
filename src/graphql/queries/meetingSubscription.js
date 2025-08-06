@@ -9,10 +9,6 @@ const MEETING_SUBSCRIPTION = gql`
           disableMic
           webcamsOnlyForModerator
         }
-        metadata {
-          name
-          value
-        }
         name
         isBreakout
         cameraBridge
