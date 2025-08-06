@@ -42,7 +42,7 @@
     "@react-navigation/stack": "^6.3.4",
     "@reduxjs/toolkit": "^1.8.3",
     "axios": "^0.27.2",
-    "bbb-breakout-sdk": "git+https://github.com/mconf/bbb-mobile-sdk.git#breakout-v0.18.11",
+    "bbb-breakout-sdk": "git+https://github.com/mconf/bbb-mobile-sdk.git#breakout-v0.18.12",
     "browser-bunyan": "^1.8.0",
     "ejson": "^2.2.3",
     "eventemitter2": "^6.4.7",
