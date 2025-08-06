@@ -22,6 +22,7 @@ import NotificationController from '../../../app-content/notification';
 import useMeeting from '../../../graphql/hooks/useMeeting';
 import { ActivitySignProvider } from '../../../app-content/ActivitySign';
 import useCurrentUser from '../../../graphql/hooks/useCurrentUser';
+import Settings from '../../../../settings.json';
 
 const DrawerNavigator = ({
   onLeaveSession, jUrl, meetingUrl
@@ -185,7 +186,7 @@ const DrawerNavigator = ({
           />
         )}
 
-        {amIModerator && (
+        {amIModerator && Settings.features.timer && (
           <Drawer.Screen
             name="TimerScreen"
             component={TimerScreen}

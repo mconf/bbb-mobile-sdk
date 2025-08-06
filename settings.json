@@ -30,6 +30,9 @@
       "logTag": "bbb-app"
     }
   },
+  "features": {
+    "timer": false
+  },
   "whiteboard": true,
   "feedback": {
     "enabled": true,
