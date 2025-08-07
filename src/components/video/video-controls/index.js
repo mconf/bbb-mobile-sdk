@@ -3,8 +3,7 @@ import { Alert } from 'react-native';
 import { useMutation } from '@apollo/client';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { selectLockSettingsProp } from '../../../store/redux/slices/meeting';
-import { isLocked } from '../../../store/redux/slices/current-user';
+import useCurrentUser from '../../../graphql/hooks/useCurrentUser';
 import useMeeting from '../../../graphql/hooks/useMeeting';
 import useAppState from '../../../hooks/use-app-state';
 import logger from '../../../services/logger';
@@ -14,16 +13,22 @@ import SFUVideoControls from './sfu-video-controls';
 
 const VideoControlsContainer = () => {
   const { data: meetingData, loading: meetingLoading } = useMeeting();
+  const { data: currentUserData } = useCurrentUser();
   const { t } = useTranslation();
   const [cameraBroadcastStart] = useMutation(Queries.CAMERA_BROADCAST_START);
   const [cameraBroadcastStop] = useMutation(Queries.CAMERA_BROADCAST_STOP);
-  const disabled = useSelector((state) => selectLockSettingsProp(state, 'disableCam') && isLocked(state));
   const isConnected = useSelector((state) => state.video.isConnected);
   const isConnecting = useSelector((state) => state.video.isConnecting);
   const localCameraId = useSelector((state) => state.video.localCameraId);
   const appState = useAppState();
-  const { cameraBridge } = meetingData?.meeting[0] || {};
+
+  const meeting = meetingData?.meeting[0];
+  const meetingCamLocked = meeting?.lockSettings?.disableCam;
+  const currentUserLocked = currentUserData?.user_current[0]?.locked ?? false;
+  const disabled = meetingCamLocked && currentUserLocked;
+  const { cameraBridge } = meeting || {};
   const buttonEnabled = cameraBridge != null && !meetingLoading;
+
   const sendUserShareWebcam = (cameraId) => {
     return cameraBroadcastStart({ variables: { cameraId } });
   };
