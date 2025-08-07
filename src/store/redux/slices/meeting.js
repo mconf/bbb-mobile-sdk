@@ -47,20 +47,6 @@ const selectMeeting = (state) => Object.values(state.meetingCollection.meetingCo
 
 const selectProp = (state, prop) => prop;
 
-const selectAllLockSettingsProps = createSelector(
-  [selectMeeting],
-  (meeting) => {
-    return meeting?.lockSettingsProps ?? {};
-  }
-);
-
-const selectLockSettingsProp = createSelector(
-  [selectAllLockSettingsProps, selectProp],
-  (lockSettings, prop) => {
-    return lockSettings[prop] ?? false;
-  }
-);
-
 const selectAllUsersProps = createSelector(
   [selectMeeting],
   (meeting) => {
@@ -99,8 +85,6 @@ export const {
 
 export {
   selectMeeting,
-  selectAllLockSettingsProps,
-  selectLockSettingsProp,
   selectAllUsersProps,
   selectUsersProp,
   selectAllMetadata,
