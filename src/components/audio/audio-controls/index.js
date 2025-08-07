@@ -5,9 +5,9 @@ import { Alert } from 'react-native';
 import { useMutation, useSubscription } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
 import { useAudioJoin } from '../../../hooks/use-audio-join';
+import useCurrentUser from '../../../graphql/hooks/useCurrentUser';
+import useMeeting from '../../../graphql/hooks/useMeeting';
 import AudioManager from '../../../services/webrtc/audio-manager';
-import { selectLockSettingsProp } from '../../../store/redux/slices/meeting';
-import { isLocked } from '../../../store/redux/slices/current-user';
 import { setAudioError } from '../../../store/redux/slices/wide-app/audio';
 import logger from '../../../services/logger';
 import Queries from './queries';
@@ -18,12 +18,18 @@ const AudioControls = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { joinAudio } = useAudioJoin();
+  const { data: currentUserData } = useCurrentUser();
+  const { data: meetingData } = useMeeting();
   const isConnected = useSelector((state) => state.audio.isConnected);
   const isConnecting = useSelector(({ audio }) => audio.isConnecting || audio.isReconnecting);
-  const micDisabled = useSelector((state) => selectLockSettingsProp(state, 'disableMic') && isLocked(state));
   const isListenOnly = useSelector((state) => state.audio.isListenOnly);
   const audioError = useSelector((state) => state.audio.audioError);
   const localMutedState = useSelector((state) => state.audio.isMuted);
+  const [userSetMuted] = useMutation(Queries.USER_SET_MUTED);
+
+  const currentUserLocked = currentUserData?.user_current[0]?.locked ?? false;
+  const meetingMicLocked = meetingData?.meeting[0]?.lockSettings?.disableMic;
+  const micDisabled = meetingMicLocked && currentUserLocked;
   const isActive = isConnected || isConnecting;
   const {
     data: currentUserVoiceData,
@@ -31,8 +37,6 @@ const AudioControls = () => {
   } = useSubscription(Queries.USER_CURRENT_VOICE);
   const isMuted = currentUserVoiceData?.user_current[0]?.voice?.muted;
   const unmutedAndConnected = !isMuted && isConnected;
-
-  const [userSetMuted] = useMutation(Queries.USER_SET_MUTED);
 
   useEffect(() => {
     if (!currentUserVoiceLoading && (localMutedState !== isMuted)) {

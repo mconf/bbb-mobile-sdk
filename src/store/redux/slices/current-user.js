@@ -65,11 +65,6 @@ const isPresenter = createSelector(
   (currentUser) => currentUser?.presenter === true
 );
 
-const isLocked = createSelector(
-  [selectCurrentUser],
-  (currentUser) => currentUser?.role !== 'MODERATOR' && currentUser?.locked === true
-);
-
 // Middleware effects and listeners
 const logoutOrEjectionPredicate = (action, currentState) => {
   if (currentState.client.sessionState.ended) return false;
@@ -137,7 +132,6 @@ export {
   selectCurrentUserRole,
   selectCurrentUserId,
   isModerator,
-  isLocked,
   isPresenter,
   logoutOrEjectionPredicate,
   logoutOrEjectionListener,
