@@ -52,7 +52,7 @@ const Title = styled.Text`
   font-weight: 600;
   text-align: center;
   padding-bottom: 24px;
-  color: ${Colors.white}
+  color: ${Colors.white};
 `;
 
 const SecretLabel = styled.Text`
@@ -60,7 +60,7 @@ const SecretLabel = styled.Text`
   font-size: 12px;
   text-align: center;
   font-style: italic;
-  color: ${Colors.white}
+  color: ${Colors.white};
 `;
 
 const TextInput = styled(textInput)``;

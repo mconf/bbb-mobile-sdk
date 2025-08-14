@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+// TODO: Upgrade to expo-audio before updating to expo54
 import { Audio } from 'expo-av';
 import Slider from '@react-native-community/slider';
 import ActivityBar from '../../activity-bar';

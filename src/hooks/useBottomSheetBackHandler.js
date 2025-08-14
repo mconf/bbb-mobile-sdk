@@ -14,18 +14,16 @@ export const useBottomSheetBackHandler = (
 ) => {
   useFocusEffect(
     useCallback(() => {
-      const onBackPress = () => {
+      const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
         if (bottomSheetOpen && bottomSheetRef.current) {
           bottomSheetRef.current.close();
           onClose?.();
           return true;
         }
         return false;
-      };
+      });
 
-      BackHandler.addEventListener('hardwareBackPress', onBackPress);
-
-      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+      return () => backHandler.remove();
     }, [bottomSheetRef, bottomSheetOpen, onClose]),
   );
 };

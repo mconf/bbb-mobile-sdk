@@ -50,7 +50,7 @@ const TimestampText = styled.Text`
 const QuestionText = styled.Text`
   font-size: 18px;
   font-weight: 400;
-  color: ${Colors.lightGray300}
+  color: ${Colors.lightGray300};
 `;
 
 const CustomDivider = styled(Divider)``;
@@ -66,7 +66,7 @@ const PollInfoLabelContainer = styled.View`
 const PollInfoText = styled.Text`
   font-weight: 400;
   font-size: 12px;
-  color: ${Colors.lightGray300}
+  color: ${Colors.lightGray300};
 `;
 
 const BlankSpaceForButton = styled.View`
@@ -84,12 +84,12 @@ const PresenterContainerOptions = styled.View`
 const MinimizeAnswersText = styled.Text`
   font-weight: 400;
   font-size: 12px;
-  color: ${Colors.blue}
+  color: ${Colors.blue};
   text-decoration: underline;
 
   ${({ secretPoll }) => secretPoll
     && `
-      color: ${Colors.lightGray300}
+      color: ${Colors.lightGray300};
       text-decoration: none;
     `}
 `;
@@ -106,12 +106,13 @@ const PressableMinimizeAnswersText = ({
   }
 
   return (
-    <PressableRN onPress={!secretPoll ? onPress : () => {}}>
+    <PressableRN onPress={!secretPoll ? onPress : () => { }}>
       <MinimizeAnswersText secretPoll={secretPoll}>
         {children}
       </MinimizeAnswersText>
     </PressableRN>
-  ); };
+  );
+};
 
 const DeleteIcon = ({ onPress }) => (
   <PressableRN onPress={onPress}>
@@ -125,7 +126,7 @@ const UserNameAnswer = styled.Text`
   text-align: center;
   vertical-align: middle;
   max-width: 80px;
-  color: ${Colors.lightGray300}
+  color: ${Colors.lightGray300};
 `;
 
 const UserAnswer = styled.Text`
@@ -133,7 +134,7 @@ const UserAnswer = styled.Text`
   font-size: 12px;
   vertical-align: middle;
   max-width: 200px;
-  color: ${Colors.lightGray300}
+  color: ${Colors.lightGray300};
 `;
 
 const UserNameContainer = styled.View`
@@ -184,7 +185,7 @@ const ButtonCreate = styled(Pressable).attrs(() => ({
   align-items: center;
   justify-content: center;
     ${({ buttonColor }) => buttonColor
-    && `
+      && `
       background-color: ${buttonColor};
     `}
   `}

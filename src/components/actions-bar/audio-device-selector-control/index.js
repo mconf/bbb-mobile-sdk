@@ -26,7 +26,6 @@ const DeviceSelectorControl = () => {
         </Styled.AudioText>
         <Styled.OpenAudioSelectorIcon />
       </>
-
     </Styled.ContainerPressable>
   );
 };

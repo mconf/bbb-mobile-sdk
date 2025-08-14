@@ -6,7 +6,7 @@ import ContentLoader, { Rect } from 'react-content-loader/native';
 
 const ContainerView = styled.View`
   ${({ orientation }) => orientation === 'LANDSCAPE'
-  && `
+    && `
     flex-direction: row;
     justify-content: center;
   `}
@@ -96,7 +96,7 @@ const NoBreakoutsLabelSubtitle = styled.Text`
 `;
 
 const BreakoutRoomDurationLabel = styled.Text`
-  color: ${Colors.lightGray300}
+  color: ${Colors.lightGray300};
   font-size: 12px;
   text-align: center;
   font-weight: 400;
@@ -104,7 +104,7 @@ const BreakoutRoomDurationLabel = styled.Text`
 `;
 
 const NumberTimerLabel = styled.Text`
-  color: ${Colors.lightGray400}
+  color: ${Colors.lightGray400};
   font-size: 24px;
   text-align: center;
   font-weight: 500;
@@ -128,7 +128,7 @@ const MiniAvatarsContainer = styled.View`
   padding: 0 6px 0 6px;
 
   ${({ participantsCount }) => participantsCount === 0
-  && `
+    && `
       display: none;
       padding-left: 0px;
   `}

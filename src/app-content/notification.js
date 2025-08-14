@@ -8,7 +8,7 @@ import LeaveQueries from '../components/custom-drawer/queries';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: false,
+    shouldShowBanner: true,
     shouldPlaySound: false,
     shouldSetBadge: false,
   }),
@@ -61,11 +61,11 @@ const NotificationController = () => {
 
     return () => {
       if (notificationListener.current) {
-        Notifications.removeNotificationSubscription(notificationListener.current);
+        notificationListener.current.remove();
       }
 
       if (responseListener.current) {
-        Notifications.removeNotificationSubscription(responseListener.current);
+        responseListener.current.remove();
       }
 
       Notifications.dismissAllNotificationsAsync().catch((error) => {

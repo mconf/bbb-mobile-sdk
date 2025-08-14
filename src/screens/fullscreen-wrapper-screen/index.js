@@ -20,13 +20,12 @@ const FullscreenWrapperScreen = ({ navigation }) => {
 
   useFocusEffect(
     useCallback(() => {
-      const onBackPress = () => {
+      const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
         onCloseFullscreen();
         return true;
-      };
-      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      });
 
-      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+      return () => backHandler.remove();
     }, [layoutStore.isFocused]),
   );
 
