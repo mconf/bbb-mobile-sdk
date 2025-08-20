@@ -33,7 +33,7 @@ const ScreenshareIconContainer = () => (
 const ScreenshareText = styled.Text`
   font-size: 16px;
   font-weight: 500;
-  color: ${Colors.white}
+  color: ${Colors.white};
   flex: 1;
 `;
 

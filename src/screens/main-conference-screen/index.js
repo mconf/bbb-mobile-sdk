@@ -10,6 +10,7 @@ import TalkingIndicator from '../../components/talking-indicator';
 import useAppState from '../../hooks/use-app-state';
 import PiPView from './pip-view';
 import Styled from './styles';
+import Settings from '../../../settings.json';
 
 const DEVICE_HEIGHT = parseInt(Dimensions.get('window').height, 10);
 const DEVICE_WIDTH = parseInt(Dimensions.get('window').width, 10);

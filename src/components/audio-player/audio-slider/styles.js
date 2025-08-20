@@ -6,7 +6,7 @@ import Colors from '../../../constants/colors';
 const FileNameText = styled.Text`
   font-size: 14px;
   font-weight: 400;
-  color: ${Colors.lightGray400}
+  color: ${Colors.lightGray400};
   height: 25px;
 `;
 

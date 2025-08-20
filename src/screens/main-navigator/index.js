@@ -70,10 +70,9 @@ const MainNavigator = (props) => {
         >
           {() => (
             <DrawerNavigator
-              navigationRef="test"
-              jUrl="test"
               onLeaveSession={onLeaveSession}
               meetingUrl={meetingUrl}
+              navigation={navigation}
             />
           )}
         </Stack.Screen>

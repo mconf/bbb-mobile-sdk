@@ -47,13 +47,13 @@ const ButtonContainer = ({ loading, children }) => {
 const DeviceSelectorTitle = styled.Text`
   font-size: 18px;
   font-weight: 500;
-  color: ${Colors.lightGray400}
+  color: ${Colors.lightGray400};
 `;
 
 const Container = styled.View`
   display: flex;
   flex-direction: column;
-  background-color: ${Colors.white}
+  background-color: ${Colors.white};
   margin: 24px;
   padding: 24px;
   gap: 18px;
@@ -64,7 +64,7 @@ const MissingPermission = styled.Text`
   font-size: 14px;
   font-weight: 500;
   text-align: center;
-  color: ${Colors.orange}
+  color: ${Colors.orange};
 `;
 
 const SettingsButton = ({

@@ -56,6 +56,10 @@ const MessageContent = styled.Text`
   color: ${Colors.lightGray300};
 `;
 
+MessageContent.defaultProps = {
+  selectable: true,
+};
+
 const ContainerItem = styled.View`
   display: flex;
   flex-direction: row;

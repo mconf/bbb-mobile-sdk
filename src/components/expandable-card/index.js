@@ -10,7 +10,14 @@ import Animated, {
   useAnimatedStyle,
   interpolate,
   Extrapolate,
+  configureReanimatedLogger,
+  ReanimatedLogLevel,
 } from 'react-native-reanimated';
+
+configureReanimatedLogger({
+  level: ReanimatedLogLevel.warn,
+  strict: false,
+});
 
 const ExpandedCard = ({
   content, expandedContent, expandableHeight, clickableWidth
