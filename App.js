@@ -32,7 +32,7 @@ const MyTheme = {
   },
 };
 
-const leaveSessionFactory = (callback = () => {}) => {
+const leaveSessionFactory = (callback = () => { }) => {
   return () => {
     disconnectLiveKitRoom({ final: true });
     callback();

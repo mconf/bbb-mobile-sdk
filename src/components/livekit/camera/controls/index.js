@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import {
+  useTracks,
   useParticipantTracks,
   useLocalParticipant,
   RoomContext
@@ -28,7 +29,7 @@ const LKVideoControls = ({
   handleCameraPublishError,
 }) => {
   const { localParticipant } = useLocalParticipant();
-  const tracks = useParticipantTracks([Track.Source.Camera], localParticipant.identity);
+  const tracks = useTracks([Track.Source.Camera]);
   const dispatch = useDispatch();
   const [publishOnActive, setPublishOnActive] = useState(false);
   const isActive = localParticipant.isCameraEnabled || isConnecting;
@@ -63,6 +64,7 @@ const LKVideoControls = ({
 
   const unpublishCamera = useCallback(async () => {
     const publications = tracks.map((trackReference) => trackReference.publication);
+    const localPublications = publications.filter(publication => publication?.isLocal)
     const handleUnpublishError = (error) => {
       logger.error({
         logCode: 'livekit_camera_unpublish_error',
@@ -74,7 +76,7 @@ const LKVideoControls = ({
     };
 
     try {
-      await Promise.all(publications
+      await Promise.all(localPublications
         .map((publication) => localParticipant.unpublishTrack(publication?.track)
           .then((trackPublication) => {
             logger.info({

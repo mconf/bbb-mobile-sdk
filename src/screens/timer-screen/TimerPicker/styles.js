@@ -1,6 +1,4 @@
 import styled from 'styled-components/native';
-import { Picker } from '@react-native-picker/picker';
-import Colors from '../../../constants/colors';
 
 const Button = styled.TouchableOpacity`
   border-width: 1px;

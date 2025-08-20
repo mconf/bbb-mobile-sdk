@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { BackHandler, Alert } from "react-native";
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { useTranslation } from 'react-i18next';
 import useAppState from '../../../hooks/use-app-state';
@@ -22,9 +23,10 @@ import NotificationController from '../../../app-content/notification';
 import useMeeting from '../../../graphql/hooks/useMeeting';
 import { ActivitySignProvider } from '../../../app-content/ActivitySign';
 import useCurrentUser from '../../../graphql/hooks/useCurrentUser';
+import Settings from '../../../../settings.json';
 
 const DrawerNavigator = ({
-  onLeaveSession, jUrl, meetingUrl
+  onLeaveSession, meetingUrl, navigation
 }) => {
   const Drawer = createDrawerNavigator();
   const appState = useAppState();
@@ -38,6 +40,38 @@ const DrawerNavigator = ({
   const amIModerator = userData?.user_current[0]?.isModerator;
 
   useModalListener();
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      const currentRoute = navigation?.getCurrentRoute?.();
+      if (currentRoute?.name !== "Main") {
+        navigation.goBack();
+      } else {
+        Alert.alert(
+          "Leave Session",
+          "Are you sure you want to leave the session?",
+          [
+            {
+              text: "Cancel",
+              onPress: () => { },
+              style: "cancel",
+            },
+            {
+              text: "OK",
+              onPress: () => {
+                if (typeof onLeaveSession === 'function') {
+                  onLeaveSession();
+                }
+              },
+            },
+          ]
+        );
+      }
+      return true;
+    });
+
+    return () => backHandler.remove();
+  }, [navigation, onLeaveSession]);
 
   return (
     <>
@@ -185,7 +219,7 @@ const DrawerNavigator = ({
           />
         )}
 
-        {amIModerator && (
+        {amIModerator && Settings.features.timer && (
           <Drawer.Screen
             name="TimerScreen"
             component={TimerScreen}

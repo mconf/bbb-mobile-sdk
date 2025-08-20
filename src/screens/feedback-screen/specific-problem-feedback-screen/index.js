@@ -53,13 +53,12 @@ const SpecificProblemFeedbackScreen = ({ route }) => {
   // disables android go back button
   useFocusEffect(
     useCallback(() => {
-      const onBackPress = () => {
+      const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
         // do nothing
         return true;
-      };
-      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      });
 
-      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+      return () => backHandler.remove();
     }, []),
   );
 

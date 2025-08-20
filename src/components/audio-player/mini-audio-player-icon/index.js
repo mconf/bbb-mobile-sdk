@@ -1,8 +1,6 @@
-import { useSelector, useDispatch } from 'react-redux';
-import { useEffect, useState } from 'react';
-import { View } from 'react-native';
+import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
 import AudioPlayerService from '../service';
-import { setProfile } from '../../../store/redux/slices/wide-app/modal';
 import AudioSlider from '../audio-slider';
 import { selectCurrentExternalVideo } from '../../../store/redux/slices/external-video-meetings';
 import ExpandedCard from '../../expandable-card';
@@ -46,7 +44,7 @@ const MiniAudioPlayer = () => {
       <ExpandedCard
         content={(
           <Styled.PlayIcon />
-      )}
+        )}
         expandedContent={(
           <Styled.Card>
             <AudioSlider
@@ -56,7 +54,7 @@ const MiniAudioPlayer = () => {
               isPlayingFromServer={currEvent === 'play' || externalVideoStream?.id?.state === 1}
             />
           </Styled.Card>
-          )}
+        )}
         expandableHeight={180}
         clickableWidth={48}
       />

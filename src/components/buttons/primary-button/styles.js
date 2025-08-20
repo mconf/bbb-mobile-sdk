@@ -1,7 +1,5 @@
 import styled from 'styled-components/native';
-import { css } from 'styled-components';
 import Colors from '../../../constants/colors';
-// import Pressable from '../pressable';
 
 const LoadingContainer = styled.View`
   display: flex;

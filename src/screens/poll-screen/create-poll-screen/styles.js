@@ -72,14 +72,14 @@ const SeePublishPollsButton = ({
 const Title = styled.Text`
   font-size: 24px;
   font-weight: 600;
-  color: ${Colors.white}
+  color: ${Colors.white};
 `;
 
 const AnswerTitle = styled.Text`
   font-weight: 500;
   font-size: 18px;
   height: 24px;
-  color: ${Colors.white}
+  color: ${Colors.white};
 `;
 
 const TextInput = styled(textInput)``;
@@ -117,16 +117,16 @@ const HeaderContainer = styled.View`
 const LabelText = styled.Text`
   font-weight: 400;
   font-size: 16px;
-  color: ${Colors.white}
+  color: ${Colors.white};
   flex: 1;
 `;
 
 const DescLabelText = styled.Text`
   font-weight: 400;
   font-size: 12px;
-  color: ${Colors.white}
+  color: ${Colors.white};
   ${({ showText }) => !showText
-  && `
+    && `
     display: none;
   `}
 `;
@@ -141,7 +141,6 @@ const ToggleOptionsContainer = styled.View`
 const ContainerLabelText = styled.View`
   flex: 1;
   gap: 4px;
-  
 `;
 
 const ToggleOptionsLabel = ({
@@ -155,7 +154,7 @@ const ToggleOptionsLabel = ({
     />
     <ContainerLabelText>
       <LabelText numberOfLines={2}>{children}</LabelText>
-      <DescLabelText showText={enableText && value}>{enableText}</DescLabelText>
+      <DescLabelText showText={enableText && value ? enableText : null}>{enableText}</DescLabelText>
     </ContainerLabelText>
   </ToggleOptionsContainer>
 );
