@@ -8,6 +8,7 @@ import { hide } from '../../../store/redux/slices/wide-app/modal';
 import AudioManager from '../../../services/webrtc/audio-manager';
 import VideoManager from '../../../services/webrtc/video-manager';
 import Styled from './styles';
+import PrimaryButton from '../../../components/buttons/primary-button';
 
 const BreakoutInviteModal = () => {
   const modalCollection = useSelector((state) => state.modal);
@@ -33,14 +34,15 @@ const BreakoutInviteModal = () => {
       <Styled.TitleDesc>
         {`${t('mobileSdk.breakout.inviteModal.moderatorContent')} `}
       </Styled.TitleDesc>
-      <Styled.JoinBreakoutButton
+      <PrimaryButton
+        variant="tertiary"
         onPress={() => {
           navigation.navigate('BreakoutRoomScreen');
           dispatch(hide());
         }}
       >
         {t('mobileSdk.breakout.inviteModal.moderatorButton')}
-      </Styled.JoinBreakoutButton>
+      </PrimaryButton>
     </Styled.Container>
   );
 
@@ -55,14 +57,15 @@ const BreakoutInviteModal = () => {
           {modalCollection.extraInfo.shortName}
         </Styled.RoomName>
       </Styled.TitleDesc>
-      <Styled.JoinBreakoutButton
+      <PrimaryButton
+        variant="tertiary"
         onPress={() => {
           navigation.navigate('BreakoutRoomScreen');
           dispatch(hide());
         }}
       >
         {t('mobileSdk.breakout.inviteModal.button')}
-      </Styled.JoinBreakoutButton>
+      </PrimaryButton>
     </Styled.Container>
   );
 

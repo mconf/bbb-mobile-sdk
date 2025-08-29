@@ -1,10 +1,11 @@
+import { useNavigation } from '@react-navigation/native';
+import LottieView from 'lottie-react-native';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert } from 'react-native';
 import WebView from 'react-native-webview';
-import { useTranslation } from 'react-i18next';
-import LottieView from 'lottie-react-native';
+import PrimaryButton from '../../components/buttons/primary-button';
 import Styled from './styles';
-import { useNavigation } from '@react-navigation/native';
 
 const TransferScreen = (props) => {
   const { transferUrl } = props;
@@ -64,11 +65,12 @@ const TransferScreen = (props) => {
       <Styled.SubtitleText>
         {t('mobileSdk.transfer.subtitle2')}
       </Styled.SubtitleText>
-      <Styled.PressableButton
+      <PrimaryButton
+        variant="tertiary"
         onPress={() => setJoinTransfer(true)}
       >
         {t('mobileSdk.transfer.button.title')}
-      </Styled.PressableButton>
+      </PrimaryButton>
     </Styled.ContainerView>
   );
 };

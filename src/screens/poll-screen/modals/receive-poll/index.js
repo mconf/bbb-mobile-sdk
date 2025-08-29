@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import { useMutation } from '@apollo/client';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Modal } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
-import { useTranslation } from 'react-i18next';
-import { useMutation } from '@apollo/client';
+import PrimaryButton from '../../../../components/buttons/primary-button';
+import Colors from '../../../../constants/colors';
 import { hide } from '../../../../store/redux/slices/wide-app/modal';
-import Styled from './styles';
 import queries from '../../queries';
+import Styled from './styles';
 
 const ReceivePollModal = () => {
   const { t } = useTranslation();
@@ -84,15 +87,15 @@ const ReceivePollModal = () => {
       );
     }
     return activePollObject?.options?.map((option) => (
-      <Styled.OptionsButton
+      <PrimaryButton
         key={option.optionId}
-        selected={selectedAnswers.includes(option.optionId)}
+        variant={selectedAnswers.includes(option.optionId) ? '' : 'secondaryAlt'}
         onPress={() => {
           handleSelectAnswers(option.optionId);
         }}
       >
         {noPollLocale ? option?.optionDesc : t(`app.poll.answer.${option.optionDesc}`.toLowerCase())}
-      </Styled.OptionsButton>
+      </PrimaryButton>
     ));
   };
 
@@ -104,7 +107,9 @@ const ReceivePollModal = () => {
       {handleIsMultipleResponseLabel()}
       <Styled.ButtonsContainer>{handleTypeOfAnswer()}</Styled.ButtonsContainer>
 
-      <Styled.PressableButton
+      <PrimaryButton
+        variant="tertiary"
+        icon={<MaterialCommunityIcons name="send" size={20} color={Colors.white} />}
         disabled={selectedAnswers.length === 0}
         onPress={() => {
           if (activePollObject?.type === 'R-') {
@@ -122,7 +127,7 @@ const ReceivePollModal = () => {
         }}
       >
         {t('mobileSdk.poll.sendAnswer')}
-      </Styled.PressableButton>
+      </PrimaryButton>
     </>
   );
 

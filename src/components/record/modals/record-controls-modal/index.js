@@ -1,12 +1,12 @@
-import { useCallback, useRef, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { Pressable } from 'react-native';
+import { useCallback, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Modal } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
-import { useTranslation } from 'react-i18next';
-import { hide } from '../../../../store/redux/slices/wide-app/modal';
-import ViewerService from '../record-status-modal/service';
 import useSetRecordingStatus from '../../../../graphql/hooks/useSetRecordingStatus';
+import { hide } from '../../../../store/redux/slices/wide-app/modal';
+import PrimaryButton from '../../../buttons/primary-button';
+import ViewerService from '../record-status-modal/service';
 import Styled from './styles';
 
 const RecordControlsModal = () => {
@@ -103,15 +103,21 @@ const RecordControlsModal = () => {
           <Styled.Description>{description}</Styled.Description>
 
           <Styled.ButtonContainer>
-            <Pressable onPress={() => dispatch(hide())}>
-              <Styled.CancelText>{t('app.settings.main.cancel.label')}</Styled.CancelText>
-            </Pressable>
-            <Styled.ConfirmButton
+            <PrimaryButton
+              onPress={() => dispatch(hide())}
+              variant="secondary"
+              mode="darkText"
+              fullWidth={false}
+            >
+              {t('app.settings.main.cancel.label')}
+            </PrimaryButton>
+            <PrimaryButton
               onPress={handleToggleRecording}
-              recording={isRecording}
+              variant="tertiary"
+              fullWidth={false}
             >
               {buttonText}
-            </Styled.ConfirmButton>
+            </PrimaryButton>
           </Styled.ButtonContainer>
         </Styled.ModalContent>
       </Styled.ModalContainer>

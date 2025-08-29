@@ -1,22 +1,23 @@
+import { useSubscription } from '@apollo/client';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import { nativeApplicationVersion, nativeBuildVersion } from 'expo-application';
+import * as Device from 'expo-device';
 import React, {
   useCallback, useState
 } from 'react';
-import { nativeApplicationVersion, nativeBuildVersion } from 'expo-application';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { PORTRAIT, OrientationLocker } from 'react-native-orientation-locker';
 import { useTranslation } from 'react-i18next';
 import { BackHandler, Platform } from 'react-native';
+import { OrientationLocker, PORTRAIT } from 'react-native-orientation-locker';
 import { useSelector } from 'react-redux';
-import * as Device from 'expo-device';
-import axios from 'axios';
-import logger from '../../services/logger';
-import useAppState from '../../hooks/use-app-state';
-import PiPView from './pip-view';
 import Settings from '../../../settings.json';
-import Styled from './styles';
-import Service from './service';
-import { useSubscription } from '@apollo/client';
+import PrimaryButton from '../../components/buttons/primary-button';
+import useAppState from '../../hooks/use-app-state';
+import logger from '../../services/logger';
 import { GET_USER_CURRENT } from '../user-join-screen/queries';
+import PiPView from './pip-view';
+import Service from './service';
+import Styled from './styles';
 
 const POST_ROUTE = Settings.feedback.route;
 const APP_IDENTIFIER = Settings.feedback.custom.appIdentifier;
@@ -152,19 +153,22 @@ const FeedbackScreen = (props) => {
           </Styled.StarsRatingTextContainer>
         </Styled.StarsRatingContainer>
         <Styled.ButtonContainer>
-          <Styled.ConfirmButton
+          <PrimaryButton
             disabled={rating === undefined || rating === 0}
             onPress={handleNextButton}
           >
             {t('app.customFeedback.defaultButtons.next')}
-          </Styled.ConfirmButton>
+          </PrimaryButton>
         </Styled.ButtonContainer>
         <Styled.QuitSessionButtonContainer>
-          <Styled.QuitSessionButton
+          <PrimaryButton
             onPress={() => navigation.navigate('EndSessionScreen')}
+            variant="secondary"
+            mode="text"
+            fullWidth={false}
           >
             {t('app.navBar.settingsDropdown.leaveSessionLabel')}
-          </Styled.QuitSessionButton>
+          </PrimaryButton>
         </Styled.QuitSessionButtonContainer>
       </Styled.ContainerFeedbackCard>
       <OrientationLocker orientation={PORTRAIT} />

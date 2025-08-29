@@ -33,25 +33,6 @@ const LabelOption = styled.Text`
   color: ${Colors.white};
 `;
 
-const ConfirmButton = ({
-  onPress, children, disabled
-}) => {
-  return (
-    <ButtonCreate
-      mode="contained"
-      onPress={onPress}
-      buttonColor={disabled ? Colors.lightGray300 : Colors.orange}
-      textColor={Colors.white}
-      labelStyle={{
-        fontSize: 18,
-        fontWeight: 500,
-      }}
-    >
-      {children}
-    </ButtonCreate>
-  );
-};
-
 const TextInputOther = styled(TextInput)`
   max-height: 150px;
 `;
@@ -65,28 +46,6 @@ const QuitSessionButtonContainer = styled(ButtonContainer)`
   align-items: flex-end;
 `;
 
-const ButtonCreate = styled(Button)`
-`;
-
-const QuitSessionButton = ({
-  onPress, children, disabled
-}) => {
-  return (
-    <ButtonCreate
-      mode="text"
-      disabled={disabled}
-      onPress={onPress}
-      textColor={Colors.white}
-      labelStyle={{
-        fontSize: 16,
-        fontWeight: 400,
-      }}
-    >
-      {children}
-    </ButtonCreate>
-  );
-};
-
 const OptionsContainer = styled.View`
   display: flex;
   align-items: flex-start;
@@ -95,12 +54,10 @@ const OptionsContainer = styled.View`
 `;
 
 export default {
-  ConfirmButton,
   ContainerView,
   Title,
   ButtonContainer,
   QuitSessionButtonContainer,
-  QuitSessionButton,
   OptionsContainer,
   Option,
   TextInputOther,

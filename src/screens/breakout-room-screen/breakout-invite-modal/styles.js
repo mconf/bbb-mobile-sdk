@@ -1,4 +1,3 @@
-import { Button } from 'react-native-paper';
 import styled from 'styled-components/native';
 import Colors from '../../../constants/colors';
 
@@ -35,32 +34,9 @@ const RoomName = styled.Text`
   color: ${Colors.lightGray300};
 `;
 
-const ButtonCreate = styled(Button)`
-`;
-
-const JoinBreakoutButton = ({
-  onPress, children
-}) => {
-  return (
-    <ButtonCreate
-      mode="contained"
-      onPress={onPress}
-      buttonColor={Colors.orange}
-      textColor={Colors.white}
-      labelStyle={{
-        fontSize: 18,
-        fontWeight: 500,
-      }}
-    >
-      {children}
-    </ButtonCreate>
-  );
-};
-
 export default {
   Container,
   TitleModal,
   TitleDesc,
-  JoinBreakoutButton,
   RoomName
 };

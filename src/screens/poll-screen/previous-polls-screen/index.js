@@ -12,6 +12,9 @@ import Styled from './styles';
 import useCurrentPoll from '../../../graphql/hooks/useCurrentPoll';
 import usePublishedPolls from '../../../graphql/hooks/usePublishedPolls';
 import Queries from '../queries';
+import PrimaryButton from '../../../components/buttons/primary-button';
+import Colors from '../../../constants/colors';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const PreviousPollScreen = () => {
   const { t } = useTranslation();
@@ -36,17 +39,24 @@ const PreviousPollScreen = () => {
     }
 
     return (
-      <Styled.PressableButton
-        onPress={() => navigation.navigate('CreatePollScreen')}
-        onPressDisabled={() => dispatch(
-          setProfile({
-            profile: 'create_poll_permission',
-          })
-        )}
-        disabled={!amIPresenter}
+      <PrimaryButton
+        onPress={() => {
+          if (!amIPresenter) {
+            dispatch(
+              setProfile({
+                profile: 'create_poll_permission',
+              })
+            );
+          } else {
+            navigation.navigate('CreatePollScreen');
+          }
+        }}
+        variant="tertiary"
+        fullWidth={false}
+        icon={<MaterialCommunityIcons name="plus" size={20} color={Colors.white} />}
       >
         {t('mobileSdk.poll.createLabel')}
-      </Styled.PressableButton>
+      </PrimaryButton>
     );
   };
 
