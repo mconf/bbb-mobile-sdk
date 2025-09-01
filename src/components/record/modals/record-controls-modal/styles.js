@@ -1,5 +1,4 @@
 import styled from 'styled-components/native';
-import { Button } from 'react-native-paper';
 import { View, Text, TouchableOpacity } from 'react-native';
 import Icon from '@expo/vector-icons/MaterialIcons';
 import Colors from '../../../../constants/colors';
@@ -20,39 +19,6 @@ const ModalBottom = styled(View)`
   display: flex;
   flex-direction: row;
   align-items: flex-end;
-`;
-
-const CloseButton = styled(Icon)`
-  padding: 0px;
-  margin: 0px;
-`;
-
-const ButtonCreate = styled(Button)`
-  margin-left: 8px;
-`;
-
-const ConfirmButton = ({
-  onPress, children
-}) => {
-  return (
-    <ButtonCreate
-      mode="contained"
-      onPress={onPress}
-      buttonColor={Colors.orange}
-      textColor={Colors.white}
-      labelStyle={{
-        fontSize: 18,
-        fontWeight: 500,
-      }}
-    >
-      {children}
-    </ButtonCreate>
-  );
-};
-
-const CloseButtonText = styled(Text)`
-  font-size: 18px;
-  font-weight: bold;
 `;
 
 const ModalContent = styled(View)`
@@ -81,12 +47,6 @@ const ButtonContainer = styled(View)`
   display: flex;
   justify-content: flex-end;
   align-items: center;
-`;
-
-const ButtonText = styled(Text)`
-  color: white;
-  font-weight: 18px;
-  font-weight: 500;
 `;
 
 const CancelButton = styled(TouchableOpacity)`
@@ -126,15 +86,10 @@ export default {
   ModalContainer,
   ModalTop,
   ModalBottom,
-  CloseButton,
-  CloseButtonText,
-  ConfirmButton,
   ModalContent,
   Title,
   Description,
   ButtonContainer,
-  Button,
-  ButtonText,
   CancelButton,
   CancelText,
   TimeText,

@@ -1,11 +1,12 @@
+import { useMutation } from '@apollo/client';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Platform } from 'react-native';
-import { useMutation } from '@apollo/client';
+import PrimaryButton from '../../../components/buttons/primary-button';
 import ScreenWrapper from '../../../components/screen-wrapper';
-import Styled from './styles';
 import useCurrentPoll from '../../../graphql/hooks/useCurrentPoll';
 import queries from '../queries';
+import Styled from './styles';
 
 const AnswerPollScreen = () => {
   const [selectedAnswers, setSelectedAnswers] = useState([]);
@@ -82,15 +83,16 @@ const AnswerPollScreen = () => {
       );
     }
     return activePollObject?.options?.map((option) => (
-      <Styled.OptionsButton
+      <PrimaryButton
         key={option.optionId}
-        selected={selectedAnswers.includes(option.optionId)}
+        variant={selectedAnswers.includes(option.optionId) ? 'primary' : 'secondaryAlt'}
+        mode="pollOptions"
         onPress={() => {
           handleSelectAnswers(option.optionId);
         }}
       >
         {noPollLocale ? option?.optionDesc : t(`app.poll.answer.${option.optionDesc}`.toLowerCase())}
-      </Styled.OptionsButton>
+      </PrimaryButton>
     ));
   };
 
@@ -101,7 +103,8 @@ const AnswerPollScreen = () => {
       {handleIsMultipleResponseLabel()}
       <Styled.ButtonsContainer>{handleTypeOfAnswer()}</Styled.ButtonsContainer>
 
-      <Styled.ConfirmButton
+      <PrimaryButton
+        variant="tertiary"
         onPress={() => {
           if (activePollObject?.type === 'R-') {
             handleTypedVote(
@@ -117,7 +120,7 @@ const AnswerPollScreen = () => {
         }}
       >
         {t('mobileSdk.poll.sendAnswer')}
-      </Styled.ConfirmButton>
+      </PrimaryButton>
     </>
   );
 

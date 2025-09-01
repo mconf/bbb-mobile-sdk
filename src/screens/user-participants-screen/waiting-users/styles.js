@@ -1,7 +1,6 @@
 import styled from 'styled-components/native';
 import { Divider } from 'react-native-paper';
 import Colors from '../../../constants/colors';
-import button from '../../../components/button';
 import userAvatar from '../../../components/user-avatar';
 import iconButton from '../../../components/icon-button';
 
@@ -16,7 +15,7 @@ const ContainerView = styled.View`
   padding-bottom: 20px;
 
   ${({ orientation }) => orientation === 'LANDSCAPE'
-  && `
+    && `
     flex-direction: row;
     justify-content: center;
     padding: 10px;
@@ -52,7 +51,7 @@ const WaitingUsersView = styled.View`
   display: flex;
 
   ${({ orientation }) => orientation === 'LANDSCAPE'
-  && `
+    && `
     width: 90%;
     max-height: 90%;
   `}
@@ -90,23 +89,7 @@ const AccRejContainer = styled.View`
   flex-direction: row;
   justify-content: center;
   padding: 16px;
-`;
-
-const AccRejButtons = styled(button)`
-  background-color: ${Colors.white};
-  font-size: 16px;
-  font-weight: 400;
-  padding: 12px;
-  padding-bottom: 12px;
-  border-radius: 40px;
-`;
-
-const AccRejButtonsText = styled.Text`
-  color: ${Colors.lightGray400};
-  font-size: 16px;
-  font-weight: 500;
-  padding: 12px;
-  border-radius: 40px;
+  gap: 4px
 `;
 
 const NoPendingUsersText = styled.Text`
@@ -143,8 +126,6 @@ export default {
   FlatList,
   UserCard,
   AccRejContainer,
-  AccRejButtons,
-  AccRejButtonsText,
   NoPendingUsersText,
   BackIcon,
   AllowButton,

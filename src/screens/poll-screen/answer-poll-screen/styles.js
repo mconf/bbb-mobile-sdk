@@ -1,51 +1,8 @@
 import styled from 'styled-components/native';
-import { Button } from 'react-native-paper';
 import textInput from '../../../components/text-input';
 import Colors from '../../../constants/colors';
 
 const ButtonsContainer = styled.View``;
-
-const ButtonCreate = styled(Button)`
-  margin: 4px 0;
-`;
-
-const ConfirmButton = ({
-  onPress, children
-}) => {
-  return (
-    <ButtonCreate
-      mode="contained"
-      onPress={onPress}
-      buttonColor={Colors.orange}
-      textColor={Colors.white}
-      labelStyle={{
-        fontSize: 18,
-        fontWeight: 500,
-      }}
-    >
-      {children}
-    </ButtonCreate>
-  );
-};
-
-const OptionsButton = ({
-  onPress, children, selected
-}) => {
-  return (
-    <ButtonCreate
-      mode="contained"
-      onPress={onPress}
-      buttonColor={selected ? Colors.blue : Colors.white}
-      textColor={selected ? Colors.white : Colors.lightGray400}
-      labelStyle={{
-        fontSize: 18,
-        fontWeight: 500,
-      }}
-    >
-      {children}
-    </ButtonCreate>
-  );
-};
 
 const Title = styled.Text`
   font-size: 24px;
@@ -86,9 +43,7 @@ const ContainerView = styled.View`
 
 export default {
   Title,
-  OptionsButton,
   ButtonsContainer,
-  ConfirmButton,
   TextInput,
   SecretLabel,
   ContainerViewPadding,

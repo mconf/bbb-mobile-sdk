@@ -1,8 +1,7 @@
-import styled from 'styled-components/native';
 import { Divider } from 'react-native-paper';
-import Colors from '../../../constants/colors';
-import button from '../../../components/button';
+import styled from 'styled-components/native';
 import iconButton from '../../../components/icon-button';
+import Colors from '../../../constants/colors';
 
 const ContainerView = styled.View`
   width: 100%;
@@ -54,21 +53,6 @@ const GuestPolicyView = styled.View`
   `}
 `;
 
-const OptionsButton = styled(button)`
-  background-color: ${Colors.white}
-  color: ${Colors.lightGray400};
-  font-size: 16px;
-  font-weight: 500;
-  padding: 12px;
-  border-radius: 12px;
-
-  ${({ selected }) => selected
-    && `
-      background-color: ${Colors.blue};
-      color: ${Colors.white};
-  `}
-`;
-
 const OptionsButtonsContainer = styled.View`
   margin-top: 24px;
   margin-bottom: 12px;
@@ -85,7 +69,6 @@ export default {
   GuestPolicyTop,
   GuestPolicyTopText,
   DividerTop,
-  OptionsButton,
   OptionsButtonsContainer,
   BackIcon
 };

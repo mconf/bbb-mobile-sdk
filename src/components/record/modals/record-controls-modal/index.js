@@ -1,13 +1,12 @@
-import { useCallback, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { Pressable } from 'react-native';
+import { useCallback, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Modal } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
-import { useTranslation } from 'react-i18next';
+import useSetRecordingStatus from '../../../../graphql/hooks/useSetRecordingStatus';
 import { hide } from '../../../../store/redux/slices/wide-app/modal';
-import { selectRecordMeeting } from '../../../../store/redux/slices/record-meetings';
+import PrimaryButton from '../../../buttons/primary-button';
 import ViewerService from '../record-status-modal/service';
-import Service from './service';
 import Styled from './styles';
 
 const RecordControlsModal = () => {
@@ -83,15 +82,21 @@ const RecordControlsModal = () => {
           </Styled.DividerContainer>
           <Styled.Description>{description}</Styled.Description>
           <Styled.ButtonContainer>
-            <Pressable onPress={() => dispatch(hide())}>
-              <Styled.CancelText>{t('app.settings.main.cancel.label')}</Styled.CancelText>
-            </Pressable>
-            <Styled.ConfirmButton
-              onPress={handleToggleRecording}
-              recording={recordMeeting?.recording}
+            <PrimaryButton
+              onPress={() => dispatch(hide())}
+              variant="secondary"
+              mode="darkText"
+              fullWidth={false}
             >
-              {title.split(' ')[0]}
-            </Styled.ConfirmButton>
+              {t('app.settings.main.cancel.label')}
+            </PrimaryButton>
+            <PrimaryButton
+              onPress={handleToggleRecording}
+              variant="tertiary"
+              fullWidth={false}
+            >
+              {buttonText}
+            </PrimaryButton>
           </Styled.ButtonContainer>
         </Styled.ModalContent>
       </Styled.ModalContainer>

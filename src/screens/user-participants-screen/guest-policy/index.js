@@ -1,13 +1,14 @@
 import { useMutation, useSubscription } from '@apollo/client';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useOrientation } from '../../../hooks/use-orientation';
+import PrimaryButton from '../../../components/buttons/primary-button';
 import ScreenWrapper from '../../../components/screen-wrapper';
-import Styled from './styles';
 import Colors from '../../../constants/colors';
-import useCurrentUser from '../../../graphql/hooks/useCurrentUser'
+import useCurrentUser from '../../../graphql/hooks/useCurrentUser';
 import { SET_POLICY } from '../../../graphql/mutations/guestPolicy';
 import { GET_POLICY } from '../../../graphql/queries/guestSubscription';
+import { useOrientation } from '../../../hooks/use-orientation';
+import Styled from './styles';
 
 const guestPolicies = {
   ASK_MODERATOR: 'ASK_MODERATOR',
@@ -59,33 +60,33 @@ const GuestPolicyScreen = ({ navigation }) => {
           </Styled.GuestPolicyTop>
           <Styled.DividerTop />
           <Styled.OptionsButtonsContainer>
-            <Styled.OptionsButton
-              selected={guestPolicy === guestPolicies.ASK_MODERATOR}
-              disabled={guestPolicy === guestPolicies.ASK_MODERATOR}
+            <PrimaryButton
+              variant={guestPolicy === guestPolicies.ASK_MODERATOR ? '' : 'secondaryAlt'}
+              mode="pollOptions"
               onPress={() => {
                 handleDispatchSetPolicy(guestPolicies.ASK_MODERATOR);
               }}
             >
               {t('app.guest-policy.button.askModerator')}
-            </Styled.OptionsButton>
-            <Styled.OptionsButton
-              selected={guestPolicy === guestPolicies.ALWAYS_ACCEPT}
-              disabled={guestPolicy === guestPolicies.ALWAYS_ACCEPT}
+            </PrimaryButton>
+            <PrimaryButton
+              variant={guestPolicy === guestPolicies.ALWAYS_ACCEPT ? '' : 'secondaryAlt'}
+              mode="pollOptions"
               onPress={() => {
                 handleDispatchSetPolicy(guestPolicies.ALWAYS_ACCEPT);
               }}
             >
               {t('app.userList.guest.allowEveryone')}
-            </Styled.OptionsButton>
-            <Styled.OptionsButton
-              selected={guestPolicy === guestPolicies.ALWAYS_DENY}
-              disabled={guestPolicy === guestPolicies.ALWAYS_DENY}
+            </PrimaryButton>
+            <PrimaryButton
+              variant={guestPolicy === guestPolicies.ALWAYS_DENY ? '' : 'secondaryAlt'}
+              mode="pollOptions"
               onPress={() => {
                 handleDispatchSetPolicy(guestPolicies.ALWAYS_DENY);
               }}
             >
               {t('app.userList.guest.denyEveryone')}
-            </Styled.OptionsButton>
+            </PrimaryButton>
           </Styled.OptionsButtonsContainer>
         </Styled.GuestPolicyView>
       </Styled.ContainerView>
