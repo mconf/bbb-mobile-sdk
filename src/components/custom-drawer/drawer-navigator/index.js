@@ -11,7 +11,6 @@ import MainConferenceScreen from '../../../screens/main-conference-screen';
 import SelectLanguageScreen from '../../../screens/select-language-screen';
 import InsideBreakoutRoomScreen from '../../../screens/inside-breakout-room-screen';
 import FullscreenWrapperScreen from '../../../screens/fullscreen-wrapper-screen';
-import RecordingIndicator from '../../record/record-indicator';
 import UserNotesScreen from '../../../screens/user-notes-screen';
 // components
 import CustomDrawer from '../index';
@@ -30,7 +29,6 @@ const DrawerNavigator = ({
   const { t } = useTranslation();
   const { data: meetingData } = useMeeting();
   const meetingName = meetingData?.meeting[0]?.name;
-  const recordMeeting = false; // get the data from the meeting
   const isBreakout = meetingData?.meeting[0]?.isBreakout;
 
   useModalListener();
@@ -87,9 +85,6 @@ const DrawerNavigator = ({
             title: meetingName || t('mobileSdk.meeting.label'),
             unmountOnBlur: true,
             headerShown: appState !== 'background',
-            headerRight: () => (
-              <RecordingIndicator recordMeeting={recordMeeting} />
-            ),
             drawerIcon: (config) => (
               <Styled.DrawerIcon
                 icon="home"
@@ -107,9 +102,6 @@ const DrawerNavigator = ({
             options={{
               title: t('mobileSdk.poll.label'),
               unmountOnBlur: true,
-              headerRight: () => (
-                <RecordingIndicator recordMeeting={recordMeeting} />
-              ),
               drawerIcon: (config) => (
                 <Styled.DrawerIcon
                   icon="poll"
@@ -127,9 +119,6 @@ const DrawerNavigator = ({
           options={{
             title: t('app.userList.label'),
             unmountOnBlur: true,
-            headerRight: () => (
-              <RecordingIndicator recordMeeting={recordMeeting} />
-            ),
             drawerIcon: (config) => (
               <Styled.DrawerIcon
                 icon="account-multiple-outline"
@@ -146,9 +135,6 @@ const DrawerNavigator = ({
           options={{
             title: t('mobileSdk.locales.label'),
             unmountOnBlur: true,
-            headerRight: () => (
-              <RecordingIndicator recordMeeting={recordMeeting} />
-            ),
             drawerIcon: (config) => (
               <Styled.DrawerIcon
                 icon="web"
