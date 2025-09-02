@@ -1,6 +1,5 @@
 import styled from 'styled-components/native';
 import { Slider } from '@miblanchard/react-native-slider';
-import { Button } from 'react-native-paper';
 import Colors from '../../constants/colors';
 
 const ContainerView = styled.View`
@@ -32,25 +31,6 @@ const Title = styled.Text`
   font-weight: 500;
 `;
 
-const ConfirmButton = ({
-  onPress, children, disabled
-}) => {
-  return (
-    <ButtonCreate
-      mode="contained"
-      onPress={disabled ? null : onPress}
-      buttonColor={disabled ? Colors.lightGray300 : Colors.orange}
-      textColor={Colors.white}
-      labelStyle={{
-        fontSize: 18,
-        fontWeight: 500,
-      }}
-    >
-      {children}
-    </ButtonCreate>
-  );
-};
-
 const Subtitle = styled.Text`
   color: ${Colors.white};
   font-size: 16px;
@@ -65,28 +45,6 @@ const QuitSessionButtonContainer = styled(ButtonContainer)`
   display: flex;
   align-items: flex-end;
 `;
-
-const ButtonCreate = styled(Button)`
-`;
-
-const QuitSessionButton = ({
-  onPress, children, disabled
-}) => {
-  return (
-    <ButtonCreate
-      mode="text"
-      disabled={disabled}
-      onPress={onPress}
-      textColor={Colors.white}
-      labelStyle={{
-        fontSize: 16,
-        fontWeight: 400,
-      }}
-    >
-      {children}
-    </ButtonCreate>
-  );
-};
 
 const StarsRatingContainer = styled.View`
   width: 80%;
@@ -168,14 +126,12 @@ const StarRatingComponent = ({ value, onValueChange }) => (
 );
 
 export default {
-  ConfirmButton,
   ContainerView,
   ContainerFeedbackCard,
   Title,
   Subtitle,
   ButtonContainer,
   QuitSessionButtonContainer,
-  QuitSessionButton,
   StarsRatingContainer,
   StarsRatingTextContainer,
   StarsRatingText,

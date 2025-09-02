@@ -311,7 +311,7 @@ const TimerScreen = () => {
           {running ? t("mobileSdk.timer.stop") : t("mobileSdk.timer.start")}
         </PrimaryButton>
         <PrimaryButton
-          variant={"secondary"}
+          variant={"secondaryAlt"}
           mode={"outlined"}
           onPress={() => {
             timerStop();

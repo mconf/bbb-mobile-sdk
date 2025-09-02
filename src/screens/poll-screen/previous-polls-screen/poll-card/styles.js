@@ -166,52 +166,17 @@ const UserAnswerComponent = ({ userId, userName, userAnswers }) => {
   );
 };
 
-const ButtonCreate = styled(Pressable).attrs(() => ({
-  pressStyle: {
-    opacity: 0.8,
-  },
-  inlineStyles: {
-    borderBottomLeftRadius: 8,
-    borderBottomRightRadius: 8,
-  }
-}))`
-  ${() => css`
+const ButtonContainer = styled.View`
   height: 40px;
-  
   position: absolute;
   bottom: 0;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-    ${({ buttonColor }) => buttonColor
-      && `
-      background-color: ${buttonColor};
-    `}
-  `}
+  border-radius: 0 0 8px 8px;
+  background-color: ${({ buttonColor }) => buttonColor ? Colors.lightGray300 : Colors.blue};
 `;
-
-const PressableButton = ({
-  onPress, disabled, onPressDisabled, children
-}) => {
-  return (
-    <ButtonCreate
-      onPress={disabled ? onPressDisabled : onPress}
-      buttonColor={disabled ? Colors.lightGray300 : Colors.blue}
-      disabled={disabled}
-    >
-      <Text
-        style={{
-          fontSize: 14,
-          fontWeight: 500,
-          color: Colors.white,
-        }}
-      >
-        {children}
-      </Text>
-    </ButtonCreate>
-  );
-};
 
 export default {
   ContainerPollCard,
@@ -223,7 +188,7 @@ export default {
   CustomDivider,
   PollInfoLabelContainer,
   PollInfoText,
-  PressableButton,
+  ButtonContainer,
   BlankSpaceForButton,
   PresenterContainerOptions,
   MinimizeAnswersText,

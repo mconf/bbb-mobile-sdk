@@ -9,13 +9,16 @@ import { editSecretPoll } from '../../../store/redux/slices/current-poll';
 import ScreenWrapper from '../../../components/screen-wrapper';
 import Styled from './styles';
 import queries from '../queries';
+import PrimaryButton from '../../../components/buttons/primary-button';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import Colors from '../../../constants/colors';
 
 const CreatePoll = () => {
   // Create poll states
   const [questionTextInput, setQuestionTextInput] = useState('');
   const [answerTypeSelected, setAnswerTypeSelected] = useState('TF');
   const [secretPoll, setSecretPoll] = useState(false);
-  const [isMultipleResponse, setIsMultipleResponse] = useState(false);
+  const [multipleResponse, setMultipleResponse] = useState(false);
 
   const [createPoll] = useMutation(queries.POLL_CREATE);
   const { t } = useTranslation();
@@ -29,7 +32,8 @@ const CreatePoll = () => {
         pollId: `${questionTextInput}/${new Date().getTime()}`,
         secretPoll,
         question: questionTextInput,
-        isMultipleResponse,
+        multipleResponse,
+        quiz: false,
         answers: []
       },
     });
@@ -40,7 +44,7 @@ const CreatePoll = () => {
   const renderMethod = () => (
     <>
       <Styled.HeaderContainer>
-        <Styled.IconPoll />
+        <MaterialCommunityIcons name="poll" size={20} color={Colors.white} />
         <Styled.Title>{t('mobileSdk.poll.createLabel')}</Styled.Title>
       </Styled.HeaderContainer>
       <Styled.TextInput
@@ -51,45 +55,49 @@ const CreatePoll = () => {
       />
       <Styled.ButtonsContainer>
         <Styled.AnswerTitle>{t('app.poll.responseTypes.label')}</Styled.AnswerTitle>
-        <Styled.OptionsButton
-          selected={answerTypeSelected === 'TF'}
+        <PrimaryButton
+          variant={answerTypeSelected === 'TF' ? 'primary' : 'secondaryAlt'}
+          mode="pollOptions"
           onPress={() => {
             setAnswerTypeSelected('TF');
           }}
         >
           {t('app.poll.tf')}
-        </Styled.OptionsButton>
-        <Styled.OptionsButton
-          selected={answerTypeSelected === 'A-4'}
+        </PrimaryButton>
+        <PrimaryButton
+          variant={answerTypeSelected === 'A-4' ? 'primary' : 'secondaryAlt'}
+          mode="pollOptions"
           onPress={() => {
             setAnswerTypeSelected('A-4');
           }}
         >
           {t('app.poll.a4')}
-        </Styled.OptionsButton>
-        <Styled.OptionsButton
-          selected={answerTypeSelected === 'YNA'}
+        </PrimaryButton>
+        <PrimaryButton
+          variant={answerTypeSelected === 'YNA' ? 'primary' : 'secondaryAlt'}
+          mode="pollOptions"
           onPress={() => {
             setAnswerTypeSelected('YNA');
           }}
         >
           {t('app.poll.yna')}
-        </Styled.OptionsButton>
-        <Styled.OptionsButton
-          selected={answerTypeSelected === 'R-'}
+        </PrimaryButton>
+        <PrimaryButton
+          variant={answerTypeSelected === 'R-' ? 'primary' : 'secondaryAlt'}
+          mode="pollOptions"
           onPress={() => {
             setAnswerTypeSelected('R-');
           }}
         >
           {t('app.poll.userResponse.label')}
-        </Styled.OptionsButton>
+        </PrimaryButton>
       </Styled.ButtonsContainer>
       <Styled.AnswerTitle>
         {t('mobileSdk.poll.createPoll.responseOptions')}
       </Styled.AnswerTitle>
       <Styled.ToggleOptionsLabel
-        value={isMultipleResponse}
-        onValueChange={(val) => setIsMultipleResponse(val)}
+        value={multipleResponse}
+        onValueChange={(val) => setMultipleResponse(val)}
       >
         {t('mobileSdk.poll.createPoll.allowMultipleResponse')}
       </Styled.ToggleOptionsLabel>
@@ -103,16 +111,21 @@ const CreatePoll = () => {
       >
         {t('mobileSdk.poll.createPoll.anonymousPoll')}
       </Styled.ToggleOptionsLabel>
-      <Styled.ConfirmButton
+      <PrimaryButton
+        variant="tertiary"
+        mode="pollOptions"
         onPress={handleCreatePoll}
       >
         {t('app.poll.start.label')}
-      </Styled.ConfirmButton>
-      <Styled.SeePublishPollsButton
+      </PrimaryButton>
+      <PrimaryButton
+        variant="tertiary"
+        mode="pollOptions"
+        icon={<MaterialCommunityIcons name="poll" size={20} color={Colors.white} />}
         onPress={() => navigation.navigate('PreviousPollsScreen')}
       >
         {t('mobileSdk.poll.previousPolls.label')}
-      </Styled.SeePublishPollsButton>
+      </PrimaryButton>
     </>
   );
 

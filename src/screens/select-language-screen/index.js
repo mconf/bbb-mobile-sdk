@@ -4,6 +4,7 @@ import { useOrientation } from '../../hooks/use-orientation';
 import ScreenWrapper from '../../components/screen-wrapper';
 import logger from '../../services/logger';
 import Styled from './styles';
+import PrimaryButton from '../../components/buttons/primary-button';
 
 const SelectLanguageScreen = () => {
   const orientation = useOrientation();
@@ -41,12 +42,12 @@ const SelectLanguageScreen = () => {
 
   const renderItem = ({ item }) => {
     return (
-      <Styled.OptionsButton
+      <PrimaryButton
         onPress={() => changeLanguage(item.id)}
-        selected={item.id === i18n.language}
+        variant={item.id === i18n.language ? 'primary' : 'secondaryAlt'}
       >
         {item.title}
-      </Styled.OptionsButton>
+      </PrimaryButton>
     );
   };
 

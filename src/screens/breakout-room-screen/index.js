@@ -18,6 +18,7 @@ import {
   FIRST_BREAKOUT_DURATION_DATA_SUBSCRIPTION
 } from './queries.js'
 import { setMainRoomBlockedByBreakout } from '../../store/redux/slices/wide-app/client';
+import PrimaryButton from '../../components/buttons/primary-button';
 
 const DEVICE_HEIGHT = parseInt(Dimensions.get("window").height, 10);
 const DEVICE_WIDTH = parseInt(Dimensions.get("window").width, 10);
@@ -180,7 +181,8 @@ const BreakoutRoomScreen = () => {
               })}
 
               <Styled.ButtonContainer>
-                <Styled.JoinBreakoutButton
+                <PrimaryButton
+                  variant="tertiary"
                   onPress={() =>
                     handleJoinButton(item.breakoutRoomId, item.joinURL)
                   }
@@ -189,7 +191,7 @@ const BreakoutRoomScreen = () => {
                   {item.joinURL
                     ? t("mobileSdk.breakout.join")
                     : t("mobileSdk.breakout.askToJoin")}
-                </Styled.JoinBreakoutButton>
+                </PrimaryButton>
               </Styled.ButtonContainer>
             </>
           }

@@ -1,17 +1,20 @@
-import React, { useCallback, useState } from 'react';
-import {
-  BackHandler, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard
-} from 'react-native';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useHeaderHeight } from '@react-navigation/elements';
-import { useTranslation } from 'react-i18next';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import axios from 'axios';
-import logger from '../../../services/logger';
+import React, { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import {
+  BackHandler,
+  Keyboard,
+  KeyboardAvoidingView, Platform, TouchableWithoutFeedback
+} from 'react-native';
 import Settings from '../../../../settings.json';
+import PrimaryButton from '../../../components/buttons/primary-button';
 import Colors from '../../../constants/colors';
-import Styled from './styles';
-import Service from '../service';
+import logger from '../../../services/logger';
 import customFeedbackData from '../customFeedback.json';
+import Service from '../service';
+import Styled from './styles';
 
 const POST_ROUTE = Settings.feedback.custom.route;
 
@@ -228,20 +231,24 @@ const SpecificProblemFeedbackScreen = ({ route }) => {
         </KeyboardAvoidingView>
 
         <Styled.ButtonContainer>
-          <Styled.ConfirmButton
+          <PrimaryButton
             disabled={!activateSendProblem()}
             onPress={handleSendProblem}
+            variant="tertiary"
           >
             {t('app.customFeedback.defaultButtons.next')}
-          </Styled.ConfirmButton>
+          </PrimaryButton>
         </Styled.ButtonContainer>
 
         <Styled.QuitSessionButtonContainer>
-          <Styled.QuitSessionButton
-            onPress={handleSkip}
+          <PrimaryButton
+            onpress={handleSkip}
+            fullWidth={false}
+            variant="secondary"
+            mode="text"
           >
             {skipButton}
-          </Styled.QuitSessionButton>
+          </PrimaryButton>
         </Styled.QuitSessionButtonContainer>
       </Styled.ContainerView>
     </TouchableWithoutFeedback>

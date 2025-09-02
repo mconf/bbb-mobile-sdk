@@ -1,5 +1,4 @@
 import styled from 'styled-components/native';
-import { Button } from 'react-native-paper';
 import Colors from '../../../../constants/colors';
 
 const Container = styled.View`
@@ -24,47 +23,6 @@ const TitleDesc = styled.Text`
   color: ${Colors.lightGray300};
 `;
 
-const ButtonCreate = styled(Button)`
-`;
-
-const MakePresenterButton = ({
-  onPress, children, disabled, onPressDisabled
-}) => {
-  return (
-    <ButtonCreate
-      mode="contained"
-      onPress={disabled ? onPressDisabled : onPress}
-      buttonColor={disabled ? Colors.lightGray300 : Colors.orange}
-      textColor={Colors.white}
-      labelStyle={{
-        fontSize: 18,
-        fontWeight: 500,
-      }}
-    >
-      {children}
-    </ButtonCreate>
-  );
-};
-
-const OkButton = ({
-  onPress, children, disabled, onPressDisabled
-}) => {
-  return (
-    <ButtonCreate
-      mode="contained"
-      onPress={disabled ? onPressDisabled : onPress}
-      buttonColor={disabled ? Colors.lightGray300 : Colors.orange}
-      textColor={Colors.white}
-      labelStyle={{
-        fontSize: 18,
-        fontWeight: 500,
-      }}
-    >
-      {children}
-    </ButtonCreate>
-  );
-};
-
 const ButtonContainer = styled.View`
   width: 100%;
   display: flex;
@@ -77,7 +35,5 @@ export default {
   Container,
   TitleModal,
   TitleDesc,
-  MakePresenterButton,
-  OkButton,
   ButtonContainer
 };

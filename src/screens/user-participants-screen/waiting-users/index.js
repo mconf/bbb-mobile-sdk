@@ -1,5 +1,5 @@
 import { useMutation } from '@apollo/client';
-import { useEffect  } from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useOrientation } from '../../../hooks/use-orientation';
 import ScreenWrapper from '../../../components/screen-wrapper';
@@ -8,6 +8,7 @@ import Colors from '../../../constants/colors';
 import { SUBMIT_APPROVAL_STATUS } from '../../../graphql/mutations/guestPolicy';
 import useGuestWaitingList from '../../../graphql/hooks/useGuestWaitingList'
 import useCurrentUser from '../../../graphql/hooks/useCurrentUser'
+import PrimaryButton from '../../../components/buttons/primary-button';
 
 const ALLOW_STATUS = 'ALLOW';
 const DENY_STATUS = 'DENY';
@@ -51,14 +52,14 @@ const WaitingUsersScreen = ({ navigation }) => {
           iconColor={Colors.green}
           animated
           size={32}
-          onPress={() => {handleDispatchSubmitApprovalStatus(pendingUsers[index], ALLOW_STATUS)}}
+          onPress={() => { handleDispatchSubmitApprovalStatus(pendingUsers[index], ALLOW_STATUS) }}
         />
         <Styled.DenyButton
           icon="close-circle-outline"
           iconColor={Colors.red}
           animated
           size={32}
-          onPress={() => {handleDispatchSubmitApprovalStatus(pendingUsers[index], DENY_STATUS)}}
+          onPress={() => { handleDispatchSubmitApprovalStatus(pendingUsers[index], DENY_STATUS) }}
         />
       </Styled.UserCard>
     );
@@ -89,28 +90,30 @@ const WaitingUsersScreen = ({ navigation }) => {
           </Styled.WaitingUsersTop>
           <Styled.DividerTop />
           <Styled.AccRejContainer>
-            <Styled.AccRejButtons>
-              <Styled.AccRejButtonsText
-                disabled={pendingUsers?.length === 0}
-                onPress={() => {
-                  handleDispatchSubmitApprovalStatus(pendingUsers, ALLOW_STATUS)
-                  navigation.goBack();
-                }}
-              >
-                {t('app.userList.guest.allowEveryone')}
-              </Styled.AccRejButtonsText>
-            </Styled.AccRejButtons>
-            <Styled.AccRejButtons>
-              <Styled.AccRejButtonsText
-                disabled={pendingUsers?.length === 0}
-                onPress={() => {
-                  handleDispatchSubmitApprovalStatus(pendingUsers, DENY_STATUS)
-                  navigation.goBack();
-                }}
-              >
-                {t('app.userList.guest.denyEveryone')}
-              </Styled.AccRejButtonsText>
-            </Styled.AccRejButtons>
+            <PrimaryButton
+              variant="secondaryAlt"
+              mode="pollOptions"
+              fullWidth={false}
+              disabled={pendingUsers?.length === 0}
+              onPress={() => {
+                handleDispatchSubmitApprovalStatus(pendingUsers, ALLOW_STATUS)
+                navigation.goBack();
+              }}
+            >
+              {t('app.userList.guest.allowEveryone')}
+            </PrimaryButton>
+            <PrimaryButton
+              variant="secondaryAlt"
+              mode="pollOptions"
+              fullWidth={false}
+              disabled={pendingUsers?.length === 0}
+              onPress={() => {
+                handleDispatchSubmitApprovalStatus(pendingUsers, DENY_STATUS)
+                navigation.goBack();
+              }}
+            >
+              {t('app.userList.guest.denyEveryone')}
+            </PrimaryButton>
           </Styled.AccRejContainer>
           {pendingUsers?.length > 0
             ? <Styled.FlatList data={pendingUsers} renderItem={renderItem} />

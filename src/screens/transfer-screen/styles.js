@@ -1,4 +1,4 @@
-import { Button, IconButton } from 'react-native-paper';
+import { IconButton } from 'react-native-paper';
 import styled from 'styled-components/native';
 import Colors from '../../constants/colors';
 
@@ -26,34 +26,6 @@ const SubtitleText = styled.Text`
   text-align: center;
   color: ${Colors.white};
 `;
-
-const ButtonJoin = styled(Button)`
-`;
-
-const PressableButton = ({
-  onPress, children, disabled, onPressDisabled
-}) => {
-  return (
-    <ButtonJoin
-      mode="contained"
-      icon="open-in-new"
-      onPress={disabled ? onPressDisabled : onPress}
-      buttonColor={disabled ? Colors.lightGray300 : Colors.orange}
-      textColor={Colors.white}
-      style={{
-        width: '100%',
-        height: 40,
-        marginTop: 12
-      }}
-      labelStyle={{
-        fontSize: 14,
-        fontWeight: 500,
-      }}
-    >
-      {children}
-    </ButtonJoin>
-  );
-};
 
 const LeaveIconButton = ({
   onPress
@@ -89,7 +61,6 @@ export default {
   ContainerView,
   TitleText,
   SubtitleText,
-  PressableButton,
   LeaveIconButton,
   Container,
   Wrapper

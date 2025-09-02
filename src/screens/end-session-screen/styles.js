@@ -24,28 +24,6 @@ const Image = styled.Image`
   height: 150px;
 `;
 
-const ButtonCreate = styled(Button)`
-`;
-
-const ConfirmButton = ({
-  onPress, children
-}) => {
-  return (
-    <ButtonCreate
-      mode="contained"
-      onPress={onPress}
-      buttonColor={Colors.orange}
-      textColor={Colors.white}
-      labelStyle={{
-        fontSize: 18,
-        fontWeight: 500,
-      }}
-    >
-      {children}
-    </ButtonCreate>
-  );
-};
-
 const Subtitle = styled.Text`
   color: ${Colors.white};
   font-size: 16px;
@@ -57,7 +35,6 @@ const ButtonContainer = styled.View`
 `;
 
 export default {
-  ConfirmButton,
   ContainerView,
   Title,
   Subtitle,

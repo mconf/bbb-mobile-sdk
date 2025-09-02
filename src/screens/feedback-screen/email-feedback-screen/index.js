@@ -1,12 +1,17 @@
-import React, { useCallback } from 'react';
-import {
-  BackHandler, TouchableWithoutFeedback, KeyboardAvoidingView, Keyboard, Platform
-} from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { useTranslation } from 'react-i18next';
 import axios from 'axios';
-import logger from '../../../services/logger';
+import React, { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import {
+  BackHandler,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback
+} from 'react-native';
 import Settings from '../../../../settings.json';
+import PrimaryButton from '../../../components/buttons/primary-button';
+import logger from '../../../services/logger';
 import Styled from './styles';
 
 const POST_ROUTE = Settings.feedback.custom.route;
@@ -77,11 +82,12 @@ const EmailFeedbackScreen = ({ route }) => {
             keyboardType="email-address"
           />
           <Styled.ButtonContainer>
-            <Styled.ConfirmButton
+            <PrimaryButton
               onPress={() => handleSend()}
+              variant="tertiary"
             >
               {concludeButton}
-            </Styled.ConfirmButton>
+            </PrimaryButton>
           </Styled.ButtonContainer>
         </Styled.ContainerView>
       </KeyboardAvoidingView>

@@ -1,73 +1,10 @@
 import styled from 'styled-components/native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Switch, Button } from 'react-native-paper';
+import { Switch } from 'react-native-paper';
 import textInput from '../../../components/text-input';
 import Colors from '../../../constants/colors';
 
 const ButtonsContainer = styled.View`
-  gap: 12px;
 `;
-
-const ButtonCreate = styled(Button)`
-`;
-
-const OptionsButton = ({
-  onPress, children, selected
-}) => {
-  return (
-    <ButtonCreate
-      mode="contained"
-      onPress={onPress}
-      buttonColor={selected ? Colors.blue : Colors.white}
-      textColor={selected ? Colors.white : Colors.lightGray400}
-      labelStyle={{
-        fontSize: 18,
-        fontWeight: 500,
-      }}
-    >
-      {children}
-    </ButtonCreate>
-  );
-};
-
-const ConfirmButton = ({
-  onPress, children
-}) => {
-  return (
-    <ButtonCreate
-      mode="contained"
-      onPress={onPress}
-      buttonColor={Colors.orange}
-      textColor={Colors.white}
-      labelStyle={{
-        fontSize: 18,
-        fontWeight: 500,
-      }}
-    >
-      {children}
-    </ButtonCreate>
-  );
-};
-
-const SeePublishPollsButton = ({
-  onPress, children
-}) => {
-  return (
-    <ButtonCreate
-      mode="contained"
-      onPress={onPress}
-      icon="poll"
-      buttonColor={Colors.orange}
-      textColor={Colors.white}
-      labelStyle={{
-        fontSize: 18,
-        fontWeight: 500,
-      }}
-    >
-      {children}
-    </ButtonCreate>
-  );
-};
 
 const Title = styled.Text`
   font-size: 24px;
@@ -102,10 +39,6 @@ const ContainerViewPadding = styled.Pressable`
   padding: 24px;
   gap: 24px;
 `;
-
-const IconPoll = () => (
-  <MaterialCommunityIcons name="poll" size={20} color={Colors.white} />
-);
 
 const HeaderContainer = styled.View`
   display: flex;
@@ -161,16 +94,12 @@ const ToggleOptionsLabel = ({
 
 export default {
   Title,
-  OptionsButton,
   AnswerTitle,
   ButtonsContainer,
-  ConfirmButton,
   TextInput,
   ContainerViewPadding,
   ContainerPollCard,
   ContainerView,
-  SeePublishPollsButton,
-  IconPoll,
   HeaderContainer,
   ToggleOptionsLabel
 };
