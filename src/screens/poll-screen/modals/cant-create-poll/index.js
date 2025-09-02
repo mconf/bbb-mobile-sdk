@@ -1,9 +1,10 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Modal } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
-import { useTranslation } from 'react-i18next';
-import { hide } from '../../../../store/redux/slices/wide-app/modal';
+import PrimaryButton from '../../../../components/buttons/primary-button';
 import { isModerator, selectCurrentUserId } from '../../../../store/redux/slices/current-user';
+import { hide } from '../../../../store/redux/slices/wide-app/modal';
 import { assignPresenter } from './service';
 import Styled from './styles';
 
@@ -17,24 +18,28 @@ const CantCreatePollModal = () => {
   const handleButtonsView = () => {
     if (amIModerator) {
       return (
-        <Styled.MakePresenterButton
+        <PrimaryButton
+          variant="tertiary"
+          mode="pollOptions"
           onPress={() => {
             assignPresenter(currentUserId);
             dispatch(hide());
           }}
         >
           {t('mobileSdk.poll.createPoll.becomePresenter')}
-        </Styled.MakePresenterButton>
+        </PrimaryButton>
       );
     }
     return (
-      <Styled.OkButton
+      <PrimaryButton
+        variant="tertiary"
+        mode="pollOptions"
         onPress={() => {
           dispatch(hide());
         }}
       >
         {t('mobileSdk.poll.createPoll.back')}
-      </Styled.OkButton>
+      </PrimaryButton>
     );
   };
 

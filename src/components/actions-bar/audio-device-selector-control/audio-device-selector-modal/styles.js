@@ -5,25 +5,6 @@ import Colors from '../../../../constants/colors';
 const ButtonCreate = styled(Button)`
 `;
 
-const OptionsButton = ({
-  onPress, children, selected
-}) => {
-  return (
-    <ButtonCreate
-      mode="outlined"
-      onPress={onPress}
-      buttonColor={selected ? Colors.blue : Colors.white}
-      textColor={selected ? Colors.white : Colors.lightGray400}
-      labelStyle={{
-        fontSize: 18,
-        fontWeight: 500,
-      }}
-    >
-      {children}
-    </ButtonCreate>
-  );
-};
-
 const ButtonContainerView = styled.View`
   display: flex;
   flex-direction: column;
@@ -67,25 +48,6 @@ const MissingPermission = styled.Text`
   color: ${Colors.orange};
 `;
 
-const SettingsButton = ({
-  onPress, children
-}) => {
-  return (
-    <ButtonCreate
-      mode="contained"
-      onPress={onPress}
-      buttonColor={Colors.orange}
-      textColor={Colors.white}
-      labelStyle={{
-        fontSize: 18,
-        fontWeight: 500,
-      }}
-    >
-      {children}
-    </ButtonCreate>
-  );
-};
-
 const RefreshDevicesButton = ({
   onPress, loading
 }) => {
@@ -106,11 +68,9 @@ const RefreshDevicesButton = ({
 };
 
 export default {
-  OptionsButton,
   ButtonContainer,
   DeviceSelectorTitle,
   Container,
   MissingPermission,
-  SettingsButton,
   RefreshDevicesButton
 };

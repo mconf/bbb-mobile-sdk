@@ -9,6 +9,7 @@ import ActivityBar from '../../../../components/activity-bar';
 import PollService from '../../service';
 import Styled from './styles';
 import queries from '../../queries';
+import PrimaryButton from '../../../../components/buttons/primary-button';
 
 const PreviousPollCard = (props) => {
   const { pollObj, amIPresenter } = props;
@@ -133,15 +134,18 @@ const PreviousPollCard = (props) => {
         {renderBottomSideOfCard()}
         <Styled.BlankSpaceForButton />
       </Styled.ContainerPollCard>
-      <Styled.PressableButton
-        disabled={!isReceivingAnswers}
-        onPress={() => {
-          handlePollPublish();
-          pollCancel();
-        }}
-      >
-        {isReceivingAnswers ? t('mobileSdk.poll.createPoll.publish') : t('mobileSdk.poll.previousPolls.publishedLabel')}
-      </Styled.PressableButton>
+      <Styled.ButtonContainer buttonColor={!isReceivingAnswers}>
+        <PrimaryButton
+          disabled={!isReceivingAnswers}
+          fullWidth={false}
+          onPress={() => {
+            handlePollPublish();
+            pollCancel();
+          }}
+        >
+          {isReceivingAnswers ? t('mobileSdk.poll.createPoll.publish') : t('mobileSdk.poll.previousPolls.publishedLabel')}
+        </PrimaryButton>
+      </Styled.ButtonContainer>
     </View>
   );
 };

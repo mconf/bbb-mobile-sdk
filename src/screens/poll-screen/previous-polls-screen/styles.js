@@ -1,5 +1,4 @@
 import styled from 'styled-components/native';
-import { Button } from 'react-native-paper';
 import Colors from '../../../constants/colors';
 
 const Title = styled.Text`
@@ -38,7 +37,7 @@ const ContainerView = styled.View`
   padding: 10px;
 
   ${({ orientation }) => orientation === 'LANDSCAPE'
-  && `
+    && `
     flex-direction: row;
     justify-content: center;
   `}
@@ -50,30 +49,6 @@ const ButtonContainer = styled.View`
   justify-content: center;
   width: 100%;
 `;
-
-const ButtonCreate = styled(Button)`
-  margin-top: 48px;
-`;
-
-const PressableButton = ({
-  onPress, children, disabled, onPressDisabled
-}) => {
-  return (
-    <ButtonCreate
-      mode="contained"
-      icon="plus"
-      onPress={disabled ? onPressDisabled : onPress}
-      buttonColor={disabled ? Colors.lightGray300 : Colors.orange}
-      textColor={Colors.white}
-      labelStyle={{
-        fontSize: 18,
-        fontWeight: 500,
-      }}
-    >
-      {children}
-    </ButtonCreate>
-  );
-};
 
 const ButtonFlyingContainer = styled.View`
   position: absolute;
@@ -116,7 +91,6 @@ export default {
   ContainerViewPadding,
   ContainerPollScrollView,
   ContainerView,
-  PressableButton,
   ButtonContainer,
   ContainerCentralizedView,
   NoPollsImage,

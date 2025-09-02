@@ -28,7 +28,7 @@ const handleAnswerPoll = async (selectedAnswers) => {
   await makeCall('publishVote', activePollObject?.id, selectedAnswers);
 };
 
-const handleCreatePoll = async (answerType, pollId, secretPoll, question, isMultipleResponse) => {
+const handleCreatePoll = async (answerType, pollId, secretPoll, question, multipleResponse) => {
   const pollTypes = {
     A2: 'A-2',
     A3: 'A-3',
@@ -42,8 +42,8 @@ const handleCreatePoll = async (answerType, pollId, secretPoll, question, isMult
     YesNoAbstention: 'YNA',
   };
 
-  // pollTypes, answerType, pollId, secretPoll, question, isMultipleResponse, answers
-  await makeCall('startPoll', pollTypes, answerType, pollId, secretPoll, question, isMultipleResponse);
+  // pollTypes, answerType, pollId, secretPoll, question, multipleResponse, answers
+  await makeCall('startPoll', pollTypes, answerType, pollId, secretPoll, question, multipleResponse);
 };
 
 const handleStopPoll = async () => {
