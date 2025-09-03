@@ -89,7 +89,7 @@
   "app.polling.responseNotSecret": "Encuesta normal - El presentador puede ver tu respuesta.",
   "app.polling.responseSecret": "Encuesta anónima - El presentador no puede ver tu respuesta.",
   "app.poll.publishLabel": "Publicar encuesta",
-  "app.poll.question.label": "Escribe tu pregunta...",
+  "app.poll.question.label": "Escribe tu pregunta... (opcional)",
   "app.poll.responseTypes.label": "Tipos de respuesta",
   "app.poll.secretPoll.label": "Encuesta anónima",
   "app.poll.start.label": "Iniciar encuesta",

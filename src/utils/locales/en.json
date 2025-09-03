@@ -89,7 +89,7 @@
   "app.polling.responseNotSecret": "Normal poll – the presenter can see your answer.",
   "app.polling.responseSecret": "Anonymous poll – the presenter can't see your answer.",
   "app.poll.publishLabel": "Publish poll",
-  "app.poll.question.label": "Write your question...",
+  "app.poll.question.label": "Write your question... (optional)",
   "app.poll.responseTypes.label": "Response Types",
   "app.poll.secretPoll.label": "Anonymous Poll",
   "app.poll.start.label": "Start Poll",
