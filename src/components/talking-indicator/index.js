@@ -19,7 +19,7 @@ const TalkingIndicator = () => {
       />
       <Styled.Container>
         {callersTalking.map((userObj, idx) => {
-          if (!userObj.talking) {
+          if (userObj.talking) {
             if (idx < 2) {
               return (
                 <Styled.TextContainer key={userObj.userId}>
