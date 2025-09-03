@@ -12,6 +12,7 @@ import {
   setJoinUrl, setApi, setHost, setSessionToken
 } from '../../store/redux/slices/wide-app/client';
 import logger from '../../services/logger';
+import { setMeetingSettings } from '../local-states/useMeetingSettings';
 
 const useJoinMeeting = (url) => {
   const [loginStage, setLoginStage] = useState(0);
@@ -231,7 +232,9 @@ const useJoinMeeting = (url) => {
     })
       .then((response) => response.json())
       .then((data) => {
-        setClientSettings(data.meeting_clientSettings[0].clientSettingsJson.public);
+        const cSettings = data.meeting_clientSettings[0].clientSettingsJson;
+        setClientSettings(cSettings?.public);
+        setMeetingSettings(cSettings);
         console.log('DONE STAGE 5');
         setLoginStage(6);
       });
