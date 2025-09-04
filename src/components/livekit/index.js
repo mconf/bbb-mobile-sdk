@@ -20,6 +20,7 @@ import useCurrentUser from '../../graphql/hooks/useCurrentUser';
 import { liveKitRoom, disconnectLiveKitRoom } from '../../services/livekit';
 import { USER_SET_TALKING } from './mutations';
 import SelectiveSubscription from './selective-subscription/index.tsx';
+import useMeetingSettings from '../../graphql/local-states/useMeetingSettings';
 
 const LiveKitObserver = ({
   room,
@@ -80,7 +81,11 @@ const BBBLiveKitRoom = ({ children }) => {
   const isAudioConnecting = useSelector(({ audio }) => audio.isConnecting || audio.isReconnecting);
   const mainRoomBlockedByBreakout = useSelector((state) => state.client.sessionState.mainRoomBlockedByBreakout);
   const connectionState = useConnectionState(liveKitRoom);
+  const [meetingSettings] = useMeetingSettings();
 
+  const url = meetingSettings?.public
+    ? (meetingSettings.public?.media?.livekit?.url || `wss://${host}/livekit`)
+    : null;
   const livekitToken = currentUserData?.user_current[0]?.livekit?.livekitToken;
   const userId = currentUserData?.user_current[0]?.userId;
   const {
@@ -120,7 +125,6 @@ const BBBLiveKitRoom = ({ children }) => {
       initializeMediaManagers({ audioBridge, cameraBridge, screenShareBridge })
         .then(() => {
           const connectOptions = { autoSubscribe: true };
-          const url = host ? `wss://${host}/livekit` : null;
 
           if (!shouldUseLiveKit || connectionState !== ConnectionState.Disconnected) return;
 
@@ -152,6 +156,7 @@ const BBBLiveKitRoom = ({ children }) => {
     mainRoomBlockedByBreakout,
     isAudioConnected,
     isAudioConnecting,
+    url,
     joinAudio,
   ]);
 
@@ -169,7 +174,7 @@ const BBBLiveKitRoom = ({ children }) => {
       audio={false}
       connect={false}
       token={livekitToken}
-      serverUrl={host ? `wss://${host}/livekit` : null}
+      serverUrl={url}
       room={liveKitRoom}
       style={{ zIndex: 0, height: 'initial', width: 'initial' }}
     >
