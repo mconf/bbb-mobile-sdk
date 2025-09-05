@@ -34,23 +34,16 @@ const PreviousPollScreen = () => {
   const amIPresenter = currentUserData?.user_current[0]?.presenter;
 
   const renderCreatePollButtonView = () => {
-    if (hasCurrentPoll) {
+    if (hasCurrentPoll || !amIPresenter) {
       return;
     }
 
     return (
       <PrimaryButton
         onPress={() => {
-          if (!amIPresenter) {
-            dispatch(
-              setProfile({
-                profile: 'create_poll_permission',
-              })
-            );
-          } else {
-            navigation.navigate('CreatePollScreen');
-          }
+          navigation.navigate('CreatePollScreen');
         }}
+        disabled={!amIPresenter}
         variant="tertiary"
         fullWidth={false}
         icon={<MaterialCommunityIcons name="plus" size={20} color={Colors.white} />}

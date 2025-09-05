@@ -242,7 +242,7 @@ const SpecificProblemFeedbackScreen = ({ route }) => {
 
         <Styled.QuitSessionButtonContainer>
           <PrimaryButton
-            onpress={handleSkip}
+            onPress={handleSkip}
             fullWidth={false}
             variant="secondary"
             mode="text"
