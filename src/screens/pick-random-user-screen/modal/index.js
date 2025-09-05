@@ -1,4 +1,3 @@
-import React from 'react';
 import { Modal } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';

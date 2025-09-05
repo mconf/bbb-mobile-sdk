@@ -23,8 +23,9 @@ const SecretLabel = styled.Text`
 
 const Title = styled.Text`
   font-size: 20px;
-  font-weight: 600;
+  font-weight: 500;
   text-align: center;
+  color: ${Colors.lightGray400};
 `;
 
 const ButtonsContainer = styled.View`
