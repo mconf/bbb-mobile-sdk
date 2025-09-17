@@ -208,35 +208,37 @@ const TimerScreen = () => {
           {UtilsService.humanizeSecondsLive(Math.floor(timePassed / 1000))}
         </Styled.TimerValue>
         <Styled.DividerTimer />
-        <Styled.TimerPickerContainer>
-          <TimerPicker
-            selectedValue={pickerValues.hour + 1}
-            max={23}
-            onSelect={(val) => {
-              const hour = val - 1;
-              setPickerValues(val => ({ ...val, hour }));
-              setHours(hour, timerTime);
-            }}
-          />
-          <TimerPicker
-            selectedValue={pickerValues.min + 1}
-            max={59}
-            onSelect={(val) => {
-              const min = val - 1;
-              setPickerValues(val => ({ ...val, min }));
-              setMinutes(min, timerTime);
-            }}
-          />
-          <TimerPicker
-            selectedValue={pickerValues.sec + 1}
-            max={59}
-            onSelect={(val) => {
-              const sec = val - 1;
-              setPickerValues(val => ({ ...val, sec }));
-              setSeconds(sec, timerTime);
-            }}
-          />
-        </Styled.TimerPickerContainer>
+        {!running && (
+          <Styled.TimerPickerContainer>
+            <TimerPicker
+              selectedValue={pickerValues.hour + 1}
+              max={23}
+              onSelect={(val) => {
+                const hour = val - 1;
+                setPickerValues(val => ({ ...val, hour }));
+                setHours(hour, timerTime);
+              }}
+            />
+            <TimerPicker
+              selectedValue={pickerValues.min + 1}
+              max={59}
+              onSelect={(val) => {
+                const min = val - 1;
+                setPickerValues(val => ({ ...val, min }));
+                setMinutes(min, timerTime);
+              }}
+            />
+            <TimerPicker
+              selectedValue={pickerValues.sec + 1}
+              max={59}
+              onSelect={(val) => {
+                const sec = val - 1;
+                setPickerValues(val => ({ ...val, sec }));
+                setSeconds(sec, timerTime);
+              }}
+            />
+          </Styled.TimerPickerContainer>
+        )}
       </Styled.TimerContainer>
     );
   };
@@ -261,6 +263,7 @@ const TimerScreen = () => {
               switchTimer(true);
             }}
             variant={stopwatch ? "primary" : "secondaryAlt"}
+            disabled={running}
           >
             {t("mobileSdk.timer.stopwatch")}
           </PrimaryButton>
@@ -273,6 +276,7 @@ const TimerScreen = () => {
               switchTimer(false);
             }}
             variant={!stopwatch ? "primary" : "secondaryAlt"}
+            disabled={running}
           >
             {t('mobileSdk.timer.title')}
           </PrimaryButton>
