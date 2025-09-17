@@ -63,7 +63,6 @@ const TimerScreen = () => {
   const stopwatch = timerData?.timer[0]?.stopwatch ?? false;
   const accumulated = timerData?.timer[0]?.accumulated;
   const timerTime = timerData?.timer[0]?.time;
-  const startedOn = timerData?.timer[0]?.startedOn;
 
   const [runningTime, setRunningTime] = useState(0);
 
@@ -130,13 +129,13 @@ const TimerScreen = () => {
     }, [])
   );
 
-  // if startedOn is 0, means the time was reset
+  // if startedAtDate is 0, means the time was reset
   useFocusEffect(
     useCallback(() => {
-      if (startedOn === 0) {
+      if (startedAtDate === 0) {
         setRunningTime(timePassed);
       };
-    }, [startedOn])
+    }, [startedAtDate])
   );
 
   // updates the timer every second locally
