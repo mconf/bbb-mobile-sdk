@@ -80,7 +80,10 @@ const TimerPicker = ({
         justifyContent: 'center',
         textAlign: 'center',
         fontSize: 24,
+        color: 'black'
       }}
+      dropdownIconColor={'black'}
+      dropdownIconRippleColor={'gray'}
     >
       {
         pickerItems.map(({ key, label, value }) => (
@@ -89,6 +92,7 @@ const TimerPicker = ({
             label={label}
             value={value}
             style={{ textAlign: 'center', fontSize: 24 }}
+            color='white'
           />
         ))
       }
