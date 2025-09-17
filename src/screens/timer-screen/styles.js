@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-import { Divider, Button } from 'react-native-paper';
+import { Divider } from 'react-native-paper';
 import Colors from '../../constants/colors';
 
 const Container = styled.View`
@@ -56,21 +56,6 @@ const TimerContainer = styled.View`
   flex-direction: column;
 `;
 
-const TimerButton = ({ onPress, children }) => (
-  <ButtonBodyCreate
-    mode="contained"
-    onPress={onPress}
-    buttonColor={Colors.lightBlue}
-    textColor={Colors.white}
-    labelStyle={{
-      fontSize: 18,
-      fontWeight: '500',
-    }}
-  >
-    {children}
-  </ButtonBodyCreate>
-);
-
 const Card = styled.View`
   width: 100%;
   background-color: ${Colors.white};
@@ -115,37 +100,10 @@ const DividerTimer = styled(Divider)`
   margin-bottom: 24px;
 `;
 
-const ButtonText = styled.Text`
-  font-size: 24px;
-  font-weight: bold;
-  color: ${Colors.white};
-`;
-
 const ButtonWrapper = styled.View`
   flex: 1;
   margin-right: ${({ isLast }) => (isLast ? '0px' : '16px')};
 `;
-
-const ButtonBodyCreate = styled(Button)`
-  margin: 0;
-  padding: 4px;
-  border-radius: 24px;
-`;
-
-const BodyButton = ({ onPress, children, selected }) => (
-  <ButtonBodyCreate
-    mode="contained"
-    onPress={onPress}
-    buttonColor={selected ? Colors.blue : Colors.lightGray100}
-    textColor={selected ? Colors.white : Colors.lightGray400}
-    labelStyle={{
-      fontSize: 18,
-      fontWeight: '500',
-    }}
-  >
-    {children}
-  </ButtonBodyCreate>
-);
 
 const ButtonContainer = styled.View`
   flex-direction: row;
@@ -171,12 +129,9 @@ export default {
   TimerContainer,
   TimerText,
   TimerValue,
-  TimerButton,
   TimerBody,
   TimerPickerContainer,
-  BodyButton,
   ButtonWrapper,
-  ButtonText,
   Card,
   DividerTop,
   DividerTimer,

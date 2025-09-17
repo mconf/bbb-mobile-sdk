@@ -255,27 +255,27 @@ const TimerScreen = () => {
     return (
       <Styled.ButtonContainer>
         <Styled.ButtonWrapper>
-          <Styled.BodyButton
+          <PrimaryButton
             onPress={() => {
               timerStop();
               switchTimer(true);
             }}
-            selected={stopwatch}
+            variant={stopwatch ? "primary" : "secondaryAlt"}
           >
             {t("mobileSdk.timer.stopwatch")}
-          </Styled.BodyButton>
+          </PrimaryButton>
         </Styled.ButtonWrapper>
 
         <Styled.ButtonWrapper isLast>
-          <Styled.BodyButton
+          <PrimaryButton
             onPress={() => {
               timerStop();
               switchTimer(false);
             }}
-            selected={!stopwatch}
+            variant={!stopwatch ? "primary" : "secondaryAlt"}
           >
             {t('mobileSdk.timer.title')}
-          </Styled.BodyButton>
+          </PrimaryButton>
         </Styled.ButtonWrapper>
       </Styled.ButtonContainer>
     );
