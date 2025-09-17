@@ -1,28 +1,28 @@
-import { useTranslation } from 'react-i18next';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
-import ScreenWrapper from '../../components/screen-wrapper';
-import { useOrientation } from '../../hooks/use-orientation';
-import { Provider } from 'react-native-paper';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
-import Styled from './styles'
-import Colors from '../../constants/colors';
-import UtilsService from '../../utils/functions';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native';
-import TimerPicker from './TimerPicker';
+import { Provider } from 'react-native-paper';
 import PrimaryButton from '../../components/buttons/primary-button';
+import ScreenWrapper from '../../components/screen-wrapper';
+import Colors from '../../constants/colors';
+import { useOrientation } from '../../hooks/use-orientation';
+import UtilsService from '../../utils/functions';
+import Styled from './styles';
+import TimerPicker from './TimerPicker';
 
+import { useMutation, useSubscription } from '@apollo/client';
 import {
-  TIMER_SUBSCRIPTION,
-  TIMER_SWITCH_MODE,
-  TIMER_START,
-  TIMER_STOP,
-  TIMER_RESET,
-  TIMER_SET_TIME,
   TIMER_ACTIVATE,
   TIMER_DEACTIVATE,
-} from './queries.js'
-import { useSubscription, useMutation } from '@apollo/client';
+  TIMER_RESET,
+  TIMER_SET_TIME,
+  TIMER_START,
+  TIMER_STOP,
+  TIMER_SUBSCRIPTION,
+  TIMER_SWITCH_MODE,
+} from './queries.js';
 
 // 1 second = 1000
 // 1 min = 60000
