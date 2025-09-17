@@ -167,8 +167,11 @@ const BottomSheetChat = () => {
               containerColor={Colors.blue}
               animated
               onPress={() => {
-                setMessageText('');
-                return handleSendMessage(messageText);
+                const trimmedMessage = messageText.trim();
+                if (trimmedMessage) {
+                  handleSendMessage(trimmedMessage);
+                  setMessageText('');
+                }
               }}
             />
           </Styled.SendMessageContainer>
