@@ -5,7 +5,6 @@ const TIMER_SUBSCRIPTION = gql`
     timer {
       running
       startedAt
-      startedOn
       stopwatch
       time
       active
