@@ -77,24 +77,6 @@ const GridView = () => {
     );
   };
 
-  if (userData?.user?.length === 1) {
-    return (
-      <>
-        <Styled.ContainerViewItem
-          isPresentationOpen={isPresentationOpen}
-          dimensionHeight={DEVICE_HEIGHT - 90}
-        >
-          <Styled.ContentArea />
-        </Styled.ContainerViewItem>
-        <Styled.RenderSessionAlone
-          sessionAloneTitle={t('mobileSdk.mainscreen.foreveralone.title')}
-          sessionAloneDesc={t('mobileSdk.mainscreen.foreveralone.desc')}
-          isPresentationOpen={isPresentationOpen}
-        />
-      </>
-    );
-  }
-
   return (
     <>
       <Styled.ContainerViewItem
