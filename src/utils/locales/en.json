@@ -242,7 +242,5 @@
   "mobileSdk.pip.permission.subtitle": "You have not permitted the use of Picture-in-Picture in this application",
   "mobileSdk.join.loadingSession.label": "Your session is being prepared",
   "mobileSdk.join.genericLoading.label": "Loading",
-  "mobileSdk.audio.join": "Join audio",
-  "mobileSdk.mainscreen.foreveralone.title": "You are the only one here",
-  "mobileSdk.mainscreen.foreveralone.desc": "Share the meeting link with anyone you want to attend."
+  "mobileSdk.audio.join": "Join audio"
 }
