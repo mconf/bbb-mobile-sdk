@@ -241,7 +241,5 @@
   "mobileSdk.join.loadingSession.label": "Sua sessão está sendo preparada",
   "mobileSdk.join.genericLoading.label": "Carregando",
   "mobileSdk.audio.join": "Entrar no áudio",
-  "mobileSdk.mainscreen.foreveralone.title": "Só você está aqui",
-  "mobileSdk.mainscreen.foreveralone.desc": "Compartilhe o link da reunião com quem você deseja que participe.",
   "app.audio.leaveAudio": "Sair do áudio"
 }

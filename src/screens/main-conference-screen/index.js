@@ -1,16 +1,15 @@
-import { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import { useEffect, useState } from 'react';
+import { Platform } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { Platform, Dimensions } from 'react-native';
-import { setIsPiPEnabled } from '../../store/redux/slices/wide-app/layout';
-import ScreenWrapper from '../../components/screen-wrapper';
-import VideoGrid from '../../components/video/video-grid';
 import MiniAudioPlayerIcon from '../../components/audio-player/mini-audio-player-icon';
+import ScreenWrapper from '../../components/screen-wrapper';
 import TalkingIndicator from '../../components/talking-indicator';
+import VideoGrid from '../../components/video/video-grid';
 import useAppState from '../../hooks/use-app-state';
+import { setIsPiPEnabled } from '../../store/redux/slices/wide-app/layout';
 import PiPView from './pip-view';
 import Styled from './styles';
-import Settings from '../../../settings.json';
 
 const DEVICE_HEIGHT = parseInt(Dimensions.get('window').height, 10);
 const DEVICE_WIDTH = parseInt(Dimensions.get('window').width, 10);
@@ -41,7 +40,9 @@ const MainConferenceScreen = () => {
     return (
       <ScreenWrapper>
         <Styled.ContainerView>
-          <TalkingIndicator />
+          <Styled.TopIndicatorBar>
+            <TalkingIndicator />
+          </Styled.TopIndicatorBar>
           <VideoGrid />
           <MiniAudioPlayerIcon />
         </Styled.ContainerView>
