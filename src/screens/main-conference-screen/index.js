@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
-import { Platform } from 'react-native';
+import { Dimensions, Platform } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import MiniAudioPlayerIcon from '../../components/audio-player/mini-audio-player-icon';
 import ScreenWrapper from '../../components/screen-wrapper';
