@@ -40,7 +40,7 @@
     "@react-navigation/native-stack": "^6.6.2",
     "@react-navigation/stack": "^6.3.4",
     "@reduxjs/toolkit": "2.8.2",
-    "axios": "0.30.0",
+    "axios": "1.12.0",
     "browser-bunyan": "^1.8.0",
     "ejson": "^2.2.3",
     "eventemitter2": "^6.4.7",
