@@ -1,5 +1,4 @@
 import {
-  RoomContext,
   useLocalParticipant,
   useTracks
 } from '@livekit/react-native';

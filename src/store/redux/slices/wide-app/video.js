@@ -30,6 +30,9 @@ const videoSlice = createSlice({
     setLocalCameraId: (state, action) => {
       state.localCameraId = action.payload;
     },
+    setLocalScreenshareId: (state, action) => {
+      state.localScreenshareId = action.payload;
+    },
     userRequestedHangup: (state, action) => {
       state.userRequestedHangup = action.payload;
     },
@@ -55,6 +58,7 @@ export const {
   setIsHangingUp,
   setSignalingTransportOpen,
   setLocalCameraId,
+  setLocalScreenshareId,
   userRequestedHangup,
   addVideoStream,
   removeVideoStream,

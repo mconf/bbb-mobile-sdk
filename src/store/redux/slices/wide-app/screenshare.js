@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
+  currentUserScreenshare: false,
   isConnecting: false,
   isConnected: false,
   isHangingUp: false,
@@ -11,6 +12,9 @@ const screenshareSlice = createSlice({
   name: 'screenshare',
   initialState,
   reducers: {
+    setCurrentUserScreenshare: (state, action) => {
+      state.currentUserScreenshare = action.payload;
+    },
     setIsConnecting: (state, action) => {
       state.isConnecting = action.payload;
     },
@@ -33,6 +37,7 @@ const screenshareSlice = createSlice({
 });
 
 export const {
+  setCurrentUserScreenshare,
   setIsConnecting,
   setIsConnected,
   setIsHangingUp,
