@@ -50,7 +50,8 @@
     },
     "plugins": [
       "@config-plugins/react-native-webrtc",
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-font"
     ],
     "web": {
       "favicon": "./src/assets/native/favicon.png"
