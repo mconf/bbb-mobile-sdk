@@ -4,7 +4,7 @@ import { Text } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect } from 'react';
-import { GET_USER_CURRENT, USER_JOIN_MUTATION } from './queries';
+import { GET_GUEST_LOBBY_INFO, USER_JOIN_MUTATION } from './queries';
 import {
   setConnected,
   setInitialCurrentUser,
@@ -17,7 +17,7 @@ import Styled from './styles';
 const UserJoinScreen = () => {
   const navigation = useNavigation();
   const [dispatchUserJoin] = useMutation(USER_JOIN_MUTATION);
-  const { data, loading, error } = useSubscription(GET_USER_CURRENT);
+  const { data, loading, error } = useSubscription(GET_GUEST_LOBBY_INFO);
   const currentUser = data?.user_current[0];
   const sessionToken = useSelector((state) => state.client.meetingData.sessionToken);
   const host = useSelector((state) => state.client.meetingData.host);
