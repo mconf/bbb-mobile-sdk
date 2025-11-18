@@ -10,7 +10,7 @@ PODS:
     - ExpoModulesCore
   - EXNotifications (0.31.4):
     - ExpoModulesCore
-  - Expo (53.0.20):
+  - Expo (53.0.23):
     - DoubleConversion
     - ExpoModulesCore
     - glog
@@ -74,7 +74,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - ExpoSecureStore (14.2.3):
+  - ExpoSecureStore (14.2.4):
     - ExpoModulesCore
   - ExpoSplashScreen (0.30.10):
     - ExpoModulesCore
@@ -85,7 +85,7 @@ PODS:
   - hermes-engine (0.79.5):
     - hermes-engine/Pre-built (= 0.79.5)
   - hermes-engine/Pre-built (0.79.5)
-  - livekit-react-native (2.8.0):
+  - livekit-react-native (2.9.3):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -110,9 +110,9 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - livekit-react-native-webrtc (125.0.12):
+  - livekit-react-native-webrtc (137.0.2):
     - React-Core
-    - WebRTC-SDK (= 125.6422.07)
+    - WebRTC-SDK (= 137.7151.04)
   - lottie-ios (4.5.0)
   - lottie-react-native (7.2.4):
     - DoubleConversion
@@ -1843,7 +1843,7 @@ PODS:
     - React-Core
   - RNCallKeep (4.3.16):
     - React
-  - RNCPicker (2.11.1):
+  - RNCPicker (2.11.2):
     - React-Core
   - RNGestureHandler (2.24.0):
     - DoubleConversion
@@ -2018,10 +2018,10 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNSVG (15.11.2):
+  - RNSVG (15.15.0):
     - React-Core
   - SocketRocket (0.7.1)
-  - WebRTC-SDK (125.6422.07)
+  - WebRTC-SDK (137.7151.04)
   - Yoga (0.0.0)
 
 DEPENDENCIES:
@@ -2332,13 +2332,13 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  boost: 7e761d76ca2ce687f7cc98e698152abd03a18f90
-  DoubleConversion: cb417026b2400c8f53ae97020b2be961b59470cb
+  boost: 1dca942403ed9342f98334bf4c3621f011aa7946
+  DoubleConversion: f16ae600a246532c4020132d54af21d0ddb2a385
   EXApplication: 1e06972201838375ca1ec1ba34d586a98a5dc718
   EXAV: ae28256069c4cdde93d185c007d8f68d92902c2e
   EXConstants: 98bcf0f22b820f9b28f9fee55ff2daededadd2f8
   EXNotifications: be5e949edf1d60b70e77178b81aa505298fadd07
-  Expo: b527631da3b11e085809e877b845f9e6cdd68f9c
+  Expo: c8f323f74218c45c46e27eed40d8a53ba50667c3
   ExpoAsset: ef06e880126c375f580d4923fdd1cdf4ee6ee7d6
   ExpoDevice: 7082f03af1c588333ef1417d5aa8287081d94b24
   ExpoFileSystem: 7f92f7be2f5c5ed40a7c9efc8fa30821181d9d63
@@ -2346,15 +2346,15 @@ SPEC CHECKSUMS:
   ExpoKeepAwake: bf0811570c8da182bfb879169437d4de298376e7
   ExpoLinking: d5c183998ca6ada66ff45e407e0f965b398a8902
   ExpoModulesCore: f55e7872391bae03ee5547c83152c81750d89508
-  ExpoSecureStore: b367d9f62c9102d808afbeb1561636d4276e439d
+  ExpoSecureStore: 3f1b632d6d40bcc62b4983ef9199cd079592a50a
   ExpoSplashScreen: 1c22c5d37647106e42d4ae1582bb6d0dda3b2385
   fast_float: 06eeec4fe712a76acc9376682e4808b05ce978b6
   FBLazyVector: d2a9cd223302b6c9aa4aa34c1a775e9db609eb52
   fmt: a40bb5bd0294ea969aaaba240a927bd33d878cdd
-  glog: 5683914934d5b6e4240e497e0f4a3b42d1854183
+  glog: 08b301085f15bcbb6ff8632a8ebaf239aae04e6a
   hermes-engine: f03b0e06d3882d71e67e45b073bb827da1a21aae
-  livekit-react-native: d92af6fc21da15a1f9ec7aac48a647ac400c4a5f
-  livekit-react-native-webrtc: 70d4b2deb83b3270dd65fe8ba0a929d0da8eb6ee
+  livekit-react-native: 6215ee7780be5ce2bc92e0f4ab505e90948da3ca
+  livekit-react-native-webrtc: c03e72c608fbb8284a99e095dd7835a85bdb0279
   lottie-ios: a881093fab623c467d3bce374367755c272bdd59
   lottie-react-native: 00d9222cde4183a263d5880215b610d31017fcfe
   RCT-Folly: e78785aa9ba2ed998ea4151e314036f6c49e6d82
@@ -2426,13 +2426,13 @@ SPEC CHECKSUMS:
   ReactCommon: 1ab5451fc5da87c4cc4c3046e19a8054624ca763
   ReactNativeIncallManager: dccd3e7499caa3bb73d3acfedf4fb0360f1a87d5
   RNCallKeep: 1930a01d8caf48f018be4f2db0c9f03405c2f977
-  RNCPicker: da0f1c9411208c1ca52bc98383db54a06e0a3862
+  RNCPicker: c53e35f4f41ad354cb176e8355a525c4c22de5b6
   RNGestureHandler: ce4a87dba81030b374d7f1993c4376f5c230da2e
   RNReanimated: efe63b33e23e1b5b06e5e087779eceeee742452b
   RNScreens: 62fdbbc4c984150b34c36f095c6ba2510ca9b6a5
-  RNSVG: ab84f2de7dd4f2c86d01825b8a65e0ef712fc36b
+  RNSVG: 49345166bbaaed1499aa7679e3f93118a78f1ff9
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
-  WebRTC-SDK: dff00a3892bc570b6014e046297782084071657e
+  WebRTC-SDK: 40d4f5ba05cadff14e4db5614aec402a633f007e
   Yoga: adb397651e1c00672c12e9495babca70777e411e
 
 PODFILE CHECKSUM: 1f904911d9f3563c4ae4d43ecaa2b9bb59a143ea
