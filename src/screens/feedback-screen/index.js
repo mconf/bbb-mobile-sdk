@@ -14,7 +14,7 @@ import Settings from '../../../settings.json';
 import PrimaryButton from '../../components/buttons/primary-button';
 import useAppState from '../../hooks/use-app-state';
 import logger from '../../services/logger';
-import { GET_USER_CURRENT } from '../user-join-screen/queries';
+import { GET_GUEST_LOBBY_INFO } from '../user-join-screen/queries';
 import PiPView from './pip-view';
 import Service from './service';
 import Styled from './styles';
@@ -32,7 +32,7 @@ const FeedbackScreen = (props) => {
   const isPiPEnabled = useSelector((state) => state.layout.isPiPEnabled);
   const appState = useAppState();
 
-  const { data: user } = useSubscription(GET_USER_CURRENT);
+  const { data: user } = useSubscription(GET_GUEST_LOBBY_INFO);
   const logoutUrl = user?.user_current[0]?.meeting?.logoutUrl;
   const meetingData = user?.user_current[0]?.meeting;
   const userData = user?.user_current[0];
