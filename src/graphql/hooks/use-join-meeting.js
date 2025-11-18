@@ -217,7 +217,7 @@ const useJoinMeeting = (url) => {
       client = new ApolloClient({
         link: wsLink,
         cache: new InMemoryCache(),
-        connectToDevTools: true,
+        connectToDevTools: false,
       });
       setApolloClient(client);
       console.log('DONE STAGE 4');

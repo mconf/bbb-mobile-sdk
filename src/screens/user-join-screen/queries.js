@@ -1,11 +1,8 @@
 import { gql } from '@apollo/client';
 
-const GET_USER_CURRENT = gql`
-  subscription getUserCurrent {
+const GET_GUEST_LOBBY_INFO = gql`
+  subscription getGuestLobbyInfo {
     user_current {
-      userId
-      extId
-      name
       authToken
       joinErrorCode
       joinErrorMessage
@@ -40,4 +37,4 @@ const USER_JOIN_MUTATION = gql`
   }
 `;
 
-export { GET_USER_CURRENT, USER_JOIN_MUTATION };
+export { GET_GUEST_LOBBY_INFO, USER_JOIN_MUTATION };
