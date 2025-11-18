@@ -8,7 +8,6 @@ const USER_LIST_SUBSCRIPTION = gql`
                     {role: asc},
                     {raiseHandTime: asc_nulls_last},
                     {isDialIn: desc},
-                    {hasDrawPermissionOnCurrentPage: desc},
                     {nameSortable: asc},
                     {registeredAt: asc},
                     {userId: asc}
