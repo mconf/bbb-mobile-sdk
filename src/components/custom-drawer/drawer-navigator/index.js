@@ -233,10 +233,7 @@ const DrawerNavigator = ({
                 maxWidth: 150, fontWeight: '400', fontSize: 16, paddingLeft: 12
               },
               drawerIcon: (config) => (
-                <>
-                  <Styled.IconMaterial name="timer" size={24} color={config.color} />
-                  <Styled.BetaTag > {t('mobileSdk.tag.new')}</Styled.BetaTag>
-                </>
+                <Styled.IconMaterial name="timer" size={24} color={config.color} />
               ),
             }}
           />
