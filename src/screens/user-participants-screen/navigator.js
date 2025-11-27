@@ -1,7 +1,6 @@
-import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import UserParticipantsScreen from './index';
 import GuestPolicyScreen from './guest-policy/index';
+import UserParticipantsScreen from './index';
 import WaitingUsersScreen from './waiting-users/index';
 
 const UserParticipantsNavigator = () => {
