@@ -27,8 +27,25 @@ const USER_LIST_SUBSCRIPTION = gql`
       cameras {
         streamId
       }
+      voice {
+        lastFloorTime
+        floor
+      }
     }
   }
 `;
 
-export default USER_LIST_SUBSCRIPTION;
+const USER_AGGREGATE_COUNT_SUBSCRIPTION = gql`
+  subscription UsersCount {
+    user_aggregate {
+      aggregate {
+        count
+      }
+    }
+  }
+`;
+
+export {
+  USER_LIST_SUBSCRIPTION,
+  USER_AGGREGATE_COUNT_SUBSCRIPTION
+};

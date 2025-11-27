@@ -1,23 +1,23 @@
 import { useMutation } from '@apollo/client';
-import { Pressable } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
-import { useTranslation } from 'react-i18next';
+import { useNavigation } from '@react-navigation/native';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
+import { Pressable } from 'react-native';
 import { ActivityIndicator, Menu, Provider } from 'react-native-paper';
-import { useOrientation } from '../../hooks/use-orientation';
+import { useSelector } from 'react-redux';
 import ScreenWrapper from '../../components/screen-wrapper';
-import { isBreakout } from '../../store/redux/slices/wide-app/client';
 import Colors from '../../constants/colors';
-import Styled from './styles';
-import useGuestWaitingList from '../../graphql/hooks/useGuestWaitingList'
-import useCurrentUser from '../../graphql/hooks/useCurrentUser'
+import useCurrentUser from '../../graphql/hooks/useCurrentUser';
+import useGuestWaitingList from '../../graphql/hooks/useGuestWaitingList';
 import useUserList from '../../graphql/hooks/useUserList';
 import {
-  SET_ROLE,
-  SET_PRESENTER
+  SET_PRESENTER,
+  SET_ROLE
 } from '../../graphql/mutations/userList';
+import { useOrientation } from '../../hooks/use-orientation';
+import { isBreakout } from '../../store/redux/slices/wide-app/client';
+import Styled from './styles';
 
 const UserParticipantsScreen = () => {
   const [showMenu, setShowMenu] = useState(false);
@@ -180,10 +180,10 @@ const UserParticipantsScreen = () => {
     );
   };
 
-  if(!currentUser) {
+  if (!currentUser) {
     return (
       <Styled.LoadingWrapper>
-        <ActivityIndicator size={50}/>
+        <ActivityIndicator size={50} />
       </Styled.LoadingWrapper>
     )
   }
