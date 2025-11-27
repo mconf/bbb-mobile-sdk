@@ -1,29 +1,27 @@
-import React, { useEffect } from 'react';
-import { BackHandler, Alert } from "react-native";
 import { createDrawerNavigator } from '@react-navigation/drawer';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import useAppState from '../../../hooks/use-app-state';
-// screens
-import PollNavigator from '../../../screens/poll-screen/navigator';
-import UserParticipantsNavigator from '../../../screens/user-participants-screen/navigator';
-import BreakoutRoomScreen from '../../../screens/breakout-room-screen';
-import MainConferenceScreen from '../../../screens/main-conference-screen';
-import SelectLanguageScreen from '../../../screens/select-language-screen';
-import InsideBreakoutRoomScreen from '../../../screens/inside-breakout-room-screen';
-import FullscreenWrapperScreen from '../../../screens/fullscreen-wrapper-screen';
-import RecordingIndicator from '../../record/record-indicator';
-import UserNotesScreen from '../../../screens/user-notes-screen';
-import TimerScreen from '../../../screens/timer-screen';
-// components
-import CustomDrawer from '../index';
-import useModalListener from '../../../hooks/listeners/use-modal-listener';
-// constants
-import Styled from './styles';
-import NotificationController from '../../../app-content/notification';
-import useMeeting from '../../../graphql/hooks/useMeeting';
-import { ActivitySignProvider } from '../../../app-content/ActivitySign';
-import useCurrentUser from '../../../graphql/hooks/useCurrentUser';
+import { Alert, BackHandler } from "react-native";
 import Settings from '../../../../settings.json';
+import { ActivitySignProvider } from '../../../app-content/ActivitySign';
+import NotificationController from '../../../app-content/notification';
+import useCurrentUser from '../../../graphql/hooks/useCurrentUser';
+import useUserCount from '../../../graphql/hooks/useUserCount';
+import useMeeting from '../../../graphql/hooks/useMeeting';
+import useModalListener from '../../../hooks/listeners/use-modal-listener';
+import useAppState from '../../../hooks/use-app-state';
+import BreakoutRoomScreen from '../../../screens/breakout-room-screen';
+import FullscreenWrapperScreen from '../../../screens/fullscreen-wrapper-screen';
+import InsideBreakoutRoomScreen from '../../../screens/inside-breakout-room-screen';
+import MainConferenceScreen from '../../../screens/main-conference-screen';
+import PollNavigator from '../../../screens/poll-screen/navigator';
+import SelectLanguageScreen from '../../../screens/select-language-screen';
+import TimerScreen from '../../../screens/timer-screen';
+import UserNotesScreen from '../../../screens/user-notes-screen';
+import UserParticipantsNavigator from '../../../screens/user-participants-screen/navigator';
+import RecordingIndicator from '../../record/record-indicator';
+import CustomDrawer from '../index';
+import Styled from './styles';
 
 const DrawerNavigator = ({
   onLeaveSession, meetingUrl, navigation
@@ -38,6 +36,8 @@ const DrawerNavigator = ({
   const isBreakout = meetingData?.meeting[0]?.isBreakout;
   const { data: userData } = useCurrentUser();
   const amIModerator = userData?.user_current[0]?.isModerator;
+  const { data: currentUserCount } = useUserCount();
+  const users = currentUserCount?.user_aggregate?.aggregate?.count || 0;
 
   useModalListener();
 
@@ -131,7 +131,7 @@ const DrawerNavigator = ({
           name="UserParticipantsScreen"
           component={UserParticipantsNavigator}
           options={{
-            title: t('app.userList.label'),
+            title: `${t('app.userList.label')} (${users})`,
             unmountOnBlur: true,
             headerRight: () => (
               <RecordingIndicator recordMeeting={recordMeeting} recordPolicies={recordPolicies} />

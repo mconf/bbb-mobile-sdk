@@ -116,7 +116,7 @@
   "app.userList.guest.allowEveryone": "Allow everyone",
   "app.userList.guest.denyEveryone": "Deny everyone",
   "app.userList.guest.noPendingUsers": "Currently no pending users...",
-  "app.userList.label": "User list",
+  "app.userList.label": "Users",
   "app.userList.menu.promoteUser.label": "Promote to Moderator",
   "app.userList.menu.demoteUser.label": "Demote to viewer",
   "app.createBreakoutRoom.title": "Breakout rooms",
