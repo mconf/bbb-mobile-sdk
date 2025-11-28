@@ -189,7 +189,7 @@
   "mobileSdk.timer.start": "Start",
   "mobileSdk.timer.stop": "Stop",
   "mobileSdk.timer.reset": "Reset",
-  "mobileSdk.audio.deviceSelector.title": "Audio device selector",
+  "mobileSdk.audio.deviceSelector.title": "Change audio output",
   "mobileSdk.audio.deviceSelector.earpiece": "Earpiece",
   "mobileSdk.audio.deviceSelector.speakerPhone": "Speaker phone",
   "mobileSdk.audio.deviceSelector.bluetooth": "Bluetooth",
