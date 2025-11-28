@@ -1,14 +1,11 @@
-import React from 'react';
-import { Modal } from 'react-native-paper';
-import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
+import { Modal } from 'react-native-paper';
+import { useDispatch, useSelector } from 'react-redux';
+import PrimaryButton from '../../../components/buttons/primary-button';
 import { useOrientation } from '../../../hooks/use-orientation';
 import { hide } from '../../../store/redux/slices/wide-app/modal';
-import AudioManager from '../../../services/webrtc/audio-manager';
-import VideoManager from '../../../services/webrtc/video-manager';
 import Styled from './styles';
-import PrimaryButton from '../../../components/buttons/primary-button';
 
 const BreakoutInviteModal = () => {
   const modalCollection = useSelector((state) => state.modal);
@@ -17,14 +14,6 @@ const BreakoutInviteModal = () => {
   const orientation = useOrientation();
   const dispatch = useDispatch();
   const { t } = useTranslation();
-
-  const joinSession = (breakoutRoomJoinUrl) => {
-    // AudioManager.exitAudio();
-    // VideoManager.unpublish(localCameraId);
-    navigation.navigate('InsideBreakoutRoomScreen', { joinUrl: breakoutRoomJoinUrl });
-  };
-
-  // *** RENDER FUNCTIONS *** //
 
   const renderNavigateToBreakoutListScreen = () => (
     <Styled.Container orientation={orientation}>

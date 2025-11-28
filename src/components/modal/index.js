@@ -1,13 +1,13 @@
 import { useSelector } from 'react-redux';
 import BreakoutInviteModal from '../../screens/breakout-room-screen/breakout-invite-modal';
+import PickRandomUserModal from '../../screens/pick-random-user-screen/modal';
 import CantCreatePollModal from '../../screens/poll-screen/modals/cant-create-poll';
+import PublishedPollModal from '../../screens/poll-screen/modals/published-poll';
+import ReceivePollModal from '../../screens/poll-screen/modals/receive-poll';
+import AudioDeviceSelectorModal from '../actions-bar/audio-device-selector-control/audio-device-selector-modal';
 import RecordControlsModal from '../record/modals/record-controls-modal';
 import RecordStatusModal from '../record/modals/record-status-modal';
-import ReceivePollModal from '../../screens/poll-screen/modals/receive-poll';
-import PublishedPollModal from '../../screens/poll-screen/modals/published-poll';
-import AudioDeviceSelectorModal from '../actions-bar/audio-device-selector-control/audio-device-selector-modal';
 import NotImplementedModal from './not-implemented';
-import PickRandomUserModal from '../../screens/pick-random-user-screen/modal';
 
 const MODAL_COMPONENTS = {
   pick_random_user: PickRandomUserModal,
