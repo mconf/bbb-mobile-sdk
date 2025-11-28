@@ -1,8 +1,7 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
-import { setProfile } from '../../../store/redux/slices/wide-app/modal';
 import { trigDetailedInfo } from '../../../store/redux/slices/wide-app/layout';
+import { setProfile } from '../../../store/redux/slices/wide-app/modal';
 import Styled from './styles';
 
 const DeviceSelectorControl = () => {
