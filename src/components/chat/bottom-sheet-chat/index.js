@@ -1,24 +1,28 @@
+import { useMutation, useSubscription } from '@apollo/client';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import BottomSheet from '@gorhom/bottom-sheet';
+import { useHeaderHeight } from '@react-navigation/elements';
 import {
-  useCallback, useRef, useMemo, useState
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
 } from 'react';
-import { useSubscription, useMutation } from '@apollo/client';
-import {
-  KeyboardAvoidingView, Platform, Text, View
+import { Trans, useTranslation } from 'react-i18next'; import {
+  KeyboardAvoidingView, Platform,
+  View
 } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import HTMLView from 'react-native-htmlview';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHeaderHeight } from '@react-navigation/elements';
-import { useTranslation, Trans } from 'react-i18next';
-import BottomSheet from '@gorhom/bottom-sheet';
-import { useBottomSheetBackHandler } from '../../../hooks/useBottomSheetBackHandler';
-import { setHasUnreadMessages, setBottomChatOpen } from '../../../store/redux/slices/wide-app/chat';
-import UserAvatar from '../../user-avatar';
-import IconButtonComponent from '../../icon-button';
 import Colors from '../../../constants/colors';
-import Styled from './styles';
+import { useBottomSheetBackHandler } from '../../../hooks/useBottomSheetBackHandler';
+import { setBottomChatOpen, setHasUnreadMessages } from '../../../store/redux/slices/wide-app/chat';
+import IconButtonComponent from '../../icon-button';
+import UserAvatar from '../../user-avatar';
 import Queries from './queries';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import Styled from './styles';
 
 const BottomSheetChat = () => {
   const height = useHeaderHeight();
@@ -32,8 +36,15 @@ const BottomSheetChat = () => {
   const [messageText, setMessageText] = useState('');
   const dispatch = useDispatch();
   const isBottomChatOpen = useSelector((state) => state.chat.isBottomChatOpen);
+  const modalCollection = useSelector((state) => state.modal);
 
   const snapPoints = useMemo(() => ['95%'], []);
+
+  useEffect(() => {
+    if (modalCollection?.profile && modalCollection.profile !== '') {
+      dispatch(setBottomChatOpen(false));
+    }
+  }, [modalCollection?.profile]);
 
   const handleSheetChanges = useCallback((index) => {
     if (index === -1) {
@@ -104,16 +115,16 @@ const BottomSheetChat = () => {
     const senderName = item.senderName
     return (
       <View style={Styled.styles.item} key={item.timestamp}>
-          <Styled.Card>
-        <Styled.ServerContainer>
+        <Styled.Card>
+          <Styled.ServerContainer>
             <MaterialCommunityIcons name="monitor" size={24} color={Colors.lightGray400} />
             <Styled.ServerMsg>
               <Trans i18nKey="mobileSdk.chat.serverMsg" values={senderName}>
                 {{ senderName }}
               </Trans>
             </Styled.ServerMsg>
-        </Styled.ServerContainer>
-          </Styled.Card>
+          </Styled.ServerContainer>
+        </Styled.Card>
       </View>
     );
   };
