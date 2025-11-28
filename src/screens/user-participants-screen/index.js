@@ -33,10 +33,18 @@ const UserParticipantsScreen = () => {
   const { data: currentUserData } = useCurrentUser();
   const { data: pendingUsersData } = useGuestWaitingList();
   const currentUser = currentUserData?.user_current[0];
-  const userList = userListData?.user || [];
+  const userList = userListData?.user ? [...userListData.user] : [];
   const pendingUsers = pendingUsersData?.user_guest;
   const [dispatchSetRole] = useMutation(SET_ROLE);
   const [dispatchSetPresenter] = useMutation(SET_PRESENTER);
+
+  if (currentUser) {
+    const currentUserIndex = userList.findIndex((u) => u.userId === currentUser.userId);
+    if (currentUserIndex !== -1) {
+      const [user] = userList.splice(currentUserIndex, 1);
+      userList.unshift(user);
+    }
+  }
 
   const handleDispatchSetPresenter = (userId) => {
     dispatchSetPresenter({
