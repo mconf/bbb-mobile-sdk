@@ -9,7 +9,6 @@ import TransferScreen from '../../transfer-screen';
 import { useSelector } from 'react-redux';
 
 const TransferNavigator = (props) => {
-  console.log('transferNavigator')
   const { onLeaveSession } = props;
   const transferUrl = useSelector((state) => state.client.transferUrl);
 
