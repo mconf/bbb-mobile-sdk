@@ -22,6 +22,7 @@ import UserParticipantsNavigator from '../../../screens/user-participants-screen
 import RecordingIndicator from '../../record/record-indicator';
 import CustomDrawer from '../index';
 import Styled from './styles';
+import ChatPopupList from '../../chat/chat-popup';
 
 const DrawerNavigator = ({
   onLeaveSession, meetingUrl, navigation
@@ -252,6 +253,7 @@ const DrawerNavigator = ({
       </Drawer.Navigator >
       <NotificationController />
       <ActivitySignProvider />
+      <ChatPopupList />
     </>
   );
 };
