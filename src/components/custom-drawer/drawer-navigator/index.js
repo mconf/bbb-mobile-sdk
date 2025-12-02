@@ -19,6 +19,7 @@ import UserNotesScreen from '../../../screens/user-notes-screen';
 import UserParticipantsNavigator from '../../../screens/user-participants-screen/navigator';
 import CustomDrawer from '../index';
 import Styled from './styles';
+import ChatPopupList from '../../chat/chat-popup';
 
 const DrawerNavigator = ({
   onLeaveSession, meetingUrl, navigation
@@ -215,6 +216,7 @@ const DrawerNavigator = ({
       </Drawer.Navigator>
       <NotificationController />
       <ActivitySignProvider />
+      <ChatPopupList />
     </>
   );
 };
