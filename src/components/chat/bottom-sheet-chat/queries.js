@@ -14,6 +14,10 @@ const CHAT_MESSAGE_PUBLIC_SUB = gql`
       senderName
       senderRole
       messageMetadata
+      user {
+        avatar
+        color
+      }
     }
   }
 `;
