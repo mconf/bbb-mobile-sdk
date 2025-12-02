@@ -119,7 +119,9 @@ const BottomSheetChat = () => {
           <UserAvatar
             userName={item.senderName}
             userRole={item.senderRole}
+            userColor={item.user?.color}
             userId={item.senderId}
+            userImage={item.user?.avatar || null}
           />
           <Styled.Card>
             <Styled.MessageTopContainer>
