@@ -7,7 +7,6 @@ import BottomSheetChat from '../chat/bottom-sheet-chat';
 import NotificationBar from '../bar-notification';
 import BottomSheetActionsBar from '../actions-bar/bottom-sheet-actions-bar';
 import ModalControllerComponent from '../modal';
-import ChatPopupList from '../chat/chat-popup';
 import DebugWindow from '../debug-window';
 
 const ScreenWrapper = ({ children, renderWithView, alwaysOpen }) => {
@@ -42,7 +41,6 @@ const ScreenWrapper = ({ children, renderWithView, alwaysOpen }) => {
         <>
           <BottomSheetActionsBar alwaysOpen={alwaysOpen} />
           <BottomSheetChat />
-          <ChatPopupList />
         </>
       )}
     </>
