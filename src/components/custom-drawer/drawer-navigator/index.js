@@ -192,7 +192,7 @@ const DrawerNavigator = ({
             title: t('app.notes.title'),
             unmountOnBlur: true,
             drawerLabelStyle: {
-              maxWidth: 150, fontWeight: '400', fontSize: 16, paddingLeft: 12
+              fontWeight: '400', fontSize: 16, paddingLeft: 12
             },
             drawerIcon: (config) => (
               <Styled.IconMaterial name="notes" size={24} color={config.color} />
@@ -231,7 +231,7 @@ const DrawerNavigator = ({
                 <RecordingIndicator recordMeeting={recordMeeting} recordPolicies={recordPolicies} />
               ),
               drawerLabelStyle: {
-                maxWidth: 150, fontWeight: '400', fontSize: 16, paddingLeft: 12
+                fontWeight: '400', fontSize: 16, paddingLeft: 12
               },
               drawerIcon: (config) => (
                 <Styled.IconMaterial name="timer" size={24} color={config.color} />
