@@ -130,6 +130,8 @@
   "app.createBreakoutRoom.join": "Unirte",
   "mobileSdk.chat.isEmptyLabel": "El chat está vacío.",
   "mobileSdk.chat.serverMsg": "{{senderName}} es ahora el presentador",
+  "mobileSdk.chat.away": "{{senderName}} está temporalmente ausente.",
+  "mobileSdk.chat.notAway": "{{senderName}} está presente.",
   "mobileSdk.endSession.subtitle": "Serás redirigido a la página de inicio en unos segundos.",
   "mobileSdk.error.fallback": "Fin inesperado de la sesión, intenta iniciar sesión de nuevo.",
   "mobileSdk.error.microphone.blocked": "Micrófono bloqueado",

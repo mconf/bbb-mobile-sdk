@@ -194,6 +194,8 @@
   "mobileSdk.breakout.participantsLabel": "participants",
   "mobileSdk.chat.isEmptyLabel": "Chat is empty.",
   "mobileSdk.chat.serverMsg": "{{senderName}} is now the presenter",
+  "mobileSdk.chat.away": "{{senderName}} is temporarily away.",
+  "mobileSdk.chat.notAway": "{{senderName}} is present.",
   "mobileSdk.breakout.starting": "Rooms starting...",
   "mobileSdk.breakout.finishing": "Rooms finishing...",
   "mobileSdk.breakout.inviteModal.title": "Breakout room",
