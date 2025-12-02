@@ -83,9 +83,34 @@ const BottomSheetChat = () => {
   const renderItem = useCallback(({ item }) => {
     switch (item.messageType) {
       case "userIsPresenterMsg": return renderPresenterMessage(item);
+      case "userAwayStatusMsg": return renderAwayStatusMessage(item);
       default: return renderDefaultMessage(item);
     }
   }, []);
+
+  const renderAwayStatusMessage = (item) => {
+    const senderName = item.senderName
+    const away = JSON.parse(item.messageMetadata)?.away === true;
+
+    // TODO: fix i18n
+    return (
+      <View style={Styled.styles.item} key={item.timestamp}>
+        <Styled.Card>
+          <Styled.ServerContainer>
+            <MaterialCommunityIcons name="timer-outline" size={24} color={Colors.lightGray400} />
+            <Styled.ServerMsg>
+              <Trans
+                i18nKey={away ? "mobileSdk.chat.away" : "mobileSdk.chat.notAway"}
+                values={{ senderName }}
+              >
+                {{ senderName }}
+              </Trans>
+            </Styled.ServerMsg>
+          </Styled.ServerContainer>
+        </Styled.Card>
+      </View>
+    );
+  };
 
   const renderDefaultMessage = (item) => {
     const timestamp = new Date(item.createdAt);
