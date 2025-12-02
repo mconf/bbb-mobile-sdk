@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 const CHAT_MESSAGE_PUBLIC_SUB = gql`
-  subscription chatMessagePublic {
+  subscription chatMessages {
     chat_message_public(limit: 20, order_by: {createdAt: desc}) {
       chatId
       chatEmphasizedText
@@ -13,6 +13,7 @@ const CHAT_MESSAGE_PUBLIC_SUB = gql`
       senderId
       senderName
       senderRole
+      messageMetadata
     }
   }
 `;
