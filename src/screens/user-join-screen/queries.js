@@ -3,6 +3,9 @@ import { gql } from '@apollo/client';
 const GET_GUEST_LOBBY_INFO = gql`
   subscription getGuestLobbyInfo {
     user_current {
+      userId
+      extId
+      name
       authToken
       joinErrorCode
       joinErrorMessage
