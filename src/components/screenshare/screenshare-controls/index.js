@@ -1,6 +1,6 @@
 import * as Linking from 'expo-linking';
 import { useTranslation } from 'react-i18next';
-import { Alert, Platform } from 'react-native';
+import { Alert } from 'react-native';
 import { useSelector } from 'react-redux';
 import useCurrentUser from '../../../graphql/hooks/useCurrentUser';
 import useMeeting from '../../../graphql/hooks/useMeeting';
@@ -80,29 +80,39 @@ const ScreenshareControlsContainer = () => {
     }
   };
 
+  const fireIosWarning = (onConfirm) => {
+    Alert.alert(
+      t('mobileSdk.screenshare.iosDisabledTitle'),
+      t('mobileSdk.screenshare.iosDisabledMessage'),
+      [
+        {
+          text: t('mobileSdk.screenshare.betaWarningConfirm', 'Continue'),
+          onPress: onConfirm,
+        },
+      ],
+
+      { cancelable: true },
+    );
+  }
+
   if (!buttonEnabled) {
     return null;
   }
 
   switch (screenShareBridge) {
     case 'livekit':
-      if (Platform.OS !== 'android') {
-        return (
-          <></>
-        );
-      } else {
-        return (
-          <LKScreenshareControls
-            disabled={!isPresenter}
-            isConnecting={isConnecting}
-            localScreenshareId={localScreenshareId}
-            fireDisabledScreenshareAlert={fireDisabledScreenshareAlert}
-            fireBetaWarning={fireBetaWarning}
-            handleScreensharePublishError={handleScreensharePublishError}
-            isPresenter={isPresenter}
-          />
-        );
-      }
+      return (
+        <LKScreenshareControls
+          disabled={!isPresenter}
+          isConnecting={isConnecting}
+          localScreenshareId={localScreenshareId}
+          fireDisabledScreenshareAlert={fireDisabledScreenshareAlert}
+          fireBetaWarning={fireBetaWarning}
+          fireIosWarning={fireIosWarning}
+          handleScreensharePublishError={handleScreensharePublishError}
+          isPresenter={isPresenter}
+        />
+      );
     case 'bbb-webrtc-sfu':
     default:
       return (

@@ -5,6 +5,7 @@ import {
 } from '@livekit/react-native';
 import { Track } from 'livekit-client';
 import { useCallback } from 'react';
+import { Platform } from 'react-native';
 import { useDispatch } from 'react-redux';
 import useDebounce from '../../../../hooks/use-debounce';
 import { liveKitRoom } from '../../../../services/livekit';
@@ -21,6 +22,7 @@ const LKScreenshareControls = ({
   isConnecting,
   fireDisabledScreenshareAlert,
   fireBetaWarning,
+  fireIosWarning,
   handleScreensharePublishError,
   isPresenter,
 }) => {
@@ -105,12 +107,16 @@ const LKScreenshareControls = ({
       if (isActive) {
         unpublishScreenshare();
       } else {
+        if (Platform.OS !== 'android') {
+          fireIosWarning()
+          return
+        };
         fireBetaWarning(() => publishScreenshare());
       }
     } else {
       fireDisabledScreenshareAlert();
     }
-  }, [disabled, isActive, publishScreenshare, unpublishScreenshare, fireBetaWarning]), 1000);
+  }, [disabled, isActive, publishScreenshare, unpublishScreenshare, fireBetaWarning, fireIosWarning]), 1000);
 
   return (
     <Styled.ScreenshareButton

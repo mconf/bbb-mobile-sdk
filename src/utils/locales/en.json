@@ -221,6 +221,8 @@
   "mobileSdk.reactions.message.notAway": "Is present.",
   "mobileSdk.userList.waitingAtendees": "Waiting attendees.",
   "mobileSdk.screenshare.blockedLabel": "Screen sharing blocked",
+  "mobileSdk.screenshare.iosDisabledTitle": "Ios Screenshare Disabled",
+  "mobileSdk.screenshare.iosDisabledMessage": "This feature is a work in progress",
   "mobileSdk.screenshare.betaWarningTitle": "Beta feature",
   "mobileSdk.screenshare.betaWarningMessage": "Screenshare is in beta. Continue?",
   "mobileSdk.screenshare.betaWarningConfirm": "Confirm",

@@ -232,6 +232,8 @@
   "mobileSdk.reactions.message.notAway": "Está presente.",
   "mobileSdk.userList.waitingAtendees": "Asistentes en espera",
   "mobileSdk.screenshare.blockedLabel": "Compartir pantalla bloqueado",
+  "mobileSdk.screenshare.iosDisabledTitle": "Compartir pantalla de iOS desactivado",
+  "mobileSdk.screenshare.iosDisabledMessage": "Esta función está en desarrollo",
   "mobileSdk.screenshare.betaWarningTitle": "Función beta",
   "mobileSdk.screenshare.betaWarningMessage": "La función de compartir pantalla está en beta. ¿Continuar?",
   "mobileSdk.screenshare.betaWarningConfirm": "Confirmar",

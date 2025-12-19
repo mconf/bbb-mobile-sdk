@@ -232,6 +232,8 @@
   "mobileSdk.reactions.message.notAway": "Está presente.",
   "mobileSdk.userList.waitingAtendees": "Participantes aguardando",
   "mobileSdk.screenshare.blockedLabel": "Compartilhamento de tela bloqueado",
+  "mobileSdk.screenshare.iosDisabledTitle": "Compartilhamento de tela do iOS desativado",
+  "mobileSdk.screenshare.iosDisabledMessage": "Este recurso está em desenvolvimento",
   "mobileSdk.screenshare.betaWarningTitle": "Recurso beta",
   "mobileSdk.screenshare.betaWarningMessage": "O compartilhamento de tela está em beta. Continuar?",
   "mobileSdk.screenshare.betaWarningConfirm": "Confirmar",
