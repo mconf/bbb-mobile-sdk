@@ -17,10 +17,9 @@ const BREAKOUT_INVITE_SUBSCRIPTION = gql`
 `;
 
 const PLUGIN_DATA_CHANNEL_NEW_ITEMS = gql`
-  subscription FetchPluginDataChannelEntry($pluginName: String!,
-    $channelName: String! , $createdAt: timestamptz!, $subChannelName: String!){
-    pluginDataChannelEntry_stream(
-      cursor: {initial_value: {createdAt: $createdAt}}, batch_size: 100,
+  subscription FetchPluginDataChannelPublicEntry ($pluginName: String!,
+    $channelName: String! , $subChannelName: String!){
+    pluginDataChannelEntry_public(
       where: {
         pluginName: { _eq: $pluginName }
         channelName: { _eq: $channelName }

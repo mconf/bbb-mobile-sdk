@@ -37,7 +37,6 @@ const useModalListener = () => {
   const prevPublishedPollCount = useRef(undefined);
 
   // PickRandomUserPlugin
-  const createdAtRef = useRef(new Date().toISOString());
   const isPickRandomUserEnabled = Settings?.plugins?.pickRandomUser?.modal;
   const {
     data: pickRandomUserData,
@@ -48,7 +47,6 @@ const useModalListener = () => {
       pluginName: 'PickRandomUserPlugin',
       channelName: 'pickRandomUser',
       subChannelName: 'default',
-      createdAt: createdAtRef.current,
     },
     skip: !isPickRandomUserEnabled,
   });
@@ -59,8 +57,9 @@ const useModalListener = () => {
       if (pickRandomUserError) {
         console.error("PickRandomUserPlugin error: ", pickRandomUserError);
       } else {
-        const pickedUserData = pickRandomUserData?.pluginDataChannelEntry_stream?.[0]?.payloadJson;
+        const pickedUserData = pickRandomUserData?.pluginDataChannelEntry_public?.[0]?.payloadJson;
 
+        // when the list is emptied it triggers this
         if (!pickedUserData || !pickedUserData.name) {
           console.warn("Missing pickRandomUserPlugin data");
           return;
