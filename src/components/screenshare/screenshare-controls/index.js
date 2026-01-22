@@ -1,13 +1,16 @@
-import * as Linking from 'expo-linking';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert } from 'react-native';
-import { useSelector } from 'react-redux';
+import { setProfile } from "../../../store/redux/slices/wide-app/modal";
+import { useDispatch, useSelector } from 'react-redux';
+// import { setExpandActionsBar } from '../../../store/redux/slices/wide-app/layout';
 import useCurrentUser from '../../../graphql/hooks/useCurrentUser';
 import useMeeting from '../../../graphql/hooks/useMeeting';
 import logger from '../../../services/logger';
 import LKScreenshareControls from '../../livekit/screenshare/controls';
 
 const ScreenshareControlsContainer = () => {
+  const dispatch = useDispatch();
   const { data: meetingData, loading: meetingLoading } = useMeeting();
   const { data: currentUserData } = useCurrentUser();
   const { t } = useTranslation();
@@ -20,12 +23,12 @@ const ScreenshareControlsContainer = () => {
   const buttonEnabled = screenShareBridge != null && !meetingLoading;
 
   const fireDisabledScreenshareAlert = () => {
-    Alert.alert(
-      t('mobileSdk.screenshare.blockedLabel'),
-      t('mobileSdk.permission.presenter'),
-      null,
-      { cancelable: true },
-    );
+    disabledScreenshareAlert();
+  };
+
+  const disabledScreenshareAlert = () => {
+    // dispatch(setExpandActionsBar(false));
+    dispatch(setProfile({ profile: "screenshare_permission" }));
   };
 
   const fireBetaWarning = (onConfirm) => {
@@ -52,14 +55,14 @@ const ScreenshareControlsContainer = () => {
       extraInfo: {
         errorCode: error.code,
         errorMessage: error.message,
-      }
+      },
     }, `Screenshare published failed: ${error.message} - ${error.name}`);
 
     if (error.name === 'NotAllowedError' || error.name === 'SecurityError') {
       const buttons = [
         {
           text: t('app.settings.main.cancel.label'),
-          style: 'cancel'
+          style: 'cancel',
         },
         {
           text: t('app.settings.main.label'),
@@ -80,6 +83,7 @@ const ScreenshareControlsContainer = () => {
     }
   };
 
+  // TODO: replace with custom warning
   const fireIosWarning = (onConfirm) => {
     Alert.alert(
       t('mobileSdk.screenshare.iosDisabledTitle'),
