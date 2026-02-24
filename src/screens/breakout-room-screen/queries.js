@@ -7,7 +7,7 @@ const BREAKOUT_ROOM_SUBSCRIPTION = gql`
       name
       joinURL
       hasJoined
-      breakoutRoomId
+      breakoutRoomMeetingId
       freeJoin
       shortName
       participants {
@@ -21,8 +21,8 @@ const BREAKOUT_ROOM_SUBSCRIPTION = gql`
 `;
 
 const BREAKOUT_ROOM_REQUEST_JOIN_URL = gql`
-  mutation BreakoutRoomRequestJoinUrl($breakoutRoomId: String!) {
-    breakoutRoomRequestJoinUrl(breakoutRoomId: $breakoutRoomId)
+  mutation BreakoutRoomRequestJoinUrl($breakoutRoomMeetingId: String!) {
+    breakoutRoomRequestJoinUrl(breakoutRoomMeetingId: $breakoutRoomMeetingId)
   }
 `;
 

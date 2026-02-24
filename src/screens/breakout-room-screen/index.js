@@ -100,10 +100,10 @@ const BreakoutRoomScreen = () => {
     }, [hasBreakouts]),
   );
 
-  const handleDispatchRequestJoinUrl = (breakoutRoomId) => {
+  const handleDispatchRequestJoinUrl = (breakoutRoomMeetingId) => {
     dispatchRequestJoinUrl({
       variables: {
-        breakoutRoomId,
+        breakoutRoomMeetingId,
       },
     });
   };
@@ -118,10 +118,10 @@ const BreakoutRoomScreen = () => {
     navigation.navigate('InsideBreakoutRoomScreen', { joinURL: breakoutRoomJoinUrl });
   };
 
-  const handleJoinButton = (breakoutId, breakoutRoomJoinUrl) => {
+  const handleJoinButton = (breakoutRoomMeetingId, breakoutRoomJoinUrl) => {
     if (!breakoutRoomJoinUrl) {
       setRequestedUrl(true);
-      handleDispatchRequestJoinUrl(breakoutId);
+      handleDispatchRequestJoinUrl(breakoutRoomMeetingId);
       setTimeout(() => setRequestedUrl(false), 3000);
     } else {
       joinSession(breakoutRoomJoinUrl);
@@ -184,7 +184,7 @@ const BreakoutRoomScreen = () => {
                 <PrimaryButton
                   variant="tertiary"
                   onPress={() =>
-                    handleJoinButton(item.breakoutRoomId, item.joinURL)
+                    handleJoinButton(item.breakoutRoomMeetingId, item.joinURL)
                   }
                   loading={requestedUrl}
                 >

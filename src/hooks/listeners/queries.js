@@ -6,7 +6,7 @@ const BREAKOUT_INVITE_SUBSCRIPTION = gql`
       joinURL
       shortName
       freeJoin
-      breakoutRoomId
+      breakoutRoomMeetingId
       isLastAssignedRoom
       isUserCurrentlyInRoom
       assignedUsers {

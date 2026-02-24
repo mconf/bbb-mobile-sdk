@@ -36,6 +36,7 @@ const USER_CURRENT_SUBSCRIPTION = gql`
       presenter
       raiseHand
       registeredAt
+      requestedPresenter
       requestedUnmuteByMod
       role
       speechLocale
@@ -48,7 +49,7 @@ const USER_CURRENT_SUBSCRIPTION = gql`
         logoutUrl
       }
       lastBreakoutRoom {
-        currentlyInRoom
+        isUserCurrentlyInRoom
         sequence
         shortName
       }
