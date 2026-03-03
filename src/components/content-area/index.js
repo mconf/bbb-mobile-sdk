@@ -20,6 +20,7 @@ import Settings from '../../../settings.json';
 import Queries from './queries';
 import LiveKitScreenshareViewContainer from '../livekit/screenshare';
 import ExternalVideo from '../external-video';
+import PrimaryButton from '../buttons/primary-button';
 
 const ContentArea = (props) => {
   const { style, fullscreen } = props;
@@ -107,6 +108,13 @@ const ContentArea = (props) => {
     return (
       <Styled.ScreenshareBackground>
         <Styled.ScreenshareText>{t('mobileSdk.screenshare.screensharing')}</Styled.ScreenshareText>
+        <PrimaryButton
+          onPress={() => { }}
+          variant="danger"
+          fullWidth={false}
+        >
+          {t('mobileSdk.screenshare.stopScreensharing')}
+        </PrimaryButton>
       </Styled.ScreenshareBackground>
     );
   }

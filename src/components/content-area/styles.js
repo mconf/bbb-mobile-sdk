@@ -85,13 +85,15 @@ const ScreenshareBackground = styled.View`
   overflow: hidden;
   object-fit: contain;
   justify-content: center;
+  align-items: center;
   background-color: ${Colors.contentLetterboxColor};
+  gap: 8px
 `;
 
 const ScreenshareText = styled.Text`
   color: ${Colors.white};
   font-weight: 600;
-  font-size: 24px;
+  font-size: 20px;
   text-align: center;
 `;
 
