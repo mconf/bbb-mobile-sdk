@@ -40,6 +40,14 @@ const BottomSheetChat = () => {
   const modalCollection = useSelector((state) => state.modal);
 
   const snapPoints = useMemo(() => ['95%'], []);
+  const topShadowStyle = {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
+    borderRadius: 12
+  };
 
   useEffect(() => {
     if (modalCollection?.profile && modalCollection.profile !== '') {
@@ -175,6 +183,7 @@ const BottomSheetChat = () => {
         snapPoints={snapPoints}
         onChange={handleSheetChanges}
         enablePanDownToClose
+        style={topShadowStyle}
       >
         {renderEmptyChatHandler()}
         <FlatList
