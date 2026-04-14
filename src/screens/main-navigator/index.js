@@ -23,7 +23,7 @@ const MainNavigator = (props) => {
   } = joinObject;
 
   useEffect(() => {
-    if (loginStage === 6) {
+    if (loginStage === 5) {
       navigation.reset({
         index: 1,
         routes: [{ name: 'UserJoinScreen' }]
@@ -31,7 +31,7 @@ const MainNavigator = (props) => {
     }
   }, [loginStage]);
 
-  if (loginStage <= 5) {
+  if (loginStage <= 4) {
     return (
       <LoadingScreen />
     );
