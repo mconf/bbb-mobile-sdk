@@ -1,15 +1,19 @@
+import { useMutation, useSubscription } from '@apollo/client';
+import { useEffect } from 'react';
 import { WebView } from 'react-native-webview';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
-import { useMutation, useSubscription } from '@apollo/client';
-import { trigDetailedInfo } from '../../store/redux/slices/wide-app/layout';
 import ScreenWrapper from '../../components/screen-wrapper';
-import Styled from './styles';
+import useMeetingSettings from '../../graphql/local-states/useMeetingSettings';
+import { trigDetailedInfo } from '../../store/redux/slices/wide-app/layout';
 import Queries from './queries';
+import Styled from './styles';
 
 const UserNotesScreen = () => {
-  const host = useSelector((state) => state.client.meetingData.host);
   const sessionToken = useSelector((state) => state.client.meetingData.sessionToken);
+  const [meetingSettings] = useMeetingSettings()
+  const host = meetingSettings?.public
+    ? (meetingSettings.public?.pads?.url)
+    : null;
 
   const dispatch = useDispatch();
   const [createSession] = useMutation(Queries.CREATE_SESSION);
@@ -19,7 +23,7 @@ const UserNotesScreen = () => {
 
   const padName = padSessionData?.sharedNotes_session[0]?.padId;
   const notesSessionId = padSessionData?.sharedNotes_session[0]?.sessionId;
-  const url = `https://${host}/pad/auth_session?padName=${padName}&sessionID=${notesSessionId}&lang=pt-br&rtl=false&sessionToken=${sessionToken}`;
+  const url = `${host}/auth_session?padName=${padName}&sessionID=${notesSessionId}&lang=pt-br&rtl=false&sessionToken=${sessionToken}`;
 
   const createNoteSession = () => {
     createSession({ variables: { externalId: 'notes' } });
