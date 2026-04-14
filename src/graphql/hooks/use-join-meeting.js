@@ -23,7 +23,6 @@ const useJoinMeeting = (url) => {
   const [graphqlWebsocketUrl, setGraphqlWebsocketUrl] = useState(null);
   const [graphqlApiUrl, setGraphqlApiUrl] = useState(null);
   const [clientSettings, setClientSettings] = useState(null);
-  const [host, setLocalHost] = useState('');
   const numberOfAttempts = useRef(20);
   const tsLastMessageRef = useRef(0);
   const tsLastPingMessageRef = useRef(0);
@@ -35,7 +34,6 @@ const useJoinMeeting = (url) => {
         if (data.status === 200) {
           setUrlWithSessionId(data.url);
           setLocalSessionToken(UrlUtils.parseQueryString(data.url).sessionToken);
-          setLocalHost(UrlUtils.getHostFromUrl(data.url));
           dispatch(setJoinUrl(data.url));
           dispatch(setHost(UrlUtils.getHostFromUrl(data.url)));
           dispatch(setSessionToken(UrlUtils.parseQueryString(data.url).sessionToken));
@@ -49,7 +47,7 @@ const useJoinMeeting = (url) => {
   async function joinWithSessionToken() {
     if (urlWithSessionId.includes('transfer/')) {
       dispatch(setTransferUrl(urlWithSessionId));
-      setLoginStage(7);
+      setLoginStage(6);
     } else {
       fetch(`${urlWithSessionId}`)
         .then((data) => {
@@ -63,7 +61,7 @@ const useJoinMeeting = (url) => {
   }
 
   async function callApi() {
-    fetch(`https://${host}/bigbluebutton/api`, {
+    fetch(UrlUtils.buildURL(urlWithSessionId, 'bigbluebutton/api'), {
       credentials: 'include',
     })
       .then((response) => response.text())
@@ -87,22 +85,6 @@ const useJoinMeeting = (url) => {
       .catch((error) => {
         console.error('error callApi()', error);
       });
-  }
-
-  async function getClientStartupSettings() {
-    // fetch(`${graphqlApiUrl}/clientStartupSettings`, {
-    //   credentials: 'include',
-    //   headers: {
-    //     'X-Session-Token': sessionToken,
-    //   }
-    // })
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     setClientStartupSettings(data.meeting_clientSettings[0]);
-    console.log('DONE STAGE 3');
-    setLoginStage(4);
-    // })
-    // .catch((error) => console.error('error getClientStartupSettings()', error));
   }
 
   const errorLink = onError(({ graphQLErrors, networkError }) => {
@@ -220,15 +202,16 @@ const useJoinMeeting = (url) => {
         connectToDevTools: false,
       });
       setApolloClient(client);
-      console.log('DONE STAGE 4');
-      setLoginStage(5);
+      console.log('DONE STAGE 3');
+      setLoginStage(4);
     } catch (error) {
       throw new Error('Error creating Apollo Client: '.concat(JSON.stringify(error) || ''));
     }
   }
 
   async function getClientSettings() {
-    fetch(`${graphqlApiUrl}/clientSettings`, {
+    fetch(`${graphqlApiUrl}/meetingStaticData`, {
+      method: 'get',
       credentials: 'include',
       headers: {
         'X-Session-Token': sessionToken,
@@ -236,11 +219,11 @@ const useJoinMeeting = (url) => {
     })
       .then((response) => response.json())
       .then((data) => {
-        const cSettings = data.meeting_clientSettings[0].clientSettingsJson;
+        const cSettings = data.meeting[0].clientSettings.clientSettingsJson
         setClientSettings(cSettings?.public);
         setMeetingSettings(cSettings);
-        console.log('DONE STAGE 5');
-        setLoginStage(6);
+        console.log('DONE STAGE 4');
+        setLoginStage(5);
       });
   }
 
@@ -256,18 +239,15 @@ const useJoinMeeting = (url) => {
         callApi();
         break;
       case 3:
-        getClientStartupSettings();
-        break;
-      case 4:
         connectGraphqlServer();
         break;
-      case 5:
+      case 4:
         getClientSettings();
         break;
-      case 6:
+      case 5:
         console.log('LOGIN COMPLETE');
         break;
-      case 7:
+      case 6:
         console.log('TRANSFER');
         break;
       default:

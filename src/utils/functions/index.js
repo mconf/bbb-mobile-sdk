@@ -52,15 +52,15 @@ const humanizeSecondsWithHours = (time) => {
       minutes,
       seconds
     ]
-    .map(x => x < 10 ? `0${x}` : x)
-    .join(':');
+      .map(x => x < 10 ? `0${x}` : x)
+      .join(':');
   } else if (minutes > 0) {
     return [
       minutes,
       seconds
     ]
-    .map(x => x < 10 ? `0${x}` : x)
-    .join(':');
+      .map(x => x < 10 ? `0${x}` : x)
+      .join(':');
   } else {
     return `00:${seconds < 10 ? `0${seconds}` : seconds}`;
   }
@@ -89,10 +89,19 @@ const parseQueryString = (url) => {
 };
 
 const getHostFromUrl = (url) => {
-  const regex = /^(?:[^:\n]+:\/\/)?([^:#/\n]*)/;
-  const match = url.match(regex);
-  const host = match ? match[1] : null;
-  return host;
+  const parsed = new URL(url);
+  const pathMatch = parsed.pathname.match('^(.*)/html5client/?');
+  const serverPathPrefix = pathMatch ? pathMatch[1] : '';
+  return serverPathPrefix
+    ? `${parsed.hostname}${serverPathPrefix}`
+    : parsed.hostname;
+};
+
+const buildURL = (joinUrl, route) => {
+  const parsed = new URL(joinUrl);
+  const pathMatch = parsed.pathname.match('^(.*)/html5client/?');
+  const serverPathPrefix = pathMatch ? `${pathMatch[1]}/` : '';
+  return new URL(route, `${parsed.protocol}//${parsed.hostname}${serverPathPrefix}`).toString();
 };
 
 function xml2json(xmlString) {
@@ -130,5 +139,6 @@ export default {
   arraysEqual,
   parseQueryString,
   getHostFromUrl,
+  buildURL,
   xml2json
 };

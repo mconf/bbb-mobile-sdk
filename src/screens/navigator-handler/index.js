@@ -13,12 +13,12 @@ const NavigatorHandler = (props) => {
   } = joinObject;
 
   switch (loginStage) {
-    case 6:
+    case 5:
       return (<MainNavigator
         {...props}
         graphqlUrlApolloClient={graphqlUrlApolloClient}
       />)
-    case 7:
+    case 6:
       return (<TransferNavigator {...props} />)
     default:
       return (<LoadingScreen />)
