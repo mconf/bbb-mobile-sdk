@@ -117,8 +117,6 @@ const RecordingIndicator = ({ recordMeeting, recordPolicies }) => {
     }, [recording])
   );
 
-  if (!recordingEnabled) return null;
-
   const handleIcon = () => (
     <MaterialCommunityIcons
       name="record-circle-outline"
