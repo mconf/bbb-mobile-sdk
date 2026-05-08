@@ -1,6 +1,6 @@
 {
   "name": "bbbmobile",
-  "version": "0.20.7",
+  "version": "0.21.1",
   "private": true,
   "description": "BigBlueButton mobile sdk",
   "main": "index.js",
