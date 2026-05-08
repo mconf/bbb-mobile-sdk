@@ -11,9 +11,9 @@ const Container = styled.View`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  right: 16px;
+  width: 32px;
+  height: 32px;
+  right: 12px;
   z-index: 1;
   border-radius: 36px;
 
@@ -23,6 +23,10 @@ const Container = styled.View`
 
   ${({ recording }) => recording && `
     background-color: ${Colors.recordingRed};
+  `}
+
+  ${({ isCameraConnected }) => isCameraConnected && `
+    right: 24px;
   `}
 `;
 
