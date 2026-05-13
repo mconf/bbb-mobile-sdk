@@ -198,6 +198,7 @@
   "mobileSdk.audio.deviceSelector.wiredHeadset": "Fone com fio",
   "mobileSdk.notificationBar.microphoneOff": "Você está silenciado(a). Clique no microfone para ativá-lo.",
   "mobileSdk.notificationBar.handsUp": "Você está com a mão levantada.",
+  "mobileSdk.notificationBar.cameraToggle": "Você mudou a câmera.",
   "mobileSdk.upload.notification.header": "Um arquivo foi carregado:",
   "mobileSdk.notification.recordLabel": "Gravação",
   "mobileSdk.record.noPermission.label": "Você não possui permissão para gravar reuniões.",

@@ -15,6 +15,7 @@ import {
   setLocalCameraId,
 } from '../../../../store/redux/slices/wide-app/video';
 import Styled from '../../../video/video-controls/styles';
+import { hideNotification, setProfile, showNotificationWithTimeout } from '../../../../store/redux/slices/wide-app/notification-bar';
 
 const LKVideoControls = ({
   disabled,
@@ -114,6 +115,8 @@ const LKVideoControls = ({
     if (localTrack) {
       localTrack.restartTrack({ facingMode: cameraFacingMode })
     }
+    dispatch(showNotificationWithTimeout({ profile: 'cameraToggle' }));
+
   }, [cameraFacingMode])
 
   const onButtonPress = useDebounce(useCallback(() => {

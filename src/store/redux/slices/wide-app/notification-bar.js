@@ -34,6 +34,12 @@ const notificationBarSlice = createSlice({
           state.text = 'mobileSdk.notificationBar.handsUp';
           state.extraInfo = action.payload.extraInfo;
           break;
+        case 'cameraToggle':
+          state.isShow = true;
+          state.profile = 'cameraToggle';
+          state.text = 'mobileSdk.notificationBar.cameraToggle';
+          state.extraInfo = action.payload.extraInfo;
+          break;
         case 'recordingStarted':
           state.isShow = true;
           state.messageTitle = 'mobileSdk.notification.recordLabel';
