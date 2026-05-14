@@ -117,7 +117,6 @@ const BottomSheetChat = () => {
 
   // TODO: move these to a chat component
   const renderItem = useCallback(({ item }) => {
-    console.log(item.messageType)
     switch (item.messageType) {
       case "userIsPresenterMsg": return renderPresenterMessage(item);
       case "userAwayStatusMsg": return renderAwayStatusMessage(item);
