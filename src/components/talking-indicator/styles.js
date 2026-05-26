@@ -37,8 +37,8 @@ const MicIcon = () => (
 
 const IconContainerPresentation = styled(TouchableRipple)`
   margin: 5px;
-  padding: 6px;
-  border-radius: 16px;
+  padding: 12px;
+  border-radius: 24px;
   position: absolute;
   right: 4px;
   background-color: ${Colors.orange};
@@ -52,7 +52,7 @@ const ShowPresentationIcon = ({ onPress, isPresentationOpen }) => {
 
   return (
     <IconContainerPresentation onPress={onPress}>
-      <MaterialIcons name="slideshow" size={16} color="#FFFFFF" />
+      <MaterialIcons name="slideshow" size={24} color="#FFFFFF" />
     </IconContainerPresentation>
   );
 };
