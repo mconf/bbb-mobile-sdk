@@ -2,12 +2,14 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, BackHandler } from "react-native";
+import { useDispatch, useSelector } from 'react-redux';
 import Settings from '../../../../settings.json';
 import { ActivitySignProvider } from '../../../app-content/ActivitySign';
 import NotificationController from '../../../app-content/notification';
+import Colors from '../../../constants/colors';
 import useCurrentUser from '../../../graphql/hooks/useCurrentUser';
-import useUserCount from '../../../graphql/hooks/useUserCount';
 import useMeeting from '../../../graphql/hooks/useMeeting';
+import useUserCount from '../../../graphql/hooks/useUserCount';
 import useModalListener from '../../../hooks/listeners/use-modal-listener';
 import useAppState from '../../../hooks/use-app-state';
 import BreakoutRoomScreen from '../../../screens/breakout-room-screen';
@@ -19,10 +21,11 @@ import SelectLanguageScreen from '../../../screens/select-language-screen';
 import TimerScreen from '../../../screens/timer-screen';
 import UserNotesScreen from '../../../screens/user-notes-screen';
 import UserParticipantsNavigator from '../../../screens/user-participants-screen/navigator';
+import { toggleFacingMode } from '../../../store/redux/slices/wide-app/video';
+import ChatPopupList from '../../chat/chat-popup';
 import RecordingIndicator from '../../record/record-indicator';
 import CustomDrawer from '../index';
 import Styled from './styles';
-import ChatPopupList from '../../chat/chat-popup';
 
 const DrawerNavigator = ({
   onLeaveSession, meetingUrl, navigation
@@ -34,11 +37,14 @@ const DrawerNavigator = ({
   const meetingName = meetingData?.meeting[0]?.name;
   const recordMeeting = meetingData?.meeting[0]?.recording;
   const recordPolicies = meetingData?.meeting[0]?.recordingPolicies;
+  const recordingEnabled = recordPolicies?.record;
   const isBreakout = meetingData?.meeting[0]?.isBreakout;
   const { data: userData } = useCurrentUser();
   const amIModerator = userData?.user_current[0]?.isModerator;
   const { data: currentUserCount } = useUserCount();
   const users = currentUserCount?.user_aggregate?.aggregate?.count || 0;
+  const isCameraConnected = useSelector((state) => state.video.isConnected);
+  const dispatch = useDispatch();
 
   useModalListener();
 
@@ -94,9 +100,26 @@ const DrawerNavigator = ({
             title: meetingName || t('mobileSdk.meeting.label'),
             unmountOnBlur: true,
             headerShown: appState !== 'background',
-            headerRight: () => (
-              <RecordingIndicator recordMeeting={recordMeeting} recordPolicies={recordPolicies} />
-            ),
+            headerRight: () => {
+              if (!isCameraConnected && !recordingEnabled) return null;
+              if (!isCameraConnected) {
+                return <RecordingIndicator recordMeeting={recordMeeting} recordPolicies={recordPolicies} />;
+              }
+              return (
+                <Styled.HeaderRight>
+                  {recordingEnabled && (
+                    <RecordingIndicator recordMeeting={recordMeeting} recordPolicies={recordPolicies} />
+                  )}
+                  <Styled.DrawerIcon
+                    icon="camera-flip-outline"
+                    size={24}
+                    iconColor={Colors.white}
+                    onPress={() => dispatch(toggleFacingMode())}
+                    style={!recordingEnabled ? { position: 'relative' } : undefined}
+                  />
+                </Styled.HeaderRight>
+              );
+            },
             drawerIcon: (config) => (
               <Styled.DrawerIcon
                 icon="home"
@@ -114,9 +137,26 @@ const DrawerNavigator = ({
             options={{
               title: t('mobileSdk.poll.label'),
               unmountOnBlur: true,
-              headerRight: () => (
-                <RecordingIndicator recordMeeting={recordMeeting} recordPolicies={recordPolicies} />
-              ),
+              headerRight: () => {
+                if (!isCameraConnected && !recordingEnabled) return null;
+                if (!isCameraConnected) {
+                  return <RecordingIndicator recordMeeting={recordMeeting} recordPolicies={recordPolicies} />;
+                }
+                return (
+                  <Styled.HeaderRight>
+                    {recordingEnabled && (
+                      <RecordingIndicator recordMeeting={recordMeeting} recordPolicies={recordPolicies} />
+                    )}
+                    <Styled.DrawerIcon
+                      icon="camera-flip-outline"
+                      size={24}
+                      iconColor={Colors.white}
+                      onPress={() => dispatch(toggleFacingMode())}
+                      style={!recordingEnabled ? { position: 'relative' } : undefined}
+                    />
+                  </Styled.HeaderRight>
+                );
+              },
               drawerIcon: (config) => (
                 <Styled.DrawerIcon
                   icon="poll"
@@ -134,9 +174,26 @@ const DrawerNavigator = ({
           options={{
             title: `${t('app.userList.label')} (${users})`,
             unmountOnBlur: true,
-            headerRight: () => (
-              <RecordingIndicator recordMeeting={recordMeeting} recordPolicies={recordPolicies} />
-            ),
+            headerRight: () => {
+              if (!isCameraConnected && !recordingEnabled) return null;
+              if (!isCameraConnected) {
+                return <RecordingIndicator recordMeeting={recordMeeting} recordPolicies={recordPolicies} />;
+              }
+              return (
+                <Styled.HeaderRight>
+                  {recordingEnabled && (
+                    <RecordingIndicator recordMeeting={recordMeeting} recordPolicies={recordPolicies} />
+                  )}
+                  <Styled.DrawerIcon
+                    icon="camera-flip-outline"
+                    size={24}
+                    iconColor={Colors.white}
+                    onPress={() => dispatch(toggleFacingMode())}
+                    style={!recordingEnabled ? { position: 'relative' } : undefined}
+                  />
+                </Styled.HeaderRight>
+              );
+            },
             drawerIcon: (config) => (
               <Styled.DrawerIcon
                 icon="account-multiple-outline"
@@ -153,9 +210,26 @@ const DrawerNavigator = ({
           options={{
             title: t('mobileSdk.locales.label'),
             unmountOnBlur: true,
-            headerRight: () => (
-              <RecordingIndicator recordMeeting={recordMeeting} recordPolicies={recordPolicies} />
-            ),
+            headerRight: () => {
+              if (!isCameraConnected && !recordingEnabled) return null;
+              if (!isCameraConnected) {
+                return <RecordingIndicator recordMeeting={recordMeeting} recordPolicies={recordPolicies} />;
+              }
+              return (
+                <Styled.HeaderRight>
+                  {recordingEnabled && (
+                    <RecordingIndicator recordMeeting={recordMeeting} recordPolicies={recordPolicies} />
+                  )}
+                  <Styled.DrawerIcon
+                    icon="camera-flip-outline"
+                    size={24}
+                    iconColor={Colors.white}
+                    onPress={() => dispatch(toggleFacingMode())}
+                    style={!recordingEnabled ? { position: 'relative' } : undefined}
+                  />
+                </Styled.HeaderRight>
+              );
+            },
             drawerIcon: (config) => (
               <Styled.DrawerIcon
                 icon="web"
@@ -227,9 +301,26 @@ const DrawerNavigator = ({
             options={{
               title: t('app.timerScreen.title'),
               unmountOnBlur: true,
-              headerRight: () => (
-                <RecordingIndicator recordMeeting={recordMeeting} recordPolicies={recordPolicies} />
-              ),
+              headerRight: () => {
+                if (!isCameraConnected && !recordingEnabled) return null;
+                if (!isCameraConnected) {
+                  return <RecordingIndicator recordMeeting={recordMeeting} recordPolicies={recordPolicies} />;
+                }
+                return (
+                  <Styled.HeaderRight>
+                    {recordingEnabled && (
+                      <RecordingIndicator recordMeeting={recordMeeting} recordPolicies={recordPolicies} />
+                    )}
+                    <Styled.DrawerIcon
+                      icon="camera-flip-outline"
+                      size={24}
+                      iconColor={Colors.white}
+                      onPress={() => dispatch(toggleFacingMode())}
+                      style={!recordingEnabled ? { position: 'relative' } : undefined}
+                    />
+                  </Styled.HeaderRight>
+                );
+              },
               drawerLabelStyle: {
                 fontWeight: '400', fontSize: 16, paddingLeft: 12
               },

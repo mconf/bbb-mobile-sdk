@@ -6,7 +6,6 @@ import Tag from '../../tag';
 
 const DrawerIcon = styled(iconButton)`
   position: absolute;
-  padding: 0px;
 `;
 
 const IconMaterial = styled(Icon)`
@@ -37,6 +36,13 @@ const HeaderTitleText = styled.Text`
   font-size: 20px;
   font-weight: 600;
   max-width: 80%;
+`;
+
+const HeaderRight = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: 24px;
+  margin-right: 12px;
 `;
 
 const BetaTag = styled(Tag)`
@@ -82,7 +88,8 @@ export default {
   NotificationIcon,
   HeaderTitleContainer,
   HeaderTitleText,
+  HeaderRight,
   BetaTag,
   IconMaterial,
-  ScreenOptions
+  ScreenOptions,
 };

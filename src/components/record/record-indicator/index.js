@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, Animated } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/core';
+import { useSelector } from 'react-redux';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { setProfile } from '../../../store/redux/slices/wide-app/modal';
 import { showNotificationWithTimeout } from '../../../store/redux/slices/wide-app/notification-bar';
@@ -16,6 +17,7 @@ const RecordingIndicator = ({ recordMeeting, recordPolicies }) => {
   const { data: userData } = useCurrentUser();
   const amIModerator = userData?.user_current[0]?.isModerator;
   const previousRecording = usePrevious(recording);
+  const isCameraConnected = useSelector((state) => state.video.isConnected);
 
   const neverRecorded = (
     recordMeeting?.previousRecordedTimeInSeconds === 0
@@ -117,8 +119,6 @@ const RecordingIndicator = ({ recordMeeting, recordPolicies }) => {
     }, [recording])
   );
 
-  if (!recordingEnabled) return null;
-
   const handleIcon = () => (
     <MaterialCommunityIcons
       name="record-circle-outline"
@@ -127,8 +127,10 @@ const RecordingIndicator = ({ recordMeeting, recordPolicies }) => {
     />
   );
 
+  // TODO: The HeaderRight property on the custom drawer doesn't respect any style
+  // fix that, and remove the isCameraConnected from here
   return (
-    <Styled.Container neverRecorded={neverRecorded} recording={recording}>
+    <Styled.Container neverRecorded={neverRecorded} recording={recording} isCameraConnected={isCameraConnected}>
       <Styled.RecordingIndicatorIcon>
         <Pressable
           onPress={hasRecordingPermission

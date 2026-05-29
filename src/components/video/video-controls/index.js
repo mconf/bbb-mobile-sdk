@@ -1,14 +1,15 @@
-import * as Linking from 'expo-linking';
-import { Alert } from 'react-native';
 import { useMutation } from '@apollo/client';
-import { useSelector } from 'react-redux';
+import * as Linking from 'expo-linking';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Alert } from 'react-native';
+import { useSelector } from 'react-redux';
 import useCurrentUser from '../../../graphql/hooks/useCurrentUser';
 import useMeeting from '../../../graphql/hooks/useMeeting';
 import useAppState from '../../../hooks/use-app-state';
 import logger from '../../../services/logger';
-import Queries from './queries';
 import LKVideoControls from '../../livekit/camera/controls';
+import Queries from './queries';
 import SFUVideoControls from './sfu-video-controls';
 
 const VideoControlsContainer = () => {
@@ -20,6 +21,7 @@ const VideoControlsContainer = () => {
   const isConnected = useSelector((state) => state.video.isConnected);
   const isConnecting = useSelector((state) => state.video.isConnecting);
   const localCameraId = useSelector((state) => state.video.localCameraId);
+  const facingMode = useSelector((state) => state.video.facingMode);
   const appState = useAppState();
 
   const meeting = meetingData?.meeting[0];
@@ -98,6 +100,7 @@ const VideoControlsContainer = () => {
           sendUserStopWebcam={sendUserStopWebcam}
           fireDisabledCamAlert={fireDisabledCamAlert}
           handleCameraPublishError={handleCameraPublishError}
+          cameraFacingMode={facingMode}
         />
       );
 
