@@ -1,21 +1,21 @@
-import { useCallback, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import {
-  useTracks,
-  useParticipantTracks,
+  RoomContext,
   useLocalParticipant,
-  RoomContext
+  useTracks
 } from '@livekit/react-native';
 import { Track } from 'livekit-client';
-import Styled from '../../../video/video-controls/styles';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import useDebounce from '../../../../hooks/use-debounce';
+import { liveKitRoom } from '../../../../services/livekit';
+import logger from '../../../../services/logger';
 import {
-  setIsConnecting,
   setIsConnected,
+  setIsConnecting,
   setLocalCameraId,
 } from '../../../../store/redux/slices/wide-app/video';
-import useDebounce from '../../../../hooks/use-debounce';
-import logger from '../../../../services/logger';
-import { liveKitRoom } from '../../../../services/livekit';
+import Styled from '../../../video/video-controls/styles';
+import { hideNotification, setProfile, showNotificationWithTimeout } from '../../../../store/redux/slices/wide-app/notification-bar';
 
 const LKVideoControls = ({
   disabled,
@@ -27,13 +27,20 @@ const LKVideoControls = ({
   sendUserStopWebcam,
   fireDisabledCamAlert,
   handleCameraPublishError,
+  cameraFacingMode,
 }) => {
   const { localParticipant } = useLocalParticipant();
   const tracks = useTracks([Track.Source.Camera]);
   const dispatch = useDispatch();
   const [publishOnActive, setPublishOnActive] = useState(false);
+  const isMounted = useRef(false);
   const isActive = localParticipant.isCameraEnabled || isConnecting;
-  const constraints = { video: true };
+  const constraints = useMemo(
+    () => (
+      { video: true, facingMode: cameraFacingMode }
+    ),
+    [cameraFacingMode]
+  );
 
   const publishCamera = useCallback(async () => {
     const newCameraId = `${localParticipant.identity}_app_${Date.now()}`;
@@ -47,9 +54,10 @@ const LKVideoControls = ({
 
       if (!localPub) throw new Error('Local track publication failed');
 
-      dispatch(setLocalCameraId(newCameraId));
+      const cameraId = localPub.trackName ?? newCameraId;
+      dispatch(setLocalCameraId(cameraId));
       dispatch(setIsConnected(true));
-      sendUserShareWebcam(newCameraId);
+      sendUserShareWebcam(cameraId);
     } catch (error) {
       handleCameraPublishError(error, publishCamera);
     } finally {
@@ -60,6 +68,7 @@ const LKVideoControls = ({
     unpublishCamera,
     sendUserShareWebcam,
     handleCameraPublishError,
+    constraints
   ]);
 
   const unpublishCamera = useCallback(async () => {
@@ -96,6 +105,19 @@ const LKVideoControls = ({
       dispatch(setIsConnected(false));
     }
   }, [localParticipant, sendUserStopWebcam, tracks]);
+
+  useEffect(() => {
+    if (!isMounted.current) {
+      isMounted.current = true;
+      return;
+    }
+    const localTrack = tracks.find((t) => t.publication?.isLocal)?.publication?.track;
+    if (localTrack) {
+      localTrack.restartTrack({ facingMode: cameraFacingMode })
+    }
+    dispatch(showNotificationWithTimeout({ profile: 'cameraToggle' }));
+
+  }, [cameraFacingMode])
 
   const onButtonPress = useDebounce(useCallback(() => {
     if (!disabled) {

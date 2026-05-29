@@ -87,11 +87,40 @@ const BottomSheetChat = () => {
     );
   };
 
+  const renderBreakoutRoomModeratorMessage = (item) => {
+    const timestamp = new Date(item.createdAt);
+    return (
+      <View style={Styled.styles.item} key={item.timestamp}>
+        <Styled.ContainerItem>
+          <UserAvatar
+            userName={item.senderName}
+            userRole={'MODERATOR'}
+            userColor={item.user?.color}
+            userId={item.senderId}
+            userImage={item.user?.avatar || null}
+          />
+          <Styled.OrangeCard>
+            <Styled.MessageTopContainer>
+              <Styled.MessageAuthor selectable>{item.senderName}</Styled.MessageAuthor>
+              <Styled.MessageTimestamp moderator>
+                {`${String(timestamp.getHours()).padStart(2, '0')}:${String(
+                  timestamp.getMinutes()
+                ).padStart(2, '0')}`}
+              </Styled.MessageTimestamp>
+            </Styled.MessageTopContainer>
+            {handleMessage(item.message)}
+          </Styled.OrangeCard>
+        </Styled.ContainerItem>
+      </View>
+    );
+  };
+
   // TODO: move these to a chat component
   const renderItem = useCallback(({ item }) => {
     switch (item.messageType) {
       case "userIsPresenterMsg": return renderPresenterMessage(item);
       case "userAwayStatusMsg": return renderAwayStatusMessage(item);
+      case "breakoutRoomModeratorMsg": return renderBreakoutRoomModeratorMessage(item);
       default: return renderDefaultMessage(item);
     }
   }, []);

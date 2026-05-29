@@ -8,6 +8,7 @@ const initialState = {
   videoStreams: {},
   localCameraId: null,
   userRequestedHangup: false,
+  facingMode: 'user',
 };
 
 const videoSlice = createSlice({
@@ -40,6 +41,9 @@ const videoSlice = createSlice({
       const { cameraId } = action.payload;
       delete state.videoStreams[cameraId];
     },
+    toggleFacingMode: (state) => {
+      state.facingMode = state.facingMode === 'user' ? 'environment' : 'user';
+    },
   },
 });
 
@@ -54,6 +58,7 @@ export const {
   userRequestedHangup,
   addVideoStream,
   removeVideoStream,
+  toggleFacingMode,
 } = videoSlice.actions;
 
 export {

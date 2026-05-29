@@ -2,8 +2,11 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, BackHandler } from "react-native";
+import { useDispatch, useSelector } from 'react-redux';
+import Settings from '../../../../settings.json';
 import { ActivitySignProvider } from '../../../app-content/ActivitySign';
 import NotificationController from '../../../app-content/notification';
+import Colors from '../../../constants/colors';
 import useCurrentUser from '../../../graphql/hooks/useCurrentUser';
 import useMeeting from '../../../graphql/hooks/useMeeting';
 import useUserCount from '../../../graphql/hooks/useUserCount';
@@ -17,9 +20,10 @@ import PollNavigator from '../../../screens/poll-screen/navigator';
 import SelectLanguageScreen from '../../../screens/select-language-screen';
 import UserNotesScreen from '../../../screens/user-notes-screen';
 import UserParticipantsNavigator from '../../../screens/user-participants-screen/navigator';
+import { toggleFacingMode } from '../../../store/redux/slices/wide-app/video';
+import ChatPopupList from '../../chat/chat-popup';
 import CustomDrawer from '../index';
 import Styled from './styles';
-import ChatPopupList from '../../chat/chat-popup';
 
 const DrawerNavigator = ({
   onLeaveSession, meetingUrl, navigation
@@ -34,6 +38,8 @@ const DrawerNavigator = ({
   const amIModerator = userData?.user_current[0]?.isModerator;
   const { data: currentUserCount } = useUserCount();
   const users = currentUserCount?.user_aggregate?.aggregate?.count || 0;
+  const isCameraConnected = useSelector((state) => state.video.isConnected);
+  const dispatch = useDispatch();
 
   useModalListener();
 
@@ -89,6 +95,21 @@ const DrawerNavigator = ({
             title: meetingName || t('mobileSdk.meeting.label'),
             unmountOnBlur: true,
             headerShown: appState !== 'background',
+            headerRight: () => {
+              return (
+                <Styled.HeaderRight>
+                  {isCameraConnected && (
+                    <Styled.DrawerIcon
+                      icon="camera-flip-outline"
+                      size={24}
+                      iconColor={Colors.white}
+                      onPress={() => dispatch(toggleFacingMode())}
+                      style={{ position: 'relative' }}
+                    />
+                  )}
+                </Styled.HeaderRight>
+              );
+            },
             drawerIcon: (config) => (
               <Styled.DrawerIcon
                 icon="home"
@@ -106,6 +127,13 @@ const DrawerNavigator = ({
             options={{
               title: t('mobileSdk.poll.label'),
               unmountOnBlur: true,
+              headerRight: () => (
+                <>
+                  {recordingEnabled && (
+                    <RecordingIndicator recordMeeting={recordMeeting} recordPolicies={recordPolicies} />
+                  )}
+                </>
+              ),
               drawerIcon: (config) => (
                 <Styled.DrawerIcon
                   icon="poll"

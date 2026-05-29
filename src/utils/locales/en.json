@@ -185,6 +185,7 @@
   "mobileSdk.audio.deviceSelector.wiredHeadset": "Wired headset",
   "mobileSdk.notificationBar.microphoneOff": "You are silenced. Click on the microphone to activate it.",
   "mobileSdk.notificationBar.handsUp": "Your hand is raised.",
+  "mobileSdk.notificationBar.cameraToggle": "You switched the camera.",
   "mobileSdk.upload.notification.header": "A file was uploaded:",
   "mobileSdk.notification.recordLabel": "Recording",
   "mobileSdk.record.noPermission.label": "You do not have permission to record meetings",
