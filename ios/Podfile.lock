@@ -6,9 +6,9 @@ PODS:
   - EXAV (15.1.7):
     - ExpoModulesCore
     - ReactCommon/turbomodule/core
-  - EXConstants (17.1.7):
+  - EXConstants (17.1.8):
     - ExpoModulesCore
-  - EXNotifications (0.31.4):
+  - EXNotifications (0.31.5):
     - ExpoModulesCore
   - Expo (53.0.23):
     - DoubleConversion
@@ -2018,7 +2018,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNSVG (15.15.0):
+  - RNSVG (15.11.2):
     - React-Core
   - SocketRocket (0.7.1)
   - WebRTC-SDK (137.7151.04)
@@ -2339,8 +2339,8 @@ SPEC CHECKSUMS:
   DoubleConversion: f16ae600a246532c4020132d54af21d0ddb2a385
   EXApplication: 1e06972201838375ca1ec1ba34d586a98a5dc718
   EXAV: ae28256069c4cdde93d185c007d8f68d92902c2e
-  EXConstants: 98bcf0f22b820f9b28f9fee55ff2daededadd2f8
-  EXNotifications: be5e949edf1d60b70e77178b81aa505298fadd07
+  EXConstants: d3d551cb154718f5161c4247304e96aa59f6cca7
+  EXNotifications: 6770976336aacdc7dc7aed7b538dd8f7ad2c55e8
   Expo: c8f323f74218c45c46e27eed40d8a53ba50667c3
   ExpoAsset: ef06e880126c375f580d4923fdd1cdf4ee6ee7d6
   ExpoDevice: 7082f03af1c588333ef1417d5aa8287081d94b24
@@ -2433,7 +2433,7 @@ SPEC CHECKSUMS:
   RNGestureHandler: ce4a87dba81030b374d7f1993c4376f5c230da2e
   RNReanimated: efe63b33e23e1b5b06e5e087779eceeee742452b
   RNScreens: 62fdbbc4c984150b34c36f095c6ba2510ca9b6a5
-  RNSVG: 49345166bbaaed1499aa7679e3f93118a78f1ff9
+  RNSVG: ab84f2de7dd4f2c86d01825b8a65e0ef712fc36b
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   WebRTC-SDK: 40d4f5ba05cadff14e4db5614aec402a633f007e
   Yoga: adb397651e1c00672c12e9495babca70777e411e
