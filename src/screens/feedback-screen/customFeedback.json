@@ -395,15 +395,6 @@
       },
       {
         "textLabel": {
-          "id": "app.customFeedback.wish.backCamera"
-        },
-        "type": "radio",
-        "next": "email",
-        "key": "feedback.wish",
-        "value": "backCamera"
-      },
-      {
-        "textLabel": {
           "id": "app.customFeedback.wish.picture"
         },
         "type": "radio",
