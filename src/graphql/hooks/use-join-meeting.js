@@ -161,7 +161,7 @@ const useJoinMeeting = (url) => {
             console.error(`Error: on subscription to server: ${JSON.stringify(error, null, 2)}`);
           },
           closed: () => {
-            console.error('socket closed');
+            console.warn('socket closed');
           },
           connected: () => {
             logger.info({
