@@ -12,16 +12,7 @@ const InsideBreakoutRoomScreen = (props) => {
   const navigation = useNavigation();
 
   return (
-    <BbbBreakoutSdk
-      joinURL={route.params.joinURL}
-      onLeaveSession={() => {
-        if (navigation.canGoBack()) {
-          navigation.goBack();
-        }
-        dispatch(setMainRoomBlockedByBreakout(false));
-      }}
-      defaultLanguage={i18n.language}
-    />
+    <></>
   );
 };
 
