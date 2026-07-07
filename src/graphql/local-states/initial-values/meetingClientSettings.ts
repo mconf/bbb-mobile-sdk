@@ -681,8 +681,13 @@ export const meetingClientSettingsInitialValues: MeetingClientSettings = {
         showButtonForNonPresenters: false,
       },
       livekit: {
-        selectiveSubscription: false,
+        selectiveSubscription: {
+          enabled: true,
+          audioSubscriptionPoolSize: 0,
+          muteDebounceMs: 2500,
+        },
         logLevel: LogLevel.warn,
+        reconnectOnFatalFailures: false,
         roomOptions: {
           adaptiveStream: true,
           dynacast: true,
@@ -696,6 +701,7 @@ export const meetingClientSettingsInitialValues: MeetingClientSettings = {
             forceStereo: false,
           },
           unpublishOnMute: false,
+          unpublishAfterMuteMs: 5000,
         },
         camera: {
           publishOptions: {
