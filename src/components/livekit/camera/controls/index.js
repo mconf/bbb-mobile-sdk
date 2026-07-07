@@ -16,6 +16,8 @@ import {
 } from '../../../../store/redux/slices/wide-app/video';
 import Styled from '../../../video/video-controls/styles';
 import { hideNotification, setProfile, showNotificationWithTimeout } from '../../../../store/redux/slices/wide-app/notification-bar';
+import { getMeetingSettings } from '../../../../graphql/local-states/useMeetingSettings';
+import { getCameraPublishOptions } from '../service';
 
 const LKVideoControls = ({
   disabled,
@@ -44,7 +46,15 @@ const LKVideoControls = ({
 
   const publishCamera = useCallback(async () => {
     const newCameraId = `${localParticipant.identity}_app_${Date.now()}`;
-    const publishOptions = { dtx: true, videoCodec: 'vp8', name: newCameraId };
+    const cameraSettings = getMeetingSettings()?.public?.media?.livekit?.camera?.publishOptions;
+    const simulcastOptions = getCameraPublishOptions();
+    const publishOptions = {
+      dtx: true,
+      videoCodec: 'vp8',
+      ...cameraSettings,
+      ...simulcastOptions,
+      name: newCameraId,
+    };
 
     try {
       if (localParticipant.isCameraEnabled) await unpublishCamera();
