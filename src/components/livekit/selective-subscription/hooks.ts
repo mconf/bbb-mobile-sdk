@@ -1,5 +1,7 @@
 import {
   useCallback,
+  useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -7,246 +9,433 @@ import { useSubscription } from '@apollo/client';
 import {
   RoomEvent,
   RemoteParticipant,
-  RemoteTrackPublication,
+  Track,
+  type RemoteTrackPublication,
+  type Room,
 } from 'livekit-client';
-import { useRemoteParticipants } from '@livekit/react-native';
+import { useRemoteParticipants, useSpeakingParticipants } from '@livekit/react-native';
 import { liveKitRoom } from '../../../services/livekit';
 import logger from '../../../services/logger';
+import { getMeetingSettings } from '../../../graphql/local-states/useMeetingSettings';
 import {
-  AUDIO_GROUP_STREAMS_SUBSCRIPTION,
+  MEDIA_GROUP_STREAMS_SUBSCRIPTION,
 } from './queries';
 import {
-  AudioGroupStream,
-  AudioSendersData,
-  SUBSCRIPTION_RETRY,
-  ParticipantTypes,
+  MediaGroupStream,
+  MediaSendersData,
+  MediaType,
+  PUBLIC_GROUP_IDS,
 } from './types';
+import {
+  getBbbUserIdForParticipant,
+  isAudioSource,
+  selectParticipantsToSubscribe,
+} from './service';
 import useCurrentUser from '../../../graphql/hooks/useCurrentUser';
 
 const PARTICIPANTS_UPDATE_FILTER = [
+  RoomEvent.ParticipantConnected,
+  RoomEvent.ParticipantDisconnected,
+  RoomEvent.ConnectionStateChanged,
   RoomEvent.TrackPublished,
   RoomEvent.TrackUnpublished,
+  RoomEvent.TrackSubscriptionPermissionChanged,
+  RoomEvent.TrackSubscriptionStatusChanged,
+  RoomEvent.TrackSubscribed,
+  RoomEvent.TrackUnsubscribed,
+  RoomEvent.TrackSubscriptionFailed,
+  RoomEvent.TrackMuted,
+  RoomEvent.TrackUnmuted,
+  RoomEvent.ActiveSpeakersChanged,
 ];
 
-export const useAudioSenders = (remoteParticipants: RemoteParticipant[]): AudioSendersData => {
+const getSelectiveSubscriptionConfig = () => {
+  const selSubConfig = getMeetingSettings()?.public?.media?.livekit?.selectiveSubscription;
+  const selectiveSubscriptionEnabled = selSubConfig?.enabled ?? true;
+  const audioSubscriptionPoolSize = selectiveSubscriptionEnabled
+    ? selSubConfig?.audioSubscriptionPoolSize ?? 0
+    : 0;
+
+  return {
+    selectiveSubscriptionEnabled,
+    audioSubscriptionPoolSize,
+    muteDebounceMs: selSubConfig?.muteDebounceMs ?? 2500,
+  };
+};
+
+/**
+ * Hook to track LiveKit participants' speaking activity timestamps.
+ * @param room - The LiveKit room
+ * @returns A map of participant IDs to their last spoke timestamp
+ */
+const useParticipantsLastSpokeAt = (room: Room): Map<string, number> => {
+  const speakingParticipants = useSpeakingParticipants();
+  const participantsLastSpokeAtMap = useRef<Map<string, number>>(new Map());
+  const [participantLastSpokeAt, setParticipantLastSpokeAt] = useState<Map<string, number>>(new Map());
+
+  const handleParticipantDisconnected = useCallback((participant: RemoteParticipant) => {
+    if (participantsLastSpokeAtMap.current.delete(participant.identity)) {
+      setParticipantLastSpokeAt(new Map(participantsLastSpokeAtMap.current));
+    }
+  }, []);
+
+  useEffect(() => {
+    let changed = false;
+
+    speakingParticipants.forEach((participant) => {
+      const { lastSpokeAt, identity } = participant;
+      const existing = participantsLastSpokeAtMap.current.get(identity);
+      const lastSpokeAtMs = lastSpokeAt instanceof Date
+        ? lastSpokeAt.getTime()
+        : undefined;
+
+      if (lastSpokeAtMs !== undefined && existing !== lastSpokeAtMs) {
+        participantsLastSpokeAtMap.current.set(identity, lastSpokeAtMs);
+        changed = true;
+      }
+    });
+
+    if (changed) setParticipantLastSpokeAt(new Map(participantsLastSpokeAtMap.current));
+  }, [speakingParticipants]);
+
+  useEffect(() => {
+    room.on(RoomEvent.ParticipantDisconnected, handleParticipantDisconnected);
+
+    return () => {
+      room.off(RoomEvent.ParticipantDisconnected, handleParticipantDisconnected);
+    };
+  }, [handleParticipantDisconnected]);
+
+  return participantLastSpokeAt;
+};
+
+/**
+ * Provides a debounced mute state for LiveKit participants, derived from the
+ * remote participants' own track state.
+ * @param participants - The remote participants
+ * @param debounceMs - The debounce time in milliseconds
+ * @param enabled - Whether Last-N filtering is active (skips work when not)
+ * @returns A record of participant IDs to their debounced unmuted state
+ */
+const useDebouncedMuteState = (
+  participants: RemoteParticipant[],
+  debounceMs: number = 2500,
+  enabled: boolean = true,
+): Record<string, boolean> => {
+  // Derive the raw unmuted state directly from LiveKit's remote track state:
+  // RemoteTrackPublication.isMuted is delivered via signaling for every
+  // published mic track, subscribed or not, so the Last-N pool needs no extra
+  // server-side (GraphQL) subscription. Keyed by participant.identity to match
+  // the sender set used in handleSubscriptionChanges.
+  const unmutedUsers = useMemo<Record<string, boolean>>(() => {
+    if (!enabled) return {};
+
+    const map: Record<string, boolean> = {};
+
+    participants.forEach((participant) => {
+      const hasUnmutedMic = Array.from(participant.audioTrackPublications.values())
+        .some((pub) => pub.source === Track.Source.Microphone && !pub.isMuted);
+      map[participant.identity] = hasUnmutedMic;
+    });
+
+    return map;
+  }, [participants, enabled]);
+  const [debouncedState, setDebouncedState] = useState<Record<string, boolean>>({});
+  const debouncedStateRef = useRef(debouncedState);
+  debouncedStateRef.current = debouncedState;
+  const debounceTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+
+  useEffect(() => {
+    if (!enabled) return;
+
+    participants.forEach((participant) => {
+      const userId = participant.identity;
+      const currUnmuted = unmutedUsers[userId] ?? false;
+      const prevUnmuted = debouncedStateRef.current[userId] ?? false;
+
+      if (currUnmuted === prevUnmuted && !debounceTimers.current.has(userId)) return;
+
+      const existingTimer = debounceTimers.current.get(userId);
+
+      // Immediately apply transitions from muted -> unmuted (subscription)
+      if (currUnmuted) {
+        if (existingTimer) {
+          clearTimeout(existingTimer);
+          debounceTimers.current.delete(userId);
+        }
+
+        setDebouncedState((prev) => {
+          if (prev[userId] === true) return prev;
+
+          return { ...prev, [userId]: true };
+        });
+      } else if (!existingTimer) {
+        // Debounce transitions from unmuted -> muted (unsubscription).
+        // Only set a timer if one isn't already pending.
+        const timer = setTimeout(() => {
+          setDebouncedState((prev) => {
+            if (prev[userId] === false || !(userId in prev)) return prev;
+
+            return { ...prev, [userId]: false };
+          });
+          debounceTimers.current.delete(userId);
+        }, debounceMs);
+        debounceTimers.current.set(userId, timer);
+      }
+    });
+  }, [participants, unmutedUsers, enabled]);
+
+  useEffect(() => {
+    return () => {
+      debounceTimers.current.forEach(clearTimeout);
+      debounceTimers.current.clear();
+    };
+  }, []);
+
+  return debouncedState;
+};
+
+export const useMediaSenders = (
+  remoteParticipants: RemoteParticipant[],
+  mediaType: MediaType,
+): MediaSendersData => {
   const { data: currentUserData } = useCurrentUser();
   const currentUserId = currentUserData?.user_current[0]?.userId;
-  const { data, error } = useSubscription(AUDIO_GROUP_STREAMS_SUBSCRIPTION);
+  const { data, error } = useSubscription(MEDIA_GROUP_STREAMS_SUBSCRIPTION);
 
   if (error) {
     logger.error({
-      logCode: 'livekit_audio_group_streams_sub_error',
+      logCode: 'livekit_media_group_streams_sub_error',
       extraInfo: {
         errorMessage: error.message,
+        mediaType,
       },
-    }, 'LiveKit: Audio group streams subscription failed.');
+    }, `LiveKit: ${mediaType} group streams subscription failed.`);
   }
 
-  const groups = data?.user_audioGroup as AudioGroupStream[] || [];
-  const receiverFilter = [
-    ParticipantTypes.RECEIVER,
-    ParticipantTypes.SENDRECV,
-  ];
-  const myInboundGroupIds = groups.filter(
-    (group) => group.userId === currentUserId && receiverFilter.includes(group.participantType),
-  ).map((group) => group.groupId);
-  const inAnyGroup = myInboundGroupIds.length > 0;
-  const senderFilter = [
-    ParticipantTypes.SENDER,
-    ParticipantTypes.SENDRECV,
-  ];
+  return useMemo<MediaSendersData>(() => {
+    const groups = ((data?.user_mediaGroup as MediaGroupStream[]) || []).filter(
+      (group) => group.mediaType === mediaType,
+    );
+    // Groups where I am a receiver - I see the union of senders from all of these
+    const myInboundGroupIds = groups.filter(
+      (group) => group.userId === currentUserId && group.receiver === true,
+    ).map((group) => group.groupId);
+    const inAnyGroup = myInboundGroupIds.length > 0;
 
-  // If we don't have any groups, we need to subscribe to all senders that
-  // are not part of a sender group
-  if (!inAnyGroup) {
-    const senderIds = new Set(groups
-      .filter((group) => senderFilter.includes(group.participantType))
-      .map((group) => group.userId));
+    // No explicit group membership = treat as public receiver.
+    // Public receivers receive from: groupless senders + public group senders.
+    // Exclude only senders in non-public groups.
+    if (!inAnyGroup) {
+      const senderIdsInNonPublicGroups = new Set(groups
+        .filter((group) => group.sender === true && group.active
+          && group.groupId !== PUBLIC_GROUP_IDS[mediaType])
+        .map((group) => group.userId));
+      const senderIdsInPublicGroup = new Set(groups
+        .filter((g) => g.sender === true && g.active && g.groupId === PUBLIC_GROUP_IDS[mediaType])
+        .map((g) => g.userId));
+      // Exclude only senders who are active in non-public groups but NOT in the public group.
+      // Users concurrently sending in both public and non-public groups should still be
+      // heard by public receivers.
+      const senderIdsOnlyInNonPublic = new Set(
+        [...senderIdsInNonPublicGroups].filter((id) => !senderIdsInPublicGroup.has(id)),
+      );
+      // Media groups use BBB intIds, which differ from LiveKit participant.identity
+      // for dial-in/VO participants (see getBbbUserIdForParticipant). Map pID to BBB
+      // intId when comparing against the sender set, but keep senders keyed by
+      // participant.identity so downstream room lookups still match.
+      const senders = remoteParticipants
+        .filter((participant) => !senderIdsOnlyInNonPublic.has(getBbbUserIdForParticipant(participant)))
+        .map((participant) => ({
+          userId: participant.identity,
+          groupId: 'default',
+          mediaType,
+          sender: true,
+          receiver: true,
+          active: true,
+        }));
 
-    const grouplessSenders = remoteParticipants
-      .filter((participant) => !senderIds.has(participant.identity))
-      .map((participant) => ({
-        userId: participant.identity,
-        groupId: 'default',
-        participantType: ParticipantTypes.SENDRECV,
-        active: true,
-      }));
+      return { senders, inAnyGroup: false };
+    }
 
-    return { senders: grouplessSenders, inAnyGroup: false };
-  }
+    // Union of senders from all groups where I am a receiver. Dedupe by userId
+    // (first occurrence wins) and rewrite BBB intId to LK identity as they are not
+    // 1:1 compatible for dial-in/VO users (see getBbbUserIdForParticipant).
+    const bbbIdToIdentity = new Map<string, string>();
+    remoteParticipants.forEach((p) => {
+      bbbIdToIdentity.set(getBbbUserIdForParticipant(p), p.identity);
+    });
+    const myInboundGroupSet = new Set(myInboundGroupIds);
+    const seenUserIds = new Set<string>();
+    const senders = groups.reduce<MediaGroupStream[]>((acc, stream) => {
+      if (!myInboundGroupSet.has(stream.groupId)) return acc;
 
-  const senders = groups
-    .filter((group) => myInboundGroupIds.includes(group.groupId))
-    .filter((stream) => senderFilter.includes(stream.participantType) && stream.active);
+      if (!stream.sender || !stream.active) return acc;
 
-  return { senders, inAnyGroup };
+      if (seenUserIds.has(stream.userId)) return acc;
+
+      const identity = bbbIdToIdentity.get(stream.userId);
+
+      if (!identity) return acc;
+
+      seenUserIds.add(stream.userId);
+      acc.push({ ...stream, userId: identity });
+
+      return acc;
+    }, []);
+
+    return { senders, inAnyGroup };
+  }, [data, remoteParticipants, mediaType, currentUserId]);
 };
 
-interface RetryState {
-  attempts: number;
-  timer: ReturnType<typeof setTimeout> | null;
-}
-
-export const useAudioSubscriptions = () => {
+export const useMediaSubscriptions = () => {
   const remoteParticipants = useRemoteParticipants({
     updateOnlyOn: PARTICIPANTS_UPDATE_FILTER,
   });
-  const { senders, inAnyGroup } = useAudioSenders(remoteParticipants);
-  const retryMap = useRef<Map<string, RetryState>>(new Map());
-  const [subscriptionErrors, setSubscriptionErrors] = useState<Map<string, Error>>(new Map());
-
-  const clearRetryTimer = (userId: string) => {
-    const state = retryMap.current.get(userId);
-    if (state?.timer) {
-      clearTimeout(state.timer);
-      state.timer = null;
-    }
-  };
-
-  const retrySubscription = useCallback((userId: string, publication: RemoteTrackPublication) => {
-    const { trackSid } = publication;
-    const state = retryMap.current.get(userId) || { attempts: 0, timer: null };
-    const { attempts } = state;
-
-    if (attempts >= SUBSCRIPTION_RETRY.MAX_RETRIES) {
-      logger.error({
-        logCode: 'livekit_audio_subscription_max_retries',
-        extraInfo: {
-          trackSid,
-        },
-      }, `LiveKit: audio maxed retries - ${trackSid}`);
-      retryMap.current.delete(userId);
-      return;
-    }
-
-    const delay = SUBSCRIPTION_RETRY.RETRY_INTERVAL
-      ** (SUBSCRIPTION_RETRY.BACKOFF_MULTIPLIER, attempts);
-
-    clearRetryTimer(userId);
-
-    state.timer = setTimeout(async () => {
-      try {
-        publication.setSubscribed(true);
-        logger.info({
-          logCode: 'livekit_audio_subscription_retry_success',
-          extraInfo: { userId, attempts: attempts + 1 },
-        }, `Successfully subscribed to ${userId} after ${attempts + 1} attempts`);
-        retryMap.current.delete(userId);
-        setSubscriptionErrors((prev) => {
-          const next = new Map(prev);
-          next.delete(userId);
-          return next;
-        });
-      } catch (error) {
-        state.attempts += 1;
-        retryMap.current.set(userId, state);
-        setSubscriptionErrors((prev) => {
-          const next = new Map(prev);
-          next.set(userId, error as Error);
-          return next;
-        });
-        retrySubscription(userId, publication);
-      }
-    }, delay);
-
-    retryMap.current.set(userId, state);
-  }, []);
+  // For now only audio is handled, but this is ready for other media types.
+  const { senders, inAnyGroup } = useMediaSenders(remoteParticipants, MediaType.AUDIO);
+  const { audioSubscriptionPoolSize, muteDebounceMs } = getSelectiveSubscriptionConfig();
+  const participantsLastSpokeAt = useParticipantsLastSpokeAt(liveKitRoom);
+  const debouncedUnmutedUsers = useDebouncedMuteState(
+    remoteParticipants,
+    muteDebounceMs,
+    audioSubscriptionPoolSize > 0,
+  );
 
   const handleSubscriptionChanges = useCallback(async () => {
     if (!liveKitRoom) return;
 
-    const currentSubscriptions = new Set<string>();
+    const currentSubscriptions: Record<
+      Track.Source.Microphone | Track.Source.ScreenShareAudio,
+      Set<string>
+    > = {
+      [Track.Source.Microphone]: new Set<string>(),
+      [Track.Source.ScreenShareAudio]: new Set<string>(),
+    };
+    // Collect unsubscribed screen share audio publications upfront so we can
+    // forcefully subscribe them (always-on, regardless of groups/Last N).
+    const pendingScreenShareAudio: Array<{
+      publication: RemoteTrackPublication;
+      participantId: string;
+    }> = [];
+    const participantsById = new Map<string, RemoteParticipant>();
+
     remoteParticipants.forEach((participant) => {
-      participant.audioTrackPublications.forEach((publication) => {
-        if (publication.isSubscribed) {
-          currentSubscriptions.add(participant.identity);
+      participantsById.set(participant.identity, participant);
+      participant.audioTrackPublications.forEach((publication: RemoteTrackPublication) => {
+        if (isAudioSource(publication.source)) {
+          if (publication.isSubscribed) {
+            const source = publication.source as Track.Source.Microphone | Track.Source.ScreenShareAudio;
+            currentSubscriptions[source].add(participant.identity);
+          } else if (publication.source === Track.Source.ScreenShareAudio) {
+            pendingScreenShareAudio.push({
+              publication,
+              participantId: participant.identity,
+            });
+          }
         }
       });
     });
 
-    const desiredSubscriptions = new Set(
-      senders.map((sender) => sender.userId),
-    );
+    // List of potential senders prior to any Last N filtering
+    const availableSenderIds = new Set(senders.map((sender) => sender.userId));
+    const availableParticipants = remoteParticipants
+      .filter((participant) => availableSenderIds.has(participant.identity));
 
-    currentSubscriptions.forEach((participantId) => {
-      if (!desiredSubscriptions.has(participantId)) {
-        const participant = remoteParticipants.find((p) => p.identity === participantId);
-        if (participant) {
-          participant.audioTrackPublications.forEach((publication) => {
-            const { trackSid } = publication;
-            if (publication.isSubscribed) {
-              clearRetryTimer(participantId);
-              retryMap.current.delete(participantId);
-              try {
-                publication.setSubscribed(false);
-                logger.debug({
-                  logCode: 'livekit_audio_unsubscribed',
-                  extraInfo: {
-                    userId: participantId,
-                    inAnyGroup,
-                  },
-                }, `LiveKit: Unsubscribed from audio - ${trackSid}`);
-              } catch (error) {
-                logger.error({
-                  logCode: 'livekit_audio_unsubscription_failed',
-                  extraInfo: {
-                    trackSid,
-                    errorMessage: (error as Error).message,
-                    errorStack: (error as Error).stack,
-                  },
-                }, `LiveKit: Failed to unsubscribe from audio - ${trackSid}`);
-              }
-            }
-          });
-        }
-      }
-    });
+    // By default, subscribe to all available senders as defined by useMediaSenders
+    let desiredSubscriptions: Set<string> = availableSenderIds;
+
+    // Last N filtering is active, restrict subscriptions
+    if (audioSubscriptionPoolSize > 0) {
+      desiredSubscriptions = selectParticipantsToSubscribe(
+        availableParticipants,
+        participantsLastSpokeAt,
+        debouncedUnmutedUsers,
+        audioSubscriptionPoolSize,
+      );
+    }
 
     // Handle new subscriptions
     desiredSubscriptions.forEach((participantId) => {
-      if (!currentSubscriptions.has(participantId)) {
-        const participant = remoteParticipants.find((p) => p.identity === participantId);
-        if (participant) {
-          participant.audioTrackPublications.forEach((publication) => {
-            const { trackSid } = publication;
+      Object.entries(currentSubscriptions).forEach(([source, subscriptions]) => {
+        if (!subscriptions.has(participantId)) {
+          const participant = participantsById.get(participantId);
+          if (participant) {
+            participant.audioTrackPublications.forEach((publication) => {
+              const { trackSid } = publication;
 
-            if (!publication.isSubscribed) {
-              try {
+              if (!publication.isSubscribed && publication.source === source) {
                 publication.setSubscribed(true);
                 logger.debug({
-                  logCode: 'livekit_audio_subscribed',
+                  logCode: 'livekit_audio_sel_subscribed',
                   extraInfo: {
                     trackSid,
+                    participantId,
                     inAnyGroup,
+                    source: publication.source,
                   },
-                }, `LiveKit: Subscribed to audio - ${trackSid}`);
-              } catch (error) {
-                logger.error({
-                  logCode: 'livekit_audio_subscription_failed',
-                  extraInfo: {
-                    trackSid,
-                    errorMessage: (error as Error).message,
-                    errorStack: (error as Error).stack,
-                  },
-                }, `LiveKit: Failed to subscribe to audio - ${trackSid}`);
-
-                setSubscriptionErrors((prev) => {
-                  const next = new Map(prev);
-                  next.set(participantId, error as Error);
-                  return next;
-                });
-
-                retrySubscription(participantId, publication);
+                }, `LiveKit: Subscribed to ${publication.source} - ${trackSid}`);
               }
-            }
-          });
+            });
+          }
         }
+      });
+    });
+
+    // Handle unsubscriptions
+    Object.values(currentSubscriptions).forEach((subscriptions) => {
+      subscriptions.forEach((participantId) => {
+        if (!desiredSubscriptions.has(participantId)) {
+          const participant = participantsById.get(participantId);
+          if (participant) {
+            participant.audioTrackPublications.forEach((publication) => {
+              // Screen share audio is always subscribed regardless of group membership
+              if (publication.source === Track.Source.ScreenShareAudio) return;
+
+              const { trackSid } = publication;
+
+              if (publication.isSubscribed) {
+                publication.setSubscribed(false);
+                logger.debug({
+                  logCode: 'livekit_audio_sel_unsubscribed',
+                  extraInfo: {
+                    userId: participantId,
+                    inAnyGroup,
+                    source: publication.source,
+                  },
+                }, `LiveKit: Unsubscribed from ${publication.source} - ${trackSid}`);
+              }
+            });
+          }
+        }
+      });
+    });
+
+    // Force-subscribe any screen share audio not already handled by the
+    // desired-subscription pass above.
+    pendingScreenShareAudio.forEach(({ publication, participantId }) => {
+      if (!publication.isSubscribed && !desiredSubscriptions.has(participantId)) {
+        publication.setSubscribed(true);
+        logger.debug({
+          logCode: 'livekit_audio_sel_subscribed',
+          extraInfo: {
+            trackSid: publication.trackSid,
+            participantId,
+            source: publication.source,
+          },
+        }, `LiveKit: Subscribed to ${publication.source} - ${publication.trackSid} (always-on)`);
       }
     });
-  }, [senders, inAnyGroup, retrySubscription, remoteParticipants]);
+  }, [
+    senders,
+    inAnyGroup,
+    remoteParticipants,
+    participantsLastSpokeAt,
+    debouncedUnmutedUsers,
+    audioSubscriptionPoolSize,
+  ]);
 
   return {
     handleSubscriptionChanges,
-    subscriptionErrors,
   };
 };
