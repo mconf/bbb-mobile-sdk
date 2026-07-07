@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useMutation } from '@apollo/client';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   LiveKitRoom,
   useLocalParticipant,
@@ -17,10 +17,25 @@ import logger from '../../services/logger';
 import useMeeting from '../../graphql/hooks/useMeeting';
 import { useAudioJoin } from '../../hooks/use-audio-join';
 import useCurrentUser from '../../graphql/hooks/useCurrentUser';
-import { liveKitRoom, disconnectLiveKitRoom } from '../../services/livekit';
+import {
+  liveKitRoom,
+  disconnectLiveKitRoom,
+  liveKitEvents,
+  LK_FATAL_ERROR_EVENT,
+} from '../../services/livekit';
+import { setIsConnected, setIsConnecting, setIsReconnecting } from '../../store/redux/slices/wide-app/audio';
+import { showNotificationWithTimeout } from '../../store/redux/slices/wide-app/notification-bar';
 import { USER_SET_TALKING } from './mutations';
 import SelectiveSubscription from './selective-subscription/index.tsx';
 import useMeetingSettings from '../../graphql/local-states/useMeetingSettings';
+
+// Cap consecutive fatal-error-driven reconnects so a persistently failing link
+// (e.g. audio publish that keeps timing out) can't spin an unbounded
+// disconnect/connect loop. Mirrors the web client's MAX_CONN_ATTEMPTS. The
+// counter is reset once the link has been stable (no fatal error) for
+// FATAL_RECONNECT_STABLE_MS, so only *rapid consecutive* failures exhaust it.
+const MAX_FATAL_RECONNECT_ATTEMPTS = 10;
+const FATAL_RECONNECT_STABLE_MS = 30000;
 
 const LiveKitObserver = ({
   room,
@@ -72,6 +87,7 @@ const LiveKitObserver = ({
 const BBBLiveKitRoom = ({ children }) => {
   const { data: currentUserData } = useCurrentUser();
   const host = useSelector((state) => state.client.meetingData.host);
+  const dispatch = useDispatch();
   const { joinAudio } = useAudioJoin();
   const { data: meetingData, loading: meetingLoading } = useMeeting();
   const sessionToken = useSelector((state) => state.client.meetingData.sessionToken);
@@ -86,6 +102,10 @@ const BBBLiveKitRoom = ({ children }) => {
   const url = meetingSettings?.public
     ? (meetingSettings.public?.media?.livekit?.url || `wss://${host}/livekit`)
     : null;
+  const reconnectOnFatalFailures = meetingSettings?.public?.media?.livekit
+    ?.reconnectOnFatalFailures ?? false;
+  const fatalReconnectAttempts = useRef(0);
+  const fatalReconnectResetTimer = useRef(null);
   const livekitToken = currentUserData?.user_current[0]?.livekit?.livekitToken;
   const userId = currentUserData?.user_current[0]?.userId;
   const {
@@ -159,6 +179,80 @@ const BBBLiveKitRoom = ({ children }) => {
     url,
     joinAudio,
   ]);
+
+  // Handle fatal errors emitted from other parts of the app (e.g. unrecoverable
+  // audio publish timeouts) by forcing a LiveKit room reconnection. Opt-in via
+  // the reconnectOnFatalFailures setting. Mobile has no DOM CustomEvent, so this
+  // listens on the module EventEmitter instead of window.addEventListener.
+  useEffect(() => {
+    const handleFatalError = ({ error, source }) => {
+      logger.error({
+        logCode: 'livekit_fatal_error_reconnect',
+        extraInfo: {
+          errorMessage: error?.message,
+          errorName: error?.name,
+          source,
+          reconnectOnFatalFailures,
+        },
+      }, `LiveKit: fatal error detected - ${error?.message}, reconnect=${reconnectOnFatalFailures}`);
+
+      if (!reconnectOnFatalFailures) return;
+
+      // Give up after too many rapid consecutive fatal reconnects, so a
+      // persistently failing link can't loop forever.
+      if (fatalReconnectAttempts.current >= MAX_FATAL_RECONNECT_ATTEMPTS) {
+        logger.error({
+          logCode: 'livekit_fatal_error_reconnect_exhausted',
+          extraInfo: {
+            attempts: fatalReconnectAttempts.current,
+            source,
+          },
+        }, `LiveKit: fatal-error reconnect attempts exhausted (${fatalReconnectAttempts.current}), giving up`);
+
+        return;
+      }
+
+      fatalReconnectAttempts.current += 1;
+      // Reset the counter if no further fatal error arrives within the stability
+      // window (i.e. the link recovered), so isolated blips don't accumulate.
+      if (fatalReconnectResetTimer.current) clearTimeout(fatalReconnectResetTimer.current);
+      fatalReconnectResetTimer.current = setTimeout(() => {
+        fatalReconnectAttempts.current = 0;
+        fatalReconnectResetTimer.current = null;
+      }, FATAL_RECONNECT_STABLE_MS);
+      dispatch(showNotificationWithTimeout({ profile: 'mediaReconnecting' }));
+
+      // Non-final disconnect (do NOT destroy the media managers). Once the room
+      // is Disconnected, the connect effect above re-fires and re-establishes the
+      // room; resetting the audio flags lets it re-run joinAudio to republish mic.
+      liveKitRoom.disconnect()
+        .then(() => {
+          dispatch(setIsConnected(false));
+          dispatch(setIsConnecting(false));
+          dispatch(setIsReconnecting(false));
+        })
+        .catch((disconnectError) => {
+          logger.error({
+            logCode: 'livekit_fatal_error_reconnect_disconnect_error',
+            extraInfo: {
+              errorMessage: disconnectError?.message,
+            },
+          }, `LiveKit: fatal-error reconnect disconnect failed - ${disconnectError?.message}`);
+        });
+    };
+
+    liveKitEvents.on(LK_FATAL_ERROR_EVENT, handleFatalError);
+
+    return () => {
+      liveKitEvents.off(LK_FATAL_ERROR_EVENT, handleFatalError);
+    };
+  }, [reconnectOnFatalFailures, dispatch]);
+
+  useEffect(() => {
+    return () => {
+      if (fatalReconnectResetTimer.current) clearTimeout(fatalReconnectResetTimer.current);
+    };
+  }, []);
 
   useEffect(() => {
     return () => {
