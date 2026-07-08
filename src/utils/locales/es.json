@@ -198,6 +198,7 @@
   "mobileSdk.notificationBar.microphoneOff": "Estás silenciado. Haz clic en el micrófono para activarlo.",
   "mobileSdk.notificationBar.handsUp": "Tienes la mano levantada.",
   "mobileSdk.notificationBar.cameraToggle": "Cambiaste la cámara.",
+  "mobileSdk.notificationBar.mediaReconnecting": "Se ha detectado un problema de conexión. Restaurando su audio y vídeo...",
   "mobileSdk.upload.notification.header": "Se subió un archivo:",
   "mobileSdk.notification.recordLabel": "Grabación",
   "mobileSdk.record.noPermission.label": "No tienes permiso para grabar reuniones",

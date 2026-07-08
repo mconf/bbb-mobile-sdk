@@ -1,8 +1,14 @@
 import { Room } from 'livekit-client';
+import { EventEmitter2 } from 'eventemitter2';
 import logger from '../logger';
 import AudioManager from '../webrtc/audio-manager';
 import VideoManager from '../webrtc/video-manager';
 import ScreenshareManager from '../webrtc/screenshare-manager';
+
+// React Native has no DOM (window/CustomEvent), so cross-module LiveKit signals
+// go through this emitter instead of window.dispatchEvent/addEventListener.
+export const LK_FATAL_ERROR_EVENT = 'liveKitFatalError';
+export const liveKitEvents = new EventEmitter2();
 
 export const liveKitRoom = new Room({
   adaptiveStream: true,
@@ -41,4 +47,6 @@ export const disconnectLiveKitRoom = ({
 export default {
   disconnectLiveKitRoom,
   liveKitRoom,
+  liveKitEvents,
+  LK_FATAL_ERROR_EVENT,
 };
