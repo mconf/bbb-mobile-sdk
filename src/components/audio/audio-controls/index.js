@@ -35,14 +35,18 @@ const AudioControls = () => {
     data: currentUserVoiceData,
     loading: currentUserVoiceLoading,
   } = useSubscription(Queries.USER_CURRENT_VOICE);
-  const isMuted = currentUserVoiceData?.user_current[0]?.voice?.muted;
+  const voice = currentUserVoiceData?.user_current[0]?.voice;
+  const isMuted = voice?.muted;
   const unmutedAndConnected = !isMuted && isConnected;
 
   useEffect(() => {
-    if (!currentUserVoiceLoading && (localMutedState !== isMuted)) {
-      AudioManager.setMutedState(isMuted);
-    }
-  }, [isMuted, currentUserVoiceLoading, localMutedState]);
+    // Server-client mute reconciliation: skip while the voice record is
+    // absent as it can be nullish on reconnects. Trying this against an absent
+    // voice collection can let to incorrectly unmuting the local mic track.
+    if (currentUserVoiceLoading || !voice) return;
+
+    if (localMutedState !== isMuted) AudioManager.setMutedState(isMuted);
+  }, [isMuted, currentUserVoiceLoading, localMutedState, voice]);
 
   useEffect(() => {
     if (audioError) {

@@ -15,7 +15,7 @@ export const useAudioJoin = () => {
   const { data: currentUserData } = useCurrentUser();
   const meeting = meetingData?.meeting[0];
   const disableMic = meeting?.lockSettings?.disableMic;
-  const muteOnStart = meeting?.voiceProp?.muteOnStart;
+  const muteOnStart = meeting?.voiceSettings?.muteOnStart;
   const audioBridge = meeting?.audioBridge;
   const currentUserLocked = currentUserData?.user_current[0]?.locked ?? false;
 
