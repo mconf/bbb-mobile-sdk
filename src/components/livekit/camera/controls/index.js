@@ -4,7 +4,7 @@ import {
   useTracks
 } from '@livekit/react-native';
 import { Track } from 'livekit-client';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import useDebounce from '../../../../hooks/use-debounce';
 import { liveKitRoom } from '../../../../services/livekit';
@@ -17,7 +17,7 @@ import {
 import Styled from '../../../video/video-controls/styles';
 import { hideNotification, setProfile, showNotificationWithTimeout } from '../../../../store/redux/slices/wide-app/notification-bar';
 import { getMeetingSettings } from '../../../../graphql/local-states/useMeetingSettings';
-import { getCameraPublishOptions } from '../service';
+import { getCameraCaptureResolution, getCameraPublishOptions } from '../service';
 
 const LKVideoControls = ({
   disabled,
@@ -37,17 +37,15 @@ const LKVideoControls = ({
   const [publishOnActive, setPublishOnActive] = useState(false);
   const isMounted = useRef(false);
   const isActive = localParticipant.isCameraEnabled || isConnecting;
-  const constraints = useMemo(
-    () => (
-      { video: true, facingMode: cameraFacingMode }
-    ),
-    [cameraFacingMode]
-  );
 
   const publishCamera = useCallback(async () => {
     const newCameraId = `${localParticipant.identity}_app_${Date.now()}`;
     const cameraSettings = getMeetingSettings()?.public?.media?.livekit?.camera?.publishOptions;
     const simulcastOptions = getCameraPublishOptions();
+    const captureOptions = {
+      facingMode: cameraFacingMode,
+      resolution: getCameraCaptureResolution(),
+    };
     const publishOptions = {
       dtx: true,
       videoCodec: 'vp8',
@@ -60,7 +58,11 @@ const LKVideoControls = ({
       if (localParticipant.isCameraEnabled) await unpublishCamera();
 
       dispatch(setIsConnecting(true));
-      const localPub = await localParticipant.setCameraEnabled(true, constraints, publishOptions);
+      const localPub = await localParticipant.setCameraEnabled(
+        true,
+        captureOptions,
+        publishOptions,
+      );
 
       if (!localPub) throw new Error('Local track publication failed');
 
@@ -78,7 +80,7 @@ const LKVideoControls = ({
     unpublishCamera,
     sendUserShareWebcam,
     handleCameraPublishError,
-    constraints
+    cameraFacingMode,
   ]);
 
   const unpublishCamera = useCallback(async () => {
@@ -123,7 +125,10 @@ const LKVideoControls = ({
     }
     const localTrack = tracks.find((t) => t.publication?.isLocal)?.publication?.track;
     if (localTrack) {
-      localTrack.restartTrack({ facingMode: cameraFacingMode })
+      localTrack.restartTrack({
+        facingMode: cameraFacingMode,
+        resolution: getCameraCaptureResolution(),
+      });
     }
     dispatch(showNotificationWithTimeout({ profile: 'cameraToggle' }));
 
