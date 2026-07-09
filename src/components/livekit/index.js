@@ -104,6 +104,8 @@ const BBBLiveKitRoom = ({ children }) => {
     : null;
   const reconnectOnFatalFailures = meetingSettings?.public?.media?.livekit
     ?.reconnectOnFatalFailures ?? false;
+  const selectiveSubscriptionEnabled = meetingSettings?.public?.media?.livekit
+    ?.selectiveSubscription?.enabled ?? true;
   const fatalReconnectAttempts = useRef(0);
   const fatalReconnectResetTimer = useRef(null);
   const livekitToken = currentUserData?.user_current[0]?.livekit?.livekitToken;
@@ -144,7 +146,16 @@ const BBBLiveKitRoom = ({ children }) => {
     ) {
       initializeMediaManagers({ audioBridge, cameraBridge, screenShareBridge })
         .then(() => {
-          const connectOptions = { autoSubscribe: true };
+          // Selective subscription on mobile is audio only for now. There is no
+          // manual camera/screenshare subscription, so autoSubscribe:false is only
+          // safe when LiveKit carries audio alone. If LiveKit also carries camera or
+          // screenshare, autoSubscribe:false would leave that video unsubscribed
+          // (blank), so keep autoSubscribe:true for now.
+          const usingLiveKitVideo = cameraBridge === 'livekit' || screenShareBridge === 'livekit';
+          const manageAudioSubscriptions = usingAudio
+            && selectiveSubscriptionEnabled
+            && !usingLiveKitVideo;
+          const connectOptions = { autoSubscribe: !manageAudioSubscriptions };
 
           if (!shouldUseLiveKit || connectionState !== ConnectionState.Disconnected) return;
 
@@ -273,7 +284,7 @@ const BBBLiveKitRoom = ({ children }) => {
       style={{ zIndex: 0, height: 'initial', width: 'initial' }}
     >
       <LiveKitObserver room={liveKitRoom} usingAudio={usingAudio} />
-      {usingAudio && <SelectiveSubscription />}
+      {usingAudio && selectiveSubscriptionEnabled && <SelectiveSubscription />}
       {children}
     </LiveKitRoom>
   );
