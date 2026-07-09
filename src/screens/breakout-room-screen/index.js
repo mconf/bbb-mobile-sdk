@@ -4,6 +4,7 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useCallback, useEffect, useState } from 'react';
 import { Dimensions } from 'react-native';
 import { useOrientation } from '../../hooks/use-orientation';
+import { invalidateInFlightAudioJoin } from '../../hooks/use-audio-join';
 import AudioManager from '../../services/webrtc/audio-manager';
 import VideoManager from '../../services/webrtc/video-manager';
 import { disconnectLiveKitRoom } from '../../services/livekit';
@@ -111,6 +112,8 @@ const BreakoutRoomScreen = () => {
   // ***** FUNCTIONS *****
 
   const joinSession = (breakoutRoomJoinUrl) => {
+    // Entering a breakout cancels any pending main room audio join
+    invalidateInFlightAudioJoin();
     AudioManager.exitAudio();
     VideoManager.unpublish(localCameraId);
     dispatch(setMainRoomBlockedByBreakout(true));

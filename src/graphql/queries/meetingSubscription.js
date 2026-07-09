@@ -4,6 +4,7 @@ import { gql } from '@apollo/client';
 const MEETING_SUBSCRIPTION = gql`
   subscription MeetingSubscription {
       meeting {
+        meetingId
         lockSettings {
           disableCam
           disableMic
