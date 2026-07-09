@@ -87,7 +87,14 @@ class AudioManager {
   }
 
   async _mediaFactory(constraints = { audio: true }) {
-    if (this.inputStream && this.inputStream.active) return this.inputStream;
+    // Reuse the cached stream only if it still has a live audio track;
+    // otherwise re-acquire, so a dead input track is regenerated rather than
+    // republished forever.
+    const hasLiveAudioTrack = this.inputStream
+      && this.inputStream.active
+      && this.inputStream.getAudioTracks().some((track) => track.readyState === 'live');
+
+    if (hasLiveAudioTrack) return this.inputStream;
 
     const inputStream = await mediaDevices.getUserMedia(constraints);
     this.inputStream = inputStream;
@@ -294,19 +301,36 @@ class AudioManager {
   onAudioJoin(clientSessionNumber) {
     // Ignore the linter - the equality check is supposed to be `==`
     // DO NOT CHANGE - prlanzarin
-    if (clientSessionNumber == this.bridge?.clientSessionNumber) {
+    // Require a live bridge bridge marking audio as connected. This can
+    // also be called by the LiveKitObserver component without a clientSessionNumber
+    // as that ID is irrelevant for LK, so the commanding check here is that
+    // the bridge MUST exist.
+    const accepted = !!this.bridge && clientSessionNumber == this.bridge?.clientSessionNumber;
+
+    if (accepted) {
       store.dispatch(setIsConnected(true));
       store.dispatch(setIsConnecting(false));
       store.dispatch(setIsReconnecting(false));
+      this.logger.info({
+        logCode: 'audio_joined',
+        extraInfo: {
+          clientSessionNumber,
+          role: this.bridge?.role || 'Unknown',
+        },
+      }, `Audio Joined (${clientSessionNumber})`);
+    } else {
+      // Rejected join signals (e.g. the LiveKitObserver's no-arg call landing in
+      // a teardown window where the bridge is already gone) get their own log:
+      // recording them as "Audio Joined" was misleading during log analysis.
+      this.logger.debug({
+        logCode: 'audio_join_ignored',
+        extraInfo: {
+          clientSessionNumber,
+          bridgeSessionNumber: this.bridge?.clientSessionNumber ?? null,
+          hasBridge: this.bridge != null,
+        },
+      }, `Audio join signal ignored (${clientSessionNumber}); no live/matching bridge`);
     }
-
-    this.logger.info({
-      logCode: 'audio_joined',
-      extraInfo: {
-        clientSessionNumber,
-        role: this.bridge?.role || 'Unknown',
-      },
-    }, `Audio Joined (${clientSessionNumber})`);
   }
 
   onAudioReconnecting(bridge) {
