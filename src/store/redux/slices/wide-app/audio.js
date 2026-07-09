@@ -11,7 +11,19 @@ const initialState = {
   inputStreamId: null,
   audioError: null,
   audioDevices: [],
-  selectedAudioDevice: ''
+  selectedAudioDevice: '',
+  // Mute intent persistence keys to restore the user's previous choice of mute state
+  // on select scenarios (breakout exit, reconnects etc). These serve as an
+  // extra safety measure to prevent mute states from leaking across meetings
+  // (store being flushed is not reliable as history has shown); and from leaking
+  // across sessions (full reconnects).
+  audioIntentMeetingId: null,
+  audioIntentSessionToken: null,
+  // Mute value to assert on the server via USER_SET_MUTED once a rejoin's voice
+  // record exists. null = no assertion pending.
+  pendingMuteAssert: null,
+  // Epoch id for pendingMuteAssert, bumped on every setPendingMuteAssert dispatch.
+  pendingMuteAssertEpoch: 0,
 };
 
 const audioSlice = createSlice({
@@ -50,12 +62,23 @@ const audioSlice = createSlice({
     },
     setAudioManagerInitialized: (state, action) => {
       state.audioManagerInitialized = action.payload;
-    }
+    },
+    // payload: { meetingId, sessionToken }, null to clear.
+    setAudioIntent: (state, action) => {
+      state.audioIntentMeetingId = action.payload?.meetingId ?? null;
+      state.audioIntentSessionToken = action.payload?.sessionToken ?? null;
+    },
+    setPendingMuteAssert: (state, action) => {
+      state.pendingMuteAssert = action.payload;
+      state.pendingMuteAssertEpoch += 1;
+    },
   },
 });
 
 export const {
   setAudioManagerInitialized,
+  setAudioIntent,
+  setPendingMuteAssert,
   setMutedState,
   setInputStreamId,
   setIsConnecting,

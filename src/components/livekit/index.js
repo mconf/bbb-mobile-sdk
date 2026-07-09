@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useMutation } from '@apollo/client';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, useStore } from 'react-redux';
 import {
   LiveKitRoom,
   useLocalParticipant,
@@ -88,6 +88,7 @@ const BBBLiveKitRoom = ({ children }) => {
   const { data: currentUserData } = useCurrentUser();
   const host = useSelector((state) => state.client.meetingData.host);
   const dispatch = useDispatch();
+  const store = useStore();
   const { joinAudio } = useAudioJoin();
   const { data: meetingData, loading: meetingLoading } = useMeeting();
   const sessionToken = useSelector((state) => state.client.meetingData.sessionToken);
@@ -162,7 +163,12 @@ const BBBLiveKitRoom = ({ children }) => {
           return liveKitRoom.connect(url, livekitToken, connectOptions);
         })
         .then(async () => {
-          if (isAudioConnected || isAudioConnecting) return;
+          // Pull audio flags directly from store as this needs to be the latest
+          // state, since multiple locations can trigger this effect with
+          // potentially stale values on React's render cycle.
+          const { isConnected, isConnecting, isReconnecting } = store.getState().audio;
+
+          if (isConnected || isConnecting || isReconnecting) return;
 
           await joinAudio();
         })
