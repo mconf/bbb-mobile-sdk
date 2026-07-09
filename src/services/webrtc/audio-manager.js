@@ -170,6 +170,10 @@ class AudioManager {
     bridge.onreconnected = () => {
       this.onAudioReconnected(bridge);
     };
+
+    bridge.onmutestatechanged = (muted) => {
+      store.dispatch(setMutedState(muted));
+    };
   }
 
   _deattachProgressListeners(bridge) {
@@ -178,6 +182,7 @@ class AudioManager {
     bridge.onstart = () => {};
     bridge.onreconnecting = () => {};
     bridge.onreconnected = () => {};
+    bridge.onmutestatechanged = () => {};
   }
 
   _initializeBridge({
