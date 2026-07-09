@@ -1,4 +1,4 @@
-import { VideoPreset, type TrackPublishOptions } from 'livekit-client';
+import { VideoPreset, type TrackPublishOptions, type VideoResolution } from 'livekit-client';
 import logger from '../../../services/logger';
 import { getMeetingSettings } from '../../../graphql/local-states/useMeetingSettings';
 import { type CameraProfile, type LiveKitPresetConfig } from '../../../types/meetingClientSettings';
@@ -174,7 +174,16 @@ const resolveExplicitPresets = (
   return deduplicatePresets(resolved, frameRate);
 };
 
-// eslint-disable-next-line import/prefer-default-export
+// The capture resolution to request from @livekit/react-native. The idea is to
+// try and converge capture resolution with the configured default profile
+// (settings.yml provided) Without this, mobile captures at RN's default (h720 = 1280x720).
+// Profiles without explict constraints will fallback to the original default.
+export const getCameraCaptureResolution = (): VideoResolution => {
+  const { width, height, frameRate } = getCameraCaptureSettings(getSelectedCameraProfile());
+
+  return { width, height, frameRate: frameRate ?? DEFAULT_CAM_FPS };
+};
+
 export const getCameraPublishOptions = (): Partial<TrackPublishOptions> => {
   const configPresets = getMeetingSettings()?.public?.media?.livekit?.camera?.presets;
 
