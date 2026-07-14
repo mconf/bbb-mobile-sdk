@@ -99,6 +99,12 @@ const clientSlice = createSlice({
     setMeetingData: (state, action) => {
       state.meetingData = action.payload;
     },
+    // Merge variant for partial writers (e.g. user-join-screen enriching
+    // meetingData with the current user's identity)
+    // setMeetingData keeps replace semantics for full resets
+    updateMeetingData: (state, action) => {
+      Object.assign(state.meetingData, action.payload);
+    },
     setBreakoutData: (state, action) => {
       state.breakoutData = action.payload;
     },
@@ -412,6 +418,7 @@ export const {
   setInitialChatMsgsFetched,
   setSessionTerminated,
   setMeetingData,
+  updateMeetingData,
   setBreakoutData,
   setJoinUrl,
   setFeedbackEnabled,
