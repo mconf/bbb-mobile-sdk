@@ -60,5 +60,23 @@ target 'bbbmobile' do
         end
       end
     end
+
+    # Newer Apple Clang versions misdetect fmt's consteval support, causing
+    # "call to consteval function ... is not a constant expression" errors in
+    # fmt/format-inl.h. fmt/base.h computes FMT_USE_CONSTEVAL itself and
+    # unconditionally re-#defines it, so passing -DFMT_USE_CONSTEVAL=0 as a
+    # compiler flag has no effect (the header's #define wins). Patch the
+    # vendored header directly to force it off instead.
+    fmt_base_header = File.join(__dir__, 'Pods', 'fmt', 'include', 'fmt', 'base.h')
+    if File.exist?(fmt_base_header)
+      anchor = "#if FMT_USE_CONSTEVAL\n#  define FMT_CONSTEVAL consteval"
+      marker = 'patched: force-disable, Apple clang misdetects consteval support'
+      content = File.read(fmt_base_header)
+      if content.include?(anchor) && !content.include?(marker)
+        override = "#undef FMT_USE_CONSTEVAL\n#define FMT_USE_CONSTEVAL 0  // #{marker}\n\n#{anchor}"
+        File.chmod(0644, fmt_base_header)
+        File.write(fmt_base_header, content.sub(anchor, override))
+      end
+    end
   end
 end
