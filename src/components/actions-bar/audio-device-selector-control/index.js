@@ -18,13 +18,13 @@ const DeviceSelectorControl = () => {
         }));
       }}
     >
-      <>
+      <Styled.ContentRow>
         <Styled.AudioIconContainer />
         <Styled.AudioText>
           {t('mobileSdk.audio.deviceSelector.title')}
         </Styled.AudioText>
         <Styled.OpenAudioSelectorIcon />
-      </>
+      </Styled.ContentRow>
     </Styled.ContainerPressable>
   );
 };

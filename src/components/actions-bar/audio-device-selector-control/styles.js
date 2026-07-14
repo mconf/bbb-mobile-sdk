@@ -16,6 +16,14 @@ const ContainerPressable = styled(TouchableRipple)`
   gap: 12px;
 `;
 
+const ContentRow = styled.View`
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 12px;
+`;
+
 const AudioIcon = styled(MaterialCommunityIcons)`
   padding: 4px;
 `;
@@ -48,5 +56,6 @@ export default {
   AudioText,
   OpenAudioSelectorIcon,
   ContainerPressable,
-  AudioIconContainer
+  AudioIconContainer,
+  ContentRow
 };

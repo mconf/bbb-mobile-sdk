@@ -85,7 +85,7 @@ PODS:
   - hermes-engine (0.79.5):
     - hermes-engine/Pre-built (= 0.79.5)
   - hermes-engine/Pre-built (0.79.5)
-  - livekit-react-native (2.9.3):
+  - livekit-react-native (2.11.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -110,9 +110,9 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - livekit-react-native-webrtc (137.0.2):
+  - livekit-react-native-webrtc (144.1.1):
     - React-Core
-    - WebRTC-SDK (= 137.7151.04)
+    - WebRTC-SDK (= 144.7559.10)
   - lottie-ios (4.5.0)
   - lottie-react-native (7.2.4):
     - DoubleConversion
@@ -2021,7 +2021,7 @@ PODS:
   - RNSVG (15.11.2):
     - React-Core
   - SocketRocket (0.7.1)
-  - WebRTC-SDK (137.7151.04)
+  - WebRTC-SDK (144.7559.10)
   - Yoga (0.0.0)
 
 DEPENDENCIES:
@@ -2335,8 +2335,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  boost: 1dca942403ed9342f98334bf4c3621f011aa7946
-  DoubleConversion: f16ae600a246532c4020132d54af21d0ddb2a385
+  boost: 7e761d76ca2ce687f7cc98e698152abd03a18f90
+  DoubleConversion: cb417026b2400c8f53ae97020b2be961b59470cb
   EXApplication: 1e06972201838375ca1ec1ba34d586a98a5dc718
   EXAV: ae28256069c4cdde93d185c007d8f68d92902c2e
   EXConstants: d3d551cb154718f5161c4247304e96aa59f6cca7
@@ -2354,10 +2354,10 @@ SPEC CHECKSUMS:
   fast_float: 06eeec4fe712a76acc9376682e4808b05ce978b6
   FBLazyVector: d2a9cd223302b6c9aa4aa34c1a775e9db609eb52
   fmt: a40bb5bd0294ea969aaaba240a927bd33d878cdd
-  glog: 08b301085f15bcbb6ff8632a8ebaf239aae04e6a
+  glog: 5683914934d5b6e4240e497e0f4a3b42d1854183
   hermes-engine: f03b0e06d3882d71e67e45b073bb827da1a21aae
-  livekit-react-native: 6215ee7780be5ce2bc92e0f4ab505e90948da3ca
-  livekit-react-native-webrtc: c03e72c608fbb8284a99e095dd7835a85bdb0279
+  livekit-react-native: 85a9ee2c85640ca2576adb36b159d5272d996315
+  livekit-react-native-webrtc: 9f52dbcc5edee327cdc8c9b458b6d6fd8ece1561
   lottie-ios: a881093fab623c467d3bce374367755c272bdd59
   lottie-react-native: 00d9222cde4183a263d5880215b610d31017fcfe
   RCT-Folly: e78785aa9ba2ed998ea4151e314036f6c49e6d82
@@ -2435,9 +2435,9 @@ SPEC CHECKSUMS:
   RNScreens: 62fdbbc4c984150b34c36f095c6ba2510ca9b6a5
   RNSVG: ab84f2de7dd4f2c86d01825b8a65e0ef712fc36b
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
-  WebRTC-SDK: 40d4f5ba05cadff14e4db5614aec402a633f007e
+  WebRTC-SDK: 1d7fc2ae91da6edd63e25f3882ff24f86a8d9d8b
   Yoga: adb397651e1c00672c12e9495babca70777e411e
 
-PODFILE CHECKSUM: 1f904911d9f3563c4ae4d43ecaa2b9bb59a143ea
+PODFILE CHECKSUM: 68f115034f2a73173f7d50c3c81e623b5752b4b0
 
 COCOAPODS: 1.16.2
