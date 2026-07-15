@@ -118,12 +118,8 @@ class AudioManager {
     if (this.isListenOnly) return;
 
     if (this.bridge) {
-      const changed = this.bridge.setSenderTrackEnabled(shouldEnable);
-
-      if (changed) {
-        const newEnabledState = this._getSenderTrackEnabled();
-        store.dispatch(setMutedState(!newEnabledState));
-      }
+      this.bridge.setSenderTrackEnabled(shouldEnable);
+      store.dispatch(setMutedState(!shouldEnable));
     }
   }
 
