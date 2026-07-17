@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
 import { setAudioDevices } from '../../../../store/redux/slices/wide-app/audio';
 import { hide } from '../../../../store/redux/slices/wide-app/modal';
-import logger from '../../../services/logger';
+import logger from '../../../../services/logger';
 import Styled from './styles';
 import PrimaryButton from '../../../buttons/primary-button';
 
