@@ -32,6 +32,7 @@ import {
   selectParticipantsToSubscribe,
 } from './service';
 import useCurrentUser from '../../../graphql/hooks/useCurrentUser';
+import useWhoIsUnmuted from '../../../graphql/hooks/useWhoIsUnmuted';
 
 const PARTICIPANTS_UPDATE_FILTER = [
   RoomEvent.ParticipantConnected,
@@ -44,8 +45,6 @@ const PARTICIPANTS_UPDATE_FILTER = [
   RoomEvent.TrackSubscribed,
   RoomEvent.TrackUnsubscribed,
   RoomEvent.TrackSubscriptionFailed,
-  RoomEvent.TrackMuted,
-  RoomEvent.TrackUnmuted,
   RoomEvent.ActiveSpeakersChanged,
 ];
 
@@ -110,11 +109,14 @@ const useParticipantsLastSpokeAt = (room: Room): Map<string, number> => {
 };
 
 /**
- * Provides a debounced mute state for LiveKit participants, derived from the
- * remote participants' own track state.
+ * Provides a debounced unmuted state for the Last-N pool, sourced from
+ * useWhoIsUnmuted (#2515): LiveKit track state or the BBB voice-activity stream,
+ * depending on media.livekit.audio.useLiveKitAudioState. Keyed by
+ * participant.identity; the source may instead key by BBB userId, so lookups
+ * coalesce both (#2607).
  * @param participants - The remote participants
  * @param debounceMs - The debounce time in milliseconds
- * @param enabled - Whether Last-N filtering is active (skips work when not)
+ * @param enabled - Whether Last-N filtering is active (skips work + source when not)
  * @returns A record of participant IDs to their debounced unmuted state
  */
 const useDebouncedMuteState = (
@@ -122,24 +124,9 @@ const useDebouncedMuteState = (
   debounceMs: number = 2500,
   enabled: boolean = true,
 ): Record<string, boolean> => {
-  // Derive the raw unmuted state directly from LiveKit's remote track state:
-  // RemoteTrackPublication.isMuted is delivered via signaling for every
-  // published mic track, subscribed or not, so the Last-N pool needs no extra
-  // server-side (GraphQL) subscription. Keyed by participant.identity to match
-  // the sender set used in handleSubscriptionChanges.
-  const unmutedUsers = useMemo<Record<string, boolean>>(() => {
-    if (!enabled) return {};
-
-    const map: Record<string, boolean> = {};
-
-    participants.forEach((participant) => {
-      const hasUnmutedMic = Array.from(participant.audioTrackPublications.values())
-        .some((pub) => pub.source === Track.Source.Microphone && !pub.isMuted);
-      map[participant.identity] = hasUnmutedMic;
-    });
-
-    return map;
-  }, [participants, enabled]);
+  // Unmuted-users source (#2515): LiveKit track state or the BBB voice-activity
+  // stream. Skipped (no work, no subscription) when Last-N is inactive.
+  const { data: unmutedUsers } = useWhoIsUnmuted({ skip: !enabled });
   const [debouncedState, setDebouncedState] = useState<Record<string, boolean>>({});
   const debouncedStateRef = useRef(debouncedState);
   debouncedStateRef.current = debouncedState;
@@ -150,7 +137,11 @@ const useDebouncedMuteState = (
 
     participants.forEach((participant) => {
       const userId = participant.identity;
-      const currUnmuted = unmutedUsers[userId] ?? false;
+      // useWhoIsUnmuted keys by LK identity (LiveKit source) or BBB userId (voice
+      // stream); dial-in/VO users differ between the two, so check both (#2607).
+      const currUnmuted = unmutedUsers[userId]
+        ?? unmutedUsers[getBbbUserIdForParticipant(participant)]
+        ?? false;
       const prevUnmuted = debouncedStateRef.current[userId] ?? false;
 
       if (currUnmuted === prevUnmuted && !debounceTimers.current.has(userId)) return;

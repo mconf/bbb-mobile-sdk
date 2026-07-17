@@ -150,6 +150,20 @@ export default class LiveKitAudioBridge {
     }, 'LiveKit: audio published');
   }
 
+  // Overriden by AudioManager. Signals a mute-state change applied to the track
+  // out-of-band (i.e. not via setSenderTrackEnabled, which already syncs Redux),
+  // so the store can be reconciled with the real track state.
+  private onmutestatechanged(muted: boolean): void {
+    this.logger.debug({
+      logCode: 'livekit_audio_mute_state_changed',
+      extraInfo: {
+        bridgeName: this.bridgeName,
+        role: this.role,
+        muted,
+      },
+    }, `LiveKit: mute state changed - ${muted}`);
+  }
+
   private static isMicrophonePublication(publication: TrackPublication): boolean {
     const { source } = publication;
 
@@ -377,19 +391,24 @@ export default class LiveKitAudioBridge {
       },
     }, `LiveKit: reinforcing muted state on local audio track - ${reason}`);
 
-    this.liveKitRoom.localParticipant.setMicrophoneEnabled(false).catch((error) => {
-      this.logger.error({
-        logCode: 'livekit_audio_mute_reinforce_error',
-        extraInfo: {
-          errorMessage: (error as Error)?.message,
-          errorName: (error as Error)?.name,
-          errorStack: (error as Error)?.stack,
-          bridgeName: this.bridgeName,
-          role: this.role,
-          reason,
-        },
-      }, `LiveKit: failed to reinforce muted state - ${(error as Error)?.message}`);
-    });
+    this.liveKitRoom.localParticipant.setMicrophoneEnabled(false)
+      .then(() => {
+        // Keep Redux's mute state in sync with this out-of-band track.
+        this.onmutestatechanged(true);
+      })
+      .catch((error) => {
+        this.logger.error({
+          logCode: 'livekit_audio_mute_reinforce_error',
+          extraInfo: {
+            errorMessage: (error as Error)?.message,
+            errorName: (error as Error)?.name,
+            errorStack: (error as Error)?.stack,
+            bridgeName: this.bridgeName,
+            role: this.role,
+            reason,
+          },
+        }, `LiveKit: failed to reinforce muted state - ${(error as Error)?.message}`);
+      });
   }
 
   private observeLiveKitEvents(): void {

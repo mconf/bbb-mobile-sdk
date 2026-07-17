@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useMutation } from '@apollo/client';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, useStore } from 'react-redux';
 import {
   LiveKitRoom,
   useLocalParticipant,
@@ -88,6 +88,7 @@ const BBBLiveKitRoom = ({ children }) => {
   const { data: currentUserData } = useCurrentUser();
   const host = useSelector((state) => state.client.meetingData.host);
   const dispatch = useDispatch();
+  const store = useStore();
   const { joinAudio } = useAudioJoin();
   const { data: meetingData, loading: meetingLoading } = useMeeting();
   const sessionToken = useSelector((state) => state.client.meetingData.sessionToken);
@@ -104,6 +105,8 @@ const BBBLiveKitRoom = ({ children }) => {
     : null;
   const reconnectOnFatalFailures = meetingSettings?.public?.media?.livekit
     ?.reconnectOnFatalFailures ?? false;
+  const selectiveSubscriptionEnabled = meetingSettings?.public?.media?.livekit
+    ?.selectiveSubscription?.enabled ?? true;
   const fatalReconnectAttempts = useRef(0);
   const fatalReconnectResetTimer = useRef(null);
   const livekitToken = currentUserData?.user_current[0]?.livekit?.livekitToken;
@@ -144,14 +147,28 @@ const BBBLiveKitRoom = ({ children }) => {
     ) {
       initializeMediaManagers({ audioBridge, cameraBridge, screenShareBridge })
         .then(() => {
-          const connectOptions = { autoSubscribe: true };
+          // Selective subscription on mobile is audio only for now. There is no
+          // manual camera/screenshare subscription, so autoSubscribe:false is only
+          // safe when LiveKit carries audio alone. If LiveKit also carries camera or
+          // screenshare, autoSubscribe:false would leave that video unsubscribed
+          // (blank), so keep autoSubscribe:true for now.
+          const usingLiveKitVideo = cameraBridge === 'livekit' || screenShareBridge === 'livekit';
+          const manageAudioSubscriptions = usingAudio
+            && selectiveSubscriptionEnabled
+            && !usingLiveKitVideo;
+          const connectOptions = { autoSubscribe: !manageAudioSubscriptions };
 
           if (!shouldUseLiveKit || connectionState !== ConnectionState.Disconnected) return;
 
           return liveKitRoom.connect(url, livekitToken, connectOptions);
         })
         .then(async () => {
-          if (isAudioConnected || isAudioConnecting) return;
+          // Pull audio flags directly from store as this needs to be the latest
+          // state, since multiple locations can trigger this effect with
+          // potentially stale values on React's render cycle.
+          const { isConnected, isConnecting, isReconnecting } = store.getState().audio;
+
+          if (isConnected || isConnecting || isReconnecting) return;
 
           await joinAudio();
         })
@@ -273,7 +290,7 @@ const BBBLiveKitRoom = ({ children }) => {
       style={{ zIndex: 0, height: 'initial', width: 'initial' }}
     >
       <LiveKitObserver room={liveKitRoom} usingAudio={usingAudio} />
-      {usingAudio && <SelectiveSubscription />}
+      {usingAudio && selectiveSubscriptionEnabled && <SelectiveSubscription />}
       {children}
     </LiveKitRoom>
   );

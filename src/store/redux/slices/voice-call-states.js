@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import AudioManager from '../../../services/webrtc/audio-manager';
+import { invalidateInFlightAudioJoin } from '../../../hooks/use-audio-join';
 
 const voiceCallStatesSlice = createSlice({
   name: 'voice-call-states',
@@ -92,6 +93,7 @@ const voiceCallStateChangeListener = (action, listenerApi) => {
       case 'CALL_ENDED':
         if (currentState.audio.isConnected
           || currentState.audio.isConnecting) {
+          invalidateInFlightAudioJoin();
           AudioManager.exitAudio();
         }
         break;

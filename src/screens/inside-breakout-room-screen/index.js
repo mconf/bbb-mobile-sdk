@@ -3,7 +3,6 @@ import { useDispatch } from 'react-redux';
 import BbbBreakoutSdk from 'bbb-breakout-sdk';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
-import { useAudioJoin } from '../../hooks/use-audio-join';
 import { setMainRoomBlockedByBreakout } from '../../store/redux/slices/wide-app/client';
 
 const InsideBreakoutRoomScreen = (props) => {
@@ -11,7 +10,6 @@ const InsideBreakoutRoomScreen = (props) => {
   const { route } = props;
   const { i18n } = useTranslation();
   const navigation = useNavigation();
-  const { joinAudio } = useAudioJoin();
 
   return (
     <BbbBreakoutSdk
@@ -21,7 +19,6 @@ const InsideBreakoutRoomScreen = (props) => {
           navigation.goBack();
         }
         dispatch(setMainRoomBlockedByBreakout(false));
-        joinAudio();
       }}
       defaultLanguage={i18n.language}
     />
