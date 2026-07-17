@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
 import { setAudioDevices } from '../../../../store/redux/slices/wide-app/audio';
 import { hide } from '../../../../store/redux/slices/wide-app/modal';
+import logger from '../../../services/logger';
 import Styled from './styles';
 import PrimaryButton from '../../../buttons/primary-button';
 
@@ -25,8 +26,19 @@ const AudioDeviceSelectorModal = () => {
   const ANDROID_SDK_MIN_BTCONNECT = 31;
 
   const getAudioDevicesIOS = async () => {
-    const audioDevicesIOS = await AudioModule.getAudioInputs();
-    dispatch(setAudioDevices(audioDevicesIOS));
+    try {
+      const audioDevicesIOS = await AudioModule.getAudioInputs();
+      logger.info({
+        logCode: 'ios_audio_devices_fetched',
+        extraInfo: { audioDevices: audioDevicesIOS },
+      }, `iOS audio devices fetched: count=${audioDevicesIOS?.length ?? 0}`);
+      dispatch(setAudioDevices(audioDevicesIOS));
+    } catch (error) {
+      logger.error({
+        logCode: 'ios_audio_devices_fetch_failed',
+        extraInfo: { errorMessage: error?.message },
+      }, `Error occurred while fetching audio devices on iOS: ${error?.message}`);
+    }
   };
 
   const checkBTPermissionAndroid = async () => {
@@ -94,7 +106,7 @@ const AudioDeviceSelectorModal = () => {
               if (ad.type !== 'EARPIECE') {
                 return (
                   <PrimaryButton
-                    OnPress={() => {
+                    onPress={() => {
                       AudioModule.setAudioDevice(ad.uid);
                       dispatch(hide());
                     }}

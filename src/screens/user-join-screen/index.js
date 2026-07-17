@@ -9,7 +9,7 @@ import {
   setConnected,
   setInitialCurrentUser,
   setLoggedIn,
-  setMeetingData,
+  updateMeetingData,
 } from '../../store/redux/slices/wide-app/client';
 import { disconnectLiveKitRoom } from '../../services/livekit';
 import Styled from './styles';
@@ -26,18 +26,18 @@ const UserJoinScreen = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
-  const meetingData = {
-    meetingID: currentUser?.meeting.meetingId,
-    sessionToken,
-    internalUserID: currentUser?.userId,
-    fullname: currentUser?.name,
-    externUserID: currentUser?.extId,
-    confname: currentUser?.meeting.name,
-    host,
-    joinUrl,
-  };
-
-  dispatch(setMeetingData(meetingData));
+  useEffect(() => {
+    dispatch(updateMeetingData({
+      meetingID: currentUser?.meeting?.meetingId,
+      sessionToken,
+      internalUserID: currentUser?.userId,
+      fullname: currentUser?.name,
+      externUserID: currentUser?.extId,
+      confname: currentUser?.meeting?.name,
+      host,
+      joinUrl,
+    }));
+  }, [currentUser, sessionToken, host, joinUrl]);
 
   const handleDispatchUserJoin = (authToken) => {
     dispatchUserJoin({
