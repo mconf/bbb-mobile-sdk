@@ -27,6 +27,7 @@ const initialState = {
   guestStatus: null, // oneof 'WAIT'|'ALLOW'|'DENY'|'FAILED'
   meetingData: {
     host: null,
+    directHost: null,
     sessionToken: null,
     joinUrl: null,
     enterUrl: null,
@@ -63,6 +64,9 @@ const clientSlice = createSlice({
     },
     setHost: (state, action) => {
       state.meetingData.host = action.payload;
+    },
+    setDirectHost: (state, action) => {
+      state.meetingData.directHost = action.payload;
     },
     setSessionToken: (state, action) => {
       state.meetingData.sessionToken = action.payload;
@@ -408,6 +412,7 @@ export {
 export const {
   setApi,
   setHost,
+  setDirectHost,
   setSessionToken,
   setInitialCurrentUser,
   setConnected,
