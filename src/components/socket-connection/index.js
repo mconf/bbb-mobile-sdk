@@ -184,10 +184,11 @@ const makeWS = (joinUrl) => {
   return new WebSocket(wsUrl);
 };
 
-const initializeMediaManagers = ({ internalUserID, host, sessionToken }) => {
+const initializeMediaManagers = ({ internalUserID, host, directHost, sessionToken }) => {
   const mediaManagerConfigs = {
     userId: internalUserID,
     host,
+    directHost,
     sessionToken,
     makeCall,
     logger,

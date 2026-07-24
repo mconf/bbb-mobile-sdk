@@ -75,7 +75,7 @@ class ScreenshareManager {
   }
 
   _getStunFetchURL() {
-    return `https://${this._host}/bigbluebutton/api/stuns?sessionToken=${this._sessionToken}`;
+    return `https://${this._directHost}/bigbluebutton/api/stuns?sessionToken=${this._sessionToken}`;
   }
 
   _initializeSubscriberBroker({ mediaServer = 'mediasoup' }) {
@@ -127,6 +127,7 @@ class ScreenshareManager {
   async init({
     userId,
     host,
+    directHost,
     sessionToken,
     logger,
   }) {
@@ -138,6 +139,7 @@ class ScreenshareManager {
 
     this._userId = userId;
     this._host = host;
+    this._directHost = directHost || host;
     this._sessionToken = sessionToken;
     this.logger = logger;
 
@@ -232,6 +234,7 @@ class ScreenshareManager {
     this.initialized = false;
     this.userId = null;
     this._host = null;
+    this._directHost = null;
     this._sessionToken = null;
     this.iceServers = null;
   }
