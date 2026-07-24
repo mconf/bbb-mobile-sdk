@@ -231,7 +231,7 @@ class VideoManager {
   }
 
   _getStunFetchURL() {
-    return `https://${this._host}/bigbluebutton/api/stuns?sessionToken=${this._sessionToken}`;
+    return `https://${this._directHost}/bigbluebutton/api/stuns?sessionToken=${this._sessionToken}`;
   }
 
   _initializePublisherBroker({
@@ -360,6 +360,7 @@ class VideoManager {
   async init({
     userId,
     host,
+    directHost,
     sessionToken,
     logger,
   }) {
@@ -372,6 +373,7 @@ class VideoManager {
 
     this.userId = userId;
     this._host = host;
+    this._directHost = directHost || host;
     this._sessionToken = sessionToken;
     this.logger = logger;
 
@@ -552,6 +554,7 @@ class VideoManager {
     this.initialized = false;
     this.userId = null;
     this._host = null;
+    this._directHost = null;
     this._sessionToken = null;
     this._makeCall = null;
     this.iceServers = null;

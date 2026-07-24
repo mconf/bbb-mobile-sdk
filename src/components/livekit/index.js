@@ -87,6 +87,7 @@ const LiveKitObserver = ({
 const BBBLiveKitRoom = ({ children }) => {
   const { data: currentUserData } = useCurrentUser();
   const host = useSelector((state) => state.client.meetingData.host);
+  const directHost = useSelector((state) => state.client.meetingData.directHost);
   const dispatch = useDispatch();
   const store = useStore();
   const { joinAudio } = useAudioJoin();
@@ -125,6 +126,7 @@ const BBBLiveKitRoom = ({ children }) => {
     const mediaManagerConfigs = {
       userId,
       host,
+      directHost,
       sessionToken,
       logger
     };
