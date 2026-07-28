@@ -124,7 +124,7 @@ class AudioManager {
   }
 
   _getStunFetchURL() {
-    return `https://${this._host}/bigbluebutton/api/stuns?sessionToken=${this._sessionToken}`;
+    return `https://${this._directHost}/bigbluebutton/api/stuns?sessionToken=${this._sessionToken}`;
   }
 
   _getSFUAddr() {
@@ -226,6 +226,7 @@ class AudioManager {
   async init({
     userId,
     host,
+    directHost,
     sessionToken,
     logger,
   }) {
@@ -237,6 +238,7 @@ class AudioManager {
 
     this.userId = userId;
     this._host = host;
+    this._directHost = directHost || host;
     this._sessionToken = sessionToken;
     this.logger = logger;
 
@@ -455,6 +457,7 @@ class AudioManager {
     this.initialized = false;
     this.userId = null;
     this._host = null;
+    this._directHost = null;
     this._sessionToken = null;
     this.iceServers = null;
   }

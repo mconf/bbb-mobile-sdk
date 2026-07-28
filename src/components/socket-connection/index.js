@@ -143,7 +143,7 @@ const getAuthInfo = (meetingData) => {
 
   const {
     meetingID, sessionToken, internalUserID,
-    fullname, externUserID, confname, host,
+    fullname, externUserID, confname, host, directHost,
     joinUrl,
   } = _meetingData;
 
@@ -155,6 +155,7 @@ const getAuthInfo = (meetingData) => {
     confname,
     externUserID,
     host,
+    directHost,
     joinUrl,
   };
 };
@@ -183,10 +184,11 @@ const makeWS = (joinUrl) => {
   return new WebSocket(wsUrl);
 };
 
-const initializeMediaManagers = ({ internalUserID, host, sessionToken }) => {
+const initializeMediaManagers = ({ internalUserID, host, directHost, sessionToken }) => {
   const mediaManagerConfigs = {
     userId: internalUserID,
     host,
+    directHost,
     sessionToken,
     makeCall,
     logger,
