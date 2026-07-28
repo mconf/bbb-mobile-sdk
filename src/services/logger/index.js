@@ -37,8 +37,8 @@ const LOG_CONFIG = Settings.clientLog || {
 
 // TODO this is not good - refactor out later - prlanzarin
 let getAuthInfo = () => { return {}; };
-let makeCall = () => {};
-let getCurrentSessionId = () => {};
+let makeCall = () => { };
+let getCurrentSessionId = () => { };
 const injectMakeCall = (func) => {
   makeCall = func;
 };
@@ -52,7 +52,7 @@ const injectSessionIdFetcher = (func) => {
 // Custom stream that logs to an end-point
 class ServerLoggerStream extends ServerStream {
   static getRemoteLogEndpointURL(host, route) {
-    return `https://${host}/${route}`;
+    return `https://${host}/${route.replace(/^\/+/, '')}`;
   }
 
   constructor({
@@ -89,9 +89,10 @@ class ServerLoggerStream extends ServerStream {
 
   write(rec) {
     const fullInfo = getAuthInfo();
-    if (fullInfo?.host) {
+    const logHost = fullInfo?.directHost || fullInfo?.host;
+    if (logHost) {
       const remoteEndpointURL = ServerLoggerStream.getRemoteLogEndpointURL(
-        fullInfo?.host,
+        logHost,
         this.route
       );
       if (this.url !== remoteEndpointURL) this.url = remoteEndpointURL;
