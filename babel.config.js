@@ -5,9 +5,9 @@ module.exports = function (api) {
     presets: ['babel-preset-expo'],
     env: {
       production: {
-        plugins: ['react-native-paper/babel', 'transform-remove-console', 'react-native-reanimated/plugin'],
+        plugins: ['react-native-paper/babel', 'transform-remove-console', 'react-native-worklets/plugin'],
       },
     },
-    plugins: ['react-native-reanimated/plugin'],
+    plugins: ['react-native-worklets/plugin'],
   };
 };
