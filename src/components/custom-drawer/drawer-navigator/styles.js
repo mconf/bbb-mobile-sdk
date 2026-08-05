@@ -59,6 +59,7 @@ const ScreenOptions = {
   },
   drawerStyle: {
     width: '80%',
+    backgroundColor: Colors.white,
   },
   drawerItemStyle: {
     borderRadius: 8,
@@ -71,7 +72,7 @@ const ScreenOptions = {
     fontWeight: '400',
     lineHeight: 18,
   },
-  sceneContainerStyle: { backgroundColor: '#06172A' },
+  sceneStyle: { backgroundColor: Colors.blueBackgroundColor },
   drawerActiveBackgroundColor: Colors.blue,
   drawerInactiveBackgroundColor: Colors.lightGray100,
   drawerActiveTintColor: Colors.white,
@@ -79,7 +80,6 @@ const ScreenOptions = {
   headerStyle: { backgroundColor: Colors.blue },
   headerTitleContainerStyle: { maxWidth: '75%' },
   headerTintColor: Colors.white,
-  drawerBackgroundColor: Colors.blue,
   headerTitleAlign: 'center',
 };
 
