@@ -1,4 +1,3 @@
-import React from 'react';
 import { useDispatch } from 'react-redux';
 import BbbBreakoutSdk from 'bbb-breakout-sdk';
 import { useNavigation } from '@react-navigation/native';
@@ -12,7 +11,16 @@ const InsideBreakoutRoomScreen = (props) => {
   const navigation = useNavigation();
 
   return (
-    <></>
+    <BbbBreakoutSdk
+      joinURL={route.params.joinURL}
+      onLeaveSession={() => {
+        if (navigation.canGoBack()) {
+          navigation.goBack();
+        }
+        dispatch(setMainRoomBlockedByBreakout(false));
+      }}
+      defaultLanguage={i18n.language}
+    />
   );
 };
 

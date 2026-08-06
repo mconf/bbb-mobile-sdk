@@ -43,7 +43,7 @@
     "@react-navigation/stack": "7.10.18",
     "@reduxjs/toolkit": "2.8.2",
     "axios": "1.18.1",
-    "bbb-breakout-sdk": "git+https://github.com/mconf/bbb-mobile-sdk.git#breakout-v0.21.8",
+    "bbb-breakout-sdk": "git+https://github.com/matheus-lagreca/bbb-mobile-sdk.git#d6bea099014ca21fa09acf160df28dfc6fb46301",
     "browser-bunyan": "1.8.0",
     "ejson": "2.2.3",
     "eventemitter2": "6.4.9",
