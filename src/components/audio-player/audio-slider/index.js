@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-// TODO: Upgrade to expo-audio before updating to expo54
-import { Audio } from 'expo-av';
+import { createAudioPlayer } from 'expo-audio';
 import Slider from '@react-native-community/slider';
 import ActivityBar from '../../activity-bar';
 import UtilsService from '../../../utils/functions/index';
@@ -13,7 +12,7 @@ const AudioSlider = (props) => {
   const {
     audioSource, positionFromServer, isPlayingFromServer, filename
   } = props;
-  const [sound, setSound] = useState();
+  const [player, setPlayer] = useState();
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
   const [position, setPosition] = useState(0);
@@ -25,19 +24,29 @@ const AudioSlider = (props) => {
   }, [isPlayingFromServer]);
 
   useEffect(() => {
-    if (sound?._loaded) {
+    if (player?.isLoaded) {
       if (!isCloseEnough(position, positionFromServer * 1000, 1000)) {
         setPosition(positionFromServer * 1000);
-        sound.setPositionAsync(positionFromServer * 1000);
+        player.seekTo(positionFromServer);
       }
     }
   }, [positionFromServer]);
 
   useEffect(() => {
-    if (sound && audioSource === null) {
-      setSound(null);
+    if (player && audioSource === null) {
+      setPlayer(null);
     }
   }, [audioSource]);
+
+  // createAudioPlayer instances are not garbage-collected automatically; release
+  // the previous player whenever it changes and on unmount.
+  useEffect(() => {
+    return () => {
+      if (player) {
+        player.remove();
+      }
+    };
+  }, [player]);
 
   useEffect(() => {
     const handlePlayPause = async () => {
@@ -51,8 +60,12 @@ const AudioSlider = (props) => {
     handlePlayPause();
   }, [isPlaying, filename]);
 
+  // expo-audio reports currentTime/duration in seconds; keep internal state in ms.
   const updatePosition = (status) => {
-    setPosition(Math.floor(status.positionMillis / 1000) * 1000);
+    setPosition(Math.floor(status.currentTime) * 1000);
+    if (status.duration) {
+      setDuration(status.duration * 1000);
+    }
   };
 
   const isCloseEnough = (number, target, threshold) => {
@@ -61,27 +74,20 @@ const AudioSlider = (props) => {
 
   const handleVolumeChange = async (_volume) => {
     setVolume(Number(_volume.toFixed(2)));
-    if (sound) {
-      await sound.setVolumeAsync(Number(_volume.toFixed(2)));
+    if (player) {
+      player.volume = Number(_volume.toFixed(2));
     }
   };
 
   const playSound = async () => {
-    if (sound) {
-      await sound.unloadAsync();
-    }
-
     try {
-      const { sound: newSound, status } = await Audio.Sound.createAsync(
-        audioSource,
-        { positionMillis: positionFromServer * 1000 },
-      );
-      setSound(newSound);
-      setDuration(status.durationMillis);
-
-      await newSound.setVolumeAsync(volume);
-      await newSound.playAsync();
-      newSound.setOnPlaybackStatusUpdate(updatePosition);
+      const newPlayer = createAudioPlayer(audioSource);
+      newPlayer.volume = volume;
+      newPlayer.addListener('playbackStatusUpdate', updatePosition);
+      await newPlayer.seekTo(positionFromServer);
+      newPlayer.play();
+      // Replacing the player triggers the cleanup effect that releases the old one.
+      setPlayer(newPlayer);
     } catch (error) {
       logger.warn({
         logCode: 'audio_player_play',
@@ -90,8 +96,8 @@ const AudioSlider = (props) => {
   };
 
   const pauseSound = async () => {
-    if (sound) {
-      await sound.pauseAsync();
+    if (player) {
+      player.pause();
     }
   };
 
@@ -124,7 +130,7 @@ const AudioSlider = (props) => {
           value={volume}
           step={0.1}
           thumbTintColor={Colors.lightBlue}
-          disabled={sound === undefined}
+          disabled={player == null}
           minimumTrackTintColor={Colors.lightBlue}
           maximumTrackTintColor={Colors.lightGray100}
           onValueChange={handleVolumeChange}
