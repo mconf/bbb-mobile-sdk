@@ -13,8 +13,10 @@ const ViewContainer = styled.View`
 
 const CustomDrawerContainer = styled.View`
   padding: 20px;
+  padding-top: ${({ topInset }) => 20 + (topInset || 0)}px;
   flex-direction: row;
   align-items: center;
+  background-color: ${Colors.blue};
 `;
 
 const UserAvatar = styled(userAvatar)`
@@ -129,7 +131,8 @@ const DrawerItemBottom = ({ label, onPress, iconName }) => {
 
 const DrawerScrollView = ({ children }) => (
   <DrawerContentScrollView
-    contentContainerStyle={{ backgroundColor: Colors.blue }}
+    style={{ backgroundColor: Colors.white }}
+    contentContainerStyle={{ paddingTop: 8 }}
   >
     {children}
   </DrawerContentScrollView>
