@@ -5,7 +5,7 @@
     "owner": "mconf",
     "scheme": "bigbluebutton",
     "version": "1.0.0",
-    "newArchEnabled": false,
+    "newArchEnabled": true,
     "orientation": "default",
     "icon": "./src/assets/native/icon.png",
     "userInterfaceStyle": "dark",
@@ -50,7 +50,9 @@
     },
     "plugins": [
       "@config-plugins/react-native-webrtc",
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-font",
+      "expo-asset"
     ],
     "web": {
       "favicon": "./src/assets/native/favicon.png"
