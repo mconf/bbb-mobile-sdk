@@ -2,10 +2,10 @@ import { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { NavigationContainer, DefaultTheme, NavigationIndependentTree } from '@react-navigation/native';
 import { OrientationLocker, PORTRAIT } from 'react-native-orientation-locker';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { store } from './src/store/redux/store';
 // components
 import InCallManagerController from './src/app-content/in-call-manager';
-// import NotifeeController from './src/app-content/notifee';
 import LocalesController from './src/app-content/locales';
 import AppStatusBar from './src/components/status-bar';
 import MainNavigator from './src/screens/main-navigator';
@@ -51,21 +51,23 @@ const App = (props) => {
   }, []);
 
   return (
-    <Provider store={store}>
-      <NavigationIndependentTree>
-        <NavigationContainer theme={MyTheme}>
-          <OrientationLocker orientation={PORTRAIT} />
-          <MainNavigator
-            {...props}
-            joinURL={_joinURL}
-            onLeaveSession={_onLeaveSession}
-          />
-          <AppStatusBar />
-          <InCallManagerController />
-          <LocalesController defaultLanguage={defaultLanguage} />
-        </NavigationContainer>
-      </NavigationIndependentTree>
-    </Provider>
+    <KeyboardProvider>
+      <Provider store={store}>
+        <NavigationIndependentTree>
+          <NavigationContainer theme={MyTheme}>
+            <OrientationLocker orientation={PORTRAIT} />
+            <MainNavigator
+              {...props}
+              joinURL={_joinURL}
+              onLeaveSession={_onLeaveSession}
+            />
+            <AppStatusBar />
+            <InCallManagerController />
+            <LocalesController defaultLanguage={defaultLanguage} />
+          </NavigationContainer>
+        </NavigationIndependentTree>
+      </Provider>
+    </KeyboardProvider>
   );
 };
 
