@@ -1,7 +1,7 @@
 import { useMutation } from '@apollo/client';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { KeyboardAvoidingView, Platform } from 'react-native';
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import PrimaryButton from '../../../components/buttons/primary-button';
 import ScreenWrapper from '../../../components/screen-wrapper';
 import useCurrentPoll from '../../../graphql/hooks/useCurrentPoll';
@@ -127,7 +127,7 @@ const AnswerPollScreen = () => {
   return (
     <ScreenWrapper>
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior="translate-with-padding"
       >
         <Styled.ContainerPollCard
           ref={scrollViewRef}

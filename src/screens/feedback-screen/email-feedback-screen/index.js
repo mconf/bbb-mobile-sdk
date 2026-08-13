@@ -5,10 +5,9 @@ import { useTranslation } from 'react-i18next';
 import {
   BackHandler,
   Keyboard,
-  KeyboardAvoidingView,
-  Platform,
   TouchableWithoutFeedback
 } from 'react-native';
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import Settings from '../../../../settings.json';
 import PrimaryButton from '../../../components/buttons/primary-button';
 import logger from '../../../services/logger';
@@ -71,7 +70,7 @@ const EmailFeedbackScreen = ({ route }) => {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <KeyboardAvoidingView
         style={{ width: '100%' }}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'position'}
+        behavior="translate-with-padding"
       >
         <Styled.ContainerView>
           <Styled.Title>{title}</Styled.Title>

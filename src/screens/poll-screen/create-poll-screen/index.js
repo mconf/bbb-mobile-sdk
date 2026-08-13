@@ -1,9 +1,9 @@
-import { KeyboardAvoidingView, Platform } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { useMutation } from '@apollo/client';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { trigDetailedInfo } from '../../../store/redux/slices/wide-app/layout';
 import { editSecretPoll } from '../../../store/redux/slices/current-poll';
 import ScreenWrapper from '../../../components/screen-wrapper';
@@ -132,7 +132,7 @@ const CreatePoll = () => {
   return (
     <ScreenWrapper>
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior="translate-with-padding"
       >
         <Styled.ContainerView>
           <Styled.ContainerPollCard>

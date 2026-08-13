@@ -5,8 +5,9 @@ import { useTranslation } from 'react-i18next';
 import {
   BackHandler,
   Keyboard,
-  KeyboardAvoidingView, Platform, TouchableWithoutFeedback
+  TouchableWithoutFeedback
 } from 'react-native';
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import Settings from '../../../../settings.json';
 import PrimaryButton from '../../../components/buttons/primary-button';
 import Colors from '../../../constants/colors';
@@ -221,7 +222,7 @@ const ProblemFeedbackScreen = ({ route }) => {
 
         <KeyboardAvoidingView
           style={{ width: '100%' }}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'position'}
+          behavior="translate-with-padding"
         >
           <Styled.TextInputOther
             onFocus={() => checkOption('other')}
