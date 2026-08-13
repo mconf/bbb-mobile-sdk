@@ -1,22 +1,19 @@
 import { createDrawerNavigator } from '@react-navigation/drawer';
+import { useIsFocused } from '@react-navigation/native';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, BackHandler } from "react-native";
 import { useDispatch, useSelector } from 'react-redux';
-import Settings from '../../../../settings.json';
 import { ActivitySignProvider } from '../../../app-content/ActivitySign';
 import NotificationController from '../../../app-content/notification';
 import Colors from '../../../constants/colors';
-import useCurrentUser from '../../../graphql/hooks/useCurrentUser';
 import useMeeting from '../../../graphql/hooks/useMeeting';
 import useUserCount from '../../../graphql/hooks/useUserCount';
 import useModalListener from '../../../hooks/listeners/use-modal-listener';
 import useAppState from '../../../hooks/use-app-state';
-import BreakoutRoomScreen from '../../../screens/breakout-room-screen';
 import FullscreenWrapperScreen from '../../../screens/fullscreen-wrapper-screen';
 import InsideBreakoutRoomScreen from '../../../screens/inside-breakout-room-screen';
 import MainConferenceScreen from '../../../screens/main-conference-screen';
-import PollNavigator from '../../../screens/poll-screen/navigator';
 import SelectLanguageScreen from '../../../screens/select-language-screen';
 import UserNotesScreen from '../../../screens/user-notes-screen';
 import UserParticipantsNavigator from '../../../screens/user-participants-screen/navigator';
@@ -24,6 +21,21 @@ import { toggleFacingMode } from '../../../store/redux/slices/wide-app/video';
 import ChatPopupList from '../../chat/chat-popup';
 import CustomDrawer from '../index';
 import Styled from './styles';
+
+const withUnmountOnBlur = (ScreenComponent) => {
+  const Wrapped = (props) => {
+    const isFocused = useIsFocused();
+    return isFocused ? <ScreenComponent {...props} /> : null;
+  };
+  return Wrapped;
+};
+
+const MainWithUnmount = withUnmountOnBlur(MainConferenceScreen);
+const UserParticipantsNavigatorWithUnmount = withUnmountOnBlur(UserParticipantsNavigator);
+const SelectLanguageScreenWithUnmount = withUnmountOnBlur(SelectLanguageScreen);
+const UserNotesScreenWithUnmount = withUnmountOnBlur(UserNotesScreen);
+const InsideBreakoutRoomScreenWithUnmount = withUnmountOnBlur(InsideBreakoutRoomScreen);
+const FullscreenWrapperScreenWithUnmount = withUnmountOnBlur(FullscreenWrapperScreen);
 
 const DrawerNavigator = ({
   onLeaveSession, meetingUrl, navigation
@@ -34,8 +46,6 @@ const DrawerNavigator = ({
   const { data: meetingData } = useMeeting();
   const meetingName = meetingData?.meeting[0]?.name;
   const isBreakout = meetingData?.meeting[0]?.isBreakout;
-  const { data: userData } = useCurrentUser();
-  const amIModerator = userData?.user_current[0]?.isModerator;
   const { data: currentUserCount } = useUserCount();
   const users = currentUserCount?.user_aggregate?.aggregate?.count || 0;
   const isCameraConnected = useSelector((state) => state.video.isConnected);
@@ -78,7 +88,6 @@ const DrawerNavigator = ({
   return (
     <>
       <Drawer.Navigator
-        independent
         drawerContent={(props) => (
           <CustomDrawer
             {...props}
@@ -90,24 +99,20 @@ const DrawerNavigator = ({
       >
         <Drawer.Screen
           name="Main"
-          component={MainConferenceScreen}
+          component={MainWithUnmount}
           options={{
             title: meetingName || t('mobileSdk.meeting.label'),
-            unmountOnBlur: true,
             headerShown: appState !== 'background',
             headerRight: () => {
+              if (!isCameraConnected) return null;
               return (
-                <Styled.HeaderRight>
-                  {isCameraConnected && (
-                    <Styled.DrawerIcon
-                      icon="camera-flip-outline"
-                      size={24}
-                      iconColor={Colors.white}
-                      onPress={() => dispatch(toggleFacingMode())}
-                      style={{ position: 'relative' }}
-                    />
-                  )}
-                </Styled.HeaderRight>
+                <Styled.DrawerIcon
+                  icon="camera-flip-outline"
+                  size={24}
+                  iconColor={Colors.white}
+                  onPress={() => dispatch(toggleFacingMode())}
+                  style={{ position: 'relative' }}
+                />
               );
             },
             drawerIcon: (config) => (
@@ -120,37 +125,22 @@ const DrawerNavigator = ({
           }}
         />
 
-        {!isBreakout && (
-          <Drawer.Screen
-            name="PollScreen"
-            component={PollNavigator}
-            options={{
-              title: t('mobileSdk.poll.label'),
-              unmountOnBlur: true,
-              headerRight: () => (
-                <>
-                  {recordingEnabled && (
-                    <RecordingIndicator recordMeeting={recordMeeting} recordPolicies={recordPolicies} />
-                  )}
-                </>
-              ),
-              drawerIcon: (config) => (
-                <Styled.DrawerIcon
-                  icon="poll"
-                  size={24}
-                  iconColor={config.color}
-                />
-              ),
-            }}
-          />
-        )}
-
         <Drawer.Screen
           name="UserParticipantsScreen"
-          component={UserParticipantsNavigator}
+          component={UserParticipantsNavigatorWithUnmount}
           options={{
             title: `${t('app.userList.label')} (${users})`,
-            unmountOnBlur: true,
+            headerRight: () => {
+              if (!isCameraConnected) return null;
+              return (
+                <Styled.DrawerIcon
+                  icon="camera-flip-outline"
+                  size={24}
+                  iconColor={Colors.white}
+                  onPress={() => dispatch(toggleFacingMode())}
+                />
+              );
+            },
             drawerIcon: (config) => (
               <Styled.DrawerIcon
                 icon="account-multiple-outline"
@@ -163,10 +153,20 @@ const DrawerNavigator = ({
 
         <Drawer.Screen
           name="Language"
-          component={SelectLanguageScreen}
+          component={SelectLanguageScreenWithUnmount}
           options={{
             title: t('mobileSdk.locales.label'),
-            unmountOnBlur: true,
+            headerRight: () => {
+              if (!isCameraConnected) return null;
+              return (
+                <Styled.DrawerIcon
+                  icon="camera-flip-outline"
+                  size={24}
+                  iconColor={Colors.white}
+                  onPress={() => dispatch(toggleFacingMode())}
+                />
+              );
+            },
             drawerIcon: (config) => (
               <Styled.DrawerIcon
                 icon="web"
@@ -177,31 +177,11 @@ const DrawerNavigator = ({
           }}
         />
 
-        {!isBreakout && (
-          <Drawer.Screen
-            name="BreakoutRoomScreen"
-            component={BreakoutRoomScreen}
-            options={{
-              title: t('app.createBreakoutRoom.title'),
-              unmountOnBlur: true,
-              drawerIcon: (config) => (
-                <Styled.DrawerIcon
-                  icon="account-group"
-                  size={24}
-                  iconColor={config.color}
-                />
-
-              ),
-            }}
-          />
-        )}
-
         <Drawer.Screen
           name="UserNotesScreen"
-          component={UserNotesScreen}
+          component={UserNotesScreenWithUnmount}
           options={{
             title: t('app.notes.title'),
-            unmountOnBlur: true,
             drawerLabelStyle: {
               fontWeight: '400', fontSize: 16, paddingLeft: 12
             },
@@ -214,10 +194,9 @@ const DrawerNavigator = ({
         {!isBreakout && (
           <Drawer.Screen
             name="InsideBreakoutRoomScreen"
-            component={InsideBreakoutRoomScreen}
+            component={InsideBreakoutRoomScreenWithUnmount}
             options={{
               title: 'InsideBreakoutScreen',
-              unmountOnBlur: true,
               headerShown: false,
               drawerItemStyle: { display: 'none' },
               drawerIcon: (config) => (
@@ -233,10 +212,9 @@ const DrawerNavigator = ({
 
         <Drawer.Screen
           name="FullscreenWrapperScreen"
-          component={FullscreenWrapperScreen}
+          component={FullscreenWrapperScreenWithUnmount}
           options={{
             headerShown: false,
-            unmountOnBlur: true,
             drawerItemStyle: { display: 'none' },
 
           }}
