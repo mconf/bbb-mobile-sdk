@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Provider } from 'react-redux';
-import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme, NavigationIndependentTree } from '@react-navigation/native';
 import { OrientationLocker, PORTRAIT } from 'react-native-orientation-locker';
 import { store } from './src/store/redux/store';
 // components
@@ -32,7 +32,7 @@ const MyTheme = {
   },
 };
 
-const leaveSessionFactory = (callback = () => {}) => {
+const leaveSessionFactory = (callback = () => { }) => {
   return () => {
     disconnectLiveKitRoom({ final: true });
     callback();
@@ -52,17 +52,19 @@ const App = (props) => {
 
   return (
     <Provider store={store}>
-      <NavigationContainer theme={MyTheme} independent>
-        <OrientationLocker orientation={PORTRAIT} />
-        <MainNavigator
-          {...props}
-          joinURL={_joinURL}
-          onLeaveSession={_onLeaveSession}
-        />
-        <AppStatusBar />
-        <InCallManagerController />
-        <LocalesController defaultLanguage={defaultLanguage} />
-      </NavigationContainer>
+      <NavigationIndependentTree>
+        <NavigationContainer theme={MyTheme}>
+          <OrientationLocker orientation={PORTRAIT} />
+          <MainNavigator
+            {...props}
+            joinURL={_joinURL}
+            onLeaveSession={_onLeaveSession}
+          />
+          <AppStatusBar />
+          <InCallManagerController />
+          <LocalesController defaultLanguage={defaultLanguage} />
+        </NavigationContainer>
+      </NavigationIndependentTree>
     </Provider>
   );
 };
