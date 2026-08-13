@@ -213,6 +213,7 @@ const BottomSheetChat = () => {
         snapPoints={snapPoints}
         onChange={handleSheetChanges}
         enablePanDownToClose
+        enableDynamicSizing={false}
         style={topShadowStyle}
       >
         {renderEmptyChatHandler()}
