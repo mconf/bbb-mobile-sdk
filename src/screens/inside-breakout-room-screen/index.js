@@ -1,4 +1,3 @@
-import React from 'react';
 import { useDispatch } from 'react-redux';
 import BbbBreakoutSdk from 'bbb-breakout-sdk';
 import { useNavigation } from '@react-navigation/native';

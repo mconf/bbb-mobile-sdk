@@ -1,4 +1,5 @@
 import { createDrawerNavigator } from '@react-navigation/drawer';
+import { useIsFocused } from '@react-navigation/native';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, BackHandler } from "react-native";
@@ -26,6 +27,28 @@ import ChatPopupList from '../../chat/chat-popup';
 import RecordingIndicator from '../../record/record-indicator';
 import CustomDrawer from '../index';
 import Styled from './styles';
+
+// react-navigation v7 removed the `unmountOnBlur` screen option; this replaces it by
+// rendering null while unfocused. Wrapped components are hoisted to module scope so their
+// identity stays stable across DrawerNavigator re-renders (an inline wrapper would remount
+// the screen on every render).
+const withUnmountOnBlur = (ScreenComponent) => {
+  const Wrapped = (props) => {
+    const isFocused = useIsFocused();
+    return isFocused ? <ScreenComponent {...props} /> : null;
+  };
+  return Wrapped;
+};
+
+const MainWithUnmount = withUnmountOnBlur(MainConferenceScreen);
+const PollNavigatorWithUnmount = withUnmountOnBlur(PollNavigator);
+const UserParticipantsNavigatorWithUnmount = withUnmountOnBlur(UserParticipantsNavigator);
+const SelectLanguageScreenWithUnmount = withUnmountOnBlur(SelectLanguageScreen);
+const BreakoutRoomScreenWithUnmount = withUnmountOnBlur(BreakoutRoomScreen);
+const UserNotesScreenWithUnmount = withUnmountOnBlur(UserNotesScreen);
+const InsideBreakoutRoomScreenWithUnmount = withUnmountOnBlur(InsideBreakoutRoomScreen);
+const TimerScreenWithUnmount = withUnmountOnBlur(TimerScreen);
+const FullscreenWrapperScreenWithUnmount = withUnmountOnBlur(FullscreenWrapperScreen);
 
 const DrawerNavigator = ({
   onLeaveSession, meetingUrl, navigation
@@ -83,7 +106,6 @@ const DrawerNavigator = ({
   return (
     <>
       <Drawer.Navigator
-        independent
         drawerContent={(props) => (
           <CustomDrawer
             {...props}
@@ -95,10 +117,9 @@ const DrawerNavigator = ({
       >
         <Drawer.Screen
           name="Main"
-          component={MainConferenceScreen}
+          component={MainWithUnmount}
           options={{
             title: meetingName || t('mobileSdk.meeting.label'),
-            unmountOnBlur: true,
             headerShown: appState !== 'background',
             headerRight: () => {
               if (!isCameraConnected && !recordingEnabled) return null;
@@ -133,10 +154,9 @@ const DrawerNavigator = ({
         {!isBreakout && (
           <Drawer.Screen
             name="PollScreen"
-            component={PollNavigator}
+            component={PollNavigatorWithUnmount}
             options={{
               title: t('mobileSdk.poll.label'),
-              unmountOnBlur: true,
               headerRight: () => {
                 if (!isCameraConnected && !recordingEnabled) return null;
                 if (!isCameraConnected) {
@@ -170,10 +190,9 @@ const DrawerNavigator = ({
 
         <Drawer.Screen
           name="UserParticipantsScreen"
-          component={UserParticipantsNavigator}
+          component={UserParticipantsNavigatorWithUnmount}
           options={{
             title: `${t('app.userList.label')} (${users})`,
-            unmountOnBlur: true,
             headerRight: () => {
               if (!isCameraConnected && !recordingEnabled) return null;
               if (!isCameraConnected) {
@@ -206,10 +225,9 @@ const DrawerNavigator = ({
 
         <Drawer.Screen
           name="Language"
-          component={SelectLanguageScreen}
+          component={SelectLanguageScreenWithUnmount}
           options={{
             title: t('mobileSdk.locales.label'),
-            unmountOnBlur: true,
             headerRight: () => {
               if (!isCameraConnected && !recordingEnabled) return null;
               if (!isCameraConnected) {
@@ -243,10 +261,9 @@ const DrawerNavigator = ({
         {!isBreakout && (
           <Drawer.Screen
             name="BreakoutRoomScreen"
-            component={BreakoutRoomScreen}
+            component={BreakoutRoomScreenWithUnmount}
             options={{
               title: t('app.createBreakoutRoom.title'),
-              unmountOnBlur: true,
               drawerIcon: (config) => (
                 <Styled.DrawerIcon
                   icon="account-group"
@@ -261,10 +278,9 @@ const DrawerNavigator = ({
 
         <Drawer.Screen
           name="UserNotesScreen"
-          component={UserNotesScreen}
+          component={UserNotesScreenWithUnmount}
           options={{
             title: t('app.notes.title'),
-            unmountOnBlur: true,
             drawerLabelStyle: {
               fontWeight: '400', fontSize: 16, paddingLeft: 12
             },
@@ -277,10 +293,9 @@ const DrawerNavigator = ({
         {!isBreakout && (
           <Drawer.Screen
             name="InsideBreakoutRoomScreen"
-            component={InsideBreakoutRoomScreen}
+            component={InsideBreakoutRoomScreenWithUnmount}
             options={{
               title: 'InsideBreakoutScreen',
-              unmountOnBlur: true,
               headerShown: false,
               drawerItemStyle: { display: 'none' },
               drawerIcon: (config) => (
@@ -297,10 +312,9 @@ const DrawerNavigator = ({
         {amIModerator && Settings.features.timer && (
           <Drawer.Screen
             name="TimerScreen"
-            component={TimerScreen}
+            component={TimerScreenWithUnmount}
             options={{
               title: t('app.timerScreen.title'),
-              unmountOnBlur: true,
               headerRight: () => {
                 if (!isCameraConnected && !recordingEnabled) return null;
                 if (!isCameraConnected) {
@@ -333,10 +347,9 @@ const DrawerNavigator = ({
 
         <Drawer.Screen
           name="FullscreenWrapperScreen"
-          component={FullscreenWrapperScreen}
+          component={FullscreenWrapperScreenWithUnmount}
           options={{
             headerShown: false,
-            unmountOnBlur: true,
             drawerItemStyle: { display: 'none' },
 
           }}

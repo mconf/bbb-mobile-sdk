@@ -1,8 +1,8 @@
-import { KeyboardAvoidingView, Platform } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { useSubscription } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import useCurrentUser from '../../../graphql/hooks/useCurrentUser';
 import { useOrientation } from '../../../hooks/use-orientation';
 import { setProfile } from '../../../store/redux/slices/wide-app/modal';
@@ -93,7 +93,7 @@ const PreviousPollScreen = () => {
   return (
     <ScreenWrapper>
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior="translate-with-padding"
       >
         <Styled.ContainerView orientation={orientation}>
           <Styled.ContainerPollScrollView>
