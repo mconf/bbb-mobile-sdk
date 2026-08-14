@@ -2,6 +2,7 @@ import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from '@apollo/client';
 import { Share } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DrawerItemList } from '@react-navigation/drawer';
 import { useOrientation } from '../../hooks/use-orientation';
 import { setExpandActionsBar } from '../../store/redux/slices/wide-app/layout';
@@ -17,6 +18,7 @@ import useMeeting from '../../graphql/hooks/useMeeting';
 const CustomDrawer = (props) => {
   const { meetingUrl, navigation } = props;
   const dispatch = useDispatch();
+  const insets = useSafeAreaInsets();
   const { data } = useCurrentUser();
   const { data: meetingData } = useMeeting();
   const [dispatchLeaveSession] = useMutation(Queries.USER_LEAVE_MEETING);
@@ -91,13 +93,13 @@ const CustomDrawer = (props) => {
 
   return (
     <Styled.ViewContainer>
+      <Styled.CustomDrawerContainer topInset={insets.top}>
+        <Styled.UserAvatarDrawer currentUser={currentUser} />
+        <Styled.NameUserAvatar numberOfLines={1}>
+          {currentUser?.name}
+        </Styled.NameUserAvatar>
+      </Styled.CustomDrawerContainer>
       <Styled.DrawerScrollView {...props}>
-        <Styled.CustomDrawerContainer>
-          <Styled.UserAvatarDrawer currentUser={currentUser} />
-          <Styled.NameUserAvatar numberOfLines={1}>
-            {currentUser?.name}
-          </Styled.NameUserAvatar>
-        </Styled.CustomDrawerContainer>
         <Styled.ContainerDrawerItemList>
           <DrawerItemList {...props} />
           {Settings.showNotImplementedFeatures && renderNotImplementedItem()}

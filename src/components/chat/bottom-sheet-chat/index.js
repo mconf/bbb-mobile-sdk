@@ -10,12 +10,10 @@ import {
   useState
 } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import {
-  KeyboardAvoidingView, Platform,
-  View
-} from 'react-native';
+import { View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import HTMLView from 'react-native-htmlview';
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { useDispatch, useSelector } from 'react-redux';
 import Colors from '../../../constants/colors';
 import { useBottomSheetBackHandler } from '../../../hooks/useBottomSheetBackHandler';
@@ -213,6 +211,7 @@ const BottomSheetChat = () => {
         snapPoints={snapPoints}
         onChange={handleSheetChanges}
         enablePanDownToClose
+        enableDynamicSizing={false}
         style={topShadowStyle}
       >
         {renderEmptyChatHandler()}
@@ -227,9 +226,8 @@ const BottomSheetChat = () => {
           style={Styled.styles.list}
         />
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          behavior="translate-with-padding"
           keyboardVerticalOffset={height + 47}
-          enabled
         >
           <Styled.SendMessageContainer>
             <Styled.TextInput

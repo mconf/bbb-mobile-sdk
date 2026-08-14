@@ -78,6 +78,7 @@ const BottomSheetActionsBar = ({ alwaysOpen }) => {
       ref={bottomSheetRef}
       index={detailedInfo ? 0 : -1}
       enablePanDownToClose={!alwaysOpen}
+      enableDynamicSizing={false}
       snapPoints={snapPoints}
       handleIndicatorStyle={Styled[renderWithOpacity ? 'opacityStyles' : 'styles'].indicatorStyle}
       style={Styled[renderWithOpacity ? 'opacityStyles' : 'styles'].style}

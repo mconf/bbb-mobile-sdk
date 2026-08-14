@@ -13,8 +13,10 @@ const ViewContainer = styled.View`
 
 const CustomDrawerContainer = styled.View`
   padding: 20px;
+  padding-top: ${({ topInset }) => 20 + (topInset || 0)}px;
   flex-direction: row;
   align-items: center;
+  background-color: ${Colors.blue};
 `;
 
 const UserAvatar = styled(userAvatar)`
@@ -35,10 +37,14 @@ const ContainerDrawerItemList = styled.View`
   flex: 1;
   background-color: ${Colors.white};
   padding-top: 10px;
+  gap: 4px;
 `;
 
 const ContainerCustomBottomButtons = styled.View`
   padding-bottom:  5%;
+  padding-left: 12px;
+  padding-right: 12px;
+  gap: 4px
 `;
 
 const ContainerCustomButtonsInsideScrollview = styled.View`
@@ -123,13 +129,15 @@ const DrawerItemBottom = ({ label, onPress, iconName }) => {
       inactiveTintColor={Colors.lightGray400}
       inactiveBackgroundColor={Colors.lightGray100}
       icon={() => <DrawerIcon name={iconName} size={24} color="#1C1B1F" />}
+      style={{ borderRadius: 8 }}
     />
   );
 };
 
 const DrawerScrollView = ({ children }) => (
   <DrawerContentScrollView
-    contentContainerStyle={{ backgroundColor: Colors.blue }}
+    style={{ backgroundColor: Colors.white }}
+    contentContainerStyle={{ paddingTop: 8 }}
   >
     {children}
   </DrawerContentScrollView>

@@ -38,13 +38,6 @@ const HeaderTitleText = styled.Text`
   max-width: 80%;
 `;
 
-const HeaderRight = styled.View`
-  flex-direction: row;
-  align-items: center;
-  gap: 24px;
-  margin-right: 12px;
-`;
-
 const BetaTag = styled(Tag)`
   position: absolute;
   right: 12px;
@@ -59,6 +52,7 @@ const ScreenOptions = {
   },
   drawerStyle: {
     width: '80%',
+    backgroundColor: Colors.white,
   },
   drawerItemStyle: {
     borderRadius: 8,
@@ -71,7 +65,7 @@ const ScreenOptions = {
     fontWeight: '400',
     lineHeight: 18,
   },
-  sceneContainerStyle: { backgroundColor: '#06172A' },
+  sceneStyle: { backgroundColor: Colors.blueBackgroundColor },
   drawerActiveBackgroundColor: Colors.blue,
   drawerInactiveBackgroundColor: Colors.lightGray100,
   drawerActiveTintColor: Colors.white,
@@ -79,7 +73,6 @@ const ScreenOptions = {
   headerStyle: { backgroundColor: Colors.blue },
   headerTitleContainerStyle: { maxWidth: '75%' },
   headerTintColor: Colors.white,
-  drawerBackgroundColor: Colors.blue,
   headerTitleAlign: 'center',
 };
 
@@ -88,7 +81,6 @@ export default {
   NotificationIcon,
   HeaderTitleContainer,
   HeaderTitleText,
-  HeaderRight,
   BetaTag,
   IconMaterial,
   ScreenOptions,
