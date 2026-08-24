@@ -1,0 +1,5 @@
+const ACTIONS_BAR_COLLAPSED_HEIGHT = 110;
+
+export default {
+  ACTIONS_BAR_COLLAPSED_HEIGHT,
+};

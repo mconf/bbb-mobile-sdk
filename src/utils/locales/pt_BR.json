@@ -164,6 +164,8 @@
   "mobileSdk.poll.postedMsg": "Uma enquete foi publicada, verifique a seção destinada a enquete para observar os resultados.",
   "mobileSdk.poll.previousPolls.label": "Enquetes anteriores já publicadas",
   "mobileSdk.poll.sendAnswer": "Enviar resposta",
+  "mobileSdk.reactions.label": "Compartilhar uma reação",
+  "mobileSdk.reactions.remove": "Remover reação",
   "mobileSdk.reactions.message.away": "Está temporariamente ausente.",
   "mobileSdk.reactions.message.notAway": "Está presente.",
   "mobileSdk.userList.waitingAtendees": "Participantes aguardando",

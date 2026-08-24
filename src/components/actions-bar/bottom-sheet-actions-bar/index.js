@@ -13,6 +13,7 @@ import AudioButton from '../audio-button';
 import Screenshare from '../screenshare-button';
 import DeviceSelectorControl from '../audio-device-selector-control';
 import Settings from '../../../../settings.json';
+import LayoutConstants from '../../../constants/layout';
 import Styled from './styles';
 
 const BottomSheetActionsBar = ({ alwaysOpen }) => {
@@ -33,14 +34,17 @@ const BottomSheetActionsBar = ({ alwaysOpen }) => {
   // variables
   const handleSizeOfActionsBar = () => {
     const variables = [showDebugToggle, showNotImplementedFeatures, true, true];
-    return variables.reduce((base, item) => base + (item ? 50 : 0), 110);
+    return variables.reduce(
+      (base, item) => base + (item ? 50 : 0),
+      LayoutConstants.ACTIONS_BAR_COLLAPSED_HEIGHT
+    );
   };
 
   const snapPoints = useMemo(() => {
     if (orientation === 'PORTRAIT') {
-      return [110, handleSizeOfActionsBar()];
+      return [LayoutConstants.ACTIONS_BAR_COLLAPSED_HEIGHT, handleSizeOfActionsBar()];
     }
-    return [110];
+    return [LayoutConstants.ACTIONS_BAR_COLLAPSED_HEIGHT];
   }, [orientation]);
 
   // callbacks
