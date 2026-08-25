@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Alert, BackHandler } from "react-native";
 import { useDispatch, useSelector } from 'react-redux';
 import { ActivitySignProvider } from '../../../app-content/ActivitySign';
-import NotificationController from '../../../app-content/notification';
+import NotifeeController from '../../../app-content/notifee';
 import Colors from '../../../constants/colors';
 import useMeeting from '../../../graphql/hooks/useMeeting';
 import useUserCount from '../../../graphql/hooks/useUserCount';
@@ -219,8 +219,8 @@ const DrawerNavigator = ({
 
           }}
         />
-      </Drawer.Navigator>
-      <NotificationController />
+      </Drawer.Navigator >
+      <NotifeeController />
       <ActivitySignProvider />
       <ChatPopupList />
     </>
