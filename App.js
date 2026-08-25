@@ -6,7 +6,6 @@ import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { store } from './src/store/redux/store';
 // components
 import InCallManagerController from './src/app-content/in-call-manager';
-// import NotifeeController from './src/app-content/notifee';
 import LocalesController from './src/app-content/locales';
 import AppStatusBar from './src/components/status-bar';
 import NavigatorHandler from './src/screens/navigator-handler';

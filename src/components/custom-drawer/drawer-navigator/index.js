@@ -6,7 +6,7 @@ import { Alert, BackHandler } from "react-native";
 import { useDispatch, useSelector } from 'react-redux';
 import Settings from '../../../../settings.json';
 import { ActivitySignProvider } from '../../../app-content/ActivitySign';
-import NotificationController from '../../../app-content/notification';
+import NotifeeController from '../../../app-content/notifee';
 import Colors from '../../../constants/colors';
 import useCurrentUser from '../../../graphql/hooks/useCurrentUser';
 import useMeeting from '../../../graphql/hooks/useMeeting';
@@ -355,7 +355,7 @@ const DrawerNavigator = ({
           }}
         />
       </Drawer.Navigator >
-      <NotificationController />
+      <NotifeeController />
       <ActivitySignProvider />
       <ChatPopupList />
     </>
