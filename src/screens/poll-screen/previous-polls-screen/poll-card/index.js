@@ -9,6 +9,7 @@ import ActivityBar from '../../../../components/activity-bar';
 import PollService from '../../service';
 import Styled from './styles';
 import queries from '../../queries';
+import { answerLabel } from '../../poll-types';
 import PrimaryButton from '../../../../components/buttons/primary-button';
 
 const PreviousPollCard = (props) => {
@@ -34,8 +35,8 @@ const PreviousPollCard = (props) => {
   const [pollCancel] = useMutation(queries.POLL_CANCEL);
   const [pollPublishResult] = useMutation(queries.POLL_PUBLISH_RESULT);
 
-  const noPollLocale = type === 'CUSTOM' || type === 'R-';
-  const timestamp = new Date(publishedAt);
+  const timestamp = publishedAt ? new Date(publishedAt) : null;
+  const hasTimestamp = timestamp != null && !Number.isNaN(timestamp.getTime());
   const isReceivingAnswers = !ended && !published && amIPresenter;
   const [showUsersAnswers, setShowUsersAnswers] = useState(false);
 
@@ -75,7 +76,7 @@ const PreviousPollCard = (props) => {
               %
             </Styled.PercentageText>
             <Styled.KeyText>
-              {noPollLocale ? response.optionDesc : t(`app.poll.answer.${response.optionDesc}`.toLowerCase())}
+              {answerLabel(response.optionDesc, type, t)}
             </Styled.KeyText>
           </Styled.LabelContainer>
           <ActivityBar
@@ -93,9 +94,11 @@ const PreviousPollCard = (props) => {
       return (
         <Styled.PollInfoLabelContainer>
           <Styled.PollInfoText>
-            {`${String(timestamp.getHours()).padStart(2, '0')}:${String(
-              timestamp.getMinutes()
-            ).padStart(2, '0')}`}
+            {hasTimestamp
+              ? `${String(timestamp.getHours()).padStart(2, '0')}:${String(
+                timestamp.getMinutes()
+              ).padStart(2, '0')}`
+              : t('mobileSdk.poll.inProgress')}
           </Styled.PollInfoText>
         </Styled.PollInfoLabelContainer>
       );
@@ -143,7 +146,9 @@ const PreviousPollCard = (props) => {
             pollCancel();
           }}
         >
-          {isReceivingAnswers ? t('mobileSdk.poll.createPoll.publish') : t('mobileSdk.poll.previousPolls.publishedLabel')}
+          {isReceivingAnswers
+            ? t('mobileSdk.poll.createPoll.publish')
+            : t('mobileSdk.poll.previousPolls.publishedLabel')}
         </PrimaryButton>
       </Styled.ButtonContainer>
     </View>
