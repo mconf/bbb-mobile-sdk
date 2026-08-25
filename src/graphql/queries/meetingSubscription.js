@@ -12,6 +12,7 @@ const MEETING_SUBSCRIPTION = gql`
         }
         name
         isBreakout
+        disabledFeatures
         recording {
           isRecording
           previousRecordedTimeInSeconds

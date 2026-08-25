@@ -8,6 +8,8 @@ import NotificationBar from '../bar-notification';
 import BottomSheetActionsBar from '../actions-bar/bottom-sheet-actions-bar';
 import ModalControllerComponent from '../modal';
 import DebugWindow from '../debug-window';
+import EmojiRain from '../emoji-rain';
+import ReactionsBar from '../interactions/reactions-bar';
 
 const ScreenWrapper = ({ children, renderWithView, alwaysOpen }) => {
   const dispatch = useDispatch();
@@ -39,7 +41,9 @@ const ScreenWrapper = ({ children, renderWithView, alwaysOpen }) => {
       So, we will disable them from rendering when is not focused */}
       {isFocused && (
         <>
+          <EmojiRain />
           <BottomSheetActionsBar alwaysOpen={alwaysOpen} />
+          <ReactionsBar />
           <BottomSheetChat />
         </>
       )}
