@@ -13,6 +13,7 @@ import Styled from './styles';
 import queries from '../queries';
 import {
   POLL_TYPES,
+  canonicalAnswerKey,
   defaultOptionsFor,
   hasAnswerOptions,
   resolvePollType,
@@ -22,6 +23,7 @@ const MIN_ANSWER_OPTIONS = 2;
 const DEFAULT_MAX_CUSTOM = 5;
 const DEFAULT_MAX_ANSWER_LENGTH = 45;
 const QUESTION_MAX_LENGTH = 1200;
+const NO_CORRECT_ANSWER = -1;
 
 const CreatePoll = () => {
   const { t } = useTranslation();
@@ -33,11 +35,14 @@ const CreatePoll = () => {
   const maxOptions = pollSettings?.maxCustom ?? DEFAULT_MAX_CUSTOM;
   const maxAnswerLength = pollSettings?.maxTypedAnswerLength ?? DEFAULT_MAX_ANSWER_LENGTH;
   const allowCustomInput = pollSettings?.allowCustomResponseInput ?? true;
+  const isQuizEnabled = pollSettings?.quiz?.enabled ?? false;
   const publicChatId = meetingSettings?.public?.chat?.public_id ?? 'public';
 
+  const [isQuiz, setIsQuiz] = useState(false);
   const [answerType, setAnswerType] = useState(null);
   const [questionTextInput, setQuestionTextInput] = useState('');
   const [answerOptions, setAnswerOptions] = useState([]);
+  const [correctAnswerIndex, setCorrectAnswerIndex] = useState(NO_CORRECT_ANSWER);
   const [customInput, setCustomInput] = useState(false);
   const [secretPoll, setSecretPoll] = useState(false);
   const [multipleResponse, setMultipleResponse] = useState(false);
@@ -49,12 +54,16 @@ const CreatePoll = () => {
     { type: POLL_TYPES.TrueFalse, label: t('app.poll.tf') },
     { type: POLL_TYPES.Letter, label: t('app.poll.a4') },
     { type: POLL_TYPES.YesNoAbstention, label: t('app.poll.yna') },
-    { type: POLL_TYPES.Response, label: t('mobileSdk.poll.createPoll.typedResponse') },
+    ...(isQuiz
+      ? []
+      : [{ type: POLL_TYPES.Response, label: t('mobileSdk.poll.createPoll.typedResponse') }]),
   ];
 
   const trimmedOptions = answerOptions.map((option) => option.trim());
   const showAnswerOptions = hasAnswerOptions(answerType);
   const isTypedResponse = answerType === POLL_TYPES.Response;
+  const correctAnswerText = trimmedOptions[correctAnswerIndex] ?? '';
+  const hasCorrectAnswer = correctAnswerText.length > 0;
 
   const missingRequirement = () => {
     if (answerType === null) return t('mobileSdk.poll.createPoll.validation.answerType');
@@ -76,11 +85,26 @@ const CreatePoll = () => {
   };
 
   const validationMessage = missingRequirement();
+  const canStartPoll = validationMessage === null
+    && (!isQuiz || hasCorrectAnswer)
+    && !isStarting;
 
   const handleSelectAnswerType = (type) => {
     setAnswerType(type);
     setAnswerOptions(defaultOptionsFor(type, t).slice(0, maxOptions));
+    setCorrectAnswerIndex(NO_CORRECT_ANSWER);
     if (type === POLL_TYPES.Response) setMultipleResponse(false);
+  };
+
+  const handleSelectMode = (quizMode) => {
+    setIsQuiz(quizMode);
+    setCorrectAnswerIndex(NO_CORRECT_ANSWER);
+    if (quizMode) {
+      setMultipleResponse(false);
+      setSecretPoll(false);
+      dispatch(editSecretPoll(false));
+      if (answerType === POLL_TYPES.Response) handleSelectAnswerType(null);
+    }
   };
 
   const handleToggleCustomInput = (enabled) => {
@@ -96,6 +120,11 @@ const CreatePoll = () => {
   const handleRemoveOption = (index) => {
     setAnswerOptions((previousOptions) => previousOptions
       .filter((_, optionIndex) => optionIndex !== index));
+    setCorrectAnswerIndex((previousIndex) => {
+      if (previousIndex === index) return NO_CORRECT_ANSWER;
+      if (previousIndex > index) return previousIndex - 1;
+      return previousIndex;
+    });
   };
 
   const handleAddOption = () => {
@@ -104,6 +133,10 @@ const CreatePoll = () => {
 
   const handleCreatePoll = () => {
     const pollType = resolvePollType(answerType, trimmedOptions, t);
+    const isCustom = pollType === POLL_TYPES.Custom;
+    const correctAnswer = isCustom
+      ? correctAnswerText
+      : canonicalAnswerKey(correctAnswerText, t);
 
     setIsStarting(true);
     createPoll({
@@ -113,14 +146,37 @@ const CreatePoll = () => {
         secretPoll,
         question: questionTextInput.trim(),
         multipleResponse,
-        quiz: false,
-        answers: pollType === POLL_TYPES.Custom ? trimmedOptions : [],
+        quiz: isQuiz,
+        answers: isCustom ? trimmedOptions : [],
+        correctAnswer: isQuiz ? correctAnswer : null,
       },
     }).catch(() => setIsStarting(false));
   };
 
+  const renderModeTabs = () => {
+    if (!isQuizEnabled) return null;
+
+    return (
+      <>
+        <Styled.ModeTabsContainer>
+          <Styled.ModeTab active={!isQuiz} onPress={() => handleSelectMode(false)}>
+            {t('mobileSdk.poll.label')}
+          </Styled.ModeTab>
+          <Styled.ModeTab active={isQuiz} onPress={() => handleSelectMode(true)}>
+            {t('mobileSdk.poll.createPoll.quizMode')}
+          </Styled.ModeTab>
+        </Styled.ModeTabsContainer>
+        <Styled.InfoBox isQuiz={isQuiz}>
+          {isQuiz
+            ? t('mobileSdk.poll.createPoll.quizModeDescription')
+            : t('mobileSdk.poll.createPoll.pollModeDescription')}
+        </Styled.InfoBox>
+      </>
+    );
+  };
+
   const renderMultipleResponseCheckbox = () => {
-    if (!showAnswerOptions) return null;
+    if (!showAnswerOptions || isQuiz) return null;
 
     return (
       <Styled.CheckboxRow
@@ -140,14 +196,32 @@ const CreatePoll = () => {
         <Styled.SectionHeading>
           {t('mobileSdk.poll.createPoll.responseOptions')}
         </Styled.SectionHeading>
+        {isQuiz && (
+          <Styled.StatusBox done={hasCorrectAnswer}>
+            {hasCorrectAnswer
+              ? t('mobileSdk.poll.createPoll.correctAnswerSelected')
+              : t('mobileSdk.poll.createPoll.selectCorrectAnswer')}
+          </Styled.StatusBox>
+        )}
         <Styled.OptionsContainer>
           {answerOptions.map((option, index) => (
             // eslint-disable-next-line react/no-array-index-key
             <Styled.OptionRow key={index}>
+              {isQuiz && (
+                <Styled.CorrectAnswerRadio
+                  selected={correctAnswerIndex === index}
+                  accessibilityLabel={t('mobileSdk.poll.createPoll.markAsCorrect')}
+                  onPress={() => setCorrectAnswerIndex(index)}
+                />
+              )}
               <Styled.OptionInput
                 value={option}
-                placeholder={t('mobileSdk.poll.createPoll.optionPlaceholder')}
+                isCorrect={isQuiz && correctAnswerIndex === index}
+                placeholder={t(isQuiz
+                  ? 'mobileSdk.poll.createPoll.optionPlaceholderQuiz'
+                  : 'mobileSdk.poll.createPoll.optionPlaceholder')}
                 maxLength={maxAnswerLength}
+                correctLabel={t('mobileSdk.poll.createPoll.correctBadge')}
                 onChangeText={(text) => handleEditOption(text, index)}
               />
               {answerOptions.length > MIN_ANSWER_OPTIONS && (
@@ -179,12 +253,15 @@ const CreatePoll = () => {
             <Styled.SheetPadding>
               <Styled.HeaderContainer>
                 <MaterialCommunityIcons name="poll" size={24} color={Colors.lightGray400} />
-                <Styled.Title>{t('mobileSdk.poll.createLabel')}</Styled.Title>
+                <Styled.Title>
+                  {t(isQuiz ? 'mobileSdk.poll.createQuizLabel' : 'mobileSdk.poll.createLabel')}
+                </Styled.Title>
                 <Styled.CloseButton
                   accessibilityLabel={t('mobileSdk.poll.backToList')}
                   onPress={() => navigation.navigate('PreviousPollsScreen')}
                 />
               </Styled.HeaderContainer>
+              {renderModeTabs()}
               {allowCustomInput && (
                 <Styled.Toggle
                   value={customInput}
@@ -220,23 +297,25 @@ const CreatePoll = () => {
               )}
               {customInput && renderMultipleResponseCheckbox()}
               {renderAnswerOptions()}
-              <Styled.Toggle
-                value={secretPoll}
-                onValueChange={(value) => {
-                  dispatch(editSecretPoll(value));
-                  setSecretPoll(value);
-                }}
-              >
-                {t('app.poll.secretPoll.label')}
-              </Styled.Toggle>
+              {!isQuiz && (
+                <Styled.Toggle
+                  value={secretPoll}
+                  onValueChange={(value) => {
+                    dispatch(editSecretPoll(value));
+                    setSecretPoll(value);
+                  }}
+                >
+                  {t('app.poll.secretPoll.label')}
+                </Styled.Toggle>
+              )}
               {validationMessage !== null && (
                 <Styled.StatusBox done={false}>{validationMessage}</Styled.StatusBox>
               )}
               <Styled.StartPollButton
-                disabled={validationMessage !== null || isStarting}
+                disabled={!canStartPoll}
                 onPress={handleCreatePoll}
               >
-                {t('app.poll.start.label')}
+                {t(isQuiz ? 'mobileSdk.poll.startQuiz' : 'app.poll.start.label')}
               </Styled.StartPollButton>
             </Styled.SheetPadding>
           </Styled.Sheet>

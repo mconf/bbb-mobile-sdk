@@ -76,12 +76,14 @@ const AnswerPollScreen = () => {
     handleVote(activePollObject.pollId, selectedAnswers);
   };
 
+  const answerVisibilityLabel = () => {
+    if (activePollObject?.secret) return t('app.polling.responseSecret');
+    if (activePollObject?.quiz) return t('mobileSdk.poll.quizResponseNotSecret');
+    return t('app.polling.responseNotSecret');
+  };
+
   const handleSecretPollLabel = () => (
-    <Styled.SecretLabel>
-      {activePollObject?.secret
-        ? t('app.polling.responseSecret')
-        : t('app.polling.responseNotSecret')}
-    </Styled.SecretLabel>
+    <Styled.SecretLabel>{answerVisibilityLabel()}</Styled.SecretLabel>
   );
 
   const handleIsMultipleResponseLabel = () => (

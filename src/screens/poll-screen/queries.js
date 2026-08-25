@@ -78,7 +78,8 @@ const POLL_CREATE = gql`
     $question: String!,
     $multipleResponse: Boolean!,
     $quiz: Boolean!,
-    $answers: [String]!
+    $answers: [String]!,
+    $correctAnswer: String
   ) {
     pollCreate(
       pollType: $pollType,
@@ -88,6 +89,7 @@ const POLL_CREATE = gql`
       multipleResponse: $multipleResponse,
       quiz: $quiz,
       answers: $answers,
+      correctAnswer: $correctAnswer,
     )
   }
 `;

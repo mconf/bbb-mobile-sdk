@@ -28,6 +28,7 @@ const PreviousPollScreen = () => {
 
   const allPolls = allPollsData?.poll;
   const hasCurrentPoll = pollActiveData?.poll?.length > 0;
+  const isCurrentPollQuiz = Boolean(pollActiveData?.poll?.[0]?.quiz);
   const amIPresenter = currentUserData?.user_current[0]?.presenter;
 
   const renderCreatePollButtonView = () => {
@@ -45,7 +46,9 @@ const PreviousPollScreen = () => {
           fullWidth={false}
           icon={<MaterialCommunityIcons name="poll" size={20} color={Colors.white} />}
         >
-          {t('mobileSdk.poll.viewCurrentPoll')}
+          {t(isCurrentPollQuiz
+            ? 'mobileSdk.poll.viewCurrentQuiz'
+            : 'mobileSdk.poll.viewCurrentPoll')}
         </PrimaryButton>
       );
     }

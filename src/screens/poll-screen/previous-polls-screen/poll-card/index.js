@@ -26,7 +26,8 @@ const PreviousPollCard = (props) => {
     published,
     users_aggregate,
     responses_aggregate,
-    users
+    users,
+    quiz
   } = pollObj;
 
   const { t } = useTranslation();
@@ -98,7 +99,7 @@ const PreviousPollCard = (props) => {
               ? `${String(timestamp.getHours()).padStart(2, '0')}:${String(
                 timestamp.getMinutes()
               ).padStart(2, '0')}`
-              : t('mobileSdk.poll.inProgress')}
+              : t(quiz ? 'mobileSdk.poll.quizInProgress' : 'mobileSdk.poll.inProgress')}
           </Styled.PollInfoText>
         </Styled.PollInfoLabelContainer>
       );
@@ -147,8 +148,10 @@ const PreviousPollCard = (props) => {
           }}
         >
           {isReceivingAnswers
-            ? t('mobileSdk.poll.createPoll.publish')
-            : t('mobileSdk.poll.previousPolls.publishedLabel')}
+            ? t(quiz ? 'mobileSdk.poll.createPoll.publishQuiz' : 'mobileSdk.poll.createPoll.publish')
+            : t(quiz
+              ? 'mobileSdk.poll.previousPolls.publishedQuizLabel'
+              : 'mobileSdk.poll.previousPolls.publishedLabel')}
         </PrimaryButton>
       </Styled.ButtonContainer>
     </View>

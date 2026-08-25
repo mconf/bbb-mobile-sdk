@@ -10,6 +10,7 @@ const POLL_ACTIVE_SUBSCRIPTION = gql`
       questionText
       multipleResponses
       secret
+      quiz
       userCurrent {
         responded
       }
@@ -24,6 +25,14 @@ const POLL_ACTIVE_SUBSCRIPTION = gql`
         optionResponsesCount
         pollResponsesCount
         questionText
+      }
+      users {
+        responded
+        optionDescIds
+        user {
+          name
+          userId
+        }
       }
     }
   }
@@ -40,6 +49,7 @@ const PUBLISHED_POLLS_SUBSCRIPTION = gql`
       questionText
       multipleResponses
       secret
+      quiz
       responses {
         optionDesc
         optionId

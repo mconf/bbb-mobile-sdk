@@ -25,6 +25,7 @@ const LivePollScreen = () => {
   const [pollCancel] = useMutation(queries.POLL_CANCEL);
 
   const publishResultsLabel = t('mobileSdk.poll.livePoll.publishResults');
+  const isQuiz = Boolean(activePoll?.quiz);
 
   const renderHighlighted = (sentence, highlight) => {
     const [before, after = ''] = sentence.split(HIGHLIGHT);
@@ -89,9 +90,13 @@ const LivePollScreen = () => {
           <Styled.SheetPadding>
             <Styled.HeaderContainer>
               <MaterialCommunityIcons name="poll" size={24} color={Colors.lightGray400} />
-              <Styled.Title>{t('mobileSdk.poll.label')}</Styled.Title>
+              <Styled.Title>
+                {t(isQuiz ? 'mobileSdk.poll.quizLabel' : 'mobileSdk.poll.label')}
+              </Styled.Title>
               <Styled.StopPollButton
-                accessibilityLabel={t('mobileSdk.poll.livePoll.cancelPoll')}
+                accessibilityLabel={t(isQuiz
+                  ? 'mobileSdk.poll.livePoll.cancelQuiz'
+                  : 'mobileSdk.poll.livePoll.cancelPoll')}
                 onPress={() => pollCancel()}
               />
               <Styled.CloseButton
@@ -101,7 +106,9 @@ const LivePollScreen = () => {
             </Styled.HeaderContainer>
             <Styled.Subtitle>
               {renderHighlighted(
-                t('mobileSdk.poll.livePoll.inProgress', { type: HIGHLIGHT }),
+                t(isQuiz
+                  ? 'mobileSdk.poll.livePoll.inProgressQuiz'
+                  : 'mobileSdk.poll.livePoll.inProgress', { type: HIGHLIGHT }),
                 typeLabel(activePoll.type, t),
               )}
             </Styled.Subtitle>
@@ -122,7 +129,9 @@ const LivePollScreen = () => {
             {showUsersAnswers && renderUsersAnswers()}
             <Styled.HintText>
               {renderHighlighted(
-                t('mobileSdk.poll.livePoll.publishHint', { action: HIGHLIGHT }),
+                t(isQuiz
+                  ? 'mobileSdk.poll.livePoll.publishHintQuiz'
+                  : 'mobileSdk.poll.livePoll.publishHint', { action: HIGHLIGHT }),
                 publishResultsLabel,
               )}
             </Styled.HintText>

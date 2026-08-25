@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-import { Switch, Checkbox } from 'react-native-paper';
+import { Switch, Checkbox, TextInput } from 'react-native-paper';
 import { Pressable as PressableRN } from 'react-native';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import textInput from '../../../components/text-input';
@@ -42,10 +42,61 @@ const SectionHeading = styled.Text`
   margin-top: 8px;
 `;
 
+const ModeTabsContainer = styled.View`
+  display: flex;
+  flex-direction: row;
+  background-color: ${Colors.lightGray100};
+  border-radius: 12px;
+  padding: 6px;
+  gap: 6px;
+`;
+
+const ModeTabPressable = styled.Pressable`
+  flex: 1;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background-color: ${({ active }) => (active ? Colors.white : 'transparent')};
+`;
+
+const ModeTabText = styled.Text`
+  font-size: 16px;
+  font-weight: ${({ active }) => (active ? 500 : 400)};
+  color: ${({ active }) => (active ? Colors.lightGray400 : Colors.lightGray300)};
+`;
+
+const ModeTab = ({
+  active, disabled, onPress, children
+}) => (
+  <ModeTabPressable active={active} disabled={disabled} onPress={onPress}>
+    <ModeTabText active={active}>{children}</ModeTabText>
+  </ModeTabPressable>
+);
+
 const CloseButton = ({ onPress, accessibilityLabel }) => (
   <PressableRN onPress={onPress} accessibilityLabel={accessibilityLabel}>
     <Feather name="x" size={26} color={Colors.lightGray400} />
   </PressableRN>
+);
+
+const InfoBoxContainer = styled.View`
+  background-color: ${({ isQuiz }) => (isQuiz ? Colors.successBackground : Colors.pollInfoBackground)};
+  border: 1px solid ${({ isQuiz }) => (isQuiz ? Colors.successBorder : Colors.pollInfoBorder)};
+  border-radius: 8px;
+  padding: 16px;
+`;
+
+const InfoBoxText = styled.Text`
+  font-size: 15px;
+  font-weight: 400;
+  color: ${({ isQuiz }) => (isQuiz ? Colors.successText : Colors.pollInfoText)};
+`;
+
+const InfoBox = ({ isQuiz, children }) => (
+  <InfoBoxContainer isQuiz={isQuiz}>
+    <InfoBoxText isQuiz={isQuiz}>{children}</InfoBoxText>
+  </InfoBoxContainer>
 );
 
 const StatusBoxContainer = styled.View`
@@ -158,9 +209,70 @@ const OptionRow = styled.View`
   gap: 12px;
 `;
 
-const OptionInput = styled(textInput)`
-  flex: 1;
+const OptionTextInput = styled(TextInput).attrs(({ isCorrect }) => ({
+  mode: 'outlined',
+  outlineColor: isCorrect ? Colors.green : Colors.lightGray300,
+  activeOutlineColor: isCorrect ? Colors.green : Colors.blue,
+}))`
+  background-color: ${({ isCorrect }) => (isCorrect ? Colors.quizCorrectBackground : Colors.white)};
 `;
+
+const OptionInputWrapper = styled.View`
+  flex: 1;
+  position: relative;
+`;
+
+const CorrectBadgeOverlay = styled.View`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 12px;
+  align-items: center;
+  justify-content: center;
+`;
+
+const CorrectBadge = styled.View`
+  background-color: ${Colors.quizCorrectBadgeBackground};
+  border-radius: 40px;
+  padding: 4px 12px;
+`;
+
+const CorrectBadgeText = styled.Text`
+  font-size: 13px;
+  font-weight: 400;
+  color: ${Colors.successText};
+`;
+
+const OptionInput = ({
+  value, isCorrect, placeholder, maxLength, correctLabel, onChangeText
+}) => (
+  <OptionInputWrapper>
+    <OptionTextInput
+      value={value}
+      isCorrect={isCorrect}
+      placeholder={placeholder}
+      maxLength={maxLength}
+      onChangeText={onChangeText}
+    />
+    {isCorrect && (
+      <CorrectBadgeOverlay pointerEvents="none">
+        <CorrectBadge>
+          <CorrectBadgeText>{correctLabel}</CorrectBadgeText>
+        </CorrectBadge>
+      </CorrectBadgeOverlay>
+    )}
+  </OptionInputWrapper>
+);
+
+const CorrectAnswerRadio = ({ selected, onPress, accessibilityLabel }) => (
+  <PressableRN onPress={onPress} accessibilityLabel={accessibilityLabel}>
+    <MaterialCommunityIcons
+      name={selected ? 'check-circle' : 'checkbox-blank-circle-outline'}
+      size={26}
+      color={selected ? Colors.green : Colors.lightGray200}
+    />
+  </PressableRN>
+);
 
 const RemoveOptionButton = ({ onPress, accessibilityLabel }) => (
   <PressableRN onPress={onPress} accessibilityLabel={accessibilityLabel}>
@@ -227,7 +339,12 @@ export default {
   CheckboxRow,
   CloseButton,
   ContainerView,
+  CorrectAnswerRadio,
   HeaderContainer,
+  InfoBox,
+  InfoBoxText,
+  ModeTab,
+  ModeTabsContainer,
   OptionInput,
   OptionRow,
   OptionsContainer,

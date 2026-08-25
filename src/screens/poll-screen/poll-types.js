@@ -69,6 +69,16 @@ const resolvePollType = (type, options, t) => {
   }
 };
 
+const CANONICAL_ANSWERS = ['True', 'False', 'Yes', 'No', 'Abstention', 'A', 'B', 'C', 'D', 'E'];
+
+const canonicalAnswerKey = (value, t) => {
+  const normalized = value.trim().toLowerCase();
+  const canonical = CANONICAL_ANSWERS.find((answer) => (
+    t(`app.poll.answer.${answer.toLowerCase()}`).trim().toLowerCase() === normalized
+  ));
+  return canonical ?? value.trim();
+};
+
 const isLocalizedType = (type) => type != null
   && type !== POLL_TYPES.Custom
   && type !== POLL_TYPES.Response;
@@ -103,6 +113,7 @@ const typeLabel = (type, t) => {
 export {
   POLL_TYPES,
   answerLabel,
+  canonicalAnswerKey,
   defaultOptionsFor,
   hasAnswerOptions,
   isLocalizedType,
