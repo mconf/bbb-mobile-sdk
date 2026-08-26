@@ -24,6 +24,7 @@ const useModalListener = () => {
   const isFreeJoin = breakoutInviteData?.breakoutRoom[0]?.freeJoin;
   const hasBreakouts = breakoutsData?.length > 0;
   const amIModerator = currentUser?.isModerator;
+  const amIPresenter = currentUser?.presenter;
 
   // Active Polls
   const { data: pollData } = useCurrentPoll();
@@ -109,8 +110,7 @@ const useModalListener = () => {
   }, [breakoutsData?.length, currentUserId]);
 
   useEffect(() => {
-    // Active Poll
-    if (hasCurrentPoll && currentUserId) {
+    if (hasCurrentPoll && currentUserId && !amIPresenter) {
       if (!activePollData?.userCurrent?.responded) {
         handleDispatch("receive_poll", {
           isModerator: amIModerator,
@@ -118,7 +118,7 @@ const useModalListener = () => {
         });
       }
     }
-  }, [activePollData, currentUserId]);
+  }, [activePollData?.pollId, currentUserId, amIPresenter]);
 
   useEffect(() => {
     // Published Poll

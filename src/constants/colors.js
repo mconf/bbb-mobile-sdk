@@ -19,6 +19,17 @@ const Colors = {
   statusBarConnected: '#00BF6F',
   statusBarConnecting: '#FFC845',
   dangerDark: '#AE1010',
+  pollInfoBackground: '#EFF8FF',
+  pollInfoBorder: '#84CAFF',
+  pollInfoText: '#0E7090',
+  successBackground: '#F6FEF9',
+  successBorder: '#75E0A7',
+  successText: '#067647',
+  warningBackground: '#FFFCF5',
+  warningBorder: '#FEC84B',
+  warningText: '#B54708',
+  quizCorrectBackground: '#F0FDF4',
+  quizCorrectBadgeBackground: '#DCFCE7',
 };
 
 export default Colors;

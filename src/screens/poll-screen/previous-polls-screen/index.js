@@ -1,11 +1,10 @@
-import { useDispatch } from 'react-redux';
 import { useSubscription } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import useCurrentUser from '../../../graphql/hooks/useCurrentUser';
 import { useOrientation } from '../../../hooks/use-orientation';
-import { setProfile } from '../../../store/redux/slices/wide-app/modal';
 import ScreenWrapper from '../../../components/screen-wrapper';
 import PreviousPollCard from './poll-card';
 import Styled from './styles';
@@ -14,13 +13,11 @@ import usePublishedPolls from '../../../graphql/hooks/usePublishedPolls';
 import Queries from '../queries';
 import PrimaryButton from '../../../components/buttons/primary-button';
 import Colors from '../../../constants/colors';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const PreviousPollScreen = () => {
   const { t } = useTranslation();
   const orientation = useOrientation();
   const navigation = useNavigation();
-  const dispatch = useDispatch();
 
   const { data: allPollsData } = useSubscription(Queries.ALL_POLLS_SUBSCRIPTION);
   const { data: currentUserData } = useCurrentUser();
@@ -31,11 +28,29 @@ const PreviousPollScreen = () => {
 
   const allPolls = allPollsData?.poll;
   const hasCurrentPoll = pollActiveData?.poll?.length > 0;
+  const isCurrentPollQuiz = Boolean(pollActiveData?.poll?.[0]?.quiz);
   const amIPresenter = currentUserData?.user_current[0]?.presenter;
 
   const renderCreatePollButtonView = () => {
-    if (hasCurrentPoll || !amIPresenter) {
+    if (!amIPresenter) {
       return;
+    }
+
+    if (hasCurrentPoll) {
+      return (
+        <PrimaryButton
+          onPress={() => {
+            navigation.navigate('LivePollScreen');
+          }}
+          variant="tertiary"
+          fullWidth={false}
+          icon={<MaterialCommunityIcons name="poll" size={20} color={Colors.white} />}
+        >
+          {t(isCurrentPollQuiz
+            ? 'mobileSdk.poll.viewCurrentQuiz'
+            : 'mobileSdk.poll.viewCurrentPoll')}
+        </PrimaryButton>
+      );
     }
 
     return (
