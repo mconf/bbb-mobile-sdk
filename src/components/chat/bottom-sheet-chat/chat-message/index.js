@@ -27,6 +27,15 @@ const ChatMessage = ({ item }) => {
       );
       break;
     }
+    case 'poll':
+      content = (
+        <SystemMessage
+          icon="poll"
+          i18nKey="mobileSdk.chat.pollPublishedMsg"
+          i18nValues={{}}
+        />
+      );
+      break;
     default:
       content = (
         <UserMessage

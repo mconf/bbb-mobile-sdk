@@ -224,6 +224,7 @@
   "mobileSdk.chat.serverMsg": "{{senderName}} is now the presenter",
   "mobileSdk.chat.away": "{{senderName}} is temporarily away.",
   "mobileSdk.chat.notAway": "{{senderName}} is present.",
+  "mobileSdk.chat.pollPublishedMsg": "A poll has been published.",
   "mobileSdk.breakout.starting": "Rooms starting...",
   "mobileSdk.breakout.finishing": "Rooms finishing...",
   "mobileSdk.breakout.inviteModal.title": "Breakout room",
