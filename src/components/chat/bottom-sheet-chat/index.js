@@ -1,5 +1,4 @@
 import { useMutation, useSubscription } from '@apollo/client';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import BottomSheet from '@gorhom/bottom-sheet';
 import { useHeaderHeight } from '@react-navigation/elements';
 import {
@@ -9,17 +8,15 @@ import {
   useRef,
   useState
 } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-import { View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { FlatList } from 'react-native-gesture-handler';
-import HTMLView from 'react-native-htmlview';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { useDispatch, useSelector } from 'react-redux';
 import Colors from '../../../constants/colors';
 import { useBottomSheetBackHandler } from '../../../hooks/useBottomSheetBackHandler';
 import { setBottomChatOpen, setHasUnreadMessages } from '../../../store/redux/slices/wide-app/chat';
 import IconButtonComponent from '../../icon-button';
-import UserAvatar from '../../user-avatar';
+import ChatMessage from './chat-message';
 import Queries from './queries';
 import Styled from './styles';
 
@@ -71,97 +68,7 @@ const BottomSheetChat = () => {
 
   useBottomSheetBackHandler(isBottomChatOpen, sheetRef, () => { });
 
-  const handleMessage = (message) => {
-    if ((/<a\b[^>]*>/.test(message))) {
-      return (
-        <HTMLView value={message} />
-      );
-    }
-    return (
-      <Styled.MessageContent selectable>
-        {message}
-      </Styled.MessageContent>
-    );
-  };
-
-  // TODO: move these to a chat component
-  const renderItem = useCallback(({ item }) => {
-    switch (item.messageType) {
-      case "userIsPresenterMsg": return renderPresenterMessage(item);
-      case "userAwayStatusMsg": return renderAwayStatusMessage(item);
-      default: return renderDefaultMessage(item);
-    }
-  }, []);
-
-  const renderAwayStatusMessage = (item) => {
-    const senderName = item.senderName
-    const away = JSON.parse(item.messageMetadata)?.away === true;
-
-    // TODO: fix i18n
-    return (
-      <View style={Styled.styles.item} key={item.timestamp}>
-        <Styled.Card>
-          <Styled.ServerContainer>
-            <MaterialCommunityIcons name="timer-outline" size={24} color={Colors.lightGray400} />
-            <Styled.ServerMsg>
-              <Trans
-                i18nKey={away ? "mobileSdk.chat.away" : "mobileSdk.chat.notAway"}
-                values={{ senderName }}
-              >
-                {{ senderName }}
-              </Trans>
-            </Styled.ServerMsg>
-          </Styled.ServerContainer>
-        </Styled.Card>
-      </View>
-    );
-  };
-
-  const renderDefaultMessage = (item) => {
-    const timestamp = new Date(item.createdAt);
-    return (
-      <View style={Styled.styles.item} key={item.timestamp}>
-        <Styled.ContainerItem>
-          <UserAvatar
-            userName={item.senderName}
-            userRole={item.senderRole}
-            userColor={item.user?.color}
-            userId={item.senderId}
-            userImage={item.user?.avatar || null}
-          />
-          <Styled.Card>
-            <Styled.MessageTopContainer>
-              <Styled.MessageAuthor selectable>{item.senderName}</Styled.MessageAuthor>
-              <Styled.MessageTimestamp>
-                {`${String(timestamp.getHours()).padStart(2, '0')}:${String(
-                  timestamp.getMinutes()
-                ).padStart(2, '0')}`}
-              </Styled.MessageTimestamp>
-            </Styled.MessageTopContainer>
-            {handleMessage(item.message)}
-          </Styled.Card>
-        </Styled.ContainerItem>
-      </View>
-    );
-  };
-
-  const renderPresenterMessage = (item) => {
-    const senderName = item.senderName
-    return (
-      <View style={Styled.styles.item} key={item.timestamp}>
-        <Styled.Card>
-          <Styled.ServerContainer>
-            <MaterialCommunityIcons name="monitor" size={24} color={Colors.lightGray400} />
-            <Styled.ServerMsg>
-              <Trans i18nKey="mobileSdk.chat.serverMsg" values={senderName}>
-                {{ senderName }}
-              </Trans>
-            </Styled.ServerMsg>
-          </Styled.ServerContainer>
-        </Styled.Card>
-      </View>
-    );
-  };
+  const renderItem = useCallback(({ item }) => <ChatMessage item={item} />, []);
 
   const renderEmptyChatHandler = () => {
     if (messages?.length !== 0) {
