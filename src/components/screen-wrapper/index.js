@@ -1,4 +1,5 @@
-import { Pressable, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { useDispatch } from 'react-redux';
 import { useIsFocused } from '@react-navigation/native';
 import { trigDetailedInfo } from '../../store/redux/slices/wide-app/layout';
@@ -33,7 +34,13 @@ const ScreenWrapper = ({ children, renderWithView, alwaysOpen }) => {
   return (
     <>
       {handleRenderChildren()}
-      <ModalControllerComponent />
+      <KeyboardAvoidingView
+        style={StyleSheet.absoluteFill}
+        pointerEvents="box-none"
+        behavior="translate-with-padding"
+      >
+        <ModalControllerComponent />
+      </KeyboardAvoidingView>
       <NotificationBar />
       <DebugWindow />
       <DraggableCamera />
