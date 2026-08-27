@@ -3,7 +3,14 @@ import SystemMessage from './system-message';
 import UserMessage from './user-message';
 import Styled from './styles';
 
-const ChatMessage = ({ item }) => {
+const ChatMessage = ({
+  item,
+  currentUserId,
+  reactionsEnabled,
+  highlighted,
+  onOpenActions,
+  onToggleReaction,
+}) => {
   let content;
 
   switch (item.messageType) {
@@ -46,6 +53,16 @@ const ChatMessage = ({ item }) => {
           userImage={item.user?.avatar || null}
           createdAt={item.createdAt}
           message={item.message}
+          reactions={item.reactions}
+          currentUserId={currentUserId}
+          reactionsEnabled={reactionsEnabled}
+          highlighted={highlighted}
+          onLongPress={() => onOpenActions(item)}
+          onToggleReaction={(reactionEmoji, reactedByMe) => onToggleReaction(
+            item.messageId,
+            reactionEmoji,
+            reactedByMe
+          )}
         />
       );
   }
