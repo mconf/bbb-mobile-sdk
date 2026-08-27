@@ -27,6 +27,20 @@ const ChatMessage = ({ item }) => {
       );
       break;
     }
+    case 'breakoutRoomModeratorMsg':
+      content = (
+        <UserMessage
+          senderName={item.senderName}
+          senderRole={item.senderRole}
+          userColor={item.user?.color}
+          senderId={item.senderId}
+          userImage={item.user?.avatar || null}
+          createdAt={item.createdAt}
+          message={item.message}
+          moderator
+        />
+      );
+      break;
     default:
       content = (
         <UserMessage

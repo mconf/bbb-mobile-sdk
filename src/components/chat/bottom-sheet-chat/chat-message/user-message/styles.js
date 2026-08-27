@@ -5,6 +5,12 @@ const Card = styled.View`
   padding: 8px;
 `;
 
+const OrangeCard = styled.View`
+  padding: 8px;
+  background-color: ${Colors.orange}20;
+  border-radius: 8px;
+`;
+
 const ContainerItem = styled.View`
   display: flex;
   flex-direction: row;
@@ -23,7 +29,7 @@ const MessageAuthor = styled.Text`
 `;
 
 const MessageTimestamp = styled.Text`
-  color: ${Colors.lightGray200};
+  color: ${({ moderator }) => (moderator ? Colors.lightGray300 : Colors.lightGray200)};
   padding-left: 8px;
   font-style: italic;
 `;
@@ -38,6 +44,7 @@ MessageContent.defaultProps = {
 
 export default {
   Card,
+  OrangeCard,
   ContainerItem,
   MessageTopContainer,
   MessageAuthor,
