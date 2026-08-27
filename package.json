@@ -76,7 +76,7 @@
     "react-native-htmlview": "0.17.0",
     "react-native-incall-manager": "4.2.2",
     "react-native-keyboard-controller": "1.18.5",
-    "react-native-notify-kit": "^10.6.0",
+    "react-native-notify-kit": "10.6.0",
     "react-native-orientation-locker": "1.7.0",
     "react-native-paper": "5.15.3",
     "react-native-reanimated": "4.1.7",
