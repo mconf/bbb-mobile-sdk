@@ -2,15 +2,15 @@ import { useState, useCallback } from 'react';
 import { useSubscription } from '@apollo/client';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
+import CHAT_MESSAGE_PUBLIC_SUBSCRIPTION from '../../../graphql/queries/chatMessagePublicSubscription';
 import { setBottomChatOpen, setHasShownInFastChat } from '../../../store/redux/slices/wide-app/chat';
 import ChatPopupItem from './chat-popout-item';
-import Queries from './queries';
 import Styled from './styles';
 
 const ChatPopupList = () => {
   const dispatch = useDispatch();
 
-  const { data } = useSubscription(Queries.CHAT_MESSAGE_PUBLIC_SUB);
+  const { data } = useSubscription(CHAT_MESSAGE_PUBLIC_SUBSCRIPTION);
   const messages = data?.chat_message_public || [];
 
   const [showMessage, setShowMessage] = useState(false);
