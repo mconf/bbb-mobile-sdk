@@ -4,6 +4,7 @@
   "app.audioNotificaion.reconnectingAsListenOnly": "El micrófono ha sido bloqueado para todos los espectadores, tu conexión es en modo 'solo escuchar'",
   "app.chat.clearPublicChatMessage": "El chat público fue borrado por un moderador",
   "app.chat.dropdown.copy": "Copiar",
+  "app.chat.errorOnSendMessage": "Error al enviar el mensaje de chat",
   "app.chat.header.tooltipDelete": "Eliminar mensaje",
   "app.chat.header.tooltipEdit": "Editar mensaje",
   "app.chat.header.tooltipReact": "Reaccionar al mensaje",
