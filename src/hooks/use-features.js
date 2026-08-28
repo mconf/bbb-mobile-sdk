@@ -48,9 +48,33 @@ export const useIsChatMessageReactionsEnabled = () => {
     && chatToolbar.includes('reactions');
 };
 
+export const useIsDeleteChatMessageEnabled = () => {
+  const { disabledFeatures, loading } = useDisabledFeatures();
+  const [meetingSettings] = useMeetingSettings();
+
+  const chatToolbar = meetingSettings?.public?.chat?.toolbar ?? [];
+
+  return !loading
+    && disabledFeatures.indexOf('deleteChatMessage') === -1
+    && chatToolbar.includes('delete');
+};
+
+export const useIsEditChatMessageEnabled = () => {
+  const { disabledFeatures, loading } = useDisabledFeatures();
+  const [meetingSettings] = useMeetingSettings();
+
+  const chatToolbar = meetingSettings?.public?.chat?.toolbar ?? [];
+
+  return !loading
+    && disabledFeatures.indexOf('editChatMessage') === -1
+    && chatToolbar.includes('edit');
+};
+
 export default {
   useDisabledFeatures,
   useIsUserReactionsEnabled,
   useIsEmojiRainEnabled,
   useIsChatMessageReactionsEnabled,
+  useIsDeleteChatMessageEnabled,
+  useIsEditChatMessageEnabled,
 };

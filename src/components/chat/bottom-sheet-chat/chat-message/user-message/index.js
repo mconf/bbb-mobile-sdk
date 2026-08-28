@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import HTMLView from 'react-native-htmlview';
 import MessageReactions from '../message-reactions';
 import Styled from './styles';
@@ -23,6 +24,9 @@ const UserMessage = ({
   senderId,
   userImage,
   createdAt,
+  editedAt,
+  deletedAt,
+  deletedByName,
   message,
   reactions,
   currentUserId,
@@ -31,7 +35,10 @@ const UserMessage = ({
   onToggleReaction,
   onLongPress,
 }) => {
+  const { t } = useTranslation();
   const timestamp = new Date(createdAt);
+  const isDeleted = !!deletedAt;
+
   return (
     <Styled.ContainerItem>
       <Styled.UserAvatar
@@ -41,7 +48,12 @@ const UserMessage = ({
         userId={senderId}
         userImage={userImage}
       />
-      <Styled.Card highlighted={highlighted} onLongPress={onLongPress}>
+      {/* A deleted message has no actions left, so it does not take the hold. */}
+      <Styled.Card
+        highlighted={highlighted}
+        disabled={isDeleted}
+        onLongPress={isDeleted ? undefined : onLongPress}
+      >
         <Styled.MessageTopContainer>
           <Styled.MessageAuthor numberOfLines={1}>{senderName}</Styled.MessageAuthor>
           <Styled.MessageTimestamp>
@@ -50,13 +62,30 @@ const UserMessage = ({
             ).padStart(2, '0')}`}
           </Styled.MessageTimestamp>
         </Styled.MessageTopContainer>
-        {handleMessage(message, onLongPress)}
-        <MessageReactions
-          reactions={reactions}
-          currentUserId={currentUserId}
-          reactionsEnabled={reactionsEnabled}
-          onToggleReaction={onToggleReaction}
-        />
+        {isDeleted ? (
+          <Styled.DeletedMessage>
+            {/* deletedBy is a relation to a user row that may already be gone */}
+            {deletedByName
+              ? t('mobileSdk.chat.deletedMessage', { userName: deletedByName })
+              : t('mobileSdk.chat.deletedMessageNoAuthor')}
+          </Styled.DeletedMessage>
+        ) : (
+          <>
+            {handleMessage(message, onLongPress)}
+            {!!editedAt && (
+              <Styled.EditedLabel>
+                <Styled.EditedIcon />
+                <Styled.EditedText>{t('app.chat.toolbar.edit.edited')}</Styled.EditedText>
+              </Styled.EditedLabel>
+            )}
+            <MessageReactions
+              reactions={reactions}
+              currentUserId={currentUserId}
+              reactionsEnabled={reactionsEnabled}
+              onToggleReaction={onToggleReaction}
+            />
+          </>
+        )}
       </Styled.Card>
     </Styled.ContainerItem>
   );
