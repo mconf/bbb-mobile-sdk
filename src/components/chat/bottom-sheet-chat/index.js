@@ -15,6 +15,7 @@ import { FlatList } from 'react-native-gesture-handler';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { useDispatch, useSelector } from 'react-redux';
 import Colors from '../../../constants/colors';
+import useChat from '../../../graphql/hooks/useChat';
 import useCurrentUser from '../../../graphql/hooks/useCurrentUser';
 import useMeetingSettings from '../../../graphql/local-states/useMeetingSettings';
 import { useBottomSheetBackHandler } from '../../../hooks/useBottomSheetBackHandler';
@@ -22,6 +23,7 @@ import {
   useIsChatMessageReactionsEnabled,
   useIsDeleteChatMessageEnabled,
   useIsEditChatMessageEnabled,
+  useIsPinChatMessageEnabled,
   useIsReplyChatMessageEnabled,
 } from '../../../hooks/use-features';
 import logger from '../../../services/logger';
@@ -31,6 +33,7 @@ import ChatMessage from './chat-message';
 import ComposerBar from './composer-bar';
 import EmojiPicker from './emoji-picker';
 import MessageActions from './message-actions';
+import PinnedMessage from './pinned-message';
 import Queries from './queries';
 import { getFirstLine } from './service';
 import Styled from './styles';
@@ -46,6 +49,7 @@ const BottomSheetChat = () => {
   const [dispatchDeleteMessage] = useMutation(Queries.DELETE_MESSAGE_MUTATION);
   const [dispatchSendReaction] = useMutation(Queries.SEND_REACTION_MUTATION);
   const [dispatchDeleteReaction] = useMutation(Queries.DELETE_REACTION_MUTATION);
+  const [dispatchSetPinned] = useMutation(Queries.SET_PINNED_MUTATION);
   const messages = data?.chat_message_public;
   // Read by callbacks that must stay stable while messages keep arriving.
   const messagesRef = useRef(messages);
@@ -77,12 +81,25 @@ const BottomSheetChat = () => {
   const isDeleteChatMessageEnabled = useIsDeleteChatMessageEnabled();
   const isEditChatMessageEnabled = useIsEditChatMessageEnabled();
   const isReplyChatMessageEnabled = useIsReplyChatMessageEnabled();
+  const isPinChatMessageEnabled = useIsPinChatMessageEnabled();
+  const { data: chatData } = useChat();
 
   // From the store, not from a subscription: it is set at join time and is
   // readable right away, so the current user's own reactions are never missed.
   const currentUserId = useSelector((state) => state.client.meetingData?.internalUserID);
   const amIModerator = currentUserData?.user_current?.[0]?.isModerator;
   const chatId = meetingSettings?.public?.chat?.public_group_id ?? 'MAIN-PUBLIC-GROUP-CHAT';
+
+  const publicChat = useMemo(
+    () => chatData?.chat?.find((chat) => chat.chatId === chatId),
+    [chatData, chatId]
+  );
+  const pinnedMessageId = publicChat?.pinnedMessageId ?? null;
+  // Taking a pin down only asks for the role, as on the web client: where the
+  // tool is off, what is already pinned can still be removed.
+  const canUnpinMessages = isPinChatMessageEnabled && !!amIModerator;
+  const canPinMessages = canUnpinMessages
+    && (meetingSettings?.public?.chat?.toolbar ?? []).includes('pin');
 
   // Re-resolved from the subscription so the menu closes itself if the message is
   // deleted from under it, falling back to the message as it was opened: the
@@ -297,6 +314,69 @@ const BottomSheetChat = () => {
     );
   }, [t, handleDeleteMessage]);
 
+  // Moderator-only on the server too, and not gently: it ejects whoever asks
+  // without the role, so the gates around this are not decoration.
+  const handleSetPinned = useCallback((messageId, pinned) => {
+    dispatchSetPinned({
+      variables: {
+        chatId,
+        messageId,
+        pinned,
+      },
+    }).catch((error) => {
+      logger.error({
+        logCode: 'chat_set_pinned_error',
+        extraInfo: {
+          errorMessage: error.message,
+          messageId,
+          pinned,
+        },
+      }, `Unable to ${pinned ? 'pin' : 'unpin'} the message: ${error.message}`);
+    });
+  }, [chatId, dispatchSetPinned]);
+
+  const handleConfirmPin = useCallback((messageId) => {
+    const isReplacing = !!pinnedMessageId && pinnedMessageId !== messageId;
+
+    Alert.alert(
+      t(isReplacing
+        ? 'app.chat.toolbar.pin.replaceConfirmationTitle'
+        : 'app.chat.toolbar.pin.confirmationTitle'),
+      t(isReplacing
+        ? 'app.chat.toolbar.pin.replaceConfirmationDescription'
+        : 'app.chat.toolbar.pin.confirmationQuestion'),
+      [
+        {
+          text: t('app.settings.main.cancel.label'),
+          style: 'cancel',
+        },
+        {
+          text: t(isReplacing
+            ? 'app.chat.toolbar.pin.replaceConfirmButton'
+            : 'app.chat.toolbar.pin'),
+          onPress: () => handleSetPinned(messageId, true),
+        },
+      ],
+    );
+  }, [t, handleSetPinned, pinnedMessageId]);
+
+  const handleConfirmUnpin = useCallback((messageId) => {
+    Alert.alert(
+      t('app.chat.pinnedMessages.confirmModal.unpinTitle'),
+      t('app.chat.pinnedMessages.confirmModal.unpinMessage'),
+      [
+        {
+          text: t('app.settings.main.cancel.label'),
+          style: 'cancel',
+        },
+        {
+          text: t('app.chat.pinnedMessages.confirmModal.confirm'),
+          onPress: () => handleSetPinned(messageId, false),
+        },
+      ],
+    );
+  }, [t, handleSetPinned]);
+
   const canSubmit = messageText.trim().length > 0;
 
   const handleSubmit = () => {
@@ -348,9 +428,9 @@ const BottomSheetChat = () => {
     }
   }, [messages, editingMessage, handleCancelEditing]);
 
-  // Same actions as the web client's message toolbar, in the same order: pin
-  // gets an entry here once it lands. With none of them available, holding a
-  // message does nothing - the menu is never opened without a way out of it.
+  // Same actions as the web client's message toolbar, in the same order. With
+  // none of them available, holding a message does nothing - the menu is never
+  // opened without a way out of it.
   const messageActions = useMemo(() => {
     if (!messageWithActions || messageWithActions.deletedAt) {
       return [];
@@ -375,6 +455,21 @@ const BottomSheetChat = () => {
         icon: 'emoticon-plus-outline',
         label: t('app.chat.header.tooltipReact'),
         onPress: () => setReactingToMessageId(messageWithActions.messageId),
+      });
+    }
+
+    if (canPinMessages) {
+      const isPinned = messageWithActions.messageId === pinnedMessageId;
+
+      actions.push({
+        id: 'pin',
+        icon: isPinned ? 'pin-off-outline' : 'pin-outline',
+        label: t(isPinned
+          ? 'app.chat.header.tooltipUnpin'
+          : 'app.chat.header.tooltipPin'),
+        onPress: () => (isPinned
+          ? handleConfirmUnpin(messageWithActions.messageId)
+          : handleConfirmPin(messageWithActions.messageId)),
       });
     }
 
@@ -414,10 +509,14 @@ const BottomSheetChat = () => {
     isChatMessageReactionsEnabled,
     isEditChatMessageEnabled,
     isDeleteChatMessageEnabled,
+    canPinMessages,
+    pinnedMessageId,
     handleCopyMessage,
     handleStartReplying,
     handleStartEditing,
     handleConfirmDelete,
+    handleConfirmPin,
+    handleConfirmUnpin,
     t,
   ]);
 
@@ -489,6 +588,16 @@ const BottomSheetChat = () => {
         enableDynamicSizing={false}
         style={topShadowStyle}
       >
+        {/* Above the list, not its header: the list is rotated 180 degrees. */}
+        {isPinChatMessageEnabled && !!pinnedMessageId && (
+          <PinnedMessage
+            pinnedMessageId={pinnedMessageId}
+            pinnedByName={publicChat?.pinnedBy?.name ?? ''}
+            canUnpin={canUnpinMessages}
+            onUnpin={() => handleConfirmUnpin(pinnedMessageId)}
+            onPress={handleFocusMessage}
+          />
+        )}
         {renderEmptyChatHandler()}
         {/* 'never', the default, makes a touch with the keyboard up only dismiss
             it and never reach the message underneath. */}

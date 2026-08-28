@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import HTMLView from 'react-native-htmlview';
 import MessageReactions from '../message-reactions';
 import RepliedMessage from './replied-message';
+import { formatTime } from '../../service';
 import Styled from './styles';
 
 const handleMessage = (message, onLongPress) => {
@@ -39,7 +40,6 @@ const UserMessage = ({
   onPressReplied,
 }) => {
   const { t } = useTranslation();
-  const timestamp = new Date(createdAt);
   const isDeleted = !!deletedAt;
 
   return (
@@ -60,9 +60,7 @@ const UserMessage = ({
         <Styled.MessageTopContainer>
           <Styled.MessageAuthor numberOfLines={1}>{senderName}</Styled.MessageAuthor>
           <Styled.MessageTimestamp>
-            {`${String(timestamp.getHours()).padStart(2, '0')}:${String(
-              timestamp.getMinutes()
-            ).padStart(2, '0')}`}
+            {formatTime(createdAt)}
           </Styled.MessageTimestamp>
         </Styled.MessageTopContainer>
         {isDeleted ? (
