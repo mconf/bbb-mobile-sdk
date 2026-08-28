@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import HTMLView from 'react-native-htmlview';
 import MessageReactions from '../message-reactions';
+import RepliedMessage from './replied-message';
 import Styled from './styles';
 
 const handleMessage = (message, onLongPress) => {
@@ -28,12 +29,14 @@ const UserMessage = ({
   deletedAt,
   deletedByName,
   message,
+  replyToMessage,
   reactions,
   currentUserId,
   reactionsEnabled,
   highlighted,
   onToggleReaction,
   onLongPress,
+  onPressReplied,
 }) => {
   const { t } = useTranslation();
   const timestamp = new Date(createdAt);
@@ -71,6 +74,17 @@ const UserMessage = ({
           </Styled.DeletedMessage>
         ) : (
           <>
+            {!!replyToMessage && (
+              <RepliedMessage
+                authorName={replyToMessage.user?.name}
+                authorColor={replyToMessage.user?.color}
+                message={replyToMessage.message}
+                deletedAt={replyToMessage.deletedAt}
+                deletedByName={replyToMessage.deletedBy?.name}
+                onPress={onPressReplied}
+                onLongPress={onLongPress}
+              />
+            )}
             {handleMessage(message, onLongPress)}
             {!!editedAt && (
               <Styled.EditedLabel>

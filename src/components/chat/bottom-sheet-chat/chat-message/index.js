@@ -10,6 +10,7 @@ const ChatMessage = ({
   highlighted,
   onOpenActions,
   onToggleReaction,
+  onFocusMessage,
 }) => {
   let content;
 
@@ -56,6 +57,7 @@ const ChatMessage = ({
           deletedAt={item.deletedAt}
           deletedByName={item.deletedBy?.name}
           message={item.message}
+          replyToMessage={item.replyToMessage}
           reactions={item.reactions}
           currentUserId={currentUserId}
           reactionsEnabled={reactionsEnabled}
@@ -66,6 +68,7 @@ const ChatMessage = ({
             reactionEmoji,
             reactedByMe
           )}
+          onPressReplied={() => onFocusMessage(item.replyToMessage?.messageSequence)}
         />
       );
   }

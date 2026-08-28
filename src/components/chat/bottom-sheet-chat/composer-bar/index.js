@@ -3,13 +3,12 @@ import { BackHandler } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import Styled from './styles';
 
-// Sits right above the message input while a message is being edited, the way
-// the web client's chat-editing-warning does.
-const EditingMessageBar = ({ onCancel }) => {
+const ComposerBar = ({
+  icon, label, preview, onCancel, onPress,
+}) => {
   const { t } = useTranslation();
 
-  // Back cancels the edit before it gets to close the chat, mirroring the
-  // web client, where escape cancels it.
+  // Back cancels the draft context instead of closing the chat.
   useEffect(() => {
     const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
       onCancel();
@@ -20,12 +19,11 @@ const EditingMessageBar = ({ onCancel }) => {
   }, [onCancel]);
 
   return (
-    <Styled.Container>
+    <Styled.Container disabled={!onPress} onPress={onPress}>
+      <Styled.Icon name={icon} />
       <Styled.Info>
-        <Styled.EditIcon />
-        <Styled.Label numberOfLines={1}>
-          {t('app.chat.toolbar.edit.editing')}
-        </Styled.Label>
+        <Styled.Label numberOfLines={1}>{label}</Styled.Label>
+        {!!preview && <Styled.Preview numberOfLines={1}>{preview}</Styled.Preview>}
       </Styled.Info>
       <Styled.CancelButton
         accessibilityLabel={t('app.settings.main.cancel.label')}
@@ -37,4 +35,4 @@ const EditingMessageBar = ({ onCancel }) => {
   );
 };
 
-export default EditingMessageBar;
+export default ComposerBar;
