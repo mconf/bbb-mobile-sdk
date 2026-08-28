@@ -1,19 +1,6 @@
-import { useMemo } from 'react';
-import { useSubscription } from '@apollo/client';
+import useDeduplicatedSubscription from './useDeduplicatedSubscription';
 import { GET_GUEST_WAITING_USERS_SUBSCRIPTION } from '../queries/guestSubscription';
 
-const useGuestWaitingList = () => {
-  const { data, loading, error } = useSubscription(GET_GUEST_WAITING_USERS_SUBSCRIPTION);
-
-  const guestWaitingList = useMemo(() => {
-    return {
-      data: data || null,
-      loading,
-      error
-    };
-  }, [data, loading, error]);
-
-  return guestWaitingList;
-};
+const useGuestWaitingList = () => useDeduplicatedSubscription(GET_GUEST_WAITING_USERS_SUBSCRIPTION);
 
 export default useGuestWaitingList;
