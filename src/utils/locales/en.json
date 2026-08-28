@@ -4,6 +4,7 @@
   "app.audioNotificaion.reconnectingAsListenOnly": "Microphone has been locked for viewers, you are being connected as listen only",
   "app.chat.clearPublicChatMessage": "The public chat history was cleared by a moderator",
   "app.chat.dropdown.copy": "Copy",
+  "app.chat.errorOnSendMessage": "Error on sending chat message",
   "app.chat.header.tooltipDelete": "Delete message",
   "app.chat.header.tooltipEdit": "Edit message",
   "app.chat.header.tooltipReact": "React to message",

@@ -121,6 +121,16 @@ const BottomSheetChat = () => {
         chatMessageInMarkdownFormat: message,
         replyToMessageId,
       },
+    }).catch((error) => {
+      // The input is already cleared, so the message would be lost silently.
+      Alert.alert(t('app.chat.errorOnSendMessage'));
+      logger.error({
+        logCode: 'chat_send_message_error',
+        extraInfo: {
+          errorMessage: error.message,
+          replyToMessageId,
+        },
+      }, `Unable to send the message: ${error.message}`);
     });
   };
 
