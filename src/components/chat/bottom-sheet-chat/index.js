@@ -9,7 +9,7 @@ import {
   useState
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, InteractionManager } from 'react-native';
+import { Alert, InteractionManager, Keyboard } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import { FlatList } from 'react-native-gesture-handler';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
@@ -136,6 +136,13 @@ const BottomSheetChat = () => {
     handleToggleReaction(reactingToMessageId, reactionEmoji, false);
     setReactingToMessageId(null);
   }, [handleToggleReaction, reactingToMessageId]);
+
+  // The menu is anchored to the bottom of the screen, where the keyboard would
+  // cover it, so opening it puts the keyboard away.
+  const handleOpenActions = useCallback((item) => {
+    Keyboard.dismiss();
+    setOpenedMessage(item);
+  }, []);
 
   const handleCopyMessage = useCallback((message) => {
     Clipboard.setStringAsync(message).catch((error) => {
@@ -343,7 +350,7 @@ const BottomSheetChat = () => {
       currentUserId={currentUserId}
       reactionsEnabled={isChatMessageReactionsEnabled}
       highlighted={item.messageId === highlightedMessageId}
-      onOpenActions={setOpenedMessage}
+      onOpenActions={handleOpenActions}
       onToggleReaction={handleToggleReaction}
     />
   ), [currentUserId, isChatMessageReactionsEnabled, highlightedMessageId, handleToggleReaction]);
@@ -370,8 +377,11 @@ const BottomSheetChat = () => {
         style={topShadowStyle}
       >
         {renderEmptyChatHandler()}
+        {/* 'never', the default, makes a touch with the keyboard up only dismiss
+            it and never reach the message underneath. */}
         <FlatList
           ref={flatListRef}
+          keyboardShouldPersistTaps="handled"
           initialNumToRender={7}
           maxToRenderPerBatch={50}
           data={messages}
@@ -381,7 +391,9 @@ const BottomSheetChat = () => {
           style={Styled.styles.list}
         />
         <KeyboardAvoidingView
-          behavior="translate-with-padding"
+          // not translate-with-padding: it moves the view by a transform, and the
+          // shifted box then swallows every touch aimed at the message list
+          behavior="padding"
           keyboardVerticalOffset={height + 47}
         >
           {editingMessage && <EditingMessageBar onCancel={handleCancelEditing} />}
