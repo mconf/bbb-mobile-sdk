@@ -30,9 +30,30 @@ const DELETE_REACTION_MUTATION = gql`
   }
 `;
 
+const EDIT_MESSAGE_MUTATION = gql`
+  mutation chatEditMessage($chatId: String!, $messageId: String!, $chatMessageInMarkdownFormat: String!) {
+    chatEditMessage(
+      chatId: $chatId,
+      messageId: $messageId,
+      chatMessageInMarkdownFormat: $chatMessageInMarkdownFormat
+    )
+  }
+`;
+
+const DELETE_MESSAGE_MUTATION = gql`
+  mutation chatDeleteMessage($chatId: String!, $messageId: String!) {
+    chatDeleteMessage(
+      chatId: $chatId,
+      messageId: $messageId
+    )
+  }
+`;
+
 export default {
   CHAT_MESSAGE_PUBLIC_SUB,
   SEND_MESSAGE_MUTATION,
   SEND_REACTION_MUTATION,
-  DELETE_REACTION_MUTATION
+  DELETE_REACTION_MUTATION,
+  EDIT_MESSAGE_MUTATION,
+  DELETE_MESSAGE_MUTATION
 };

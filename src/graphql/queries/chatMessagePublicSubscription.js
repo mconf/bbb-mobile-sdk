@@ -9,6 +9,11 @@ const CHAT_MESSAGE_PUBLIC_SUBSCRIPTION = gql`
       chatEmphasizedText
       correlationId
       createdAt
+      editedAt
+      deletedAt
+      deletedBy {
+        name
+      }
       message
       messageId
       messageType

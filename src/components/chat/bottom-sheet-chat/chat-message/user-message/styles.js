@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components/native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import userAvatar from '../../../../user-avatar';
 import Pressable from '../../../../pressable';
 import Colors from '../../../../../constants/colors';
@@ -59,6 +60,31 @@ const MessageContent = styled.Text`
   color: ${Colors.lightGray300};
 `;
 
+const DeletedMessage = styled.Text`
+  color: ${Colors.lightGray200};
+  font-style: italic;
+`;
+
+const EditedLabel = styled.View`
+  flex-direction: row;
+  align-items: center;
+  align-self: flex-end;
+  gap: 4px;
+  padding-top: 4px;
+`;
+
+const EditedIcon = styled(MaterialCommunityIcons).attrs(() => ({
+  name: 'pencil-outline',
+  size: 12,
+  color: Colors.lightGray200,
+}))``;
+
+const EditedText = styled.Text`
+  font-size: 12px;
+  font-style: italic;
+  color: ${Colors.lightGray200};
+`;
+
 const UserAvatar = styled(userAvatar)`
   padding-top: 30px;
 `;
@@ -71,5 +97,9 @@ export default {
   MessageAuthor,
   MessageTimestamp,
   MessageContent,
+  DeletedMessage,
+  EditedLabel,
+  EditedIcon,
+  EditedText,
   UserAvatar,
 };
