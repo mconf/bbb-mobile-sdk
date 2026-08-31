@@ -1,5 +1,4 @@
 import { gql } from '@apollo/client';
-import CHAT_MESSAGE_PUBLIC_SUB from '../../../graphql/queries/chatMessagePublicSubscription';
 
 const SEND_MESSAGE_MUTATION = gql`
   mutation chatSendMessage($chatId: String!, $chatMessageInMarkdownFormat: String!, $replyToMessageId: String) {
@@ -61,7 +60,6 @@ const DELETE_MESSAGE_MUTATION = gql`
 `;
 
 export default {
-  CHAT_MESSAGE_PUBLIC_SUB,
   SEND_MESSAGE_MUTATION,
   SEND_REACTION_MUTATION,
   DELETE_REACTION_MUTATION,
