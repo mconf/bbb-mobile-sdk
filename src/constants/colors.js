@@ -1,8 +1,8 @@
 const Colors = {
-  blue: '#003399',
-  lightBlue: '#1D65D4',
+  blue: '#000A8c',
+  lightBlue: '#00AAE6',
   green: '#00BF6F',
-  orange: '#F18700',
+  orange: '#FF872D',
   red: '#CD545B',
   recordingRed: '#B01C1C',
   white: '#FFFFFF',

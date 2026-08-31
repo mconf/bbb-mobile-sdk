@@ -159,6 +159,8 @@
   "mobileSdk.poll.postedMsg": "Se ha publicado una encuesta, revisa la sección de encuestas para ver los resultados",
   "mobileSdk.poll.previousPolls.label": "Encuestas anteriores",
   "mobileSdk.poll.sendAnswer": "Enviar respuesta",
+  "mobileSdk.reactions.label": "Compartir una reacción",
+  "mobileSdk.reactions.remove": "Quitar reacción",
   "mobileSdk.reactions.message.away": "Está temporalmente ausente.",
   "mobileSdk.reactions.message.notAway": "Está presente.",
   "mobileSdk.userList.waitingAtendees": "Asistentes en espera",

@@ -1,76 +1,15 @@
 import styled from 'styled-components/native';
 import { StyleSheet } from 'react-native';
-import userAvatar from '../../user-avatar';
 import textInput from '../../text-input';
-import Colors from '../../../constants/colors';
-
-const Card = styled.View`
-  padding: 8px;
-`;
-
-const OrangeCard = styled.View`
-  padding: 8px;
-  background-color: ${Colors.orange}20;
-  border-radius: 8px;
-`;
-
-const ServerContainer = styled.View`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  gap: 4px;
-`;
-
-const ServerMsg = styled.Text`
-  font-weight: 500;
-  color: ${Colors.lightGray400};
-`;
 
 const FlatList = styled.FlatList`
   width: 100%;
-`;
-
-const MessageAuthor = styled.Text`
-  color: ${Colors.lightGray400};
-  font-weight: 500;
-`;
-
-const MessageTopContainer = styled.View`
-  display: flex;
-  flex-direction: row;
-`;
-
-const MessageTimestamp = styled.Text`
-  color: ${({ moderator }) => (moderator ? Colors.lightGray300 : Colors.lightGray200)};
-  padding-left: 8px;
-  font-style: italic;
 `;
 
 const NoMessageText = styled.Text`
   font-size: 24px;
   text-align: center;
   padding: 8px;
-`;
-
-const UserAvatar = styled(userAvatar)`
-  padding-top: 30px;
-`;
-
-const MessageContent = styled.Text`
-  color: ${Colors.lightGray300};
-`;
-
-MessageContent.defaultProps = {
-  selectable: true,
-};
-
-const ContainerItem = styled.View`
-  display: flex;
-  flex-direction: row;
-  width: 90%;
-  padding: 12px;
 `;
 
 const Container = styled.View`
@@ -98,26 +37,13 @@ const styles = StyleSheet.create({
   list: {
     transform: [{ rotate: '180deg' }],
   },
-  item: {
-    transform: [{ rotate: '180deg' }],
-  },
 });
 
 export default {
-  Card,
-  OrangeCard,
-  ServerMsg,
-  ServerContainer,
   FlatList,
-  UserAvatar,
-  ContainerItem,
-  MessageAuthor,
-  MessageContent,
   Container,
   SendMessageContainer,
   TextInput,
-  MessageTimestamp,
-  MessageTopContainer,
   NoMessageText,
   styles
 };
