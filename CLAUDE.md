@@ -116,7 +116,15 @@ effect â€” `GuestScreen` itself has no navigation logic and depends on
 Breakout rooms embed **a second full instance of this same app** via the
 `bbb-breakout-sdk` git dependency (this repo, pinned to a tag). That's why
 `NavigationContainer`/`Drawer` are marked `independent`, and why two Redux
-stores / two LiveKit rooms can be alive at once.
+stores / two LiveKit rooms can be alive at once. The breakout tag is **not a
+divergent branch**: it is auto-generated from the main release tag by
+`scripts/make-breakout-tag.sh` (strips the self-dependency and swaps
+`inside-breakout-room-screen/sdk-loader.js` for its `.breakout.js` stub).
+Breakout-specific behavior is decided at **runtime**: the parent instance
+passes `isBreakout` into the embedded `App`, exposed everywhere via
+`useIsBreakoutInstance()` (`src/hooks/use-breakout-instance.js`) — available
+before Apollo exists and after session teardown — while in-conference UI also
+uses the server-side `meeting.isBreakout` flag from `useMeeting`.
 
 ### State: Redux + Apollo (reactive vars), split by origin
 
@@ -221,7 +229,9 @@ info, device info, and app/build version. Note: log records include
   TS-aware) â€” expected repo-wide; diff against HEAD before blaming your edit.
 - The `README.md` is stale (claims Node 18 / Expo 52); trust `.nvmrc` and
   `package.json`.
-- **Versioning:** the SDK release version is `package.json` (0.21.4), and the
+- **Versioning:** the SDK release version is `package.json`, and the
   `bbb-breakout-sdk` git-dependency tag tracks it. `app.json` `version` (1.0.0)
-  is unrelated â€” bump `package.json` + the breakout tag for SDK releases.
+  is unrelated. For SDK releases: bump `package.json` + point the dep at
+  `#breakout-vX.Y.Z`, tag `vX.Y.Z`, then generate the breakout tag with
+  `./scripts/make-breakout-tag.sh X.Y.Z` (never hand-edit breakout tags).
 

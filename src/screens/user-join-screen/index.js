@@ -13,10 +13,12 @@ import {
 } from '../../store/redux/slices/wide-app/client';
 import { disconnectLiveKitRoom } from '../../services/livekit';
 import logger from '../../services/logger';
+import { useIsBreakoutInstance } from '../../hooks/use-breakout-instance';
 import Styled from './styles';
 
 const UserJoinScreen = () => {
   const navigation = useNavigation();
+  const isBreakoutInstance = useIsBreakoutInstance();
   const [dispatchUserJoin] = useMutation(USER_JOIN_MUTATION);
   const { data, loading, error } = useSubscription(GET_GUEST_LOBBY_INFO);
   const currentUser = data?.user_current[0];
@@ -56,6 +58,14 @@ const UserJoinScreen = () => {
         dispatch(setConnected(false));
         dispatch(setLoggedIn(false));
         disconnectLiveKitRoom({ final: true });
+
+        // Breakout instances skip feedback and go straight to the
+        // "back to main room" end screen
+        if (isBreakoutInstance) {
+          navigation.navigate('EndSessionScreen');
+          return;
+        }
+
         navigation.navigate('FeedbackScreen', {
           currentUser: {
             ...currentUser,

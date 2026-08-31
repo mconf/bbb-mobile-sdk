@@ -5,11 +5,14 @@ import { setProfile } from "../../store/redux/slices/wide-app/modal";
 import useCurrentUser from "../../graphql/hooks/useCurrentUser";
 import useCurrentPoll from "../../graphql/hooks/useCurrentPoll";
 import usePublishedPolls from "../../graphql/hooks/usePublishedPolls.js";
+import { useIsBreakoutInstance } from '../use-breakout-instance';
 import Queries from "./queries";
 import Settings from "../../../settings.json";
 
 const useModalListener = () => {
   const dispatch = useDispatch();
+  // Polls and the pickRandomUser plugin do not exist inside breakout rooms
+  const isBreakoutInstance = useIsBreakoutInstance();
 
   // CurrentUser
   const { data: currentUserData } = useCurrentUser();
@@ -27,18 +30,18 @@ const useModalListener = () => {
   const amIPresenter = currentUser?.presenter;
 
   // Active Polls
-  const { data: pollData } = useCurrentPoll();
+  const { data: pollData } = useCurrentPoll({ skip: isBreakoutInstance });
   const activePollData = pollData?.poll[0];
   const hasCurrentPoll = pollData?.poll?.length > 0;
 
   // Published Polls
-  const { data: publishedData } = usePublishedPolls();
+  const { data: publishedData } = usePublishedPolls({ skip: isBreakoutInstance });
   const publishedPollData = publishedData?.poll;
   const hasPublishedPolls = publishedPollData?.length > 0;
   const prevPublishedPollCount = useRef(undefined);
 
   // PickRandomUserPlugin
-  const isPickRandomUserEnabled = Settings?.plugins?.pickRandomUser?.modal;
+  const isPickRandomUserEnabled = !isBreakoutInstance && Settings?.plugins?.pickRandomUser?.modal;
   const {
     data: pickRandomUserData,
     loading: pickRandomUserLoading,

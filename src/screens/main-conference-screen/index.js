@@ -9,6 +9,7 @@ import MiniAudioPlayerIcon from '../../components/audio-player/mini-audio-player
 import TalkingIndicator from '../../components/talking-indicator';
 import TimerIndicator from '../../components/timer/timerIndicator';
 import useAppState from '../../hooks/use-app-state';
+import { useIsBreakoutInstance } from '../../hooks/use-breakout-instance';
 import PiPView from './pip-view';
 import Styled from './styles';
 import Settings from '../../../settings.json';
@@ -18,6 +19,7 @@ const DEVICE_WIDTH = parseInt(Dimensions.get('window').width, 10);
 
 const MainConferenceScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const isBreakoutInstance = useIsBreakoutInstance();
   // const initialChatMsgsFetched = useSelector((state) => state.client.initialChatMsgsFetched);
   const isPiPEnabled = useSelector((state) => state.layout.isPiPEnabled);
   const navigation = useNavigation();
@@ -44,7 +46,7 @@ const MainConferenceScreen = () => {
         <Styled.ContainerView>
           <Styled.TopIndicatorBar>
             <TalkingIndicator />
-            {Settings.features.timer && (
+            {!isBreakoutInstance && Settings.features.timer && (
               <TimerIndicator />
             )}
           </Styled.TopIndicatorBar>

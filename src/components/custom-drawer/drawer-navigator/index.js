@@ -309,7 +309,7 @@ const DrawerNavigator = ({
           />
         )}
 
-        {amIModerator && Settings.features.timer && (
+        {!isBreakout && amIModerator && Settings.features.timer && (
           <Drawer.Screen
             name="TimerScreen"
             component={TimerScreenWithUnmount}

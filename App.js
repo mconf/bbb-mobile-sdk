@@ -9,6 +9,7 @@ import InCallManagerController from './src/app-content/in-call-manager';
 import LocalesController from './src/app-content/locales';
 import AppStatusBar from './src/components/status-bar';
 import NavigatorHandler from './src/screens/navigator-handler';
+import { BreakoutInstanceProvider } from './src/hooks/use-breakout-instance';
 import { disconnectLiveKitRoom } from './src/services/livekit';
 // inject stores
 import { injectStore as injectStoreVM } from './src/services/webrtc/video-manager';
@@ -41,7 +42,9 @@ const leaveSessionFactory = (callback = () => { }) => {
 const defaultJoinURL = () => '';
 
 const App = (props) => {
-  const { joinURL, defaultLanguage, onLeaveSession } = props;
+  const {
+    joinURL, defaultLanguage, onLeaveSession, isBreakout = false,
+  } = props;
   const _joinURL = joinURL
     || defaultJoinURL();
   const _onLeaveSession = leaveSessionFactory(onLeaveSession);
@@ -52,21 +55,23 @@ const App = (props) => {
 
   return (
     <KeyboardProvider>
-      <Provider store={store}>
-        <NavigationIndependentTree>
-          <NavigationContainer theme={MyTheme}>
-            <OrientationLocker orientation={PORTRAIT} />
-            <NavigatorHandler
-              {...props}
-              joinURL={_joinURL}
-              onLeaveSession={_onLeaveSession}
-            />
-            <AppStatusBar />
-            <InCallManagerController />
-            <LocalesController defaultLanguage={defaultLanguage} />
-          </NavigationContainer>
-        </NavigationIndependentTree>
-      </Provider>
+      <BreakoutInstanceProvider value={isBreakout}>
+        <Provider store={store}>
+          <NavigationIndependentTree>
+            <NavigationContainer theme={MyTheme}>
+              <OrientationLocker orientation={PORTRAIT} />
+              <NavigatorHandler
+                {...props}
+                joinURL={_joinURL}
+                onLeaveSession={_onLeaveSession}
+              />
+              <AppStatusBar />
+              <InCallManagerController />
+              <LocalesController defaultLanguage={defaultLanguage} />
+            </NavigationContainer>
+          </NavigationIndependentTree>
+        </Provider>
+      </BreakoutInstanceProvider>
     </KeyboardProvider>
   );
 };

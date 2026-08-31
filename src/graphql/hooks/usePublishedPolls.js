@@ -2,8 +2,8 @@ import { useMemo } from 'react';
 import { useSubscription } from '@apollo/client';
 import { PUBLISHED_POLLS_SUBSCRIPTION } from '../queries/usePollSubscription';
 
-const usePublishedPolls = () => {
-  const { data, loading, error } = useSubscription(PUBLISHED_POLLS_SUBSCRIPTION);
+const usePublishedPolls = ({ skip = false } = {}) => {
+  const { data, loading, error } = useSubscription(PUBLISHED_POLLS_SUBSCRIPTION, { skip });
 
   const currentPublishedPolls = useMemo(() => {
     return {

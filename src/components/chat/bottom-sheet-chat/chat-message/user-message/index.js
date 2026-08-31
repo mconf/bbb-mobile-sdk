@@ -15,29 +15,31 @@ const handleMessage = (message) => {
 };
 
 const UserMessage = ({
-  senderName, senderRole, userColor, senderId, userImage, createdAt, message,
+  senderName, senderRole, userColor, senderId, userImage, createdAt, message, moderator = false,
 }) => {
   const timestamp = new Date(createdAt);
+  const MessageCard = moderator ? Styled.OrangeCard : Styled.Card;
+
   return (
     <Styled.ContainerItem>
       <Styled.UserAvatar
         userName={senderName}
-        userRole={senderRole}
+        userRole={moderator ? 'MODERATOR' : senderRole}
         userColor={userColor}
         userId={senderId}
         userImage={userImage}
       />
-      <Styled.Card>
+      <MessageCard>
         <Styled.MessageTopContainer>
           <Styled.MessageAuthor selectable>{senderName}</Styled.MessageAuthor>
-          <Styled.MessageTimestamp>
+          <Styled.MessageTimestamp moderator={moderator}>
             {`${String(timestamp.getHours()).padStart(2, '0')}:${String(
               timestamp.getMinutes()
             ).padStart(2, '0')}`}
           </Styled.MessageTimestamp>
         </Styled.MessageTopContainer>
         {handleMessage(message)}
-      </Styled.Card>
+      </MessageCard>
     </Styled.ContainerItem>
   );
 };
