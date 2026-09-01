@@ -289,5 +289,14 @@
   "mobileSdk.join.loadingSession.label": "Sua sessão está sendo preparada",
   "mobileSdk.join.genericLoading.label": "Carregando",
   "mobileSdk.audio.join": "Entrar no áudio",
-  "app.audio.leaveAudio": "Sair do áudio"
+  "app.audio.leaveAudio": "Sair do áudio",
+  "app.notes.blocknote.payloadSizeError": "Conteúdo da área de transferência muito grande ({sizeKB}KB). O tamanho máximo para colar é {maxKB}KB.",
+  "app.notes.blocknote.maxCharCountError": "Limite atingido. Você não pode digitar mais que {maxCharCount} caracteres.",
+  "mobileSdk.sharedNotes.dismiss": "Dispensar",
+  "mobileSdk.sharedNotes.retry": "Tentar novamente",
+  "mobileSdk.sharedNotes.connectionClosed": "Conexão encerrada.",
+  "mobileSdk.sharedNotes.authenticationFailed": "Falha na autenticação",
+  "mobileSdk.sharedNotes.securityViolation": "Violação de segurança: {reason}",
+  "mobileSdk.sharedNotes.unsupportedEditor": "Esta reunião usa o editor antigo de notas compartilhadas, que este aplicativo não suporta mais. Abra as notas compartilhadas em um navegador.",
+  "mobileSdk.sharedNotes.loadFailed": "Não foi possível carregar as notas compartilhadas. Verifique sua conexão e tente novamente."
 }

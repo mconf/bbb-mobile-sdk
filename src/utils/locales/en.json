@@ -295,5 +295,14 @@
   "mobileSdk.pip.permission.subtitle": "You have not permitted the use of Picture-in-Picture in this application",
   "mobileSdk.join.loadingSession.label": "Your session is being prepared",
   "mobileSdk.join.genericLoading.label": "Loading",
-  "mobileSdk.audio.join": "Join audio"
+  "mobileSdk.audio.join": "Join audio",
+  "app.notes.blocknote.payloadSizeError": "Clipboard content too large ({sizeKB}KB). Maximum size for pasting is {maxKB}KB.",
+  "app.notes.blocknote.maxCharCountError": "Input limit reached. You cannot type more than {maxCharCount} characters.",
+  "mobileSdk.sharedNotes.dismiss": "Dismiss",
+  "mobileSdk.sharedNotes.retry": "Retry",
+  "mobileSdk.sharedNotes.connectionClosed": "Connection closed.",
+  "mobileSdk.sharedNotes.authenticationFailed": "Authentication failed",
+  "mobileSdk.sharedNotes.securityViolation": "Security violation: {reason}",
+  "mobileSdk.sharedNotes.unsupportedEditor": "This meeting uses the old shared notes editor, which this app no longer supports. Open the shared notes in a browser instead.",
+  "mobileSdk.sharedNotes.loadFailed": "Could not load the shared notes. Check your connection and try again."
 }

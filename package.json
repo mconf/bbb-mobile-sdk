@@ -17,6 +17,7 @@
     "lint": "eslint . --ext .js",
     "lint:file": "eslint",
     "build": "babel src/ -d lib/",
+    "build:notes-editor": "npm --prefix shared-notes-editor ci && npm --prefix shared-notes-editor run build",
     "prepublish": "npm run build"
   },
   "dependencies": {
