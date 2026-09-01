@@ -28,7 +28,12 @@ module.exports = {
     '**/src/services/**',
 
     // socket connection
-    '**/socket-connection/**'
+    '**/socket-connection/**',
+
+    // shared notes: the BlockNote editor is a web bundle with its own toolchain,
+    // and editor-bundle.js is its generated single-line output
+    '**/shared-notes-editor/**',
+    '**/user-notes-screen/editor-bundle.js'
   ],
   rules: {
     'react/jsx-filename-extension': [

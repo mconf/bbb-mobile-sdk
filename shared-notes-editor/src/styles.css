@@ -1,0 +1,202 @@
+/*
+ * Down to the "MOBILE" marker: the <style> block from bn-shared-notes/component.tsx,
+ * verbatim, with the styled-components palette inlined.
+ */
+
+/* BlockNote ships Inter and hardcodes it; inherit the client font
+   instead (body in main.html) so Shared Notes matches the rest of the
+   UI. Both selectors are needed: '.bn-root' (toolbar and menus) sets
+   the font from a '--bn-font-family' default, and '.bn-default-styles'
+   (the editor content) sets Inter on its own. 'inherit' also follows
+   the per-language body overrides, e.g. body.lang-fa -> Tahoma. */
+.bn-root,
+.bn-default-styles {
+  font-family: inherit;
+}
+.bn-toolbar-row .mantine-Button-label {
+  display: none;
+}
+.bn-toolbar-row .mantine-Button-inner > .mantine-Button-section {
+  margin: 0;
+}
+.bn-toolbar-row [data-with-left-section] {
+  padding: 0 .25rem
+}
+.bn-collaboration-cursor__label {
+  color: #FFFFFF !important;
+}
+/* The collaborator's name is held in a data attribute (see
+   renderCollaborationCursor) and rendered as pseudo-content so it never
+   becomes part of a surrounding link's text/href - issue #25225. */
+.bn-collaboration-cursor__label::after {
+  content: attr(data-cursor-name);
+}
+.bn-collaboration-cursor__caret {
+  overflow: visible !important;
+}
+.bn-mantine .bn-suggestion-menu {
+  min-width: 300px;
+}
+/* BlockNote fixes link form inputs at 300px, which overflows the
+   Shared Notes panel and scrolls the panel when an input is focused. */
+.bn-mantine .bn-form-popover .mantine-TextInput-root {
+  width: 100%;
+}
+/* Toolbar and editor are siblings inside .bn-container. DOM order matches
+   visual order (toolbar first, editor second), so tab order is correct. */
+.bn-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.bn-mantine button, .bn-mantine select {
+  height: 100%;
+}
+.bn-toolbar-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+  padding-block: 4px;
+  flex-shrink: 0;
+  border-bottom: 1px solid #d4d9df;
+}
+.bn-toolbar-row .bn-formatting-toolbar {
+  box-shadow: none;
+  border: none;
+  padding: 0;
+}
+.bn-toolbar-row [data-test="colors"] .bn-color-icon {
+  font-weight: 700;
+}
+.bn-toolbar-row [data-test="colors"] .bn-color-icon[data-text-color="default"] {
+  color: #2f80ed;
+}
+.bn-editor {
+  padding-inline: 50px 25px;
+  font-size: 1rem;
+  box-sizing: border-box;
+  cursor: text;
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+}
+/* Flip labels to below when near top of scroll container */
+.bn-block-group > .bn-block-outer:first-child
+  .bn-collaboration-cursor__label {
+
+  top: 1.5em !important;
+  bottom: auto !important;
+  transform: translateY(0) !important;
+}
+
+/* MOBILE: the web renders inside a styled panel; this page is the whole document. */
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: #FFFFFF;
+  color: #06172A;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-text-size-adjust: 100%;
+  /* The WebView already handles the pull-to-refresh/overscroll gesture. */
+  overscroll-behavior: none;
+}
+
+/* Mirrors Styled.Notes from bn-shared-notes/styles.ts. */
+.bbb-notes {
+  background-color: #FFFFFF;
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  height: 100%;
+  overflow: auto;
+}
+
+/* Mirrors Styled.WarningNotificationContainer. */
+.bbb-notice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  text-align: center;
+  flex-grow: 1;
+}
+
+.bbb-notice__error {
+  color: #DF2721;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.bbb-notice__warning {
+  color: #6a6c71;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.bbb-notice__button {
+  appearance: none;
+  border: none;
+  border-radius: 4px;
+  background-color: #0F70D7;
+  color: #FFFFFF;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: .6rem 1.4rem;
+  cursor: pointer;
+}
+
+.bbb-notice__button:focus-visible {
+  outline: 2px solid #0F70D7;
+  outline-offset: 2px;
+}
+
+/* Touch targets need the room more than the drag-handle gutter does. */
+@media (max-width: 600px) {
+  .bn-editor {
+    padding-inline: 28px 12px;
+  }
+
+  .bn-mantine .bn-suggestion-menu {
+    min-width: auto;
+    max-width: 90vw;
+  }
+}
+
+/* MOBILE: replaces the web's toast; .bbb-notice would hide the editor. */
+.bbb-banner {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  flex-shrink: 0;
+  padding: .6rem .9rem;
+  background-color: #FBF1DC;
+  border-bottom: 1px solid #FEC84B;
+  color: #8A5A00;
+  font-size: .875rem;
+  line-height: 1.35;
+}
+
+.bbb-banner__text {
+  flex: 1 1 auto;
+}
+
+.bbb-banner__button {
+  appearance: none;
+  border: 1px solid #FEC84B;
+  border-radius: 4px;
+  background-color: transparent;
+  color: #8A5A00;
+  font-size: .8125rem;
+  font-weight: 600;
+  padding: .3rem .7rem;
+  white-space: nowrap;
+  cursor: pointer;
+}

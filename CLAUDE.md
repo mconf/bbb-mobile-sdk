@@ -35,6 +35,11 @@ npm run build          # babel src/ -d lib/  â€” transpiles the SDK into li
 # Android gradle troubleshooting: cd android && ./gradlew clean
 # Locale sync (strings are a subset of upstream bbb-html5):
 #   ./generate_locales.sh <lang> <path-to-bbb-html5/locales>
+
+npm run build:notes-editor  # rebuilds the BlockNote shared-notes WebView bundle
+                            # (shared-notes-editor/ -> src/screens/user-notes-screen/
+                            # editor-bundle.js). Separate npm package with its own
+                            # deps; the generated output IS committed. See its README.
 ```
 
 **Native build prerequisites** (the README's Node/Expo versions are stale, but
