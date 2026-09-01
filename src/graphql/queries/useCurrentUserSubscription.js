@@ -75,8 +75,10 @@ const USER_CURRENT_SUBSCRIPTION = gql`
       sessionCurrent {
         enforceLayout
       }
-      livekit {
-        livekitToken
+      livekitRooms {
+        roomName
+        purpose
+        token
       }
     }
   }
