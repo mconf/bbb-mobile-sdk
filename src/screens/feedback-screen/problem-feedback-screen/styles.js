@@ -1,6 +1,7 @@
 import styled from 'styled-components/native';
 import { RadioButton, TextInput } from 'react-native-paper';
 import Colors from '../../../constants/colors';
+import { Text } from '../../../components/typography';
 
 const ContainerView = styled.View`
   width: 100%;
@@ -12,7 +13,7 @@ const ContainerView = styled.View`
   display: flex;
 `;
 
-const Title = styled.Text`
+const Title = styled(Text)`
   font-size: 24px;
   font-weight: 500;
   color: ${Colors.white};
@@ -29,7 +30,7 @@ const CheckContainerItem = styled.View`
 const Option = styled(RadioButton.Android)`
 `;
 
-const LabelOption = styled.Text`
+const LabelOption = styled(Text)`
   flex: 1;
   color: ${Colors.white};
 `;

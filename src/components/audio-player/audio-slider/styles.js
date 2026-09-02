@@ -2,15 +2,16 @@ import styled from 'styled-components/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { TouchableRipple } from 'react-native-paper';
 import Colors from '../../../constants/colors';
+import { Text } from '../../typography';
 
-const FileNameText = styled.Text`
+const FileNameText = styled(Text)`
   font-size: 14px;
   font-weight: 400;
   color: ${Colors.lightGray400};
   height: 25px;
 `;
 
-const DurationText = styled.Text`
+const DurationText = styled(Text)`
   font-size: 10px;
   font-weight: 400;
   color: #B1B3B3;

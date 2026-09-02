@@ -1,6 +1,7 @@
 import { IconButton } from 'react-native-paper';
 import styled from 'styled-components/native';
 import Colors from '../../constants/colors';
+import { Text } from '../../components/typography';
 
 const ContainerView = styled.View`
   width: 100%;
@@ -13,14 +14,14 @@ const ContainerView = styled.View`
   background-color: #06172A;
 `;
 
-const TitleText = styled.Text`
+const TitleText = styled(Text)`
   font-size: 21px;
   font-weight: 500;
   text-align: center;
   color: ${Colors.white};
 `;
 
-const SubtitleText = styled.Text`
+const SubtitleText = styled(Text)`
   font-size: 16px;
   font-weight: 400;
   text-align: center;

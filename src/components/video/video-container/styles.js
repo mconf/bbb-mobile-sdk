@@ -4,6 +4,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import IconButtonComponent from '../../icon-button';
 import Colors from '../../../constants/colors';
 import Pressable from '../../pressable';
+import { Text } from '../../typography';
 
 const ContainerPressable = styled(Pressable).attrs(() => ({
   pressStyle: {
@@ -53,7 +54,7 @@ const NameLabelContainer = styled.View`
   margin: 5px;
   border-radius: 4px;
 `;
-const NameLabel = styled.Text`
+const NameLabel = styled(Text)`
   color: ${Colors.white};
 `;
 

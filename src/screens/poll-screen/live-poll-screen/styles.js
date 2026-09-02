@@ -3,6 +3,7 @@ import { Divider } from 'react-native-paper';
 import { Pressable as PressableRN } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import Colors from '../../../constants/colors';
+import { Text } from '../../../components/typography';
 
 const ContainerView = styled.View`
   width: 100%;
@@ -27,7 +28,7 @@ const HeaderContainer = styled.View`
   gap: 12px;
 `;
 
-const Title = styled.Text`
+const Title = styled(Text)`
   font-size: 24px;
   font-weight: 600;
   color: ${Colors.lightGray400};
@@ -46,20 +47,20 @@ const CloseButton = ({ onPress, accessibilityLabel }) => (
   </PressableRN>
 );
 
-const Subtitle = styled.Text`
+const Subtitle = styled(Text)`
   font-size: 15px;
   font-weight: 400;
   color: ${Colors.lightGray300};
 `;
 
-const SubtitleStrong = styled.Text`
+const SubtitleStrong = styled(Text)`
   font-weight: 600;
   color: ${Colors.lightGray400};
 `;
 
 const CustomDivider = styled(Divider)``;
 
-const QuestionText = styled.Text`
+const QuestionText = styled(Text)`
   font-size: 22px;
   font-weight: 400;
   color: ${Colors.lightGray400};
@@ -77,7 +78,7 @@ const ResultRow = styled.View`
   gap: 12px;
 `;
 
-const ResultLabel = styled.Text`
+const ResultLabel = styled(Text)`
   font-size: 17px;
   font-weight: 400;
   color: ${Colors.lightGray300};
@@ -100,13 +101,13 @@ const ResultBar = styled.View`
   width: ${({ percentage }) => `${percentage}%`};
 `;
 
-const ResultCount = styled.Text`
+const ResultCount = styled(Text)`
   font-size: 15px;
   font-weight: 400;
   color: ${Colors.lightGray300};
 `;
 
-const ResultPercentage = styled.Text`
+const ResultPercentage = styled(Text)`
   font-size: 17px;
   font-weight: 400;
   color: ${Colors.lightGray300};
@@ -114,7 +115,7 @@ const ResultPercentage = styled.Text`
   text-align: right;
 `;
 
-const HintText = styled.Text`
+const HintText = styled(Text)`
   font-size: 15px;
   font-weight: 400;
   color: ${Colors.lightGray300};
@@ -129,7 +130,7 @@ const PublishPressable = styled.Pressable`
   background-color: ${Colors.orange};
 `;
 
-const PublishText = styled.Text`
+const PublishText = styled(Text)`
   font-size: 18px;
   font-weight: 500;
   color: ${Colors.white};

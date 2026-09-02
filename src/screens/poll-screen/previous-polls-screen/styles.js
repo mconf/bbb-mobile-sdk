@@ -1,14 +1,15 @@
 import styled from 'styled-components/native';
 import Colors from '../../../constants/colors';
+import { Text } from '../../../components/typography';
 
-const Title = styled.Text`
+const Title = styled(Text)`
   font-size: 24px;
   font-weight: 600;
   text-align: center;
   padding-bottom: 24px;
 `;
 
-const NoPollText = styled.Text`
+const NoPollText = styled(Text)`
   font-size: 16px;
   font-weight: 600;
   font-style: italic;
@@ -68,7 +69,7 @@ const ContainerCentralizedView = styled.View`
 
 const NoPollsImage = styled.Image``;
 
-const NoPollsLabelTitle = styled.Text`
+const NoPollsLabelTitle = styled(Text)`
   color: ${Colors.white};
   font-size: 21px;
   text-align: center;
@@ -77,7 +78,7 @@ const NoPollsLabelTitle = styled.Text`
   padding-top: 24px;
 `;
 
-const NoPollsLabelSubtitle = styled.Text`
+const NoPollsLabelSubtitle = styled(Text)`
   color: ${Colors.white};
   font-size: 16px;
   text-align: center;

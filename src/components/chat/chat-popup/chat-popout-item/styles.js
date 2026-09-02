@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components/native';
 import { Entypo } from '@expo/vector-icons';
 import Pressable from '../../../pressable';
+import { Text } from '../../../typography';
 
 const ContainerPressable = styled(Pressable).attrs(() => ({
   pressStyle: {
@@ -33,14 +34,14 @@ const TextContainer = styled.View`
   padding: 8px;
 `;
 
-const UserNameText = styled.Text`
+const UserNameText = styled(Text)`
   font-size: 12px;
   color: white;
   font-weight: 700;
   vertical-align: middle;
 `;
 
-const UserMessage = styled.Text`
+const UserMessage = styled(Text)`
   font-size: 12px;
   color: white;
 `;

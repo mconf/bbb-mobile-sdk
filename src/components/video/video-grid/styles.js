@@ -3,6 +3,7 @@ import { StyleSheet } from 'react-native';
 import VideoContainer from '../video-container';
 import contentArea from '../../content-area';
 import Colors from '../../../constants/colors';
+import { Text } from '../../typography';
 
 const VideoListItem = styled(VideoContainer)`
   width: 100%;
@@ -131,14 +132,14 @@ const ContainerViewItem = styled.View`
   `}
 `;
 
-const SessionAloneTitle = styled.Text`
+const SessionAloneTitle = styled(Text)`
   color: white;
   font-weight: 600;
   font-size: 24px;
   text-align: center;
 `;
 
-const SessionAloneDesc = styled.Text`
+const SessionAloneDesc = styled(Text)`
   color: white;
   font-weight: 400;
   font-size: 18px;
@@ -170,14 +171,14 @@ const ContainerTextSessionAlone = styled.View`
 
 const NoPollsImage = styled.Image``;
 
-const NoPollsLabelTitle = styled.Text`
+const NoPollsLabelTitle = styled(Text)`
   color: ${Colors.white};
   font-size: 21px;
   text-align: center;
   font-weight: 500;
 `;
 
-const NoPollsLabelSubtitle = styled.Text`
+const NoPollsLabelSubtitle = styled(Text)`
   color: ${Colors.white};
   font-size: 16px;
   text-align: center;

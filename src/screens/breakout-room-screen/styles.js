@@ -3,6 +3,7 @@ import { Divider } from 'react-native-paper';
 import Colors from '../../constants/colors';
 import UserAvatar from '../../components/user-avatar';
 import ContentLoader, { Rect } from 'react-content-loader/native';
+import { Text } from '../../components/typography';
 
 const ContainerView = styled.View`
   ${({ orientation }) => orientation === 'LANDSCAPE'
@@ -39,14 +40,14 @@ const Card = styled.View`
   flex-direction: column;
 `;
 
-const ShortName = styled.Text`
+const ShortName = styled(Text)`
   color: black;
   font-size: 21px;
   font-weight: 500;
   padding: 0 0 6px 0;
 `;
 
-const ParticipantsCount = styled.Text`
+const ParticipantsCount = styled(Text)`
   color: ${Colors.lightGray300};
   font-size: 12px;
 `;
@@ -59,7 +60,7 @@ const ParticipantsContainerExpandable = styled.View`
   margin-left: 6px;
 `;
 
-const UserNameText = styled.Text`
+const UserNameText = styled(Text)`
   color: ${Colors.lightGray300};
   font-size: 16px;
   padding-left: 4px;
@@ -74,13 +75,13 @@ const FlatList = styled.FlatList`
   height: 78%;
 `;
 
-const TitleText = styled.Text`
+const TitleText = styled(Text)`
   color: white;
   font-size: 18px;
   text-align: center;
 `;
 
-const NoBreakoutsLabelTitle = styled.Text`
+const NoBreakoutsLabelTitle = styled(Text)`
   color: ${Colors.white};
   font-size: 21px;
   text-align: center;
@@ -88,14 +89,14 @@ const NoBreakoutsLabelTitle = styled.Text`
   font-weight: 500;
 `;
 
-const NoBreakoutsLabelSubtitle = styled.Text`
+const NoBreakoutsLabelSubtitle = styled(Text)`
   color: ${Colors.white};
   font-size: 16px;
   text-align: center;
   padding: 24px;
 `;
 
-const BreakoutRoomDurationLabel = styled.Text`
+const BreakoutRoomDurationLabel = styled(Text)`
   color: ${Colors.lightGray300};
   font-size: 12px;
   text-align: center;
@@ -103,7 +104,7 @@ const BreakoutRoomDurationLabel = styled.Text`
   padding: 0 0 12px 0;
 `;
 
-const NumberTimerLabel = styled.Text`
+const NumberTimerLabel = styled(Text)`
   color: ${Colors.lightGray400};
   font-size: 24px;
   text-align: center;

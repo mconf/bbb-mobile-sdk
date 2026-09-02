@@ -3,6 +3,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { TouchableRipple } from 'react-native-paper';
 import { View } from 'react-native';
 import Colors from '../../../constants/colors';
+import { Text } from '../../typography';
 
 const ContainerPressable = styled(TouchableRipple)`
   display: flex;
@@ -37,7 +38,7 @@ const AudioIconContainer = () => (
   </View>
 );
 
-const AudioText = styled.Text`
+const AudioText = styled(Text)`
   font-size: 16px;
   font-weight: 500;
   color: ${Colors.white};

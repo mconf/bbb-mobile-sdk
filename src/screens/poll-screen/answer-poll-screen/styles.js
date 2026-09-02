@@ -1,10 +1,11 @@
 import styled from 'styled-components/native';
 import textInput from '../../../components/text-input';
 import Colors from '../../../constants/colors';
+import { Text } from '../../../components/typography';
 
 const ButtonsContainer = styled.View``;
 
-const Title = styled.Text`
+const Title = styled(Text)`
   font-size: 24px;
   font-weight: 600;
   text-align: center;
@@ -12,7 +13,7 @@ const Title = styled.Text`
   color: ${Colors.white};
 `;
 
-const SecretLabel = styled.Text`
+const SecretLabel = styled(Text)`
   font-weight: 500;
   font-size: 12px;
   text-align: center;

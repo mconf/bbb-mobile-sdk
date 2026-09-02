@@ -1,5 +1,6 @@
 import styled from 'styled-components/native';
 import IconButtonComponent from '../icon-button';
+import { Text as BaseText } from '../typography';
 
 const IndexContainer = styled.View`
   ${(props) => props.index === 1 && `
@@ -32,7 +33,7 @@ const DismissButton = styled(IconButtonComponent)`
   margin: 0px 4px 0px 0px;
 `;
 
-const Text = styled.Text`
+const Text = styled(BaseText)`
   font-size: 12px;
   color: white;
 `;
