@@ -1,4 +1,5 @@
 import styled from 'styled-components/native';
+import { Text } from '../../../components/typography';
 
 const Button = styled.TouchableOpacity`
   border-width: 1px;
@@ -8,7 +9,7 @@ const Button = styled.TouchableOpacity`
   align-self: center;
 `;
 
-const ButtonText = styled.Text`
+const ButtonText = styled(Text)`
   font-size: 18px;
 `;
 
@@ -29,7 +30,7 @@ const DoneButton = styled.TouchableOpacity`
   border-color: #ccc;
 `;
 
-const DoneText = styled.Text`
+const DoneText = styled(Text)`
   font-size: 18px;
   font-weight: bold;
 `;

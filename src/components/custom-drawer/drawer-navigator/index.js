@@ -27,6 +27,7 @@ import ChatPopupList from '../../chat/chat-popup';
 import RecordingIndicator from '../../record/record-indicator';
 import CustomDrawer from '../index';
 import Styled from './styles';
+import Fonts from '../../../constants/fonts';
 
 // react-navigation v7 removed the `unmountOnBlur` screen option; this replaces it by
 // rendering null while unfocused. Wrapped components are hoisted to module scope so their
@@ -282,7 +283,7 @@ const DrawerNavigator = ({
           options={{
             title: t('app.notes.title'),
             drawerLabelStyle: {
-              fontWeight: '400', fontSize: 16, paddingLeft: 12
+              fontFamily: Fonts.regular, fontWeight: '400', fontSize: 16, paddingLeft: 12
             },
             drawerIcon: (config) => (
               <Styled.IconMaterial name="notes" size={24} color={config.color} />
@@ -336,7 +337,7 @@ const DrawerNavigator = ({
                 );
               },
               drawerLabelStyle: {
-                fontWeight: '400', fontSize: 16, paddingLeft: 12
+                fontFamily: Fonts.regular, fontWeight: '400', fontSize: 16, paddingLeft: 12
               },
               drawerIcon: (config) => (
                 <Styled.IconMaterial name="timer" size={24} color={config.color} />

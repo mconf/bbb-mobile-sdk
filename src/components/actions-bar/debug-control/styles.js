@@ -3,6 +3,7 @@ import { Switch } from 'react-native-paper';
 import { FontAwesome } from '@expo/vector-icons';
 import { View } from 'react-native';
 import Colors from '../../../constants/colors';
+import { Text } from '../../typography';
 
 const DebugContainer = styled.View`
   display: flex;
@@ -29,7 +30,7 @@ const DebugIconContainer = () => (
   </View>
 );
 
-const DebugText = styled.Text`
+const DebugText = styled(Text)`
   font-size: 16px;
   font-weight: 500;
   color: ${Colors.white};

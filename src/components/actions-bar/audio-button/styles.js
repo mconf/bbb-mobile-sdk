@@ -3,6 +3,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { TouchableRipple } from 'react-native-paper';
 import { View } from 'react-native';
 import Colors from '../../../constants/colors';
+import { Text } from '../../typography';
 
 const ContainerPressable = styled(TouchableRipple)`
   display: flex;
@@ -29,7 +30,7 @@ const HeadphoneIconContainer = ({ isActive }) => (
   </View>
 );
 
-const HeadphoneText = styled.Text`
+const HeadphoneText = styled(Text)`
   font-size: 16px;
   font-weight: 500;
   color: ${Colors.white};

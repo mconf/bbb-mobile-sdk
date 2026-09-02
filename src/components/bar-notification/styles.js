@@ -1,4 +1,5 @@
 import styled from 'styled-components/native';
+import { Text as BaseText } from '../typography';
 
 const IndexContainer = styled.View`
   ${(props) => props.index === 1 && `
@@ -25,7 +26,7 @@ const TextContainer = styled.View`
   padding: 8px 16px;
 `;
 
-const Text = styled.Text`
+const Text = styled(BaseText)`
   font-size: 12px;
   color: white;
 `;

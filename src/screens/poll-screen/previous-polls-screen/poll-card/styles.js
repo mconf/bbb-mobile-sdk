@@ -1,10 +1,13 @@
 import styled, { css } from 'styled-components/native';
 import { Divider } from 'react-native-paper';
-import { Text, Pressable as PressableRN } from 'react-native';
+import {
+  Pressable as PressableRN,
+} from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import Pressable from '../../../../components/pressable';
 import Colors from '../../../../constants/colors';
 import UserAvatar from '../../../../components/user-avatar';
+import { Text } from '../../../../components/typography';
 
 const ContainerPollCard = styled.Pressable`
   background-color: ${Colors.white};
@@ -15,13 +18,13 @@ const ContainerPollCard = styled.Pressable`
   border-radius: 8px;
 `;
 
-const KeyText = styled.Text`
+const KeyText = styled(Text)`
   font-size: 14px;
   font-weight: 400;
   color: ${Colors.lightGray300};
 `;
 
-const PercentageText = styled.Text`
+const PercentageText = styled(Text)`
   font-size: 13px;
   font-weight: 400;
   width: 35px;
@@ -40,14 +43,14 @@ const LabelContainer = styled.View`
   gap: 4px;
 `;
 
-const TimestampText = styled.Text`
+const TimestampText = styled(Text)`
   font-size: 14px;
   font-weight: 500;
   font-style: italic;
   text-align: center;
 `;
 
-const QuestionText = styled.Text`
+const QuestionText = styled(Text)`
   font-size: 18px;
   font-weight: 400;
   color: ${Colors.lightGray300};
@@ -63,7 +66,7 @@ const PollInfoLabelContainer = styled.View`
   align-items: center;
 `;
 
-const PollInfoText = styled.Text`
+const PollInfoText = styled(Text)`
   font-weight: 400;
   font-size: 12px;
   color: ${Colors.lightGray300};
@@ -81,7 +84,7 @@ const PresenterContainerOptions = styled.View`
   flex-direction: row;
 `;
 
-const MinimizeAnswersText = styled.Text`
+const MinimizeAnswersText = styled(Text)`
   font-weight: 400;
   font-size: 12px;
   color: ${Colors.blue};
@@ -120,7 +123,7 @@ const DeleteIcon = ({ onPress }) => (
   </PressableRN>
 );
 
-const UserNameAnswer = styled.Text`
+const UserNameAnswer = styled(Text)`
   font-weight: 400;
   font-size: 12px;
   text-align: center;
@@ -129,7 +132,7 @@ const UserNameAnswer = styled.Text`
   color: ${Colors.lightGray300};
 `;
 
-const UserAnswer = styled.Text`
+const UserAnswer = styled(Text)`
   font-weight: 500;
   font-size: 12px;
   vertical-align: middle;

@@ -1,6 +1,7 @@
 import styled from 'styled-components/native';
 import userAvatar from '../../../../user-avatar';
 import Colors from '../../../../../constants/colors';
+import { Text } from '../../../../typography';
 
 const Card = styled.View`
   padding: 8px;
@@ -18,18 +19,18 @@ const MessageTopContainer = styled.View`
   flex-direction: row;
 `;
 
-const MessageAuthor = styled.Text`
+const MessageAuthor = styled(Text)`
   color: ${Colors.lightGray400};
   font-weight: 500;
 `;
 
-const MessageTimestamp = styled.Text`
+const MessageTimestamp = styled(Text)`
   color: ${Colors.lightGray200};
   padding-left: 8px;
   font-style: italic;
 `;
 
-const MessageContent = styled.Text`
+const MessageContent = styled(Text)`
   color: ${Colors.lightGray300};
 `;
 

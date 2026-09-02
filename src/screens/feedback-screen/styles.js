@@ -1,6 +1,7 @@
 import styled from 'styled-components/native';
 import { Slider } from '@miblanchard/react-native-slider';
 import Colors from '../../constants/colors';
+import { Text } from '../../components/typography';
 
 const ContainerView = styled.View`
   width: 100%;
@@ -20,7 +21,7 @@ const ContainerFeedbackCard = styled.View`
   gap: 16px;
 `;
 
-const Title = styled.Text`
+const Title = styled(Text)`
   color: ${Colors.white};
   font-size: 21px;
   font-size: 21px;
@@ -31,7 +32,7 @@ const Title = styled.Text`
   font-weight: 500;
 `;
 
-const Subtitle = styled.Text`
+const Subtitle = styled(Text)`
   color: ${Colors.white};
   font-size: 16px;
   text-align: center;
@@ -58,7 +59,7 @@ const StarsRatingTextContainer = styled.View`
   margin-bottom: 10%;
 `;
 
-const StarsRatingText = styled.Text`
+const StarsRatingText = styled(Text)`
   color: ${Colors.white};
 `;
 
@@ -74,7 +75,7 @@ const ThumbContainer = styled.View`
   right: 30px;
 `;
 
-const ThumbLabel = styled.Text`
+const ThumbLabel = styled(Text)`
   fontSize: 30px;
   text-align: center;
   color: ${Colors.white};
