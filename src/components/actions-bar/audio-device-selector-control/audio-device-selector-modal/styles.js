@@ -1,6 +1,7 @@
 import styled from 'styled-components/native';
 import { ActivityIndicator, Button, IconButton } from 'react-native-paper';
 import Colors from '../../../../constants/colors';
+import { Text } from '../../../typography';
 
 const ButtonCreate = styled(Button)`
 `;
@@ -25,7 +26,7 @@ const ButtonContainer = ({ loading, children }) => {
   );
 };
 
-const DeviceSelectorTitle = styled.Text`
+const DeviceSelectorTitle = styled(Text)`
   font-size: 18px;
   font-weight: 500;
   color: ${Colors.lightGray400};
@@ -41,7 +42,7 @@ const Container = styled.View`
   border-radius: 12px;
 `;
 
-const MissingPermission = styled.Text`
+const MissingPermission = styled(Text)`
   font-size: 14px;
   font-weight: 500;
   text-align: center;

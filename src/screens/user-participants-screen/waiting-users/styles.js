@@ -3,6 +3,7 @@ import { Divider } from 'react-native-paper';
 import Colors from '../../../constants/colors';
 import userAvatar from '../../../components/user-avatar';
 import iconButton from '../../../components/icon-button';
+import { Text } from '../../../components/typography';
 
 const ContainerView = styled.View`
   width: 100%;
@@ -30,7 +31,7 @@ const WaitingUsersTop = styled.View`
   padding: 12px;
 `;
 
-const WaitingUsersTopText = styled.Text`
+const WaitingUsersTopText = styled(Text)`
   font-size: 18px;
   font-weight: 500;
   color: ${Colors.white};
@@ -57,7 +58,7 @@ const WaitingUsersView = styled.View`
   `}
 `;
 
-const UserName = styled.Text`
+const UserName = styled(Text)`
   color: black;
   padding-left: 20px;
   font-size: 16px;
@@ -92,7 +93,7 @@ const AccRejContainer = styled.View`
   gap: 4px
 `;
 
-const NoPendingUsersText = styled.Text`
+const NoPendingUsersText = styled(Text)`
   font-size: 16px;
   font-weight: 500;
   font-style: italic;

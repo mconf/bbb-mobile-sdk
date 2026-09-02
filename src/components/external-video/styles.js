@@ -1,5 +1,6 @@
 import styled from 'styled-components/native';
 import Colors from '../../constants/colors';
+import { Text as BaseText } from '../typography';
 
 const Container = styled.View`
   display: flex;
@@ -17,7 +18,7 @@ const Card = styled.View`
   justify-content: center;
 `;
 
-const Text = styled.Text`
+const Text = styled(BaseText)`
   color: ${Colors.white};
   font-size: 24px;
   font-weight: 600;

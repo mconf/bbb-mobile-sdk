@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
-import { Text } from 'react-native';
 import IconButtonComponent from '../../icon-button';
 import ReactionsIcon from './reactions-icon';
 import Colors from '../../../constants/colors';
+import { Text } from '../../typography';
 
 const ReactionsButton = ({
   currentUserReaction, isOpen, accessibilityLabel, onPress

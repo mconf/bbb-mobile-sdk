@@ -1,6 +1,7 @@
 import styled from 'styled-components/native';
 import Colors from '../../constants/colors';
 import IconButtonComponent from '../icon-button';
+import { Text } from '../typography';
 
 const Background = styled.View`
   width: 52px;
@@ -85,7 +86,7 @@ const ImageContainer = styled.View`
   `}
 `;
 
-const UserName = styled.Text`
+const UserName = styled(Text)`
   color: ${Colors.white};
   font-size: 18px;
 

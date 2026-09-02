@@ -3,6 +3,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Pressable from '../../pressable';
 import Colors from '../../../constants/colors';
 import LayoutConstants from '../../../constants/layout';
+import { Text } from '../../typography';
 
 const BOTTOM_OFFSET = LayoutConstants.ACTIONS_BAR_COLLAPSED_HEIGHT + 10;
 
@@ -39,7 +40,7 @@ const ReactionButton = styled(Pressable).attrs(() => ({
   `}
 `;
 
-const Reaction = styled.Text`
+const Reaction = styled(Text)`
   font-size: 24px;
   line-height: 30px;
 `;

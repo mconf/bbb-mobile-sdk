@@ -3,6 +3,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { TouchableRipple } from 'react-native-paper';
 import { View } from 'react-native';
 import Colors from '../../../constants/colors';
+import { Text } from '../../typography';
 
 const ContainerPressable = styled(TouchableRipple)`
   display: flex;
@@ -30,7 +31,7 @@ const ScreenshareIconContainer = () => (
   </View>
 );
 
-const ScreenshareText = styled.Text`
+const ScreenshareText = styled(Text)`
   font-size: 16px;
   font-weight: 500;
   color: ${Colors.white};
