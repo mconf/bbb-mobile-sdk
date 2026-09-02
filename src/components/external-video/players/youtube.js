@@ -1,18 +1,32 @@
-import { forwardRef, useRef, useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet } from 'react-native';
+import {
+  forwardRef, useRef, useEffect, useImperativeHandle, useState,
+} from 'react';
+import {
+  SafeAreaView, StyleSheet, Dimensions, Platform,
+} from 'react-native';
 import { WebView } from 'react-native-webview';
-import { Dimensions } from 'react-native';
+import { useSelector } from 'react-redux';
+import Slider from '@react-native-community/slider';
+import { MaterialIcons } from '@expo/vector-icons';
 import Styled from './styles';
 import Colors from '../../../constants/colors';
-import Slider from '@react-native-community/slider';
-import { Platform } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+import logger from '../../../services/logger';
 
 const { width } = Dimensions.get('window');
 
+// YouTube's embedded player refuses to load (error 153, "Video player
+// configuration error") when the embedding page has no https origin/Referer.
+// Inline HTML in a WebView has a null origin, so the page must be given a
+// `baseUrl`. We use the meeting host, mirroring what the web client sends.
+const FALLBACK_EMBED_ORIGIN = 'https://www.youtube.com';
+// Same host the web client (mconf-live) uses for its YouTube embeds.
+const YOUTUBE_EMBED_HOST = 'https://www.youtube-nocookie.com';
+
 // TODO: make the overlay into a component
 // that controls volume/restart/fullscreen independent of player type
-const YoutubePlayer = forwardRef(({ url, playing, playerCurrentTime, isPresenter }, ref) => {
+const YoutubePlayer = forwardRef(({
+  url, playing, playerCurrentTime, isPresenter,
+}, ref) => {
   const webViewRef = useRef();
   const [ready, setReady] = useState(false);
   const videoId = url.split('v=')[1]?.split('&')[0] || url.split('/').pop();
@@ -20,11 +34,13 @@ const YoutubePlayer = forwardRef(({ url, playing, playerCurrentTime, isPresenter
   const [volume, setVolume] = useState(0);
   const [muted, setMuted] = useState(true);
   const volumeInitialized = useRef(false);
+  const host = useSelector((state) => state.client.meetingData.host);
+  const embedOrigin = host ? `https://${host}` : FALLBACK_EMBED_ORIGIN;
 
   const [webViewKey, setWebViewKey] = useState(0);
 
   const handleRefreshPlayer = () => {
-    setWebViewKey(prev => prev + 1);
+    setWebViewKey((prev) => prev + 1);
     setReady(false);
     volumeInitialized.current = false;
   };
@@ -45,7 +61,7 @@ const YoutubePlayer = forwardRef(({ url, playing, playerCurrentTime, isPresenter
     }
 
     const script = commands
-      .map(cmd => `try { ${cmd} } catch(e) {}`)
+      .map((cmd) => `try { ${cmd} } catch(e) {}`)
       .join('\n');
 
     webViewRef.current.injectJavaScript(`
@@ -61,7 +77,7 @@ const YoutubePlayer = forwardRef(({ url, playing, playerCurrentTime, isPresenter
   }, [volume, ready]);
 
   useEffect(() => {
-    if (!ready || volumeInitialized.current) return;
+    if (!ready || volumeInitialized.current) return undefined;
 
     const timeout = setTimeout(() => {
       setVolume(50);
@@ -71,6 +87,14 @@ const YoutubePlayer = forwardRef(({ url, playing, playerCurrentTime, isPresenter
 
     return () => clearTimeout(timeout);
   }, [ready, volume]);
+
+  useImperativeHandle(ref, () => ({
+    seekTo: (sec) => webViewRef.current?.injectJavaScript(
+      `try { player.seekTo(${sec}, true); } catch (e) {} true;`,
+    ),
+    play: () => webViewRef.current?.injectJavaScript('try { player.playVideo(); } catch (e) {} true;'),
+    pause: () => webViewRef.current?.injectJavaScript('try { player.pauseVideo(); } catch (e) {} true;'),
+  }));
 
   const toggleMuteIOS = () => {
     const newMuted = !muted;
@@ -82,6 +106,90 @@ const YoutubePlayer = forwardRef(({ url, playing, playerCurrentTime, isPresenter
     `);
   };
 
+  const handleMessage = (event) => {
+    try {
+      const msg = JSON.parse(event.nativeEvent.data);
+      if (msg.type === 'ready') setReady(true);
+      if (msg.type === 'error') {
+        logger.warn({
+          logCode: 'external_video_youtube_player_error',
+          extraInfo: { errorCode: msg.code, videoId },
+        }, `YouTube player error ${msg.code}`);
+      }
+    } catch {
+      // ignore non-JSON messages from the page
+    }
+  };
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta name="referrer" content="strict-origin-when-cross-origin">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+      </head>
+      <body style="margin:0;margin-top:102px;padding:0;background-color:black;">
+        <div id="player"></div>
+        <script>
+          var tag = document.createElement('script');
+          tag.src = "https://www.youtube.com/iframe_api";
+          var firstScriptTag = document.getElementsByTagName('script')[0];
+          firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+          var player;
+          function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+              host: '${YOUTUBE_EMBED_HOST}',
+              height: '${width}',
+              width: '100%',
+              videoId: '${videoId}',
+              playerVars: {
+                'autoplay': 0,
+                'controls': 0,
+                'playsinline': 1,
+                'modestbranding': 1,
+                'rel': 0,
+                'mute': 1,
+                'origin': '${embedOrigin}',
+              },
+              events: {
+                'onReady': onPlayerReady,
+                'onError': onPlayerError
+              }
+            });
+          }
+
+          function onPlayerReady(event) {
+            window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'ready' }));
+          }
+
+          function onPlayerError(event) {
+            window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'error', code: event.data }));
+          }
+
+          document.addEventListener('message', function(e) {
+            var data = JSON.parse(e.data);
+            if (player) {
+              if (data.type === 'play') player.playVideo();
+              if (data.type === 'pause') player.pauseVideo();
+              if (data.type === 'seek') player.seekTo(data.time, true);
+              if (data.type === 'volume') {
+                player.setVolume(data.volume);
+                if (data.volume > 0) player.unMute();
+              }
+              if (data.type === 'unmute') {
+                player.unMute();
+              }
+              if (data.type === 'mute') {
+                player.mute();
+              }
+            }
+          });
+        </script>
+      </body>
+    </html>
+  `;
+
   return (
     <Styled.Container>
       <SafeAreaView style={styles.safe}>
@@ -92,78 +200,15 @@ const YoutubePlayer = forwardRef(({ url, playing, playerCurrentTime, isPresenter
           javaScriptEnabled
           allowsInlineMediaPlayback
           mediaPlaybackRequiresUserAction={false}
-          source={{
-            html: `
-              <!DOCTYPE html>
-              <html>
-                <body style="margin:0;margin-top:102px;padding:0;background-color:black;">
-                  <div id="player"></div>
-                  <script>
-                    var tag = document.createElement('script');
-                    tag.src = "https://www.youtube.com/iframe_api";
-                    var firstScriptTag = document.getElementsByTagName('script')[0];
-                    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-                    var player;
-                    function onYouTubeIframeAPIReady() {
-                      player = new YT.Player('player', {
-                        height: '${width}',
-                        width: '100%',
-                        videoId: '${videoId}',
-                        playerVars: {
-                        'autoplay': 0,
-                        'controls': 0,
-                        'playsinline': 1,
-                        'modestbranding': 1,
-                        'rel': 0,
-                        'mute': 1,
-                        },
-                        events: {
-                          'onReady': onPlayerReady
-                        }
-                      });
-                    }
-
-                    function onPlayerReady(event) {
-                      window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'ready' }));
-                    }
-
-                    document.addEventListener('message', function(e) {
-                      var data = JSON.parse(e.data);
-                      if (player) {
-                        if (data.type === 'play') player.playVideo();
-                        if (data.type === 'pause') player.pauseVideo();
-                        if (data.type === 'seek') player.seekTo(data.time, true);
-                        if (data.type === 'volume') {
-                          player.setVolume(data.volume);
-                          if (data.volume > 0) player.unMute();
-                        }
-                        if (data.type === 'unmute') {
-                          player.unMute();
-                        }
-                        if (data.type === 'mute') {
-                          player.mute();
-                        }
-                      }
-                    });
-                  </script>
-                </body>
-              </html>
-            `
-          }}
-          onMessage={event => {
-            try {
-              const msg = JSON.parse(event.nativeEvent.data);
-              if (msg.type === 'ready') setReady(true);
-            } catch { }
-          }}
+          source={{ html, baseUrl: embedOrigin }}
+          onMessage={handleMessage}
         />
         {!isPresenter && (
           <>
             <Styled.Overlay
               pointerEvents="auto"
-              onTouchStart={() => setShowVolume(v => !v)}
-              onClick={() => setShowVolume(v => !v)}
+              onTouchStart={() => setShowVolume((v) => !v)}
+              onClick={() => setShowVolume((v) => !v)}
             />
 
             <Styled.RestartIcon
@@ -199,7 +244,7 @@ const YoutubePlayer = forwardRef(({ url, playing, playerCurrentTime, isPresenter
           </>
         )}
       </SafeAreaView>
-    </Styled.Container >
+    </Styled.Container>
   );
 });
 
