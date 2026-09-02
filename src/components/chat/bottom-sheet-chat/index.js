@@ -11,6 +11,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { FlatList } from 'react-native-gesture-handler';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import Colors from '../../../constants/colors';
 import { useBottomSheetBackHandler } from '../../../hooks/useBottomSheetBackHandler';
@@ -22,6 +23,7 @@ import Styled from './styles';
 
 const BottomSheetChat = () => {
   const height = useHeaderHeight();
+  const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const { data } = useSubscription(Queries.CHAT_MESSAGE_PUBLIC_SUB);
   const [dispatchSendMessage] = useMutation(Queries.SEND_MESSAGE_MUTATION);
@@ -89,6 +91,7 @@ const BottomSheetChat = () => {
         onChange={handleSheetChanges}
         enablePanDownToClose
         enableDynamicSizing={false}
+        topInset={insets.top}
         style={topShadowStyle}
       >
         {renderEmptyChatHandler()}
