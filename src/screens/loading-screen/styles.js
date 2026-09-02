@@ -1,6 +1,7 @@
 import { ActivityIndicator } from 'react-native-paper';
 import styled from 'styled-components/native';
 import Colors from '../../constants/colors';
+import { Text } from '../../components/typography';
 
 const ContainerView = styled.View`
   width: 100%;
@@ -12,7 +13,7 @@ const ContainerView = styled.View`
   padding: 24px;
 `;
 
-const TitleText = styled.Text`
+const TitleText = styled(Text)`
   font-size: 24px;
   font-weight: 500;
   text-align: center;

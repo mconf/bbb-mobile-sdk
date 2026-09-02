@@ -2,6 +2,7 @@ import styled from 'styled-components/native';
 import { TouchableRipple } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
 import Colors from '../../constants/colors';
+import { Text as BaseText } from '../typography';
 
 const Container = styled.View`
   display: flex;
@@ -24,7 +25,7 @@ const TextContainer = styled.View`
   align-self: flex-end;
 `;
 
-const Text = styled.Text`
+const Text = styled(BaseText)`
   color: ${Colors.white};
   font-size: 14px;
   font-weight: 600;

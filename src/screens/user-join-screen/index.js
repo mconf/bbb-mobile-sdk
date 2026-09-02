@@ -1,6 +1,5 @@
 import { useMutation, useSubscription } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
-import { Text } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect } from 'react';
@@ -14,6 +13,7 @@ import {
 import { disconnectLiveKitRoom } from '../../services/livekit';
 import logger from '../../services/logger';
 import Styled from './styles';
+import { Text } from '../../components/typography';
 
 const UserJoinScreen = () => {
   const navigation = useNavigation();

@@ -1,6 +1,7 @@
 import styled from 'styled-components/native';
 import { Divider } from 'react-native-paper';
 import Colors from '../../constants/colors';
+import { Text } from '../../components/typography';
 
 const Container = styled.View`
   width: 100%;
@@ -30,14 +31,14 @@ const TimerBody = styled.View`
   align-items: center;
 `;
 
-const TimerText = styled.Text`
+const TimerText = styled(Text)`
   font-size: 18px;
   font-weight: 500;
   color: ${Colors.white};
   padding-left: 12px;
 `;
 
-const TimerValue = styled.Text`
+const TimerValue = styled(Text)`
   font-size: 24px;
   font-weight: bold;
   color: ${Colors.lightGray400};

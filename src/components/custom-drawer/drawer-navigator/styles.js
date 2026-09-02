@@ -2,7 +2,9 @@ import styled from 'styled-components/native';
 import Icon from '@expo/vector-icons/MaterialIcons';
 import iconButton from '../../icon-button';
 import Colors from '../../../constants/colors';
+import Fonts from '../../../constants/fonts';
 import Tag from '../../tag';
+import { Text } from '../../typography';
 
 const DrawerIcon = styled(iconButton)`
   position: absolute;
@@ -30,7 +32,7 @@ const HeaderTitleContainer = styled.View`
   gap: 10px;
 `;
 
-const HeaderTitleText = styled.Text`
+const HeaderTitleText = styled(Text)`
   color: ${Colors.white};
   text-align: center;
   font-size: 20px;
@@ -69,6 +71,7 @@ const ScreenOptions = {
     textAlignVertical: 'center',
     paddingLeft: 12,
     fontSize: 16,
+    fontFamily: Fonts.regular,
     fontWeight: '400',
     lineHeight: 18,
   },

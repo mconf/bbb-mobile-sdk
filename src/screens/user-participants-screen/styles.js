@@ -5,6 +5,7 @@ import userAvatar from '../../components/user-avatar';
 import Colors from '../../constants/colors';
 import Pressable from '../../components/pressable';
 import iconButton from '../../components/icon-button';
+import { Text } from '../../components/typography';
 
 const ContainerView = styled.View`
   width: 100%;
@@ -41,7 +42,7 @@ const CardPressable = styled(Pressable).attrs(() => ({
   `}
 `;
 
-const UserName = styled.Text`
+const UserName = styled(Text)`
   color: black;
   padding-left: 20px;
   font-size: 16px;
@@ -79,7 +80,7 @@ const GuestPolicyIcon = styled(iconButton)`
   right: 0px;
 `;
 
-const GuestPolicyText = styled.Text`
+const GuestPolicyText = styled(Text)`
   font-size: 18px;
   font-weight: 500;
   color: ${Colors.white};

@@ -1,6 +1,7 @@
 import styled from 'styled-components/native';
 import Colors from '../../../../constants/colors';
 import textInput from '../../../../components/text-input';
+import { Text } from '../../../../components/typography';
 
 const Container = styled.Pressable`
   display: flex;
@@ -14,14 +15,14 @@ const InsideContainer = styled.Pressable`
   padding: 24px;
 `;
 
-const SecretLabel = styled.Text`
+const SecretLabel = styled(Text)`
   font-weight: 500;
   font-size: 12px;
   text-align: center;
   font-style: italic;
 `;
 
-const Title = styled.Text`
+const Title = styled(Text)`
   font-size: 20px;
   font-weight: 500;
   text-align: center;

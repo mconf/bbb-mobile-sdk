@@ -1,12 +1,13 @@
 import styled from 'styled-components/native';
 import { StyleSheet } from 'react-native';
 import textInput from '../../text-input';
+import { Text } from '../../typography';
 
 const FlatList = styled.FlatList`
   width: 100%;
 `;
 
-const NoMessageText = styled.Text`
+const NoMessageText = styled(Text)`
   font-size: 24px;
   text-align: center;
   padding: 8px;
