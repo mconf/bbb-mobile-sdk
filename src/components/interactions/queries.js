@@ -9,8 +9,8 @@ const USER_CURRENT_RAISE_HAND_SUBSCRIPTION = gql`
 `;
 
 const SET_RAISE_HAND = gql`
-  mutation UserSetRaiseHand($raiseHand: Boolean!, $userId: String) {
-    userSetRaiseHand(raiseHand: $raiseHand, userId: $userId)
+  mutation UserSetRaiseHand($userId: String, $raiseHand: Boolean!) {
+    userSetRaiseHand(userId: $userId, raiseHand: $raiseHand)
   }
 `;
 
