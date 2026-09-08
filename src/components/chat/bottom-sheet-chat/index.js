@@ -1,4 +1,4 @@
-import { useMutation, useSubscription } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import BottomSheet from '@gorhom/bottom-sheet';
 import { useHeaderHeight } from '@react-navigation/elements';
 import {
@@ -16,6 +16,7 @@ import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { useDispatch, useSelector } from 'react-redux';
 import Colors from '../../../constants/colors';
 import useChat from '../../../graphql/hooks/useChat';
+import useChatMessagePages from '../../../graphql/hooks/useChatMessagePages';
 import useCurrentUser from '../../../graphql/hooks/useCurrentUser';
 import useMeetingSettings from '../../../graphql/local-states/useMeetingSettings';
 import { useBottomSheetBackHandler } from '../../../hooks/useBottomSheetBackHandler';
@@ -39,21 +40,22 @@ import { getFirstLine } from './service';
 import Styled from './styles';
 
 const FOCUS_HIGHLIGHT_DURATION = 1000;
+// The web client's size, so the sequence-to-page arithmetic matches on both.
+const PAGE_SIZE = 50;
+const PAGES_AT_TAIL = 2;
+const PENDING_FOCUS_TIMEOUT = 5000;
+const SCROLL_RETRY_DELAY = 250;
+const SCROLL_RETRY_LIMIT = 5;
 
 const BottomSheetChat = () => {
   const height = useHeaderHeight();
   const { t } = useTranslation();
-  const { data } = useSubscription(Queries.CHAT_MESSAGE_PUBLIC_SUB);
   const [dispatchSendMessage] = useMutation(Queries.SEND_MESSAGE_MUTATION);
   const [dispatchEditMessage] = useMutation(Queries.EDIT_MESSAGE_MUTATION);
   const [dispatchDeleteMessage] = useMutation(Queries.DELETE_MESSAGE_MUTATION);
   const [dispatchSendReaction] = useMutation(Queries.SEND_REACTION_MUTATION);
   const [dispatchDeleteReaction] = useMutation(Queries.DELETE_REACTION_MUTATION);
   const [dispatchSetPinned] = useMutation(Queries.SET_PINNED_MUTATION);
-  const messages = data?.chat_message_public;
-  // Read by callbacks that must stay stable while messages keep arriving.
-  const messagesRef = useRef(messages);
-  messagesRef.current = messages;
 
   const sheetRef = useRef(null);
   const flatListRef = useRef(null);
@@ -69,6 +71,11 @@ const BottomSheetChat = () => {
   const [replyingToMessage, setReplyingToMessage] = useState(null);
   const [focusedMessageId, setFocusedMessageId] = useState(null);
   const focusTimeoutRef = useRef(null);
+  const scrollRetryRef = useRef({ index: null, attempts: 0 });
+  const scrollRetryTimeoutRef = useRef(null);
+  // How far back the user has walked. Null means the tail.
+  const [loadedBackUntilPage, setLoadedBackUntilPage] = useState(null);
+  const [pendingFocusSequence, setPendingFocusSequence] = useState(null);
   // What was typed when the edit started, so cancelling puts it back. Null means
   // no edit has taken the input over, which is how the web client tracks it too.
   const draftBeforeEditingRef = useRef(null);
@@ -100,6 +107,45 @@ const BottomSheetChat = () => {
   const canUnpinMessages = isPinChatMessageEnabled && !!amIModerator;
   const canPinMessages = canUnpinMessages
     && (meetingSettings?.public?.chat?.toolbar ?? []).includes('pin');
+
+  // Pages count from the start of the chat, so a sequence tells which page holds it.
+  const totalMessages = publicChat?.totalMessages ?? 0;
+  const totalPages = Math.ceil(totalMessages / PAGE_SIZE);
+  const lastPage = totalPages - 1;
+  const tailFirstPage = Math.max(totalPages - PAGES_AT_TAIL, 0);
+  const firstPage = Math.min(loadedBackUntilPage ?? tailFirstPage, Math.max(lastPage, 0));
+  // The tail moves on every fiftieth message; while the sheet is open the range must
+  // not follow it, or a page the reader scrolled into is pulled out from under the
+  // list. Open it only grows backwards; closed it tracks the tail again.
+  useEffect(() => {
+    if (!isBottomChatOpen) {
+      return;
+    }
+
+    setLoadedBackUntilPage((previous) => (
+      previous === null ? tailFirstPage : Math.min(previous, tailFirstPage)
+    ));
+  }, [isBottomChatOpen, tailFirstPage]);
+  const { messages: oldestFirstMessages, loading: loadingPages } = useChatMessagePages({
+    firstPage,
+    lastPage,
+    pageSize: PAGE_SIZE,
+  });
+  // The list is rotated 180 degrees, so it is fed newest first. That also lands a
+  // page of history at the end of the array, growing it away from the scroll offset.
+  const messages = useMemo(() => [...oldestFirstMessages].reverse(), [oldestFirstMessages]);
+  // Read by callbacks that must stay stable while messages keep arriving.
+  const messagesRef = useRef(messages);
+  messagesRef.current = messages;
+  const firstPageRef = useRef(firstPage);
+  firstPageRef.current = firstPage;
+  const tailFirstPageRef = useRef(tailFirstPage);
+  tailFirstPageRef.current = tailFirstPage;
+  const loadingPagesRef = useRef(loadingPages);
+  loadingPagesRef.current = loadingPages;
+  // onEndReached also fires while the list is still filling itself, before the sheet
+  // has been touched, so only a drag counts as asking for history.
+  const hasDraggedRef = useRef(false);
 
   // Re-resolved from the subscription so the menu closes itself if the message is
   // deleted from under it, falling back to the message as it was opened: the
@@ -232,24 +278,9 @@ const BottomSheetChat = () => {
     setReplyingToMessage(null);
   }, []);
 
-  // Addressed by sequence, as on the web client. Only what the subscription holds
-  // can be reached, so the quote is inert until the list is paginated.
-  const handleFocusMessage = useCallback((messageSequence) => {
-    if (messageSequence == null) {
-      return;
-    }
-
-    const loadedMessages = messagesRef.current ?? [];
-    const index = loadedMessages.findIndex(
-      (message) => message.messageSequence === messageSequence
-    );
-
-    if (index === -1) {
-      return;
-    }
-
-    flatListRef.current?.scrollToIndex({ index, viewPosition: 0.5, animated: true });
-    setFocusedMessageId(loadedMessages[index].messageId);
+  // Re-armed on every retry below: a distant target outlasts the highlight.
+  const highlightMessage = useCallback((messageId) => {
+    setFocusedMessageId(messageId);
     clearTimeout(focusTimeoutRef.current);
     focusTimeoutRef.current = setTimeout(
       () => setFocusedMessageId(null),
@@ -257,21 +288,115 @@ const BottomSheetChat = () => {
     );
   }, []);
 
-  // Without getItemLayout, a target that is not laid out yet would throw.
+  const scrollToMessage = useCallback((messageSequence) => {
+    const loadedMessages = messagesRef.current ?? [];
+    const index = loadedMessages.findIndex(
+      (message) => message.messageSequence === messageSequence
+    );
+
+    if (index === -1) {
+      return false;
+    }
+
+    scrollRetryRef.current = { index: null, attempts: 0 };
+    flatListRef.current?.scrollToIndex({ index, viewPosition: 0.5, animated: true });
+    highlightMessage(loadedMessages[index].messageId);
+    return true;
+  }, [highlightMessage]);
+
+  // Addressed by sequence, which is also what says where it lives: count+1 at insert
+  // time, so it lines up with the offset. A target further back pulls its page in.
+  const handleFocusMessage = useCallback((messageSequence) => {
+    if (messageSequence == null || scrollToMessage(messageSequence)) {
+      return;
+    }
+
+    const targetPage = Math.max(Math.ceil(messageSequence / PAGE_SIZE) - 1, 0);
+
+    // Armed either way: the page may be subscribed and not have delivered yet.
+    setPendingFocusSequence(messageSequence);
+
+    if (targetPage < firstPageRef.current) {
+      setLoadedBackUntilPage(targetPage);
+    }
+  }, [scrollToMessage]);
+
+  useEffect(() => {
+    if (pendingFocusSequence !== null && scrollToMessage(pendingFocusSequence)) {
+      setPendingFocusSequence(null);
+    }
+  }, [messages, pendingFocusSequence, scrollToMessage]);
+
+  // Given up on, so a target that never arrives cannot scroll the list later.
+  useEffect(() => {
+    if (pendingFocusSequence === null) {
+      return undefined;
+    }
+
+    const timeout = setTimeout(() => setPendingFocusSequence(null), PENDING_FOCUS_TIMEOUT);
+
+    return () => clearTimeout(timeout);
+  }, [pendingFocusSequence]);
+
+  // On a rotated list the end of the data is the top of the screen. It fires
+  // repeatedly, hence the guard.
+  const handleLoadOlderMessages = useCallback(() => {
+    if (!hasDraggedRef.current || loadingPagesRef.current) {
+      return;
+    }
+
+    setLoadedBackUntilPage((previous) => {
+      const current = previous ?? tailFirstPageRef.current;
+
+      return current > 0 ? current - 1 : current;
+    });
+  }, []);
+
+  // Without getItemLayout, a target that is not laid out yet would throw. The offset
+  // it falls back to is estimated from what happens to be rendered, so it lands near
+  // the target; once the list has settled the row exists and the index can be asked
+  // for again.
   const handleScrollToIndexFailed = useCallback(({ index, averageItemLength }) => {
     flatListRef.current?.scrollToOffset({
       offset: index * averageItemLength,
       animated: true,
     });
-  }, []);
 
-  useEffect(() => () => clearTimeout(focusTimeoutRef.current), []);
+    const { index: lastIndex, attempts } = scrollRetryRef.current;
+    const attempt = lastIndex === index ? attempts + 1 : 1;
+
+    scrollRetryRef.current = { index, attempts: attempt };
+
+    // Bounded: the retry can fail the same way.
+    if (attempt > SCROLL_RETRY_LIMIT) {
+      return;
+    }
+
+    clearTimeout(scrollRetryTimeoutRef.current);
+    scrollRetryTimeoutRef.current = setTimeout(() => {
+      const target = messagesRef.current?.[index];
+
+      flatListRef.current?.scrollToIndex({ index, viewPosition: 0.5, animated: true });
+
+      if (target) {
+        highlightMessage(target.messageId);
+      }
+    }, SCROLL_RETRY_DELAY);
+  }, [highlightMessage]);
+
+  useEffect(() => () => {
+    clearTimeout(focusTimeoutRef.current);
+    clearTimeout(scrollRetryTimeoutRef.current);
+  }, []);
 
   const handleSheetChanges = useCallback((index) => {
     if (index === -1) {
       setOpenedMessage(null);
       setReactingToMessageId(null);
       setFocusedMessageId(null);
+      setPendingFocusSequence(null);
+      setLoadedBackUntilPage(null);
+      hasDraggedRef.current = false;
       handleCancelReplying();
       handleCancelEditing();
       dispatch(setBottomChatOpen(false));
@@ -568,7 +693,9 @@ const BottomSheetChat = () => {
   ]);
 
   const renderEmptyChatHandler = () => {
-    if (messages?.length !== 0) {
+    // Waits for the chat row: a count of zero is only meaningful once it arrives,
+    // and the loaded pages are empty while they are in flight.
+    if (!publicChat || totalMessages !== 0) {
       return null;
     }
     return <Styled.NoMessageText>{t('mobileSdk.chat.isEmptyLabel')}</Styled.NoMessageText>;
@@ -609,7 +736,10 @@ const BottomSheetChat = () => {
           data={messages}
           updateCellsBatchingPeriod={500}
           renderItem={renderItem}
-          keyExtractor={(item) => item.createdAt}
+          keyExtractor={(item) => item.messageId}
+          onScrollBeginDrag={() => { hasDraggedRef.current = true; }}
+          onEndReached={handleLoadOlderMessages}
+          onEndReachedThreshold={0.5}
           onScrollToIndexFailed={handleScrollToIndexFailed}
           style={Styled.styles.list}
         />

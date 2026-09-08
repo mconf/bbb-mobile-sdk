@@ -39,22 +39,29 @@ const acquire = (client, document, variables, variablesKey) => {
   const entry = { count: 1, result, subscription: null };
 
   byVariables.set(variablesKey, entry);
+  // A terminated observable must not be handed out again: whoever mounts next
+  // gets a subscription of its own instead of a dead one.
+  const forget = () => {
+    if (byVariables.get(variablesKey) === entry) {
+      byVariables.delete(variablesKey);
+    }
+  };
+
   entry.subscription = client.subscribe({ query: document, variables }).subscribe({
     next: ({ data }) => result({ data: data ?? null, loading: false, error: null }),
-    error: (error) => result({ ...result(), loading: false, error }),
+    error: (error) => {
+      result({ ...result(), loading: false, error });
+      forget();
+    },
+    complete: forget,
   });
 
   return entry;
 };
 
-const release = (client, document, variablesKey) => {
-  const byVariables = subscriptions.get(client)?.get(document);
-  const entry = byVariables?.get(variablesKey);
-
-  if (!entry) {
-    return;
-  }
-
+// Takes the entry that was acquired: since forget() can drop one, the key may hold
+// a later entry, and releasing by key would unsubscribe it under its own consumers.
+const release = (client, document, variablesKey, entry) => {
   entry.count -= 1;
 
   if (entry.count > 0) {
@@ -62,7 +69,12 @@ const release = (client, document, variablesKey) => {
   }
 
   entry.subscription?.unsubscribe();
-  byVariables.delete(variablesKey);
+
+  const byVariables = subscriptions.get(client)?.get(document);
+
+  if (byVariables?.get(variablesKey) === entry) {
+    byVariables.delete(variablesKey);
+  }
 };
 
 const useDeduplicatedSubscription = (document, options) => {
@@ -79,9 +91,11 @@ const useDeduplicatedSubscription = (document, options) => {
       return undefined;
     }
 
-    setResult(() => acquire(client, document, variables, variablesKey).result);
+    const entry = acquire(client, document, variables, variablesKey);
 
-    return () => release(client, document, variablesKey);
+    setResult(() => entry.result);
+
+    return () => release(client, document, variablesKey, entry);
   }, [client, document, variablesKey, skip]);
 
   return useReactiveVar(result);
