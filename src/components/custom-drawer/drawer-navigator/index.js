@@ -62,6 +62,9 @@ const DrawerNavigator = ({
   const recordPolicies = meetingData?.meeting[0]?.recordingPolicies;
   const recordingEnabled = recordPolicies?.record;
   const isBreakout = meetingData?.meeting[0]?.isBreakout;
+  // The shared notes screen has nothing to show until akka-apps has created the
+  // pad for this meeting.
+  const hasSharedNotes = meetingData?.meeting[0]?.componentsFlags?.hasSharedNotes;
   const { data: userData } = useCurrentUser();
   const amIModerator = userData?.user_current[0]?.isModerator;
   const { data: currentUserCount } = useUserCount();
@@ -284,6 +287,9 @@ const DrawerNavigator = ({
             drawerLabelStyle: {
               fontWeight: '400', fontSize: 16, paddingLeft: 12
             },
+            // Hidden rather than unregistered: removing the route would drop it
+            // from under the user if it is the focused screen.
+            drawerItemStyle: hasSharedNotes ? undefined : { display: 'none' },
             drawerIcon: (config) => (
               <Styled.IconMaterial name="notes" size={24} color={config.color} />
             ),

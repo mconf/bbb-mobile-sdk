@@ -8,7 +8,11 @@ const MEETING_SUBSCRIPTION = gql`
         lockSettings {
           disableCam
           disableMic
+          disableNotes
           webcamsOnlyForModerator
+        }
+        componentsFlags {
+          hasSharedNotes
         }
         name
         isBreakout

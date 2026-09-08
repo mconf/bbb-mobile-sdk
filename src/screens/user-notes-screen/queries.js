@@ -1,27 +1,18 @@
 import { gql } from '@apollo/client';
 
-const CREATE_SESSION = gql`
-  mutation createSession($externalId: String!) {
-    sharedNotesCreateSession(
-      sharedNotesExtId: $externalId
-    )
-  }
-`;
-
-const PAD_SESSION_SUBSCRIPTION = gql`
-subscription padSession {
-  sharedNotes_session {
-    sessionId
-    sharedNotesExtId
-    padId
-    sharedNotes {
+// A subscription rather than the web's `useQuery`: this screen mounts on drawer
+// focus, possibly before akka-apps has created the pad.
+const SHARED_NOTES_SUBSCRIPTION = gql`
+  subscription sharedNotes($externalId: String!) {
+    sharedNotes(where: { sharedNotesExtId: { _eq: $externalId } }) {
       padId
+      sharedNotesExtId
+      sharedNotesEditor
+      lastUpdatedAt
     }
   }
-}
 `;
 
 export default {
-  CREATE_SESSION,
-  PAD_SESSION_SUBSCRIPTION
+  SHARED_NOTES_SUBSCRIPTION,
 };
