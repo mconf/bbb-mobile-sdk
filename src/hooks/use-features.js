@@ -37,8 +37,20 @@ export const useIsEmojiRainEnabled = () => {
     && animations;
 };
 
+export const useIsChatMessageReactionsEnabled = () => {
+  const { disabledFeatures, loading } = useDisabledFeatures();
+  const [meetingSettings] = useMeetingSettings();
+
+  const chatToolbar = meetingSettings?.public?.chat?.toolbar ?? [];
+
+  return !loading
+    && disabledFeatures.indexOf('chatMessageReactions') === -1
+    && chatToolbar.includes('reactions');
+};
+
 export default {
   useDisabledFeatures,
   useIsUserReactionsEnabled,
   useIsEmojiRainEnabled,
+  useIsChatMessageReactionsEnabled,
 };

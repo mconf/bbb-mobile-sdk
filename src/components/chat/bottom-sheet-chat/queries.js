@@ -1,26 +1,5 @@
 import { gql } from '@apollo/client';
-
-const CHAT_MESSAGE_PUBLIC_SUB = gql`
-  subscription chatMessages {
-    chat_message_public(limit: 20, order_by: {createdAt: desc}) {
-      chatId
-      chatEmphasizedText
-      correlationId
-      createdAt
-      message
-      messageId
-      messageType
-      senderId
-      senderName
-      senderRole
-      messageMetadata
-      user {
-        avatar
-        color
-      }
-    }
-  }
-`;
+import CHAT_MESSAGE_PUBLIC_SUB from '../../../graphql/queries/chatMessagePublicSubscription';
 
 const SEND_MESSAGE_MUTATION = gql`
   mutation chatSendMessage($chatId: String!, $chatMessageInMarkdownFormat: String!) {
@@ -31,7 +10,29 @@ const SEND_MESSAGE_MUTATION = gql`
   }
 `;
 
+const SEND_REACTION_MUTATION = gql`
+  mutation chatSendMessageReaction($chatId: String!, $messageId: String!, $reactionEmoji: String!) {
+    chatSendMessageReaction(
+      chatId: $chatId,
+      messageId: $messageId,
+      reactionEmoji: $reactionEmoji
+    )
+  }
+`;
+
+const DELETE_REACTION_MUTATION = gql`
+  mutation chatDeleteMessageReaction($chatId: String!, $messageId: String!, $reactionEmoji: String!) {
+    chatDeleteMessageReaction(
+      chatId: $chatId,
+      messageId: $messageId,
+      reactionEmoji: $reactionEmoji
+    )
+  }
+`;
+
 export default {
   CHAT_MESSAGE_PUBLIC_SUB,
-  SEND_MESSAGE_MUTATION
+  SEND_MESSAGE_MUTATION,
+  SEND_REACTION_MUTATION,
+  DELETE_REACTION_MUTATION
 };
