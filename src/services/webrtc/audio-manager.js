@@ -48,6 +48,9 @@ class AudioManager {
     this.iceServers = null;
     this.isListenOnly = false;
     this._livekitBridge = null;
+    // Tracks a bridge's in-flight stop() so a new bridge is never started
+    // while the previous one is still tearing down (see _joinAudio/exitAudio).
+    this._pendingStop = null;
   }
 
   get bridge() {
@@ -382,14 +385,22 @@ class AudioManager {
     }
   }
 
-  _joinAudio(callOptions = {}) {
+  async _joinAudio(callOptions = {}) {
     if (!this.initialized) throw new TypeError('Audio manager is not ready');
 
     // There's a stale bridge here. Tear it down and start again.
     if (this.bridge) {
       this._deattachProgressListeners(this.bridge);
-      this.bridge.stop();
+      this._pendingStop = this.bridge.stop();
       this.bridge = null;
+    }
+
+    // Never start a new bridge while the previous one is still mid-teardown -
+    // both would concurrently drive the same singleton LiveKit room/participant
+    // (setMicrophoneEnabled/publish/unpublish), which is unsafe.
+    if (this._pendingStop) {
+      await this._pendingStop;
+      this._pendingStop = null;
     }
 
     this.bridge = this._initializeBridge(callOptions);
@@ -433,7 +444,7 @@ class AudioManager {
     }
 
     store.dispatch(setIsHangingUp(true));
-    this.bridge.stop();
+    this._pendingStop = this.bridge.stop();
     this.bridge = null;
   }
 
