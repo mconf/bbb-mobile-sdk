@@ -260,6 +260,12 @@ const BBBLiveKitRoom = ({ children }) => {
       // Non-final disconnect (do NOT destroy the media managers). Once the room
       // is Disconnected, the connect effect above re-fires and re-establishes the
       // room; resetting the audio flags lets it re-run joinAudio to republish mic.
+      // Tear the audio bridge down through AudioManager (rather than leaving it
+      // dangling on the singleton room until the next joinAudio call) so its
+      // stop() is tracked and awaited before a new bridge is started.
+      // No-op if there's no live bridge (e.g. audioBridge isn't 'livekit').
+      AudioManager.exitAudio();
+
       liveKitRoom.disconnect()
         .then(() => {
           dispatch(setIsConnected(false));
