@@ -48,6 +48,17 @@ export const useIsChatMessageReactionsEnabled = () => {
     && chatToolbar.includes('reactions');
 };
 
+export const useIsReplyChatMessageEnabled = () => {
+  const { disabledFeatures, loading } = useDisabledFeatures();
+  const [meetingSettings] = useMeetingSettings();
+
+  const chatToolbar = meetingSettings?.public?.chat?.toolbar ?? [];
+
+  return !loading
+    && disabledFeatures.indexOf('replyChatMessage') === -1
+    && chatToolbar.includes('reply');
+};
+
 export const useIsDeleteChatMessageEnabled = () => {
   const { disabledFeatures, loading } = useDisabledFeatures();
   const [meetingSettings] = useMeetingSettings();
@@ -75,6 +86,7 @@ export default {
   useIsUserReactionsEnabled,
   useIsEmojiRainEnabled,
   useIsChatMessageReactionsEnabled,
+  useIsReplyChatMessageEnabled,
   useIsDeleteChatMessageEnabled,
   useIsEditChatMessageEnabled,
 };

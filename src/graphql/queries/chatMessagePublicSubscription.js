@@ -16,6 +16,7 @@ const CHAT_MESSAGE_PUBLIC_SUBSCRIPTION = gql`
       }
       message
       messageId
+      messageSequence
       messageType
       senderId
       senderName
@@ -24,6 +25,20 @@ const CHAT_MESSAGE_PUBLIC_SUBSCRIPTION = gql`
       user {
         avatar
         color
+      }
+      replyToMessage {
+        deletedAt
+        deletedBy {
+          name
+        }
+        chatEmphasizedText
+        messageSequence
+        message
+        messageAsHtml
+        user {
+          name
+          color
+        }
       }
       reactions(order_by: {createdAt: asc}) {
         createdAt

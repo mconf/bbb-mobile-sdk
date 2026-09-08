@@ -2,10 +2,11 @@ import { gql } from '@apollo/client';
 import CHAT_MESSAGE_PUBLIC_SUB from '../../../graphql/queries/chatMessagePublicSubscription';
 
 const SEND_MESSAGE_MUTATION = gql`
-  mutation chatSendMessage($chatId: String!, $chatMessageInMarkdownFormat: String!) {
+  mutation chatSendMessage($chatId: String!, $chatMessageInMarkdownFormat: String!, $replyToMessageId: String) {
     chatSendMessage(
       chatId: $chatId,
-      chatMessageInMarkdownFormat: $chatMessageInMarkdownFormat
+      chatMessageInMarkdownFormat: $chatMessageInMarkdownFormat,
+      replyToMessageId: $replyToMessageId
     )
   }
 `;

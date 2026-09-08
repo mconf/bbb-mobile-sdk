@@ -3,10 +3,13 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Pressable from '../../../pressable';
 import Colors from '../../../../constants/colors';
 
-const Container = styled.View`
+const Container = styled(Pressable).attrs(() => ({
+  pressStyle: {
+    opacity: 0.7,
+  },
+}))`
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
   gap: 8px;
   padding: 8px 12px;
   background-color: ${Colors.pollInfoBackground};
@@ -14,23 +17,26 @@ const Container = styled.View`
   border-top-color: ${Colors.pollInfoBorder};
 `;
 
-const Info = styled.View`
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 1;
-`;
-
-const EditIcon = styled(MaterialCommunityIcons).attrs(() => ({
-  name: 'pencil-outline',
+const Icon = styled(MaterialCommunityIcons).attrs(() => ({
   size: 18,
   color: Colors.pollInfoText,
-}))``;
+}))`
+  flex-shrink: 0;
+`;
+
+const Info = styled.View`
+  flex-shrink: 1;
+  flex-grow: 1;
+`;
 
 const Label = styled.Text`
-  flex-shrink: 1;
   font-size: 14px;
   color: ${Colors.pollInfoText};
+`;
+
+const Preview = styled.Text`
+  font-size: 13px;
+  color: ${Colors.lightGray300};
 `;
 
 const CancelButton = styled(Pressable).attrs(() => ({
@@ -50,9 +56,10 @@ const CancelIcon = styled(MaterialCommunityIcons).attrs(() => ({
 
 export default {
   Container,
+  Icon,
   Info,
-  EditIcon,
   Label,
+  Preview,
   CancelButton,
   CancelIcon,
 };

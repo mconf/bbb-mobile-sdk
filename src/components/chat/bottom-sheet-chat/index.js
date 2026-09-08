@@ -22,16 +22,20 @@ import {
   useIsChatMessageReactionsEnabled,
   useIsDeleteChatMessageEnabled,
   useIsEditChatMessageEnabled,
+  useIsReplyChatMessageEnabled,
 } from '../../../hooks/use-features';
 import logger from '../../../services/logger';
 import { setBottomChatOpen, setHasUnreadMessages } from '../../../store/redux/slices/wide-app/chat';
 import IconButtonComponent from '../../icon-button';
 import ChatMessage from './chat-message';
-import EditingMessageBar from './editing-message-bar';
+import ComposerBar from './composer-bar';
 import EmojiPicker from './emoji-picker';
 import MessageActions from './message-actions';
 import Queries from './queries';
+import { getFirstLine } from './service';
 import Styled from './styles';
+
+const FOCUS_HIGHLIGHT_DURATION = 1000;
 
 const BottomSheetChat = () => {
   const height = useHeaderHeight();
@@ -43,6 +47,9 @@ const BottomSheetChat = () => {
   const [dispatchSendReaction] = useMutation(Queries.SEND_REACTION_MUTATION);
   const [dispatchDeleteReaction] = useMutation(Queries.DELETE_REACTION_MUTATION);
   const messages = data?.chat_message_public;
+  // Read by callbacks that must stay stable while messages keep arriving.
+  const messagesRef = useRef(messages);
+  messagesRef.current = messages;
 
   const sheetRef = useRef(null);
   const flatListRef = useRef(null);
@@ -54,6 +61,10 @@ const BottomSheetChat = () => {
   const [openedMessage, setOpenedMessage] = useState(null);
   const [reactingToMessageId, setReactingToMessageId] = useState(null);
   const [editingMessage, setEditingMessage] = useState(null);
+  // A snapshot, not a live row, as on the web client.
+  const [replyingToMessage, setReplyingToMessage] = useState(null);
+  const [focusedMessageId, setFocusedMessageId] = useState(null);
+  const focusTimeoutRef = useRef(null);
   // What was typed when the edit started, so cancelling puts it back. Null means
   // no edit has taken the input over, which is how the web client tracks it too.
   const draftBeforeEditingRef = useRef(null);
@@ -65,6 +76,7 @@ const BottomSheetChat = () => {
   const isChatMessageReactionsEnabled = useIsChatMessageReactionsEnabled();
   const isDeleteChatMessageEnabled = useIsDeleteChatMessageEnabled();
   const isEditChatMessageEnabled = useIsEditChatMessageEnabled();
+  const isReplyChatMessageEnabled = useIsReplyChatMessageEnabled();
 
   // From the store, not from a subscription: it is set at join time and is
   // readable right away, so the current user's own reactions are never missed.
@@ -101,11 +113,24 @@ const BottomSheetChat = () => {
   }, [modalCollection?.profile]);
 
   const handleSendMessage = (message) => {
+    const replyToMessageId = replyingToMessage?.messageId ?? null;
+
     dispatchSendMessage({
       variables: {
         chatId,
         chatMessageInMarkdownFormat: message,
+        replyToMessageId,
       },
+    }).catch((error) => {
+      // The input is already cleared, so the message would be lost silently.
+      Alert.alert(t('app.chat.errorOnSendMessage'));
+      logger.error({
+        logCode: 'chat_send_message_error',
+        extraInfo: {
+          errorMessage: error.message,
+          replyToMessageId,
+        },
+      }, `Unable to send the message: ${error.message}`);
     });
   };
 
@@ -156,6 +181,8 @@ const BottomSheetChat = () => {
   }, []);
 
   const handleStartEditing = useCallback((item) => {
+    // the two bars are exclusive, as they are on the web client
+    setReplyingToMessage(null);
     if (draftBeforeEditingRef.current === null) {
       draftBeforeEditingRef.current = messageTextRef.current;
     }
@@ -173,15 +200,67 @@ const BottomSheetChat = () => {
     setEditingMessage(null);
   }, []);
 
+  const handleStartReplying = useCallback((item) => {
+    handleCancelEditing();
+    setReplyingToMessage({
+      messageId: item.messageId,
+      messageSequence: item.messageSequence,
+      senderName: item.senderName,
+      message: item.message,
+    });
+    InteractionManager.runAfterInteractions(() => inputRef.current?.focus());
+  }, [handleCancelEditing]);
+
+  const handleCancelReplying = useCallback(() => {
+    setReplyingToMessage(null);
+  }, []);
+
+  // Addressed by sequence, as on the web client. Only what the subscription holds
+  // can be reached, so the quote is inert until the list is paginated.
+  const handleFocusMessage = useCallback((messageSequence) => {
+    if (messageSequence == null) {
+      return;
+    }
+
+    const loadedMessages = messagesRef.current ?? [];
+    const index = loadedMessages.findIndex(
+      (message) => message.messageSequence === messageSequence
+    );
+
+    if (index === -1) {
+      return;
+    }
+
+    flatListRef.current?.scrollToIndex({ index, viewPosition: 0.5, animated: true });
+    setFocusedMessageId(loadedMessages[index].messageId);
+    clearTimeout(focusTimeoutRef.current);
+    focusTimeoutRef.current = setTimeout(
+      () => setFocusedMessageId(null),
+      FOCUS_HIGHLIGHT_DURATION
+    );
+  }, []);
+
+  // Without getItemLayout, a target that is not laid out yet would throw.
+  const handleScrollToIndexFailed = useCallback(({ index, averageItemLength }) => {
+    flatListRef.current?.scrollToOffset({
+      offset: index * averageItemLength,
+      animated: true,
+    });
+  }, []);
+
+  useEffect(() => () => clearTimeout(focusTimeoutRef.current), []);
+
   const handleSheetChanges = useCallback((index) => {
     if (index === -1) {
       setOpenedMessage(null);
       setReactingToMessageId(null);
+      setFocusedMessageId(null);
+      handleCancelReplying();
       handleCancelEditing();
       dispatch(setBottomChatOpen(false));
       dispatch(setHasUnreadMessages(false));
     }
-  }, [handleCancelEditing]);
+  }, [handleCancelEditing, handleCancelReplying]);
 
   const handleDeleteMessage = useCallback((messageId) => {
     dispatchDeleteMessage({
@@ -252,6 +331,7 @@ const BottomSheetChat = () => {
 
     handleSendMessage(trimmedMessage);
     setMessageText('');
+    setReplyingToMessage(null);
   };
 
   // A moderator can delete the message while its author is editing it: there is
@@ -268,9 +348,9 @@ const BottomSheetChat = () => {
     }
   }, [messages, editingMessage, handleCancelEditing]);
 
-  // Same actions as the web client's message toolbar: reply and pin get an entry
-  // here as each one lands. With none of them available, holding a message does
-  // nothing - the menu is never opened without a way out of it.
+  // Same actions as the web client's message toolbar, in the same order: pin
+  // gets an entry here once it lands. With none of them available, holding a
+  // message does nothing - the menu is never opened without a way out of it.
   const messageActions = useMemo(() => {
     if (!messageWithActions || messageWithActions.deletedAt) {
       return [];
@@ -278,6 +358,16 @@ const BottomSheetChat = () => {
 
     const isOwnMessage = messageWithActions.senderId === currentUserId;
     const actions = [];
+
+    // Offered on own messages too, as on the web client.
+    if (isReplyChatMessageEnabled) {
+      actions.push({
+        id: 'reply',
+        icon: 'reply-outline',
+        label: t('app.chat.header.tooltipReply'),
+        onPress: () => handleStartReplying(messageWithActions),
+      });
+    }
 
     if (isChatMessageReactionsEnabled) {
       actions.push({
@@ -320,10 +410,12 @@ const BottomSheetChat = () => {
     messageWithActions,
     currentUserId,
     amIModerator,
+    isReplyChatMessageEnabled,
     isChatMessageReactionsEnabled,
     isEditChatMessageEnabled,
     isDeleteChatMessageEnabled,
     handleCopyMessage,
+    handleStartReplying,
     handleStartEditing,
     handleConfirmDelete,
     t,
@@ -331,15 +423,29 @@ const BottomSheetChat = () => {
 
   const isActionsMenuOpen = messageActions.length > 0;
   const actionsMenuMessageId = isActionsMenuOpen ? messageWithActions.messageId : null;
-  const highlightedMessageId = actionsMenuMessageId
-    ?? reactingToMessageId
-    ?? editingMessage?.messageId
-    ?? null;
+  // A set: a quote can scroll to one message while another is being replied to.
+  const highlightedMessageIds = useMemo(() => new Set([
+    actionsMenuMessageId,
+    reactingToMessageId,
+    editingMessage?.messageId,
+    replyingToMessage?.messageId,
+    focusedMessageId,
+  ].filter(Boolean)), [
+    actionsMenuMessageId,
+    reactingToMessageId,
+    editingMessage?.messageId,
+    replyingToMessage?.messageId,
+    focusedMessageId,
+  ]);
 
-  // Overlays and the editing bar register their own back handler, so the sheet
+  // Overlays and the composer bar register their own back handler, so the sheet
   // must not close the whole chat from under them.
   useBottomSheetBackHandler(
-    isBottomChatOpen && !isActionsMenuOpen && !reactingToMessageId && !editingMessage,
+    isBottomChatOpen
+      && !isActionsMenuOpen
+      && !reactingToMessageId
+      && !editingMessage
+      && !replyingToMessage,
     sheetRef,
     () => { },
   );
@@ -349,11 +455,18 @@ const BottomSheetChat = () => {
       item={item}
       currentUserId={currentUserId}
       reactionsEnabled={isChatMessageReactionsEnabled}
-      highlighted={item.messageId === highlightedMessageId}
+      highlighted={highlightedMessageIds.has(item.messageId)}
       onOpenActions={handleOpenActions}
       onToggleReaction={handleToggleReaction}
+      onFocusMessage={handleFocusMessage}
     />
-  ), [currentUserId, isChatMessageReactionsEnabled, highlightedMessageId, handleToggleReaction]);
+  ), [
+    currentUserId,
+    isChatMessageReactionsEnabled,
+    highlightedMessageIds,
+    handleToggleReaction,
+    handleFocusMessage,
+  ]);
 
   const renderEmptyChatHandler = () => {
     if (messages?.length !== 0) {
@@ -388,6 +501,7 @@ const BottomSheetChat = () => {
           updateCellsBatchingPeriod={500}
           renderItem={renderItem}
           keyExtractor={(item) => item.createdAt}
+          onScrollToIndexFailed={handleScrollToIndexFailed}
           style={Styled.styles.list}
         />
         <KeyboardAvoidingView
@@ -396,7 +510,24 @@ const BottomSheetChat = () => {
           behavior="padding"
           keyboardVerticalOffset={height + 47}
         >
-          {editingMessage && <EditingMessageBar onCancel={handleCancelEditing} />}
+          {editingMessage && (
+            <ComposerBar
+              icon="pencil-outline"
+              label={t('app.chat.toolbar.edit.editing')}
+              onCancel={handleCancelEditing}
+            />
+          )}
+          {replyingToMessage && (
+            <ComposerBar
+              icon="reply-outline"
+              label={t('mobileSdk.chat.replyingTo', {
+                userName: replyingToMessage.senderName,
+              })}
+              preview={getFirstLine(replyingToMessage.message)}
+              onCancel={handleCancelReplying}
+              onPress={() => handleFocusMessage(replyingToMessage.messageSequence)}
+            />
+          )}
           <Styled.SendMessageContainer>
             <Styled.TextInput
               ref={inputRef}
