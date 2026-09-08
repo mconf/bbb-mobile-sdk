@@ -4,6 +4,15 @@ export const getFirstLine = (message) => (message ?? '')
   .split('\n')
   .find((line) => line.trim().length > 0) ?? '';
 
+export const formatTime = (date) => {
+  const timestamp = new Date(date);
+
+  return `${String(timestamp.getHours()).padStart(2, '0')}:${String(
+    timestamp.getMinutes()
+  ).padStart(2, '0')}`;
+};
+
 export default {
   getFirstLine,
+  formatTime,
 };

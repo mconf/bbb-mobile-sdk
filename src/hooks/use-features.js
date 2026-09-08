@@ -81,6 +81,14 @@ export const useIsEditChatMessageEnabled = () => {
     && chatToolbar.includes('edit');
 };
 
+// The odd one out: chat.toolbar is deliberately not checked here. The web client
+// checks it at the button, so where the tool is off an existing pin still shows.
+export const useIsPinChatMessageEnabled = () => {
+  const { disabledFeatures, loading } = useDisabledFeatures();
+
+  return !loading && disabledFeatures.indexOf('pinChatMessage') === -1;
+};
+
 export default {
   useDisabledFeatures,
   useIsUserReactionsEnabled,
@@ -89,4 +97,5 @@ export default {
   useIsReplyChatMessageEnabled,
   useIsDeleteChatMessageEnabled,
   useIsEditChatMessageEnabled,
+  useIsPinChatMessageEnabled,
 };
