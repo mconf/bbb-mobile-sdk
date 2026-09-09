@@ -46,6 +46,9 @@ const DrawerNavigator = ({
   const { data: meetingData } = useMeeting();
   const meetingName = meetingData?.meeting[0]?.name;
   const isBreakout = meetingData?.meeting[0]?.isBreakout;
+  // The shared notes screen has nothing to show until akka-apps has created the
+  // pad for this meeting.
+  const hasSharedNotes = meetingData?.meeting[0]?.componentsFlags?.hasSharedNotes;
   const { data: currentUserCount } = useUserCount();
   const users = currentUserCount?.user_aggregate?.aggregate?.count || 0;
   const isCameraConnected = useSelector((state) => state.video.isConnected);
@@ -182,11 +185,14 @@ const DrawerNavigator = ({
           component={UserNotesScreenWithUnmount}
           options={{
             title: t('app.notes.title'),
-            drawerLabelStyle: {
-              fontWeight: '400', fontSize: 16, paddingLeft: 12
-            },
+            // Hidden rather than unregistered: removing the route would drop it
+            // from under the user if it is the focused screen.
             drawerIcon: (config) => (
-              <Styled.IconMaterial name="notes" size={24} color={config.color} />
+              <Styled.DrawerIcon
+                icon="note-text-outline"
+                size={24}
+                iconColor={config.color}
+              />
             ),
           }}
         />

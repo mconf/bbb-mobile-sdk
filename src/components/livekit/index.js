@@ -17,6 +17,7 @@ import logger from '../../services/logger';
 import useMeeting from '../../graphql/hooks/useMeeting';
 import { useAudioJoin } from '../../hooks/use-audio-join';
 import useCurrentUser from '../../graphql/hooks/useCurrentUser';
+import { usePrimaryLiveKitMembership } from '../../graphql/hooks/useLiveKitMemberships';
 import {
   liveKitRoom,
   disconnectLiveKitRoom,
@@ -110,8 +111,16 @@ const BBBLiveKitRoom = ({ children }) => {
     ?.selectiveSubscription?.enabled ?? true;
   const fatalReconnectAttempts = useRef(0);
   const fatalReconnectResetTimer = useRef(null);
-  const livekitToken = currentUserData?.user_current[0]?.livekit?.livekitToken;
+  const primaryMembership = usePrimaryLiveKitMembership();
+  const livekitToken = primaryMembership?.token;
+  // Tokens are regenerated periodically: connect on token presence, not its
+  // value, so a token refresh doesn't re-run it (ie causes an uneeded reconnect)
+  const hasLiveKitToken = typeof livekitToken === 'string' && livekitToken.length > 0;
+  const initialLiveKitToken = useRef(null);
   const userId = currentUserData?.user_current[0]?.userId;
+
+  if (hasLiveKitToken && !initialLiveKitToken.current) initialLiveKitToken.current = livekitToken;
+
   const {
     cameraBridge,
     screenShareBridge,
@@ -162,6 +171,12 @@ const BBBLiveKitRoom = ({ children }) => {
 
           if (!shouldUseLiveKit || connectionState !== ConnectionState.Disconnected) return;
 
+          // Membership rows exist before their token is generated. Reject so the
+          // audio join below is skipped; the effect should re-run once the token is available.
+          if (!hasLiveKitToken) {
+            throw new Error('LiveKit membership has no token yet');
+          }
+
           return liveKitRoom.connect(url, livekitToken, connectOptions);
         })
         .then(async () => {
@@ -195,6 +210,7 @@ const BBBLiveKitRoom = ({ children }) => {
     mainRoomBlockedByBreakout,
     isAudioConnected,
     isAudioConnecting,
+    hasLiveKitToken,
     url,
     joinAudio,
   ]);
@@ -244,6 +260,12 @@ const BBBLiveKitRoom = ({ children }) => {
       // Non-final disconnect (do NOT destroy the media managers). Once the room
       // is Disconnected, the connect effect above re-fires and re-establishes the
       // room; resetting the audio flags lets it re-run joinAudio to republish mic.
+      // Tear the audio bridge down through AudioManager (rather than leaving it
+      // dangling on the singleton room until the next joinAudio call) so its
+      // stop() is tracked and awaited before a new bridge is started.
+      // No-op if there's no live bridge (e.g. audioBridge isn't 'livekit').
+      AudioManager.exitAudio();
+
       liveKitRoom.disconnect()
         .then(() => {
           dispatch(setIsConnected(false));
@@ -282,11 +304,12 @@ const BBBLiveKitRoom = ({ children }) => {
   if (!shouldUseLiveKit) return children;
 
   return (
+    // Pin token to the ref to avoid triggering a reconnect on token refreshes.
     <LiveKitRoom
       video={false}
       audio={false}
       connect={false}
-      token={livekitToken}
+      token={initialLiveKitToken.current}
       serverUrl={url}
       room={liveKitRoom}
       style={{ zIndex: 0, height: 'initial', width: 'initial' }}

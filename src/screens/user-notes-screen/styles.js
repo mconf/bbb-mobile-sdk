@@ -1,11 +1,29 @@
 import styled from 'styled-components/native';
-import { IconButton } from 'react-native-paper';
+import { ActivityIndicator, IconButton } from 'react-native-paper';
 import Colors from '../../constants/colors';
 
 const ContainerScreen = styled.View`
   width: 100%;
   height: 100%;
 `;
+
+const CenteredContainer = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+`;
+
+const MessageText = styled.Text`
+  color: ${Colors.white};
+  font-size: 16px;
+  line-height: 24px;
+  text-align: center;
+`;
+
+const Spinner = styled(ActivityIndicator).attrs(() => ({
+  color: Colors.orange,
+}))``;
 
 const ToggleActionsBarIconButton = ({
   onPress
@@ -27,5 +45,8 @@ const ToggleActionsBarIconButton = ({
 
 export default {
   ContainerScreen,
+  CenteredContainer,
+  MessageText,
+  Spinner,
   ToggleActionsBarIconButton
 };

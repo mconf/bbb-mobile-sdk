@@ -37,8 +37,65 @@ export const useIsEmojiRainEnabled = () => {
     && animations;
 };
 
+export const useIsChatMessageReactionsEnabled = () => {
+  const { disabledFeatures, loading } = useDisabledFeatures();
+  const [meetingSettings] = useMeetingSettings();
+
+  const chatToolbar = meetingSettings?.public?.chat?.toolbar ?? [];
+
+  return !loading
+    && disabledFeatures.indexOf('chatMessageReactions') === -1
+    && chatToolbar.includes('reactions');
+};
+
+export const useIsReplyChatMessageEnabled = () => {
+  const { disabledFeatures, loading } = useDisabledFeatures();
+  const [meetingSettings] = useMeetingSettings();
+
+  const chatToolbar = meetingSettings?.public?.chat?.toolbar ?? [];
+
+  return !loading
+    && disabledFeatures.indexOf('replyChatMessage') === -1
+    && chatToolbar.includes('reply');
+};
+
+export const useIsDeleteChatMessageEnabled = () => {
+  const { disabledFeatures, loading } = useDisabledFeatures();
+  const [meetingSettings] = useMeetingSettings();
+
+  const chatToolbar = meetingSettings?.public?.chat?.toolbar ?? [];
+
+  return !loading
+    && disabledFeatures.indexOf('deleteChatMessage') === -1
+    && chatToolbar.includes('delete');
+};
+
+export const useIsEditChatMessageEnabled = () => {
+  const { disabledFeatures, loading } = useDisabledFeatures();
+  const [meetingSettings] = useMeetingSettings();
+
+  const chatToolbar = meetingSettings?.public?.chat?.toolbar ?? [];
+
+  return !loading
+    && disabledFeatures.indexOf('editChatMessage') === -1
+    && chatToolbar.includes('edit');
+};
+
+// The odd one out: chat.toolbar is deliberately not checked here. The web client
+// checks it at the button, so where the tool is off an existing pin still shows.
+export const useIsPinChatMessageEnabled = () => {
+  const { disabledFeatures, loading } = useDisabledFeatures();
+
+  return !loading && disabledFeatures.indexOf('pinChatMessage') === -1;
+};
+
 export default {
   useDisabledFeatures,
   useIsUserReactionsEnabled,
   useIsEmojiRainEnabled,
+  useIsChatMessageReactionsEnabled,
+  useIsReplyChatMessageEnabled,
+  useIsDeleteChatMessageEnabled,
+  useIsEditChatMessageEnabled,
+  useIsPinChatMessageEnabled,
 };
