@@ -185,14 +185,14 @@ const DrawerNavigator = ({
           component={UserNotesScreenWithUnmount}
           options={{
             title: t('app.notes.title'),
-            drawerLabelStyle: {
-              fontWeight: '400', fontSize: 16, paddingLeft: 12
-            },
             // Hidden rather than unregistered: removing the route would drop it
             // from under the user if it is the focused screen.
-            drawerItemStyle: hasSharedNotes ? undefined : { display: 'none' },
             drawerIcon: (config) => (
-              <Styled.IconMaterial name="notes" size={24} color={config.color} />
+              <Styled.DrawerIcon
+                icon="note-text-outline"
+                size={24}
+                iconColor={config.color}
+              />
             ),
           }}
         />

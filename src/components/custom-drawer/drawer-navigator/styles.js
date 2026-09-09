@@ -1,17 +1,10 @@
 import styled from 'styled-components/native';
-import Icon from '@expo/vector-icons/MaterialIcons';
 import iconButton from '../../icon-button';
 import Colors from '../../../constants/colors';
 import Tag from '../../tag';
 
 const DrawerIcon = styled(iconButton)`
   position: absolute;
-`;
-
-const IconMaterial = styled(Icon)`
-  position: absolute;
-  left: 0px;
-  margin: 14px;
 `;
 
 const NotificationIcon = styled(iconButton)`
@@ -82,6 +75,5 @@ export default {
   HeaderTitleContainer,
   HeaderTitleText,
   BetaTag,
-  IconMaterial,
   ScreenOptions,
 };
