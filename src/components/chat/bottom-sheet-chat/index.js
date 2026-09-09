@@ -666,10 +666,10 @@ const BottomSheetChat = () => {
   // must not close the whole chat from under them.
   useBottomSheetBackHandler(
     isBottomChatOpen
-      && !isActionsMenuOpen
-      && !reactingToMessageId
-      && !editingMessage
-      && !replyingToMessage,
+    && !isActionsMenuOpen
+    && !reactingToMessageId
+    && !editingMessage
+    && !replyingToMessage,
     sheetRef,
     () => { },
   );
@@ -784,6 +784,9 @@ const BottomSheetChat = () => {
                 : t('app.chat.submitLabel')}
               iconColor={Colors.white}
               containerColor={Colors.blue}
+              // react-native-paper always swaps iconColor for the theme's
+              // onSurfaceDisabled color while disabled, so it is pinned to white here.
+              theme={{ colors: { onSurfaceDisabled: Colors.white } }}
               animated
               onPress={handleSubmit}
             />

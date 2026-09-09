@@ -16,6 +16,7 @@ const IconButtonComponent = (props) => {
     accessibilityLabel,
     onPress,
     style,
+    theme,
   } = props;
 
   return (
@@ -32,6 +33,7 @@ const IconButtonComponent = (props) => {
       accessibilityLabel={accessibilityLabel}
       onPress={onPress}
       style={style}
+      theme={theme}
     />
   );
 };
