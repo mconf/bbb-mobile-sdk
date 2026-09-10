@@ -3,7 +3,7 @@ import {
   useCallback, useEffect, useMemo, useRef, useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AppState, Linking } from 'react-native';
+import { AppState, Linking, Platform } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { useDispatch, useSelector } from 'react-redux';
 import ScreenWrapper from '../../components/screen-wrapper';
@@ -57,13 +57,40 @@ const buildDocument = (config) => {
 
 const clearCachedDocument = () => { cachedDocument = null; };
 
+// The Hocuspocus handshake is only authorized when it carries the JSESSIONID
+// cookie bbb-web set on the join. Android's WebView shares the app's cookie jar,
+// but WKWebView has its own store and react-native-webview only copies the app's
+// cookies into it for `source.uri` loads - for `source.html` the copy is skipped
+// (`visitSource` returns before `syncCookiesToWebView`), so `sharedCookiesEnabled`
+// alone leaves the editor's WebSocket cookieless and the server closes it (401).
+// Loading a tiny same-host URL first runs that copy; the cookies then persist in
+// the WebView's data store for the HTML document loaded next.
+const NEEDS_COOKIE_PRIMING = Platform.OS === 'ios';
+const COOKIE_PRIMING_ROUTE = 'bigbluebutton/api';
+
 const NotesEditorWebView = ({ initialConfig, liveConfig, onOpenActionsBar }) => {
   const webViewRef = useRef(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [cookiesPrimed, setCookiesPrimed] = useState(!NEEDS_COOKIE_PRIMING);
 
   // Frozen at mount: rebuilding it would reload the WebView and drop the Yjs
   // session, so mid-session changes go through injectJavaScript instead.
   const [html] = useState(() => buildDocument({ ...initialConfig, ...liveConfig }));
+
+  const source = useMemo(() => (cookiesPrimed
+    ? { html, baseUrl: initialConfig.baseUrl }
+    : { uri: `${initialConfig.baseUrl}${COOKIE_PRIMING_ROUTE}` }
+  ), [cookiesPrimed, html, initialConfig.baseUrl]);
+
+  // react-native-webview also fires onLoadEnd after a failed load, so a priming
+  // request that errors still hands over to the editor.
+  const handleLoadEnd = useCallback(() => {
+    if (!cookiesPrimed) {
+      setCookiesPrimed(true);
+      return;
+    }
+    setIsLoaded(true);
+  }, [cookiesPrimed]);
 
   useEffect(() => {
     if (!isLoaded || !webViewRef.current) return;
@@ -145,7 +172,9 @@ const NotesEditorWebView = ({ initialConfig, liveConfig, onOpenActionsBar }) => 
       <Styled.ToggleActionsBarIconButton onPress={onOpenActionsBar} />
       <WebView
         ref={webViewRef}
-        source={{ html, baseUrl: initialConfig.baseUrl }}
+        source={source}
+        // Keeps the priming response from flashing before the editor loads.
+        style={cookiesPrimed ? undefined : { opacity: 0 }}
         originWhitelist={['*']}
         javaScriptEnabled
         domStorageEnabled
@@ -158,7 +187,28 @@ const NotesEditorWebView = ({ initialConfig, liveConfig, onOpenActionsBar }) => 
           const url = event?.nativeEvent?.targetUrl;
           if (url && /^https?:/i.test(url)) openExternally(url);
         }}
-        onLoadEnd={() => setIsLoaded(true)}
+        onLoadEnd={handleLoadEnd}
+        onError={({ nativeEvent }) => {
+          logger.warn({
+            logCode: 'shared_notes_webview_error',
+            extraInfo: {
+              code: nativeEvent?.code,
+              description: nativeEvent?.description,
+              url: nativeEvent?.url,
+              cookiesPrimed,
+            },
+          }, `Shared notes WebView error: ${nativeEvent?.description}`);
+        }}
+        onHttpError={({ nativeEvent }) => {
+          logger.warn({
+            logCode: 'shared_notes_webview_http_error',
+            extraInfo: {
+              statusCode: nativeEvent?.statusCode,
+              url: nativeEvent?.url,
+              cookiesPrimed,
+            },
+          }, `Shared notes WebView HTTP error: ${nativeEvent?.statusCode}`);
+        }}
         onMessage={handleMessage}
         onRenderProcessGone={() => {
           logger.error({
@@ -173,7 +223,13 @@ const NotesEditorWebView = ({ initialConfig, liveConfig, onOpenActionsBar }) => 
 const UserNotesScreen = () => {
   const sessionToken = useSelector((state) => state.client.meetingData.sessionToken);
   const host = useSelector((state) => state.client.meetingData.host);
+  const directHost = useSelector((state) => state.client.meetingData.directHost);
   const [meetingSettings] = useMeetingSettings();
+
+  // The JSESSIONID cookie that authorizes the Hocuspocus handshake belongs to
+  // the API host (directHost), which on cluster-proxy setups is not the html5
+  // client host stored in `host`.
+  const apiHost = directHost || host;
   const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
 
@@ -203,16 +259,16 @@ const UserNotesScreen = () => {
   const initialConfig = useMemo(() => ({
     padId,
     sessionToken,
-    // Empty in settings.yml means "same host as the client".
-    serverHostname: sharedNotesSettings?.serverHostname || host,
+    // Empty in settings.yml means "same host as the BBB server".
+    serverHostname: sharedNotesSettings?.serverHostname || apiHost,
     // Keeps the BBB session cookie first-party for the Hocuspocus auth_request.
-    baseUrl: `https://${host}/`,
+    baseUrl: `https://${apiHost}/`,
     defaultLocale: 'en',
     staticFormattingToolbar: sharedNotesSettings?.staticFormattingToolbar ?? true,
     maxDocumentChars: sharedNotesSettings?.maxDocumentChars || DEFAULT_MAX_DOCUMENT_CHARS,
     maxLengthForContentUpdate: sharedNotesSettings?.maxLengthForContentUpdate
       || DEFAULT_MAX_LENGTH_FOR_CONTENT_UPDATE,
-  }), [padId, sessionToken, host, sharedNotesSettings]);
+  }), [padId, sessionToken, apiHost, sharedNotesSettings]);
 
   const liveConfig = useMemo(() => ({
     locale: toBcp47(i18n.language),
@@ -287,7 +343,7 @@ const UserNotesScreen = () => {
     );
   }
 
-  if (!padId || !sessionToken || !host) {
+  if (!padId || !sessionToken || !apiHost) {
     return withChrome(<Styled.Spinner animating size="large" />);
   }
 
