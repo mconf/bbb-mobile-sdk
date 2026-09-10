@@ -9,7 +9,8 @@ import { onError } from '@apollo/client/link/error';
 import uuid from 'react-native-uuid';
 import UrlUtils from '../../utils/functions';
 import {
-  setJoinUrl, setApi, setHost, setSessionToken
+  setJoinUrl, setApi, setHost, setDirectHost, setSessionToken,
+  setTransferUrl
 } from '../../store/redux/slices/wide-app/client';
 import logger from '../../services/logger';
 import { setMeetingSettings } from '../local-states/useMeetingSettings';
@@ -35,6 +36,10 @@ const useJoinMeeting = (url) => {
           setLocalSessionToken(UrlUtils.parseQueryString(data.url).sessionToken);
           dispatch(setJoinUrl(data.url));
           dispatch(setHost(UrlUtils.getHostFromUrl(data.url)));
+          // The API host that served the join owns the JSESSIONID cookie that
+          // bbb-web requires on session-bound calls; it may differ from the
+          // client host `data.url` redirected to (cluster proxy).
+          dispatch(setDirectHost(UrlUtils.getApiHostFromUrl(url)));
           dispatch(setSessionToken(UrlUtils.parseQueryString(data.url).sessionToken));
           console.log('DONE STAGE 0');
           setLoginStage(1);

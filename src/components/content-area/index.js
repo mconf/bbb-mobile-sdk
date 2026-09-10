@@ -36,7 +36,14 @@ const ContentArea = (props) => {
   const navigation = useNavigation();
   const { t } = useTranslation();
 
-  const currentSlide = currentPageData?.pres_page_curr[0]?.svgUrl;
+  const sessionToken = useSelector((state) => state.client.meetingData.sessionToken);
+
+  const slideUrl = currentPageData?.pres_page_curr[0]?.svgUrl;
+  // presentation files are session protected (the server answers 401 without it)
+  // and the image loader does not carry the app's session, so it goes in the URL
+  const currentSlide = slideUrl && sessionToken
+    ? `${slideUrl}${slideUrl.includes('?') ? '&' : '?'}sessionToken=${sessionToken}`
+    : slideUrl;
   const hasScreenshare = screenshareData?.screenshare.length > 0;
   const externalVideoUrl = externalVideoData?.meeting[0]?.externalVideo?.externalVideoUrl;
   const isPresentationOpen = useSelector((state) => state.layout.isPresentationOpen);

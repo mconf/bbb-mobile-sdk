@@ -75,6 +75,19 @@ const getHostFromUrl = (url) => {
     : parsed.hostname;
 };
 
+// Host (plus any reverse-proxy path prefix) of the BBB API that answered a
+// `/bigbluebutton/api/...` URL. On cluster-proxy deployments this differs from
+// the html5 client host the join redirects to, and it is the host that owns the
+// session cookie bbb-web checks on session-bound calls (getJoinUrl, stuns, ...).
+const getApiHostFromUrl = (url) => {
+  const parsed = new URL(url);
+  const pathMatch = parsed.pathname.match('^(.*)/bigbluebutton/api(/|$)');
+  const serverPathPrefix = pathMatch ? pathMatch[1] : '';
+  return serverPathPrefix
+    ? `${parsed.hostname}${serverPathPrefix}`
+    : parsed.hostname;
+};
+
 const buildURL = (joinUrl, route) => {
   const parsed = new URL(joinUrl);
   const pathMatch = parsed.pathname.match('^(.*)/html5client/?');
@@ -116,6 +129,7 @@ export default {
   arraysEqual,
   parseQueryString,
   getHostFromUrl,
+  getApiHostFromUrl,
   buildURL,
   xml2json
 };
