@@ -50,6 +50,8 @@ const BetaTag = styled(Tag)`
   right: 12px;
 `;
 
+const LANDSCAPE_DRAWER_MAX_WIDTH = 360;
+
 const ScreenOptions = {
   contentOptions: {
     style: {
@@ -92,4 +94,5 @@ export default {
   BetaTag,
   IconMaterial,
   ScreenOptions,
+  LANDSCAPE_DRAWER_MAX_WIDTH,
 };

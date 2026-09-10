@@ -1,12 +1,14 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Provider } from 'react-redux';
-import { NavigationContainer, DefaultTheme, NavigationIndependentTree } from '@react-navigation/native';
-import { OrientationLocker, PORTRAIT } from 'react-native-orientation-locker';
+import {
+  NavigationContainer, DefaultTheme, NavigationIndependentTree, useNavigationContainerRef
+} from '@react-navigation/native';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { store } from './src/store/redux/store';
 // components
 import InCallManagerController from './src/app-content/in-call-manager';
 import LocalesController from './src/app-content/locales';
+import OrientationController from './src/app-content/orientation';
 import AppStatusBar from './src/components/status-bar';
 import NavigatorHandler from './src/screens/navigator-handler';
 import { disconnectLiveKitRoom } from './src/services/livekit';
@@ -46,6 +48,14 @@ const App = (props) => {
     || defaultJoinURL();
   const _onLeaveSession = leaveSessionFactory(onLeaveSession);
 
+  // The orientation policy is keyed by the deepest focused route, which only
+  // the container ref can resolve across the nested stack/drawer navigators.
+  const navigationRef = useNavigationContainerRef();
+  const [routeName, setRouteName] = useState();
+  const syncRouteName = useCallback(() => {
+    setRouteName(navigationRef.getCurrentRoute()?.name);
+  }, [navigationRef]);
+
   useEffect(() => {
     injectStore();
   }, []);
@@ -54,8 +64,13 @@ const App = (props) => {
     <KeyboardProvider>
       <Provider store={store}>
         <NavigationIndependentTree>
-          <NavigationContainer theme={MyTheme}>
-            <OrientationLocker orientation={PORTRAIT} />
+          <NavigationContainer
+            ref={navigationRef}
+            theme={MyTheme}
+            onReady={syncRouteName}
+            onStateChange={syncRouteName}
+          >
+            <OrientationController routeName={routeName} />
             <NavigatorHandler
               {...props}
               joinURL={_joinURL}

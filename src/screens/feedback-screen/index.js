@@ -8,7 +8,6 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BackHandler, Platform } from 'react-native';
-import { OrientationLocker, PORTRAIT } from 'react-native-orientation-locker';
 import { useSelector } from 'react-redux';
 import Settings from '../../../settings.json';
 import PrimaryButton from '../../components/buttons/primary-button';
@@ -171,7 +170,6 @@ const FeedbackScreen = (props) => {
           </PrimaryButton>
         </Styled.QuitSessionButtonContainer>
       </Styled.ContainerFeedbackCard>
-      <OrientationLocker orientation={PORTRAIT} />
     </Styled.ContainerView>
   );
 };

@@ -13,6 +13,7 @@ import { Alert, InteractionManager, Keyboard } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import { FlatList } from 'react-native-gesture-handler';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import Colors from '../../../constants/colors';
 import useChat from '../../../graphql/hooks/useChat';
@@ -49,6 +50,7 @@ const SCROLL_RETRY_LIMIT = 5;
 
 const BottomSheetChat = () => {
   const height = useHeaderHeight();
+  const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const [dispatchSendMessage] = useMutation(Queries.SEND_MESSAGE_MUTATION);
   const [dispatchEditMessage] = useMutation(Queries.EDIT_MESSAGE_MUTATION);
@@ -713,6 +715,7 @@ const BottomSheetChat = () => {
         onChange={handleSheetChanges}
         enablePanDownToClose
         enableDynamicSizing={false}
+        topInset={insets.top}
         style={topShadowStyle}
       >
         {/* Above the list, not its header: the list is rotated 180 degrees. */}

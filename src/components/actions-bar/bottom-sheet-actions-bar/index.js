@@ -1,7 +1,7 @@
 import React, {
   useCallback, useEffect, useMemo, useRef
 } from 'react';
-import { View } from 'react-native';
+import { View, useWindowDimensions } from 'react-native';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { useRoute } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
@@ -21,6 +21,7 @@ const BottomSheetActionsBar = ({ alwaysOpen }) => {
   const bottomSheetRef = useRef(null);
   const route = useRoute();
   const orientation = useOrientation();
+  const { height: windowHeight } = useWindowDimensions();
   const dispatch = useDispatch();
 
   const detailedInfo = useSelector((state) => state.layout.detailedInfo);
@@ -40,12 +41,15 @@ const BottomSheetActionsBar = ({ alwaysOpen }) => {
     );
   };
 
+  // Both orientations expose the expanded point (the drawer's "audio device"
+  // shortcut snaps to index 1); in landscape the window is short, so cap it
+  // and let the inner BottomSheetScrollView scroll the rest.
   const snapPoints = useMemo(() => {
-    if (orientation === 'PORTRAIT') {
-      return [LayoutConstants.ACTIONS_BAR_COLLAPSED_HEIGHT, handleSizeOfActionsBar()];
-    }
-    return [LayoutConstants.ACTIONS_BAR_COLLAPSED_HEIGHT];
-  }, [orientation]);
+    const expanded = orientation === 'PORTRAIT'
+      ? handleSizeOfActionsBar()
+      : Math.min(handleSizeOfActionsBar(), Math.round(windowHeight * 0.9));
+    return [LayoutConstants.ACTIONS_BAR_COLLAPSED_HEIGHT, expanded];
+  }, [orientation, windowHeight]);
 
   // callbacks
   const handleSheetChanges = useCallback((index) => {
