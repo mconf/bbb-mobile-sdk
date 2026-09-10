@@ -341,11 +341,12 @@ const DrawerNavigator = ({
                   </Styled.HeaderRight>
                 );
               },
-              drawerLabelStyle: {
-                fontWeight: '400', fontSize: 16, paddingLeft: 12
-              },
               drawerIcon: (config) => (
-                <Styled.IconMaterial name="timer" size={24} color={config.color} />
+                <Styled.DrawerIcon
+                  icon="timer-outline"
+                  size={24}
+                  iconColor={config.color}
+                />
               ),
             }}
           />
