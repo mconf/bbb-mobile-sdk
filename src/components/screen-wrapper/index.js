@@ -34,8 +34,6 @@ const ScreenWrapper = ({ children, renderWithView, alwaysOpen }) => {
     <>
       {handleRenderChildren()}
       <ModalControllerComponent />
-      <NotificationBar />
-      <DebugWindow />
       <DraggableCamera />
       {/* This components keep mounted because react navigation does NOT unmount previous screens
       So, we will disable them from rendering when is not focused */}
@@ -47,6 +45,9 @@ const ScreenWrapper = ({ children, renderWithView, alwaysOpen }) => {
           <BottomSheetChat />
         </>
       )}
+      {/* After the sheets: their containers fill the screen, so an earlier sibling gets no taps */}
+      <NotificationBar />
+      <DebugWindow />
     </>
   );
 };
