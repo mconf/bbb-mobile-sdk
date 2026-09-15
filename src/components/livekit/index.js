@@ -9,6 +9,7 @@ import {
 } from '@livekit/react-native';
 import {
   ConnectionState,
+  LogLevel,
 } from 'livekit-client';
 import AudioManager from '../../services/webrtc/audio-manager';
 import VideoManager from '../../services/webrtc/video-manager';
@@ -18,6 +19,10 @@ import useMeeting from '../../graphql/hooks/useMeeting';
 import { useAudioJoin } from '../../hooks/use-audio-join';
 import useCurrentUser from '../../graphql/hooks/useCurrentUser';
 import { usePrimaryLiveKitMembership } from '../../graphql/hooks/useLiveKitMemberships';
+import {
+  applyLiveKitSdkLogLevel,
+  setLiveKitSdkLogBridgeEnabled,
+} from '../../services/livekit/sdk-log-bridge.ts';
 import {
   liveKitRoom,
   disconnectLiveKitRoom,
@@ -109,6 +114,8 @@ const BBBLiveKitRoom = ({ children }) => {
     : null;
   const reconnectOnFatalFailures = meetingSettings?.public?.media?.livekit
     ?.reconnectOnFatalFailures ?? false;
+  const sdkLogLevel = meetingSettings?.public?.media?.livekit?.logLevel ?? LogLevel.warn;
+  const sdkLogBridge = meetingSettings?.public?.media?.livekit?.sdkLogBridge ?? true;
   const selectiveSubscriptionEnabled = meetingSettings?.public?.media?.livekit
     ?.selectiveSubscription?.enabled ?? true;
   const configuredRoomOptions = meetingSettings?.public?.media?.livekit?.roomOptions;
@@ -153,6 +160,16 @@ const BBBLiveKitRoom = ({ children }) => {
     // AudioManager is always initialized (used by all bridges)
     return AudioManager.init(mediaManagerConfigs);
   };
+
+  useEffect(() => {
+    setLiveKitSdkLogBridgeEnabled(sdkLogBridge);
+  }, [sdkLogBridge]);
+
+  // livekit-client resets its loggers on every RTCEngine it builds (loglevel can't
+  // persist the level on React Native), so the level is applied again.
+  useEffect(() => {
+    applyLiveKitSdkLogLevel(sdkLogLevel);
+  }, [sdkLogLevel, connectionState]);
 
   useEffect(() => {
     if (sessionToken
