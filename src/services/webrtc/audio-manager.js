@@ -407,6 +407,7 @@ class AudioManager {
 
     return this.bridge.joinAudio({
       inputStream: callOptions.inputStream,
+      isListenOnly: callOptions.isListenOnly,
       muted: callOptions.muted,
     }).catch((error) => {
       throw error;
