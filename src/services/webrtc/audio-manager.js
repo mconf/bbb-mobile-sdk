@@ -90,6 +90,17 @@ class AudioManager {
     return this.audioSessionNumber;
   }
 
+  releaseInputStream() {
+    const stream = this.inputStream;
+
+    if (!stream) return;
+
+    this.inputStream = null;
+    stream.getTracks().forEach((track) => track.stop());
+
+    if (typeof stream.release === 'function') stream.release();
+  }
+
   async _mediaFactory(constraints = { audio: true }) {
     // Reuse the cached stream only if it still has a live audio track;
     // otherwise re-acquire, so a dead input track is regenerated rather than
@@ -99,6 +110,9 @@ class AudioManager {
       && this.inputStream.getAudioTracks().some((track) => track.readyState === 'live');
 
     if (hasLiveAudioTrack) return this.inputStream;
+
+    // A capture ended in JS still holds the native mic until it is released.
+    this.releaseInputStream();
 
     const inputStream = await mediaDevices.getUserMedia(constraints);
     this.inputStream = inputStream;
