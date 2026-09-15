@@ -36,6 +36,14 @@ const LOG_CONFIG = Settings.clientLog || {
 };
 
 // TODO this is not good - refactor out later - prlanzarin
+//
+// Injected from src/components/socket-connection/index.js at import time.
+// getAuthInfo() reads the *active* App instance's store (see
+// src/store/redux/legacy-store.js and src/app-instance/active-instance.js):
+// while a breakout room is open its records carry the breakout's host and
+// session token, otherwise the main room's. The endpoint is resolved per record
+// at write() time and pinned on the record, so batches that straddle an
+// instance switch are still posted to the right host.
 let getAuthInfo = () => { return {}; };
 let makeCall = () => { };
 let getCurrentSessionId = () => { };
@@ -96,6 +104,12 @@ class ServerLoggerStream extends ServerStream {
         this.route
       );
       if (this.url !== remoteEndpointURL) this.url = remoteEndpointURL;
+      // Non-enumerable so it is not serialized with the record
+      Object.defineProperty(rec, 'endpointURL', {
+        value: remoteEndpointURL,
+        enumerable: false,
+        configurable: true,
+      });
     }
 
     this.rec = rec;

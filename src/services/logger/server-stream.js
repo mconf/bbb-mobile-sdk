@@ -37,43 +37,56 @@ export class ServerStream {
     }
 
     start({ method, throttleInterval, withCredentials, onError }) {
+        const send = (url, recs) => new Promise((resolve) => {
+            try {
+                const xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = () => {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                        if (xhr.status >= 400) {
+                            if (typeof onError === 'function') {
+                                onError.call(this, recs, xhr);
+                            } else {
+                                // Do nothing - muffle the logs for the time being - prlanzarin
+                                //console.warn('Browser Bunyan: A server log write failed');
+                            }
+                        }
+                        resolve();
+                    }
+                };
+                xhr.open(method, url);
+                for (const [name, value] of Object.entries(this.headers)) {
+                    xhr.setRequestHeader(name, value);
+                }
+                xhr.withCredentials = withCredentials;
+                xhr.send(JSON.stringify(recs, bigIntSafeReplacer));
+            } catch (error) {
+                resolve();
+            }
+        });
+
         const throttleRequests = () => {
             // wait for any errors to accumulate
             this.currentThrottleTimeout = setTimeout(() => {
                 const recs = this.recordsAsArray();
-                if (recs.length) {
-                    // A batch we cannot send must cost us that batch, not the
-                    // stream: throwing here skips onreadystatechange, so the
-                    // records would never be cleared and nothing would re-arm.
-                    try {
-                        const xhr = new XMLHttpRequest();
-                        xhr.onreadystatechange = () => {
-                            if (xhr.readyState === XMLHttpRequest.DONE) {
-                                if (xhr.status >= 400) {
-                                    if (typeof onError === 'function') {
-                                        onError.call(this, recs, xhr);
-                                    } else {
-                                        // Do nothing - muffle the logs for the time being - prlanzarin
-                                        //console.warn('Browser Bunyan: A server log write failed');
-                                    }
-                                }
-                                this.records = {};
-                                throttleRequests();
-                            }
-                        };
-                        xhr.open(method, this.url);
-                        for (const [name, value] of Object.entries(this.headers)) {
-                            xhr.setRequestHeader(name, value);
-                        }
-                        xhr.withCredentials = withCredentials;
-                        xhr.send(JSON.stringify(recs, bigIntSafeReplacer));
-                    } catch (error) {
-                        this.records = {};
-                        throttleRequests();
-                    }
-                } else {
+                if (!recs.length) {
                     throttleRequests();
+                    return;
                 }
+
+                // Records may target different endpoints (a record pins its own
+                // `endpointURL`, see ServerLoggerStream.write): group and post one
+                // request per endpoint. Records written while these requests are
+                // in flight go to the next batch instead of being dropped.
+                this.records = {};
+                const groups = new Map();
+                recs.forEach((rec) => {
+                    const url = rec.endpointURL || this.url;
+                    if (!groups.has(url)) groups.set(url, []);
+                    groups.get(url).push(rec);
+                });
+
+                Promise.all(Array.from(groups.entries()).map(([url, group]) => send(url, group)))
+                    .then(throttleRequests, throttleRequests);
             }, throttleInterval);
         };
 
