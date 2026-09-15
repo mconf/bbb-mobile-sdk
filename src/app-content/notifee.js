@@ -6,6 +6,7 @@ import { useMutation, useSubscription } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
 import AudioQueries from '../components/audio/audio-controls/queries';
 import LeaveQueries from '../components/custom-drawer/queries';
+import useCurrentUser from '../graphql/hooks/useCurrentUser';
 import { setPendingMuteAssert } from '../store/redux/slices/wide-app/audio';
 import logger from '../services/logger';
 import Colors from '../constants/colors';
@@ -57,28 +58,37 @@ const NotifeeController = () => {
   const audioIsConnected = useSelector((state) => state.audio.isConnected);
   const audioIsMuted = useSelector((state) => state.audio.isMuted);
   const isListenOnly = useSelector((state) => state.audio.isListenOnly);
+  const pendingMuteAssert = useSelector((state) => state.audio.pendingMuteAssert);
   const { t } = useTranslation();
   const [userSetMuted] = useMutation(AudioQueries.USER_SET_MUTED);
   const [dispatchLeaveSession] = useMutation(LeaveQueries.USER_LEAVE_MEETING);
   const { data: currentUserVoiceData } = useSubscription(AudioQueries.USER_CURRENT_VOICE);
+  const { data: currentUserData } = useCurrentUser();
   const voice = currentUserVoiceData?.user_current[0]?.voice;
+  const currentUserId = currentUserData?.user_current[0]?.userId;
+  const displayedMuted = pendingMuteAssert !== null
+    ? audioIsMuted
+    : (voice?.muted ?? audioIsMuted);
 
   const toggleMute = useCallback(async () => {
-    if (!voice) return;
-
     // Explicit user mute toggle supersedes previous mute asserts
     // (mirrors audio-controls' toggleVoice)
     dispatch(setPendingMuteAssert(null));
 
     try {
-      await userSetMuted({ variables: { muted: !voice.muted, userId: voice.userId } });
+      await userSetMuted({
+        variables: {
+          muted: !displayedMuted,
+          userId: voice?.userId ?? currentUserId,
+        },
+      });
     } catch (error) {
       logger.error({
         logCode: 'notifee_toggle_mute_failed',
         extraInfo: { errorMessage: error?.message },
       }, 'Error on trying to toggle muted from notification');
     }
-  }, [voice]);
+  }, [voice, displayedMuted, currentUserId]);
 
   const leave = useCallback(async () => {
     try {
