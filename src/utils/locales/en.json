@@ -257,7 +257,6 @@
   "mobileSdk.notificationBar.mediaReconnecting": "Connection issue detected. Restoring your audio and video...",
   "mobileSdk.notificationBar.mediaReconnectFailed": "Could not restore your audio and video. Please leave and rejoin the meeting.",
   "mobileSdk.upload.notification.header": "A file was uploaded:",
-  "mobileSdk.notification.recordLabel": "Recording",
   "mobileSdk.record.noPermission.label": "You do not have permission to record meetings",
   "mobileSdk.breakout.durationLabel": "Breakout rooms time remaining",
   "mobileSdk.breakout.noBreakoutsTitle": "There are no Breakout Rooms available at this time.",

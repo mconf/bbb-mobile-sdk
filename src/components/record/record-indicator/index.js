@@ -96,7 +96,9 @@ const RecordingIndicator = ({ recordMeeting, recordPolicies }) => {
       previousRecording !== undefined &&
       recording !== previousRecording
     ) {
-      dispatch(showNotificationWithTimeout(recording ? 'recordingStarted' : 'recordingStopped'));
+      dispatch(showNotificationWithTimeout({
+        profile: recording ? 'recordingStarted' : 'recordingStopped',
+      }));
     }
   }, [recording, previousRecording, dispatch]);
 
