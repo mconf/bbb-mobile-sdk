@@ -4,6 +4,7 @@ import {
   ConnectionState,
   RoomEvent,
   ParticipantEvent,
+  type DisconnectReason,
   type TrackPublication,
   type LocalTrack,
   type LocalTrackPublication,
@@ -12,13 +13,17 @@ import {
   type Room,
   type TrackPublishOptions,
 } from 'livekit-client';
-import { liveKitRoom, liveKitEvents, LK_FATAL_ERROR_EVENT } from '../livekit';
+import {
+  liveKitRoom,
+  liveKitEvents,
+  waitForRoomConnection,
+  LK_FATAL_ERROR_EVENT,
+} from '../livekit';
 import MediaStreamUtils from './media-stream-utils';
 import { getMeetingSettings } from '../../graphql/local-states/useMeetingSettings';
 
 const BRIDGE_NAME = 'livekit';
 const SENDRECV_ROLE = 'sendrecv';
-const ROOM_CONNECTION_TIMEOUT = 15000;
 const DEFAULT_UNPUBLISH_AFTER_MUTE_MS = 5000;
 
 interface JoinOptions {
@@ -181,6 +186,29 @@ export default class LiveKitAudioBridge {
   private static isFatalPublishError(error: Error): boolean {
     return error.name === 'ConnectionError'
       && error.message?.includes('timed out');
+  }
+
+  // So a caller does not wait on a promise a dead room can no longer complete.
+  // The SDK usually rejects in-flight publishes first; this covers that ordering
+  // changing.
+  private static bindToRoomLiveness<T>(room: Room, operation: Promise<T>): Promise<T> {
+    if (room.state === ConnectionState.Disconnected) {
+      // The SDK call was already issued, and RN flags unhandled rejections.
+      operation.catch(() => {});
+
+      return Promise.reject(new Error('Room disconnected before publishing'));
+    }
+
+    return new Promise<T>((resolve, reject) => {
+      const onDisconnected = (reason?: DisconnectReason) => {
+        reject(new Error(`Room disconnected while publishing (reason=${reason})`));
+      };
+
+      room.once(RoomEvent.Disconnected, onDisconnected);
+      operation.then(resolve, reject).finally(() => {
+        room.off(RoomEvent.Disconnected, onDisconnected);
+      });
+    });
   }
 
   private isLocalPublicationMuted(): boolean {
@@ -640,12 +668,18 @@ export default class LiveKitAudioBridge {
           .map((track) => {
             return this.liveKitRoom.localParticipant.publishTrack(track, publishOptions);
           });
-        await Promise.all(trackPublishers);
+        await LiveKitAudioBridge.bindToRoomLiveness(
+          this.liveKitRoom,
+          Promise.all(trackPublishers),
+        );
       } else {
-        await this.liveKitRoom.localParticipant.setMicrophoneEnabled(
-          true,
-          constraints,
-          publishOptions,
+        await LiveKitAudioBridge.bindToRoomLiveness(
+          this.liveKitRoom,
+          this.liveKitRoom.localParticipant.setMicrophoneEnabled(
+            true,
+            constraints,
+            publishOptions,
+          ),
         );
         this.originalStream = this.inputStream;
         this.logger.debug({
@@ -713,26 +747,6 @@ export default class LiveKitAudioBridge {
       });
   }
 
-  private waitForRoomConnection(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      if (this.liveKitRoom.state === ConnectionState.Connected) {
-        resolve();
-        return;
-      }
-
-      const timeout = setTimeout(() => {
-        this.liveKitRoom.off(RoomEvent.Connected, onRoomConnected);
-        reject(new Error('Room connection timeout'));
-      }, ROOM_CONNECTION_TIMEOUT);
-      const onRoomConnected = () => {
-        clearTimeout(timeout);
-        resolve();
-      };
-
-      this.liveKitRoom.once(RoomEvent.Connected, onRoomConnected);
-    });
-  }
-
   async joinAudio(
     options: JoinOptions,
   ): Promise<void> {
@@ -742,7 +756,7 @@ export default class LiveKitAudioBridge {
     } = options;
 
     try {
-      await this.waitForRoomConnection();
+      await waitForRoomConnection(this.liveKitRoom);
       this.originalStream = inputStream;
       this.shouldBeMuted = muted;
 
