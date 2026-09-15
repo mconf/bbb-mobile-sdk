@@ -536,6 +536,24 @@ export default class LiveKitAudioBridge {
       },
     }, `LiveKit: audio track unmuted - ${trackSid}`);
 
+    // A client-requested unmute is granted server-side, so arriving here before
+    // BBB's voice state lands is the grant, not a desync.
+    if (consumeMuteCommand(false)) {
+      // Ends the server mute window so the voice unmute that follows isn't refused.
+      this.endServerMuteEchoWindow();
+      this.logger.debug({
+        logCode: 'livekit_audio_mute_reinforce_skipped',
+        extraInfo: {
+          bridgeName: this.bridgeName,
+          role: this.role,
+          trackSid,
+          shouldBeMuted: this.shouldBeMuted,
+        },
+      }, `LiveKit: skipping mute reinforcement, unmute in flight - ${trackSid}`);
+
+      return;
+    }
+
     // The server is not notified of a track-level unmute, so if BBB's state is
     // muted we must re-mute here to reconcile states.
     this.reinforceMuteState('local_track_unmuted');
