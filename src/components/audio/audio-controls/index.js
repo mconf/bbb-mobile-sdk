@@ -10,6 +10,7 @@ import { useAudioJoin, invalidateInFlightAudioJoin } from '../../../hooks/use-au
 import useCurrentUser from '../../../graphql/hooks/useCurrentUser';
 import useMeeting from '../../../graphql/hooks/useMeeting';
 import AudioManager from '../../../services/webrtc/audio-manager';
+import { markMuteCommandDelivered, stampMuteCommand } from '../../../services/webrtc/mute-intent.ts';
 import {
   setAudioError,
   setAudioIntent,
@@ -44,6 +45,9 @@ const AudioControls = () => {
   // pendingMuteAssertEpoch.
   const muteAssertFiredEpoch = useRef(null);
   const muteAssertTimeout = useRef(null);
+  // The bridge can leave the local state unchanged when it delays a server mute, so
+  // the last value pushed to it is tracked separately.
+  const lastPushedServerMuted = useRef(null);
 
   const currentUserLocked = currentUserData?.user_current[0]?.locked ?? false;
   const meetingMicLocked = meetingData?.meeting[0]?.lockSettings?.disableMic;
@@ -55,12 +59,10 @@ const AudioControls = () => {
   } = useSubscription(Queries.USER_CURRENT_VOICE);
   const voice = currentUserVoiceData?.user_current[0]?.voice;
   const serverMuted = voice?.muted;
-  // The server voice state can be absent (rejoin, breakout, a subscription error).
-  // While a mute assert is pending the server value is the one this client is
-  // overwriting, so the local state is the valid one in both cases.
-  const displayedMuted = pendingMuteAssert !== null
-    ? localMutedState
-    : (serverMuted ?? localMutedState);
+  // A local mute shows before the server confirms it. The server state can be absent, or
+  // stale while a re-assert is pending.
+  const displayedMuted = localMutedState
+    || (pendingMuteAssert === null && serverMuted === true);
   const unmutedAndConnected = !displayedMuted && isConnected;
 
   // Mute reconciliation effect: applies the server's mute state
@@ -72,10 +74,19 @@ const AudioControls = () => {
     //   unmuting the local mic track.
     // - While a mute re-assert is pending - the restored mute intent must reach the
     //   server first, or the reconciliation would flip it back to muteOnStart
-    if (currentUserVoiceLoading || !voice) return;
+    if (currentUserVoiceLoading || !voice) {
+      // Cleared while the voice record is absent, so the first value after it
+      // returns is pushed to the bridge even if it matches the local state.
+      lastPushedServerMuted.current = null;
+
+      return;
+    }
     if (pendingMuteAssert !== null) return;
 
-    if (localMutedState !== serverMuted) AudioManager.setMutedState(serverMuted);
+    if (localMutedState !== serverMuted || lastPushedServerMuted.current !== serverMuted) {
+      lastPushedServerMuted.current = serverMuted;
+      AudioManager.setMutedState(serverMuted);
+    }
   }, [serverMuted, currentUserVoiceLoading, localMutedState, voice, pendingMuteAssert]);
 
   // Mute state re-assertion after a rejoin (breakouts, reconnects, etc): once
@@ -119,6 +130,9 @@ const AudioControls = () => {
 
     if (!fired) {
       muteAssertFiredEpoch.current = epoch;
+      // Only the unmute direction is stamped, so a restored unmute is not re-muted
+      // by the bridge while a restored mute can still be deferred on a reconnect.
+      if (pendingMuteAssert === false) stampMuteCommand(false);
 
       userSetMuted({ variables: { muted: pendingMuteAssert, userId: voice.userId } })
         .then(() => {
@@ -227,11 +241,13 @@ const AudioControls = () => {
     dispatch(setPendingMuteAssert(null));
 
     try {
+      const command = AudioManager.applyUserMuteCommand(muted, serverMuted);
       await userSetMuted({ variables: { muted, userId } });
+      markMuteCommandDelivered(command);
     } catch (e) {
       logger.error('Error on trying to toggle muted');
     }
-  }, [voice, currentUserData, displayedMuted]);
+  }, [voice, serverMuted, currentUserData, displayedMuted]);
 
   const onPressMic = useCallback(() => {
     // Lock settings are applied to the user

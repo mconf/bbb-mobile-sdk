@@ -2,6 +2,7 @@ import { mediaDevices } from '@livekit/react-native-webrtc';
 import AudioBroker from './audio-broker';
 import LiveKitAudioBridge from './livekit-audio-bridge';
 import fetchIceServers from './fetch-ice-servers';
+import { stampMuteCommand } from './mute-intent';
 import {
   setAudioManagerInitialized,
   setIsConnecting,
@@ -119,11 +120,16 @@ class AudioManager {
 
   _setSenderTrackEnabled(shouldEnable) {
     if (this.isListenOnly) return;
+    if (!this.bridge) return;
 
-    if (this.bridge) {
-      this.bridge.setSenderTrackEnabled(shouldEnable);
-      store.dispatch(setMutedState(!shouldEnable));
-    }
+    this.bridge.setSenderTrackEnabled(shouldEnable);
+
+    // The bridge can ignore a server mute during a reconnect, so mirror its intent.
+    const muted = typeof this.bridge.getMuteIntent === 'function'
+      ? this.bridge.getMuteIntent()
+      : !shouldEnable;
+
+    store.dispatch(setMutedState(muted));
   }
 
   _getStunFetchURL() {
@@ -173,6 +179,10 @@ class AudioManager {
     bridge.onmutestatechanged = (muted) => {
       store.dispatch(setMutedState(muted));
     };
+
+    bridge.ondeferredunmute = () => {
+      if (this.bridge === bridge) this.setMutedState(false);
+    };
   }
 
   _deattachProgressListeners(bridge) {
@@ -182,6 +192,7 @@ class AudioManager {
     bridge.onreconnecting = () => {};
     bridge.onreconnected = () => {};
     bridge.onmutestatechanged = () => {};
+    bridge.ondeferredunmute = () => {};
   }
 
   _initializeBridge({
@@ -459,6 +470,24 @@ class AudioManager {
 
   setMutedState(isMuted) {
     this._setSenderTrackEnabled(!isMuted);
+  }
+
+  // An unmute waits for the server, unless it already reports unmuted; then it applies
+  // now, or later if the server muted the track moments ago.
+  applyUserMuteCommand(muted, serverMuted) {
+    const command = stampMuteCommand(muted);
+
+    if (this.isListenOnly || typeof this.bridge?.applyLocalMuteIntent !== 'function') return command;
+
+    if (muted) {
+      this.bridge.applyLocalMuteIntent();
+      store.dispatch(setMutedState(this.bridge.getMuteIntent()));
+    } else if (serverMuted === false && this.bridge.getMuteIntent()) {
+      if (this.bridge.hasUnechoedServerMute?.()) this.bridge.deferUserUnmute();
+      else this.setMutedState(false);
+    }
+
+    return command;
   }
 
   isLocalStreamMuted() {

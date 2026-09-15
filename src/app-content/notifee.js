@@ -8,6 +8,7 @@ import AudioQueries from '../components/audio/audio-controls/queries';
 import LeaveQueries from '../components/custom-drawer/queries';
 import useCurrentUser from '../graphql/hooks/useCurrentUser';
 import { setPendingMuteAssert } from '../store/redux/slices/wide-app/audio';
+import { stampMuteCommand } from '../services/webrtc/mute-intent.ts';
 import logger from '../services/logger';
 import Colors from '../constants/colors';
 
@@ -76,6 +77,7 @@ const NotifeeController = () => {
     dispatch(setPendingMuteAssert(null));
 
     try {
+      stampMuteCommand(!displayedMuted);
       await userSetMuted({
         variables: {
           muted: !displayedMuted,
