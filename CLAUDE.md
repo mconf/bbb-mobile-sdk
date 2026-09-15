@@ -135,10 +135,42 @@ conference â†’ feedback) is centralized in `user-join-screen`'s subscriptio
 effect â€” `GuestScreen` itself has no navigation logic and depends on
 `UserJoinScreen` staying mounted.
 
-Breakout rooms embed **a second full instance of this same app** via the
-`bbb-breakout-sdk` git dependency (this repo, pinned to a tag). That's why
-`NavigationContainer`/`Drawer` are marked `independent`, and why two Redux
-stores / two LiveKit rooms can be alive at once.
+Breakout rooms are **a second, nested mount of this same `App`**: the main
+room's `inside-breakout-room-screen` renders the root `App` (taken from
+`NestedAppContext`, not imported, to avoid a cycle) with `isBreakout`, from the
+same module graph. There is no `bbb-breakout-sdk` dependency and no separate
+breakout branch/tag anymore. That's why `NavigationContainer`/`Drawer` are
+marked `independent`, and why two Redux stores / two Apollo clients are alive
+at once (see "Per-App instance" below). Breakout-only behavior is decided at
+**runtime**: `useIsBreakoutInstance()` (`src/app-instance/context.js`, known on
+the first render, before Apollo and after teardown; use it to skip
+subscriptions, feedback, end-screen strings) or the server flag
+`meeting.isBreakout` from `useMeeting` (drawer routes, recording indicator).
+Entering a breakout: `breakout-room-screen` `joinSession` exits audio/camera,
+sets `mainRoomBlockedByBreakout`, **awaits** `instance.disconnectLiveKit({final:true})`,
+then navigates. The main room's `BBBLiveKitRoom` stays mounted (drawer content)
+but refuses to reconnect while the flag is set; the nested App's `onLeaveSession`
+clears it and the main media re-initializes.
+
+### Per-App instance: nothing media/session-related is a module singleton
+
+`src/app-instance/` is the heart of that. `createAppInstance({ isBreakout })`
+(called once per mounted `App` via a `useState` initializer) builds an object
+owning: the Redux store (`createAppStore(instance)`), the LiveKit `Room` +
+event emitter + room bookkeeping (`liveKitTracker`: connected-once flag,
+published camera tracks), the three WebRTC managers (constructed with the
+instance), the meeting-settings reactive var, the ICE-server cache, the
+audio-join guard, the expected camera stops (`cameraStops`), the client mute
+commands (`muteIntent`) and the LiveKit screen-capture attempt state.
+React reads it through `useAppInstance()` / `useLiveKitRoom()` /
+`useMediaManagers()`; managers/bridges receive it by constructor; Redux
+listener effects reach it as `listenerApi.extra`. **Never create a module-level
+`Room`, manager or `makeVar` for session state again.** The only module-level
+pointer is `active-instance.js` (a stack, innermost mounted App = active),
+which exists solely for legacy non-React code: the `store` shim
+`src/store/redux/legacy-store.js` (used by `socket-connection/**` and
+`poll-screen/service.js`; `store.js` no longer exports a store) and the
+logger's `getAuthInfo`.
 
 ### State: Redux + Apollo (reactive vars), split by origin
 
@@ -169,21 +201,27 @@ flags.
   `sfu-base-broker.js`, an EventEmitter2) â†’ `WebRtcPeer` (`peer.js`) over a
   hand-rolled JSON-signaling WebSocket to `bbb-webrtc-sfu`. Managers are plain
   modules (not React): they read via `store.getState()` and write via
-  `store.dispatch()`. `App.js` calls `injectStore(...)` on all three at mount to
-  break the circular dep between the managers and the store slices that import
-  them.
-- **LiveKit path** â€” a **single shared `Room`** created once in
-  `src/services/livekit/index.js` (exports `liveKitRoom` +
-  `disconnectLiveKitRoom({final})`). `BBBLiveKitRoom` imperatively connects it.
+  `store.dispatch()`. There is one set of managers **per App instance**: they
+  are constructed with the instance and use `this.instance.store`; the old
+  `injectStore(...)` is gone. Slices never import managers; listener effects
+  use `listenerApi.extra.<manager>`.
+- **LiveKit path** â€” **one `Room` per App instance**, created by
+  `createLiveKitRoom()` in `src/services/livekit/index.js` and held as
+  `instance.liveKitRoom` (`useLiveKitRoom()` in React; the five
+  `RoomContext.Provider` sites read it from there). `BBBLiveKitRoom`
+  imperatively connects it.
   `registerGlobals()` from `@livekit/react-native` runs in `index.js` **before**
   `App` is imported (wires WebRTC globals) â€” don't reorder those imports.
 - **Asymmetric port state:** audio on LiveKit *still flows through*
   `AudioManager` (via `LiveKitAudioBridge`), but LiveKit **video/screenshare do
   not use any manager** â€” they live in React components using
   `@livekit/react-native` hooks (`useTracks`). There is no `LiveKitVideoManager`.
-- `disconnectLiveKitRoom({final: true})` also `destroy()`s all three WebRTC
-  managers â€” it's the central teardown coupling both stacks (called from
-  `App.js` `leaveSessionFactory`, `BBBLiveKitRoom` unmount, breakout/user-join).
+- `instance.disconnectLiveKit({final: true})` (returns a promise) also
+  `destroy()`s that instance's three WebRTC managers â€” it's the central
+  teardown coupling both stacks (called from `App.js` `leaveSessionFactory`,
+  `BBBLiveKitRoom` unmount, breakout entry, user-join). Managers are
+  re-initializable after `destroy()`; that is how the main room resumes after a
+  breakout.
 
 > WebRTC library naming trap: the runtime WebRTC primitives come from
 > `@livekit/react-native-webrtc` (a LiveKit fork). `@config-plugins/react-native-webrtc`
@@ -217,9 +255,11 @@ info, device info, and app/build version. Note: log records include
   `subscription` documents (folder is misnamed). Read-hook shape:
   `const {data,loading,error}=useSubscription(DOC); return useMemo(...)`. gql docs
   live both centrally and co-located per component (e.g. `components/livekit/mutations.js`).
-- **Reading settings outside React:** use `getMeetingSettings()` from
-  `src/graphql/local-states/useMeetingSettings.ts` (mobile's analog of web's
-  `window.meetingClientSettings`) in plain modules/managers/bridges.
+- **Reading settings outside React:** use the instance's `getMeetingSettings()`
+  (`instance.getMeetingSettings`, built by `createMeetingSettingsState()` in
+  `src/graphql/local-states/useMeetingSettings.ts`; mobile's analog of web's
+  `window.meetingClientSettings`). There is no module-level export: managers and
+  bridges get it from the instance, components from `useAppInstance()`.
   `createUseLocalState` also returns the raw Apollo `ReactiveVar` as its 3rd tuple
   element for non-hook reads.
 - **Feature gating** is driven by `settings.json` flags read throughout the UI:
@@ -243,7 +283,9 @@ info, device info, and app/build version. Note: log records include
   TS-aware) â€” expected repo-wide; diff against HEAD before blaming your edit.
 - The `README.md` is stale (claims Node 18 / Expo 52); trust `.nvmrc` and
   `package.json`.
-- **Versioning:** the SDK release version is `package.json`, and the
-  `bbb-breakout-sdk` git-dependency tag tracks it. `app.json` `version` (1.0.0)
-  is unrelated â€” bump `package.json` + the breakout tag for SDK releases.
+- **Versioning:** the SDK release version is `package.json` only. `app.json`
+  `version` (1.0.0) is unrelated â€” bump `package.json` for SDK releases. The
+  old `breakout-graphql` branch and `breakout-v*` tags are archived: since
+  0.27.0 the breakout client ships inside the main SDK and no breakout tag is
+  cut.
 

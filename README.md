@@ -37,6 +37,13 @@
 
     $ npm install
 
+## Breakout rooms
+
+Breakout rooms are handled by this same package: a breakout is the root `App`
+mounted a second time (with `isBreakout`) inside the main room, each mount
+owning its own store, LiveKit room and media managers (see `src/app-instance`).
+No extra dependency or separate breakout tag is needed.
+
 ## How to run
 To run the sdk as standalone just switch the flag on the settings.json:
 
