@@ -1,8 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-// Profiles that stay up until their condition clears, so they are the only ones
-// offered a dismiss control.
-export const PERSISTENT_PROFILES = ['mediaReconnectFailed'];
+// Notices that stay up until their condition clears, so the user can dismiss them.
+export const PERSISTENT_PROFILES = ['mediaReconnectFailed', 'mediaReconnecting'];
 
 const initialState = {
   isShow: false,
