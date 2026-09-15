@@ -44,13 +44,21 @@ import useMeetingSettings from '../../graphql/local-states/useMeetingSettings';
 // FATAL_RECONNECT_STABLE_MS, so only *rapid consecutive* failures exhaust it.
 const MAX_FATAL_RECONNECT_ATTEMPTS = 10;
 const FATAL_RECONNECT_STABLE_MS = 30000;
+const TALKING_CLEAR_GRACE_MS = 500;
 
 const LiveKitObserver = ({
   room,
   usingAudio,
 }) => {
   const { localParticipant } = useLocalParticipant();
-  const [setUserTalking] = useMutation(USER_SET_TALKING);
+  const [setUserTalking] = useMutation(USER_SET_TALKING, {
+    onError: (error) => {
+      logger.warn({
+        logCode: 'livekit_talking_mutation_failure',
+        extraInfo: { errorMessage: error?.message },
+      }, `LiveKit: talking state mutation failed - ${error?.message}`);
+    },
+  });
   const isSpeaking = useIsSpeaking(localParticipant);
   const connectionState = useConnectionState(room);
   const { data: currentUserData } = useCurrentUser();
@@ -68,15 +76,34 @@ const LiveKitObserver = ({
     }, `LiveKit conn state changed: ${connectionState}`);
   }, [connectionState]);
 
-  useEffect(() => {
-    if (!usingAudio) return;
+  const isRoomConnected = connectionState === ConnectionState.Connected;
+  const speakingIsFrozen = useRef(false);
 
-    setUserTalking({
-      variables: {
-        talking: isSpeaking,
-      },
-    });
-  }, [isSpeaking, isMuted]);
+  useEffect(() => {
+    if (!usingAudio) return undefined;
+
+    if (!isRoomConnected) {
+      speakingIsFrozen.current = true;
+      // Cleanup the talking state after a grace period if LiveKit disconnected.
+      // This happens server-side on a longer timeout as well; also do it here, on
+      // a faster grace period, to clean up the state quicker whenever possible.
+      const timer = setTimeout(() => {
+        setUserTalking({ variables: { talking: false } });
+      }, TALKING_CLEAR_GRACE_MS);
+
+      return () => clearTimeout(timer);
+    }
+
+    if (speakingIsFrozen.current) {
+      if (isSpeaking) return undefined;
+
+      speakingIsFrozen.current = false;
+    }
+
+    setUserTalking({ variables: { talking: isSpeaking } });
+
+    return undefined;
+  }, [isSpeaking, isMuted, usingAudio, isRoomConnected]);
 
   useEffect(() => {
     if (!usingAudio) return;
