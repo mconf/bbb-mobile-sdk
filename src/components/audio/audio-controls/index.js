@@ -54,8 +54,14 @@ const AudioControls = () => {
     loading: currentUserVoiceLoading,
   } = useSubscription(Queries.USER_CURRENT_VOICE);
   const voice = currentUserVoiceData?.user_current[0]?.voice;
-  const isMuted = voice?.muted;
-  const unmutedAndConnected = !isMuted && isConnected;
+  const serverMuted = voice?.muted;
+  // The server voice state can be absent (rejoin, breakout, a subscription error).
+  // While a mute assert is pending the server value is the one this client is
+  // overwriting, so the local state is the valid one in both cases.
+  const displayedMuted = pendingMuteAssert !== null
+    ? localMutedState
+    : (serverMuted ?? localMutedState);
+  const unmutedAndConnected = !displayedMuted && isConnected;
 
   // Mute reconciliation effect: applies the server's mute state
   // locally if it differs from the local state based on specific conditions.
@@ -69,8 +75,8 @@ const AudioControls = () => {
     if (currentUserVoiceLoading || !voice) return;
     if (pendingMuteAssert !== null) return;
 
-    if (localMutedState !== isMuted) AudioManager.setMutedState(isMuted);
-  }, [isMuted, currentUserVoiceLoading, localMutedState, voice, pendingMuteAssert]);
+    if (localMutedState !== serverMuted) AudioManager.setMutedState(serverMuted);
+  }, [serverMuted, currentUserVoiceLoading, localMutedState, voice, pendingMuteAssert]);
 
   // Mute state re-assertion after a rejoin (breakouts, reconnects, etc): once
   // a rejoined session's voice record exists, push our restored mute intent to the
@@ -214,9 +220,8 @@ const AudioControls = () => {
   }, [audioError, joinAudio]);
 
   const toggleVoice = useCallback(async (mutedVal) => {
-    const userId = currentUserVoiceData?.user_current[0]?.voice?.userId;
-    const currMuted = currentUserVoiceData?.user_current[0]?.voice?.muted;
-    const muted = typeof mutedVal === 'boolean' ? mutedVal : !currMuted;
+    const userId = voice?.userId ?? currentUserData?.user_current[0]?.userId;
+    const muted = typeof mutedVal === 'boolean' ? mutedVal : !displayedMuted;
 
     // Explicit user mute toggle supersedes previous mute asserts
     dispatch(setPendingMuteAssert(null));
@@ -226,7 +231,7 @@ const AudioControls = () => {
     } catch (e) {
       logger.error('Error on trying to toggle muted');
     }
-  }, [currentUserVoiceData]);
+  }, [voice, currentUserData, displayedMuted]);
 
   const onPressMic = useCallback(() => {
     // Lock settings are applied to the user
