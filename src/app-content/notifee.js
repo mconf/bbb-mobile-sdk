@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { Platform, PermissionsAndroid } from 'react-native';
+import { AppState, Platform, PermissionsAndroid } from 'react-native';
 import notifee, { AndroidForegroundServiceType, EventType } from 'react-native-notify-kit';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMutation, useSubscription } from '@apollo/client';
@@ -16,6 +16,10 @@ const CHANNEL_ID = 'main_meeting_channel';
 // Fixed id: the breakout instance's notification replaces the main room's
 // instead of duplicating it (two full app instances run during breakouts)
 const NOTIFICATION_ID = 'audio_notification_main';
+// Android won't restart the service from the background, so its stop waits for a
+// possible rejoin. The longer delay covers a join in progress, but not forever.
+const SERVICE_STOP_DELAY_MS = 15000;
+const SERVICE_RECOVERY_CEILING_MS = 90000;
 
 // Foreground service task runner/notification: keeps audio/mic working on
 // Android when the app is backgrounded or the screen is off. The promise
@@ -59,7 +63,16 @@ const NotifeeController = () => {
   const audioIsConnected = useSelector((state) => state.audio.isConnected);
   const audioIsMuted = useSelector((state) => state.audio.isMuted);
   const isListenOnly = useSelector((state) => state.audio.isListenOnly);
+  const mediaInterrupted = useSelector((state) => state.audio.mediaInterrupted);
+  const audioRecovering = useSelector((state) => state.audio.isConnecting
+    || state.audio.isReconnecting);
   const pendingMuteAssert = useSelector((state) => state.audio.pendingMuteAssert);
+  // The breakout instance reuses this service and notification id, so a late stop
+  // here would kill its service.
+  const sessionActive = useSelector(({ client }) => client.sessionState.connected
+    && client.sessionState.loggedIn
+    && !client.sessionState.mainRoomBlockedByBreakout);
+  const audioIntentSet = useSelector((state) => state.audio.audioIntentMeetingId != null);
   const { t } = useTranslation();
   const [userSetMuted] = useMutation(AudioQueries.USER_SET_MUTED);
   const [dispatchLeaveSession] = useMutation(LeaveQueries.USER_LEAVE_MEETING);
@@ -70,8 +83,16 @@ const NotifeeController = () => {
   const displayedMuted = pendingMuteAssert !== null
     ? audioIsMuted
     : (voice?.muted ?? audioIsMuted);
+  const serviceStopTimer = useRef(null);
+  const serviceStopDelay = useRef(null);
+  const serviceRunning = useRef(false);
+  const intentWhileConnected = useRef(false);
+  const fgsStartFailed = useRef(false);
 
   const toggleMute = useCallback(async () => {
+    // Only unmuting is refused while the session is down (mirrors audio-controls).
+    if (mediaInterrupted && displayedMuted) return;
+
     // Explicit user mute toggle supersedes previous mute asserts
     // (mirrors audio-controls' toggleVoice)
     dispatch(setPendingMuteAssert(null));
@@ -90,7 +111,7 @@ const NotifeeController = () => {
         extraInfo: { errorMessage: error?.message },
       }, 'Error on trying to toggle muted from notification');
     }
-  }, [voice, displayedMuted, currentUserId]);
+  }, [voice, displayedMuted, currentUserId, mediaInterrupted]);
 
   const leave = useCallback(async () => {
     try {
@@ -101,6 +122,7 @@ const NotifeeController = () => {
         extraInfo: { errorMessage: error?.message },
       }, 'Error on trying to leave session from notification');
     } finally {
+      serviceRunning.current = false;
       await notifee.stopForegroundService();
       await notifee.cancelNotification(NOTIFICATION_ID);
     }
@@ -171,6 +193,7 @@ const NotifeeController = () => {
           [AndroidForegroundServiceType.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK],
         ));
       } catch (retryError) {
+        fgsStartFailed.current = true;
         logger.error({
           logCode: 'notifee_fgs_display_retry_failed',
           extraInfo: { errorMessage: retryError?.message },
@@ -185,13 +208,75 @@ const NotifeeController = () => {
   useEffect(() => {
     if (Platform.OS !== 'android') return;
 
-    if (audioIsConnected) {
-      display();
-    } else {
+    const clearStopTimer = () => {
+      clearTimeout(serviceStopTimer.current);
+      serviceStopTimer.current = null;
+      serviceStopDelay.current = null;
+    };
+
+    const stopService = () => {
+      clearStopTimer();
+      intentWhileConnected.current = false;
+      // The breakout instance may own the service by now.
+      if (!serviceRunning.current) return;
+
+      serviceRunning.current = false;
       notifee.stopForegroundService();
       notifee.cancelNotification(NOTIFICATION_ID);
+    };
+
+    if (!sessionActive) {
+      stopService();
+
+      return;
     }
-  }, [audioIsConnected, display]);
+
+    if (audioIsConnected) {
+      clearStopTimer();
+      // Remembered because leaving audio can clear the intent a render before
+      // audioIsConnected drops.
+      if (audioIntentSet) intentWhileConnected.current = true;
+      serviceRunning.current = true;
+      display();
+
+      return;
+    }
+
+    if (!serviceRunning.current) return;
+
+    // Leaving audio on purpose clears the audio intent; a forced reconnect keeps it.
+    if (intentWhileConnected.current && !audioIntentSet) {
+      stopService();
+
+      return;
+    }
+
+    // No stop while the room is down: its reconnect can outlast any fixed delay.
+    if (mediaInterrupted) {
+      clearStopTimer();
+    } else {
+      const delay = audioRecovering ? SERVICE_RECOVERY_CEILING_MS : SERVICE_STOP_DELAY_MS;
+      if (serviceStopTimer.current && serviceStopDelay.current !== delay) clearStopTimer();
+      if (!serviceStopTimer.current) {
+        serviceStopDelay.current = delay;
+        serviceStopTimer.current = setTimeout(stopService, delay);
+      }
+    }
+  }, [audioIsConnected, sessionActive, mediaInterrupted, audioIntentSet, display]);
+
+  // Retry a service start that failed while the app was in the background.
+  useEffect(() => {
+    if (Platform.OS !== 'android') return undefined;
+
+    const subscription = AppState.addEventListener('change', (next) => {
+      if (next !== 'active' || !fgsStartFailed.current || !serviceRunning.current) return;
+
+      fgsStartFailed.current = false;
+      display();
+    });
+
+    return () => subscription.remove();
+  }, [display]);
 
   useEffect(() => {
     // POST_NOTIFICATIONS runtime prompt (Android 13+)
@@ -223,6 +308,8 @@ const NotifeeController = () => {
 
     return () => {
       unsubscribeForegroundEvents();
+      clearTimeout(serviceStopTimer.current);
+      serviceRunning.current = false;
 
       if (Platform.OS === 'android') {
         notifee.stopForegroundService();

@@ -30,7 +30,7 @@ const DEFAULT_UNPUBLISH_AFTER_MUTE_MS = 5000;
 // to arrive on a mobile link, so ignore the server's mute state for this long.
 const RECONNECT_SERVER_MUTE_WINDOW_MS = 15000;
 // Upper bound for a reconnect that never finishes, so it cannot ignore the
-// server's mute state forever.
+// server's mute state forever. Longer than the stall detector's 60 s window.
 const RECONNECT_MUTE_HOLD_CEILING_MS = 90000;
 // Time given to the reconnect's republish to land before the server's mute state
 // is read again.
