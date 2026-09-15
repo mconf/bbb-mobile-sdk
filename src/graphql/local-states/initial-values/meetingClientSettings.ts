@@ -688,6 +688,7 @@ export const meetingClientSettingsInitialValues: MeetingClientSettings = {
         },
         logLevel: LogLevel.warn,
         sdkLogBridge: true,
+        // Replaced by the server's clientSettings, where a stock server ships true.
         reconnectOnFatalFailures: false,
         roomOptions: {
           adaptiveStream: true,
