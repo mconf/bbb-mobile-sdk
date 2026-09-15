@@ -13,16 +13,19 @@ export const liveKitEvents = new EventEmitter2();
 const DEFAULT_ROOM_OPTIONS = {
   adaptiveStream: true,
   dynacast: true,
+  singlePeerConnection: false,
   stopLocalTrackOnUnpublish: false,
 };
 
 // Only the keys mobile honours are taken from the meeting settings: a server-authored
 // roomOptions is shaped for the web client, and merging its nested blocks would drop
 // the SDK's own defaults (echo cancellation, AGC) or replace a class instance.
+// stopLocalTrackOnUnpublish stays off: the audio bridge keeps its mic capture
+// across unpublishes.
 const SUPPORTED_ROOM_OPTION_KEYS = [
   'adaptiveStream',
   'dynacast',
-  'stopLocalTrackOnUnpublish',
+  'singlePeerConnection',
 ];
 
 export const resolveRoomOptions = (configured) => {

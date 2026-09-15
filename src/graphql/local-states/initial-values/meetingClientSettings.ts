@@ -691,6 +691,7 @@ export const meetingClientSettingsInitialValues: MeetingClientSettings = {
         roomOptions: {
           adaptiveStream: true,
           dynacast: true,
+          singlePeerConnection: false,
           stopLocalTrackOnUnpublish: false,
         },
         audio: {
