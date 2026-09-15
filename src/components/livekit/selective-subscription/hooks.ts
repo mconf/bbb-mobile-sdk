@@ -103,7 +103,7 @@ const useParticipantsLastSpokeAt = (room: Room): Map<string, number> => {
     return () => {
       room.off(RoomEvent.ParticipantDisconnected, handleParticipantDisconnected);
     };
-  }, [handleParticipantDisconnected]);
+  }, [room, handleParticipantDisconnected]);
 
   return participantLastSpokeAt;
 };
