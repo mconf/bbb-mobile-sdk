@@ -1531,7 +1531,11 @@ export default class LiveKitAudioBridge {
     if (this.intentApplied && this.lastServerMuteState) this.onmutestatechanged(true);
 
     return this.liveKitRoom.localParticipant.setMicrophoneEnabled(false)
-      .then(() => this.unpublish('stop'))
+      .then(
+        () => this.unpublish('stop'),
+        // A rejected mute must not skip the unpublish
+        (error) => this.unpublish('stop').then(() => { throw error; }),
+      )
       .then(() => {
         this.logger.info({
           logCode: 'livekit_audio_exit',
