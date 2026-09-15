@@ -71,6 +71,10 @@ export default class LiveKitAudioBridge {
 
   private originalStream: MediaStream | null;
 
+  // The shared Room runs with stopLocalTrackOnUnpublish disabled, so when the
+  // fallback publish acquires the capture the bridge is left to release it.
+  private bridgeAcquiredStream: boolean;
+
   private unpublishRequest: ReturnType<typeof setTimeout> | null;
 
   // Tracks whether a publish operation is pending. Used for idempotency checks
@@ -149,6 +153,7 @@ export default class LiveKitAudioBridge {
     this.userId = userId;
     this.clientSessionNumber = clientSessionNumber;
     this.originalStream = null;
+    this.bridgeAcquiredStream = false;
     this.liveKitRoom = liveKitRoom;
     this.unpublishRequest = null;
     this.isPublishPending = false;
@@ -199,11 +204,15 @@ export default class LiveKitAudioBridge {
     return this._inputDeviceId;
   }
 
-  get inputStream(): MediaStream | null {
+  get publicationTrackStream(): MediaStream | null {
     const micTrackPublications = this.getLocalMicTrackPubs();
     const publication = micTrackPublications[0];
 
-    return this.originalStream || publication?.track?.mediaStream || null;
+    return publication?.track?.mediaStream || null;
+  }
+
+  get inputStream(): MediaStream | null {
+    return this.originalStream || this.publicationTrackStream;
   }
 
   private getLocalMicTrackPubs(): LocalTrackPublication[] {
@@ -288,6 +297,10 @@ export default class LiveKitAudioBridge {
   private static isFatalPublishError(error: Error): boolean {
     return error.name === 'ConnectionError'
       && error.message?.includes('timed out');
+  }
+
+  private static isStreamLive(stream: MediaStream | null): boolean {
+    return !!stream && stream.getAudioTracks().some((track) => track.readyState === 'live');
   }
 
   // So a caller does not wait on a promise a dead room can no longer complete.
@@ -1273,7 +1286,7 @@ export default class LiveKitAudioBridge {
 
       if (this.hasMicrophoneTrack()) await this.unpublish('republish');
 
-      if (inputStream && !inputStream.active) {
+      if (inputStream && !LiveKitAudioBridge.isStreamLive(inputStream)) {
         this.logger.warn({
           logCode: 'livekit_audio_publish_inactive_stream',
           extraInfo: {
@@ -1285,7 +1298,7 @@ export default class LiveKitAudioBridge {
         }, 'LiveKit: audio stream is inactive, fallback');
       }
 
-      if (inputStream && inputStream.active) {
+      if (inputStream && LiveKitAudioBridge.isStreamLive(inputStream)) {
         // Get tracks from the stream and publish them. Map into an array of
         // Promise objects and wait for all of them to resolve.
         this.logger.debug({
@@ -1314,7 +1327,22 @@ export default class LiveKitAudioBridge {
             publishOptions,
           ),
         );
-        this.originalStream = this.inputStream;
+
+        if (this.publicationTrackStream) {
+          this.originalStream = this.publicationTrackStream;
+          this.bridgeAcquiredStream = true;
+        } else {
+          this.logger.warn({
+            logCode: 'livekit_audio_publish_pub_stream_missing',
+            extraInfo: {
+              bridgeName: this.bridgeName,
+              role: this.role,
+              inputDeviceId: this.inputDeviceId,
+              streamData: MediaStreamUtils.getMediaStreamLogData(this.originalStream),
+            },
+          }, 'LiveKit: published without a publication stream, keeping the previous capture');
+        }
+
         this.logger.debug({
           logCode: 'livekit_audio_publish_without_stream',
           extraInfo: {
@@ -1481,6 +1509,15 @@ export default class LiveKitAudioBridge {
         this.removeLiveKitObservers();
         this.clearUnpublishRequest();
         this.clearServerStateReconcile();
+
+        // Only a capture this bridge acquired; AudioManager keeps the ones it handed in.
+        if (this.bridgeAcquiredStream && this.originalStream) {
+          const releasable = this.originalStream as unknown as { release?: () => void };
+
+          if (typeof releasable.release === 'function') releasable.release();
+        }
+
+        this.bridgeAcquiredStream = false;
         this.originalStream = null;
         this.isPublishPending = false;
         this.publishGeneration += 1;
