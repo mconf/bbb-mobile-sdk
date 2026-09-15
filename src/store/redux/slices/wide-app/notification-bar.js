@@ -1,10 +1,16 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
+// Profiles that stay up until their condition clears, so they are the only ones
+// offered a dismiss control.
+export const PERSISTENT_PROFILES = [];
+
 const initialState = {
   isShow: false,
   profile: '',
   extraInfo: {},
   text: '',
+  // Profiles the user dismissed: not shown again until their condition clears.
+  dismissed: {},
 };
 
 const notificationBarSlice = createSlice({
@@ -18,7 +24,24 @@ const notificationBarSlice = createSlice({
       state.isShow = false;
     },
     hideNotification: (state, action) => {
+      // Hiding a profile means its condition is gone, so a later occurrence of it
+      // is a new notice the user has not dismissed.
+      if (action.payload) delete state.dismissed[action.payload];
+
       if (!action.payload || action.payload === state.profile) {
+        state.isShow = false;
+        state.profile = '';
+        state.extraInfo = {};
+      }
+    },
+    dismissNotification: (state, action) => {
+      const profile = action.payload || state.profile;
+
+      if (!profile) return;
+
+      state.dismissed[profile] = true;
+
+      if (profile === state.profile) {
         state.isShow = false;
         state.profile = '';
         state.extraInfo = {};
@@ -77,7 +100,7 @@ export const showNotificationWithTimeout = createAsyncThunk(
         // eslint-disable-next-line no-await-in-loop, no-promise-executor-return
         await new Promise((resolve) => setTimeout(resolve, 5000));
         notificationQueue.shift();
-        thunkAPI.dispatch(hideNotification());
+        thunkAPI.dispatch(hideNotification(params.profile));
       }
     } else {
       notificationQueue.push(params.profile);
@@ -85,10 +108,19 @@ export const showNotificationWithTimeout = createAsyncThunk(
   }
 );
 
+export const cancelQueuedNotification = (profile) => {
+  // Entry 0 is the one the drain loop is showing and will shift itself;
+  // removing it here would make the loop drop somebody else's notification.
+  for (let i = notificationQueue.length - 1; i > 0; i -= 1) {
+    if (notificationQueue[i] === profile) notificationQueue.splice(i, 1);
+  }
+};
+
 export const {
   show,
   hide,
   setProfile,
   hideNotification,
+  dismissNotification,
 } = notificationBarSlice.actions;
 export default notificationBarSlice.reducer;
