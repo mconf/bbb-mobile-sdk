@@ -1,5 +1,5 @@
 import Module from './module';
-import { store } from '../../../store/redux/store';
+import { store } from '../../../store/redux/legacy-store';
 import { setProfile } from '../../../store/redux/slices/wide-app/modal';
 import {
   addBreakout,

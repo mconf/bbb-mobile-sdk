@@ -13,7 +13,7 @@ import {
   setTransferUrl
 } from '../../store/redux/slices/wide-app/client';
 import logger from '../../services/logger';
-import { setMeetingSettings } from '../local-states/useMeetingSettings';
+import { useAppInstance } from '../../app-instance/context';
 
 const useJoinMeeting = (url) => {
   const [loginStage, setLoginStage] = useState(0);
@@ -26,7 +26,10 @@ const useJoinMeeting = (url) => {
   const numberOfAttempts = useRef(20);
   const tsLastMessageRef = useRef(0);
   const tsLastPingMessageRef = useRef(0);
+  const wsClientRef = useRef(null);
   const dispatch = useDispatch();
+  // Meeting settings live on the App instance (a nested breakout App has its own)
+  const { setMeetingSettings } = useAppInstance();
 
   async function requestSessionToken() {
     fetch(`${url}`)
@@ -188,6 +191,7 @@ const useJoinMeeting = (url) => {
 
         },
       });
+      wsClientRef.current = subscription;
       const graphWsLink = new GraphQLWsLink(
         subscription,
       );
@@ -230,6 +234,26 @@ const useJoinMeeting = (url) => {
         setLoginStage(5);
       });
   }
+
+  // Tear the graphql-ws client and the Apollo client down with the App that
+  // created them. Without this a nested breakout App (or a host app unmounting
+  // the SDK) leaves the socket open and the server keeps the user "joined"
+  // until the socket times out.
+  useEffect(() => {
+    return () => {
+      try {
+        graphqlUrlApolloClient?.stop();
+      } catch (error) {
+        // ignore - best effort teardown
+      }
+      try {
+        wsClientRef.current?.dispose();
+      } catch (error) {
+        // ignore - best effort teardown
+      }
+      wsClientRef.current = null;
+    };
+  }, [graphqlUrlApolloClient]);
 
   useEffect(() => {
     switch (loginStage) {

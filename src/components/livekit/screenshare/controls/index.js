@@ -8,9 +8,8 @@ import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import useDebounce from '../../../../hooks/use-debounce';
-import { liveKitRoom } from '../../../../services/livekit';
+import { useAppInstance, useLiveKitRoom } from '../../../../app-instance/context';
 import logger from '../../../../services/logger';
-import { getMeetingSettings } from '../../../../graphql/local-states/useMeetingSettings';
 import {
   setIsLocalConnecting,
   setIsLocalSharing,
@@ -35,14 +34,15 @@ const CAPTURE_PROBE_TIMEOUT = 2000;
 const CAPTURE_PROBE_INTERVAL = 250;
 const MAX_CAPTURE_ATTEMPTS = 3;
 
-// Set by any stop the user asks for - the hook is mounted twice (actions bar and
-// presenter view), so a ref would not reach the instance running the attempts.
-let stopRequested = false;
-// Capturers from attempts that produced no frames. They are deliberately not
-// released between attempts (that is what keeps the foreground service alive),
-// so they are collected here and disposed once the share ends - otherwise the
-// service and its notification outlive the share.
-const staleCapturers = new Set();
+// Per App instance (instance.screenshareCapture), shared by every mount of the
+// hook in that App:
+// - stopRequested: set by any stop the user asks for - the hook is mounted twice
+//   (actions bar and presenter view), so a ref would not reach the mount running
+//   the attempts.
+// - staleCapturers: capturers from attempts that produced no frames. They are
+//   deliberately not released between attempts (that is what keeps the foreground
+//   service alive), so they are collected here and disposed once the share ends -
+//   otherwise the service and its notification outlive the share.
 
 const wait = (ms) => new Promise((resolve) => { setTimeout(resolve, ms); });
 
@@ -80,6 +80,8 @@ export const useLKScreenshare = ({ handleScreensharePublishError } = {}) => {
   const { localParticipant, isScreenShareEnabled } = useLocalParticipant();
   const tracks = useTracks([Track.Source.ScreenShare]);
   const dispatch = useDispatch();
+  const { screenshareCapture: capture, getMeetingSettings } = useAppInstance();
+  const { staleCapturers } = capture;
   const isConnecting = useSelector((state) => state.screenshare.isLocalConnecting);
 
   // Mirror LiveKit's local state into Redux so components outside the room
@@ -98,7 +100,7 @@ export const useLKScreenshare = ({ handleScreensharePublishError } = {}) => {
     releaseCapturer = true,
     requestedByUser = true,
   } = {}) => {
-    if (requestedByUser) stopRequested = true;
+    if (requestedByUser) capture.stopRequested = true;
 
     const localPublications = tracks
       .map((trackReference) => trackReference.publication)
@@ -173,7 +175,7 @@ export const useLKScreenshare = ({ handleScreensharePublishError } = {}) => {
     try {
       if (localParticipant.isScreenShareEnabled) await unpublishScreenshare();
 
-      stopRequested = false;
+      capture.stopRequested = false;
       dispatch(setIsLocalConnecting(true));
       // On Android this opens the system MediaProjection consent dialog and,
       // once accepted, starts the mediaProjection foreground service bundled
@@ -190,7 +192,7 @@ export const useLKScreenshare = ({ handleScreensharePublishError } = {}) => {
       // attempts cannot overlap with a tap. Between them the capturer is kept
       // alive on purpose: that keeps the foreground service up, which is what
       // lets a later attempt win the race the first one lost.
-      for (let attempt = 1; attempt <= MAX_CAPTURE_ATTEMPTS && !stopRequested; attempt += 1) {
+      for (let attempt = 1; attempt <= MAX_CAPTURE_ATTEMPTS && !capture.stopRequested; attempt += 1) {
         if (attempt > 1) {
           // eslint-disable-next-line no-await-in-loop
           await unpublishScreenshare({ releaseCapturer: false, requestedByUser: false });
@@ -216,7 +218,7 @@ export const useLKScreenshare = ({ handleScreensharePublishError } = {}) => {
 
       // The user stopped mid-sequence: drop whatever the last attempt left
       // behind instead of publishing it.
-      if (stopRequested) {
+      if (capture.stopRequested) {
         await unpublishScreenshare({ requestedByUser: false });
         return;
       }
@@ -322,7 +324,7 @@ const LKScreenshareControls = ({
 };
 
 const LKScreenshareControlsContainer = (props) => (
-  <RoomContext.Provider value={liveKitRoom}>
+  <RoomContext.Provider value={useLiveKitRoom()}>
     <LKScreenshareControls {...props} />
   </RoomContext.Provider>
 );
@@ -343,7 +345,7 @@ const LKStopScreenshare = () => {
 
 // Stop control for the presenter view (content-area), outside the actions bar.
 export const LKStopScreenshareControl = () => (
-  <RoomContext.Provider value={liveKitRoom}>
+  <RoomContext.Provider value={useLiveKitRoom()}>
     <LKStopScreenshare />
   </RoomContext.Provider>
 );

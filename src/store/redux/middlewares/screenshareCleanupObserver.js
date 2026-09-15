@@ -1,10 +1,15 @@
 import { createListenerMiddleware } from '@reduxjs/toolkit';
 import { removeScreenshare, screenshareCleanupListener } from '../slices/screenshare';
 
-const screenshareCleanupObserver = createListenerMiddleware();
-screenshareCleanupObserver.startListening({
-  actionCreator: removeScreenshare,
-  effect: screenshareCleanupListener,
-});
+// Per-store factory; see voiceCallStateObserver.js for why.
+const createScreenshareCleanupObserver = (instance) => {
+  const screenshareCleanupObserver = createListenerMiddleware({ extra: instance });
+  screenshareCleanupObserver.startListening({
+    actionCreator: removeScreenshare,
+    effect: screenshareCleanupListener,
+  });
 
-export default screenshareCleanupObserver;
+  return screenshareCleanupObserver;
+};
+
+export default createScreenshareCleanupObserver;

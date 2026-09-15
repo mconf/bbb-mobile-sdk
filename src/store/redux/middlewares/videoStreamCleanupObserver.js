@@ -1,10 +1,15 @@
 import { createListenerMiddleware } from '@reduxjs/toolkit';
 import { removeVideoStream, videoStreamCleanupListener } from '../slices/video-streams';
 
-const videoStreamCleanupObserver = createListenerMiddleware();
-videoStreamCleanupObserver.startListening({
-  actionCreator: removeVideoStream,
-  effect: videoStreamCleanupListener,
-});
+// Per-store factory; see voiceCallStateObserver.js for why.
+const createVideoStreamCleanupObserver = (instance) => {
+  const videoStreamCleanupObserver = createListenerMiddleware({ extra: instance });
+  videoStreamCleanupObserver.startListening({
+    actionCreator: removeVideoStream,
+    effect: videoStreamCleanupListener,
+  });
 
-export default videoStreamCleanupObserver;
+  return videoStreamCleanupObserver;
+};
+
+export default createVideoStreamCleanupObserver;

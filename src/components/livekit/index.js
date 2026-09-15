@@ -21,12 +21,9 @@ import {
   LogLevel,
   RoomEvent,
 } from 'livekit-client';
-import AudioManager from '../../services/webrtc/audio-manager';
-import VideoManager from '../../services/webrtc/video-manager';
-import ScreenshareManager from '../../services/webrtc/screenshare-manager';
 import logger from '../../services/logger';
 import useMeeting from '../../graphql/hooks/useMeeting';
-import { useAudioJoin, invalidateInFlightAudioJoin } from '../../hooks/use-audio-join';
+import { useAudioJoin } from '../../hooks/use-audio-join';
 import useCurrentUser from '../../graphql/hooks/useCurrentUser';
 import { usePrimaryLiveKitMembership } from '../../graphql/hooks/useLiveKitMemberships';
 import {
@@ -34,16 +31,12 @@ import {
   setLiveKitSdkLogBridgeEnabled,
 } from '../../services/livekit/sdk-log-bridge.ts';
 import {
-  liveKitRoom,
-  disconnectLiveKitRoom,
-  liveKitEvents,
   applyRoomOptions,
   resolveRoomOptions,
-  hasConnectedOnce,
   isReconnectingState,
-  stopAbandonedCameraTracks,
   LK_FATAL_ERROR_EVENT,
 } from '../../services/livekit';
+import { useAppInstance } from '../../app-instance/context';
 import {
   setIsConnected,
   setIsConnecting,
@@ -59,7 +52,6 @@ import {
   setProfile,
   showNotificationWithTimeout,
 } from '../../store/redux/slices/wide-app/notification-bar';
-import { expectStreamStop } from '../../services/livekit/camera-state.ts';
 import LiveKitCameraTeardownObserver from './camera/teardown-observer';
 import { USER_SET_TALKING } from './mutations';
 import SelectiveSubscription from './selective-subscription/index.tsx';
@@ -97,8 +89,10 @@ const LiveKitObserver = ({
   usingAudio,
   usingCamera,
   setReconnectingNotice,
+  audioManager,
 }) => {
   const dispatch = useDispatch();
+  const { liveKitTracker } = useAppInstance();
   const mainRoomBlockedByBreakout = useSelector(
     (state) => state.client.sessionState.mainRoomBlockedByBreakout,
   );
@@ -164,13 +158,13 @@ const LiveKitObserver = ({
       && connectionState === ConnectionState.Connected
       && joinedVoice
       && audioManagerInitialized) {
-      AudioManager.onAudioJoin();
+      audioManager.onAudioJoin();
     }
-  }, [isConnected, connectionState, joinedVoice, audioManagerInitialized]);
+  }, [isConnected, connectionState, joinedVoice, audioManagerInitialized, audioManager]);
 
   // Entering a breakout tears this room down on purpose, so a room that is not
   // Connected is not always an interruption of the user's session.
-  const isMediaInterrupted = hasConnectedOnce()
+  const isMediaInterrupted = liveKitTracker.hasConnectedOnce()
     && !mainRoomBlockedByBreakout
     && connectionState !== ConnectionState.Connected;
   const isResuming = connectionState === ConnectionState.SignalReconnecting;
@@ -209,12 +203,27 @@ const LiveKitObserver = ({
 };
 
 const BBBLiveKitRoom = ({ children }) => {
+  // Everything media-related is owned by this App instance (see
+  // src/app-instance): a nested breakout App has its own room, event emitter
+  // and managers, so nothing here can collide with the main room's.
+  const instance = useAppInstance();
+  const {
+    liveKitRoom,
+    liveKitEvents,
+    audioManager: AudioManager,
+    videoManager: VideoManager,
+    screenshareManager: ScreenshareManager,
+  } = instance;
   const { data: currentUserData } = useCurrentUser();
   const host = useSelector((state) => state.client.meetingData.host);
   const directHost = useSelector((state) => state.client.meetingData.directHost);
   const dispatch = useDispatch();
   const store = useStore();
-  const { joinAudio } = useAudioJoin();
+  const { joinAudio, invalidateInFlightAudioJoin } = useAudioJoin();
+  const {
+    cameraStops: { expectStreamStop },
+    liveKitTracker: { stopAbandonedCameraTracks },
+  } = instance;
   const { data: meetingData, loading: meetingLoading } = useMeeting();
   const sessionToken = useSelector((state) => state.client.meetingData.sessionToken);
   const isClientConnected = useSelector((state) => state.client.sessionState.connected);
@@ -979,6 +988,7 @@ const BBBLiveKitRoom = ({ children }) => {
     forceRoomReconnect,
     notifyReconnectExhausted,
     clearReconnectNotice,
+    liveKitEvents,
   ]);
 
   useEffect(() => {
@@ -997,7 +1007,7 @@ const BBBLiveKitRoom = ({ children }) => {
 
   useEffect(() => {
     return () => {
-      disconnectLiveKitRoom({ final: true });
+      instance.disconnectLiveKit({ final: true });
     };
   }, []);
 
@@ -1019,6 +1029,7 @@ const BBBLiveKitRoom = ({ children }) => {
         usingAudio={usingAudio}
         usingCamera={usingCamera}
         setReconnectingNotice={setReconnectingNotice}
+        audioManager={AudioManager}
       />
       {usingCamera && <LiveKitCameraTeardownObserver setCameraNotice={setCameraNotice} />}
       {usingAudio && selectiveSubscriptionEnabled && <SelectiveSubscription />}

@@ -39,13 +39,13 @@ import clientReducer, { setSessionTerminated, setConnected, sessionStateChanged 
 import ReduxDebug from '../../services/logger/redux-debug';
 // Middlewares
 import {
-  screenshareCleanupObserver,
-  videoStreamCleanupObserver,
-  voiceCallStateObserver,
-  logoutOrEjectionObserver
+  createScreenshareCleanupObserver,
+  createVideoStreamCleanupObserver,
+  createVoiceCallStateObserver,
+  createLogoutOrEjectionObserver,
 } from './middlewares';
 
-let storeFlushCallback = () => {
+const defaultStoreFlushCallback = () => {
   logger.info({
     logCode: 'store_flushed',
   }, 'Store flushed');
@@ -89,38 +89,43 @@ const appReducer = combineReducers({
   client: clientReducer,
 });
 
-const flushStoreObserver = createListenerMiddleware();
-const flushStoreEffect = (action, listenerApi) => {
-  const state = listenerApi.getState();
-  const hasEnded = (_state, type, payload) => {
-    if (!_state) return false;
+const createFlushStoreObserver = (instance, storeFlushCallback) => {
+  const flushStoreObserver = createListenerMiddleware({ extra: instance });
+  const flushStoreEffect = (action, listenerApi) => {
+    const state = listenerApi.getState();
+    const hasEnded = (_state, type, payload) => {
+      if (!_state) return false;
 
-    const disconnected = !_state.client.sessionState.connected || (type === 'client/setConnected' && !payload);
-    const ended = _state.client.sessionState.ended || (type === 'client/sessionStateChanged' && payload.ended);
-    const terminated = _state.client.sessionState.terminated || (type === 'client/setSessionTerminated' && payload);
+      const disconnected = !_state.client.sessionState.connected || (type === 'client/setConnected' && !payload);
+      const ended = _state.client.sessionState.ended || (type === 'client/sessionStateChanged' && payload.ended);
+      const terminated = _state.client.sessionState.terminated || (type === 'client/setSessionTerminated' && payload);
 
-    logger.info({
-      logCode: 'store_flushed',
-    }, `Disconnected=${disconnected}, Ended=${ended}, Terminated=${terminated}`);
+      logger.debug({
+        logCode: 'store_flush_check',
+        extraInfo: { appInstanceId: instance.id },
+      }, `Disconnected=${disconnected}, Ended=${ended}, Terminated=${terminated}`);
 
-    return disconnected && ended && terminated;
+      return disconnected && ended && terminated;
+    };
+
+    if (hasEnded(state, action.type, action.payload)) {
+      logger.info({
+        logCode: 'dispatch_store_flushed',
+      }, 'Dispatching store_flush');
+      if (typeof storeFlushCallback === 'function') storeFlushCallback();
+      listenerApi.dispatch({ type: 'STORE_FLUSH' });
+    }
   };
+  flushStoreObserver.startListening({
+    matcher: isAnyOf(setConnected, setSessionTerminated, sessionStateChanged),
+    effect: flushStoreEffect,
+  });
 
-  if (hasEnded(state, action.type, action.payload)) {
-    logger.info({
-      logCode: 'dispatch_store_flushed',
-    }, 'Dispatching store_flush');
-    if (typeof storeFlushCallback === 'function') storeFlushCallback();
-    listenerApi.dispatch({ type: 'STORE_FLUSH' });
-  }
+  return flushStoreObserver;
 };
-flushStoreObserver.startListening({
-  matcher: isAnyOf(setConnected, setSessionTerminated, sessionStateChanged),
-  effect: flushStoreEffect,
-});
 
-const rootReducer = (state, action) => {
-  ReduxDebug.addToReduxLog(action);
+const createRootReducer = (instance) => (state, action) => {
+  ReduxDebug.addToReduxLog(action, instance.id);
   // Reset the store on logouts
   if (action.type === 'STORE_FLUSH') {
     logger.info({
@@ -133,19 +138,33 @@ const rootReducer = (state, action) => {
   return appReducer(state, action);
 };
 
-export const injectStoreFlushCallback = (callback) => {
-  storeFlushCallback = callback;
-};
+// One Redux store per App instance (see src/app-instance). The main room and a
+// nested breakout room each get their own store, their own listener
+// middlewares (a createListenerMiddleware() instance must not be shared between
+// stores) and reach their own WebRTC managers through `listenerApi.extra`,
+// which is the AppInstance.
+//
+// There is deliberately no module-level `store` export anymore. React code uses
+// the nearest <Provider> (useSelector/useDispatch/useStore); plain modules
+// receive the instance by constructor; legacy DDP code goes through
+// ./legacy-store.js.
+export const createAppStore = (instance, { onFlush = defaultStoreFlushCallback } = {}) => {
+  const flushStoreObserver = createFlushStoreObserver(instance, onFlush);
+  const videoStreamCleanupObserver = createVideoStreamCleanupObserver(instance);
+  const screenshareCleanupObserver = createScreenshareCleanupObserver(instance);
+  const voiceCallStateObserver = createVoiceCallStateObserver(instance);
+  const logoutOrEjectionObserver = createLogoutOrEjectionObserver(instance);
 
-export const store = configureStore({
-  reducer: rootReducer,
-  middleware: (getDefaultMiddleware) => {
-    return getDefaultMiddleware().prepend([
-      flushStoreObserver.middleware,
-      videoStreamCleanupObserver.middleware,
-      screenshareCleanupObserver.middleware,
-      voiceCallStateObserver.middleware,
-      logoutOrEjectionObserver.middleware,
-    ]);
-  },
-});
+  return configureStore({
+    reducer: createRootReducer(instance),
+    middleware: (getDefaultMiddleware) => {
+      return getDefaultMiddleware().prepend([
+        flushStoreObserver.middleware,
+        videoStreamCleanupObserver.middleware,
+        screenshareCleanupObserver.middleware,
+        voiceCallStateObserver.middleware,
+        logoutOrEjectionObserver.middleware,
+      ]);
+    },
+  });
+};

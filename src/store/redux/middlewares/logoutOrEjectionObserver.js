@@ -1,10 +1,15 @@
 import { createListenerMiddleware } from '@reduxjs/toolkit';
 import { logoutOrEjectionPredicate, logoutOrEjectionListener } from '../slices/current-user';
 
-const logoutOrEjectionObserver = createListenerMiddleware();
-logoutOrEjectionObserver.startListening({
-  predicate: logoutOrEjectionPredicate,
-  effect: logoutOrEjectionListener,
-});
+// Per-store factory; see voiceCallStateObserver.js for why.
+const createLogoutOrEjectionObserver = (instance) => {
+  const logoutOrEjectionObserver = createListenerMiddleware({ extra: instance });
+  logoutOrEjectionObserver.startListening({
+    predicate: logoutOrEjectionPredicate,
+    effect: logoutOrEjectionListener,
+  });
 
-export default logoutOrEjectionObserver;
+  return logoutOrEjectionObserver;
+};
+
+export default createLogoutOrEjectionObserver;

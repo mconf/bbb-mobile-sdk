@@ -48,10 +48,8 @@ import MessageSender from './message-sender';
 import MethodTransaction from './method-transaction';
 import MethodTransactionManager from './method-transaction-manager';
 // TODO BAD - move elsewhere
-import AudioManager from '../../services/webrtc/audio-manager';
-import VideoManager from '../../services/webrtc/video-manager';
-import ScreenshareManager from '../../services/webrtc/screenshare-manager';
-import { store } from '../../store/redux/store';
+import { getActiveInstance } from '../../app-instance/active-instance';
+import { store } from '../../store/redux/legacy-store';
 import { selectUserByIntId } from '../../store/redux/slices/users';
 import { selectMeeting } from '../../store/redux/slices/meeting';
 import { selectCurrentUserRole } from '../../store/redux/slices/current-user';
@@ -196,15 +194,18 @@ const initializeMediaManagers = ({ internalUserID, host, directHost, sessionToke
     makeCall,
     logger,
   };
-  AudioManager.init(mediaManagerConfigs);
-  VideoManager.init(mediaManagerConfigs);
-  ScreenshareManager.init(mediaManagerConfigs);
+  // Legacy plane: the managers of the active App instance (see src/app-instance)
+  const { audioManager, videoManager, screenshareManager } = getActiveInstance();
+  audioManager.init(mediaManagerConfigs);
+  videoManager.init(mediaManagerConfigs);
+  screenshareManager.init(mediaManagerConfigs);
 };
 
 const destroyMediaManagers = () => {
-  AudioManager.destroy();
-  VideoManager.destroy();
-  ScreenshareManager.destroy();
+  const { audioManager, videoManager, screenshareManager } = getActiveInstance();
+  audioManager.destroy();
+  videoManager.destroy();
+  screenshareManager.destroy();
 };
 
 /// Set up the web socket modules.

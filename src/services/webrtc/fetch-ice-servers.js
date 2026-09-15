@@ -1,16 +1,11 @@
-let STUN_TURN_DICT = null;
-let MAPPED_STUN_TURN_DICT;
-
 const fetchStunTurnServers = (url) => {
-  if (STUN_TURN_DICT) return Promise.resolve(STUN_TURN_DICT);
-
   const handleStunTurnResponse = ({ stunServers, turnServers }) => {
     if (!stunServers && !turnServers) {
       return Promise.reject(new Error('Could not fetch STUN/TURN servers'));
     }
 
     const turnReply = [];
-    turnServers.forEach((turnEntry) => {
+    (turnServers || []).forEach((turnEntry) => {
       const { password, _url, username } = turnEntry;
       turnReply.push({
         urls: _url,
@@ -19,37 +14,47 @@ const fetchStunTurnServers = (url) => {
       });
     });
 
-    const stDictionary = {
-      stun: stunServers.map(server => server.url),
+    return Promise.resolve({
+      stun: (stunServers || []).map((server) => server.url),
       turn: turnReply,
-    };
-
-    STUN_TURN_DICT = stDictionary;
-
-    return Promise.resolve(stDictionary);
+    });
   };
 
   return fetch(url, { credentials: 'include' })
-    .then(res => res.json())
+    .then((res) => res.json())
     .then(handleStunTurnResponse);
 };
 
 const mapStunTurn = ({ stun, turn }) => {
-  const rtcStuns = stun.map(url => ({ urls: url }));
-  const rtcTurns = turn.map(t => ({ urls: t.urls, credential: t.password, username: t.username }));
+  const rtcStuns = stun.map((url) => ({ urls: url }));
+  const rtcTurns = turn.map((t) => ({ urls: t.urls, credential: t.password, username: t.username }));
   return rtcStuns.concat(rtcTurns);
 };
 
-const fetchIceServers = async (url) => {
-  if (MAPPED_STUN_TURN_DICT) {
-    return MAPPED_STUN_TURN_DICT;
-  }
+// Per-instance ICE server cache. Keyed by the fetch URL (which embeds the host
+// and the session token) so a breakout room on another host/session never
+// reuses the main room's servers, and caching the in-flight promise means the
+// three managers' concurrent init() calls share a single request.
+export const createIceServerCache = () => {
+  const cache = new Map();
 
-  const stDictionary = await fetchStunTurnServers(url);
-  const mappedIceServers = mapStunTurn(stDictionary);
-  MAPPED_STUN_TURN_DICT = mappedIceServers;
+  const fetchIceServers = (url) => {
+    if (cache.has(url)) return cache.get(url);
 
-  return mappedIceServers;
-}
+    const request = fetchStunTurnServers(url)
+      .then(mapStunTurn)
+      .catch((error) => {
+        // Do not cache failures
+        cache.delete(url);
+        throw error;
+      });
 
-export default fetchIceServers;
+    cache.set(url, request);
+
+    return request;
+  };
+
+  return { fetch: fetchIceServers };
+};
+
+export default createIceServerCache;

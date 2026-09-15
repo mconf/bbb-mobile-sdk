@@ -6,7 +6,7 @@ import {
 import { Track } from 'livekit-client';
 import { useSubscription } from '@apollo/client';
 import Styled from './styles';
-import { liveKitRoom } from '../../../services/livekit';
+import { useLiveKitRoom } from '../../../app-instance/context';
 import screenshareSubscription from '../../../graphql/queries/screenshareSubscription';
 
 const LiveKitScreenshareView = ({ trackId }) => {
@@ -25,6 +25,7 @@ const LiveKitScreenshareView = ({ trackId }) => {
 const LiveKitScreenshareViewContainer = () => {
   const { data: screenshareData } = useSubscription(screenshareSubscription);
   const trackId = screenshareData?.screenshare[0]?.stream;
+  const liveKitRoom = useLiveKitRoom();
 
   return (
     <RoomContext.Provider value={liveKitRoom}>

@@ -7,7 +7,7 @@ import {
   useTracks,
   RoomContext,
 } from '@livekit/react-native';
-import { liveKitRoom } from '../../services/livekit';
+import { useLiveKitRoom } from '../../app-instance/context';
 import {
   setFocusedElement, setFocusedId, setIsFocused, trigDetailedInfo
 } from '../../store/redux/slices/wide-app/layout';
@@ -59,6 +59,8 @@ const FullscreenWrapperScreen = ({ navigation, route }) => {
 };
 
 const FullscreenWrapperScreenContainer = (props) => {
+  const liveKitRoom = useLiveKitRoom();
+
   return (
     <RoomContext.Provider value={liveKitRoom}>
       <FullscreenWrapperScreen {...props} />

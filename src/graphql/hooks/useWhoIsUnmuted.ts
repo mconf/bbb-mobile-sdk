@@ -3,7 +3,7 @@ import { useSubscription, type OnDataOptions } from '@apollo/client';
 import { RoomEvent, Track } from 'livekit-client';
 import { useRemoteParticipants } from '@livekit/react-native';
 import useMeeting from './useMeeting';
-import { getMeetingSettings } from '../local-states/useMeetingSettings';
+import useMeetingSettings from '../local-states/useMeetingSettings';
 import VOICE_ACTIVITY, { type VoiceActivityResponse } from '../queries/voiceActivitySubscription';
 
 type UnmutedUsers = Record<string, boolean>;
@@ -49,8 +49,9 @@ const LK_UPDATE_FILTER_MINIMAL = [
  */
 export const useShouldUseLiveKitAudioState = (): boolean => {
   const { data: meetingData } = useMeeting();
+  const [meetingSettings] = useMeetingSettings();
   const audioBridge = meetingData?.meeting?.[0]?.audioBridge;
-  const useLiveKitAudioState = getMeetingSettings()
+  const useLiveKitAudioState = meetingSettings
     ?.public?.media?.livekit?.audio?.useLiveKitAudioState ?? false;
 
   return useLiveKitAudioState && audioBridge === 'livekit';

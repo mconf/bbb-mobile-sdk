@@ -10,8 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import useCurrentUser from '../../../graphql/hooks/useCurrentUser';
 import useMeeting from '../../../graphql/hooks/useMeeting';
 import logger from '../../../services/logger';
-import { liveKitRoom } from '../../../services/livekit';
-import { consumeExpectedStreamStop } from '../../../services/livekit/camera-state.ts';
+import { useAppInstance } from '../../../app-instance/context';
 import {
   setIsConnected,
   setLocalCameraId,
@@ -24,6 +23,10 @@ const LiveKitCameraTeardownObserver = ({ setCameraNotice }) => {
   const { data: currentUserData, loading, error } = useCurrentUser();
   const { data: meetingData } = useMeeting();
   const { localParticipant } = useLocalParticipant();
+  const {
+    liveKitRoom,
+    cameraStops: { consumeExpectedStreamStop },
+  } = useAppInstance();
   const connectionState = useConnectionState(liveKitRoom);
   const localCameraId = useSelector((state) => state.video.localCameraId);
   const cameraPublishing = useSelector((state) => state.video.isConnecting);

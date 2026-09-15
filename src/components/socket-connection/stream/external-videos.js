@@ -1,6 +1,6 @@
 import { getRandomAlphanumericWithCaps } from "../utils";
 import Module from '../modules/module';
-import { store } from '../../../store/redux/store';
+import { store } from '../../../store/redux/legacy-store';
 import { editStreamExternalVideoMeeting } from "../../../store/redux/slices/external-video-meetings";
 
 export class StreamExternalVideoModule extends Module {

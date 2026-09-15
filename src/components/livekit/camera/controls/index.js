@@ -7,7 +7,7 @@ import { Track } from 'livekit-client';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import useDebounce from '../../../../hooks/use-debounce';
-import { liveKitRoom, restartCameraTrack } from '../../../../services/livekit';
+import { useAppInstance, useLiveKitRoom } from '../../../../app-instance/context';
 import logger from '../../../../services/logger';
 import {
   setIsConnected,
@@ -20,11 +20,7 @@ import {
   hideNotification,
   showNotificationWithTimeout,
 } from '../../../../store/redux/slices/wide-app/notification-bar';
-import {
-  consumeExpectedStreamStop,
-  expectStreamStop,
-} from '../../../../services/livekit/camera-state.ts';
-import { getMeetingSettings } from '../../../../graphql/local-states/useMeetingSettings';
+import useMeetingSettings from '../../../../graphql/local-states/useMeetingSettings';
 import { getCameraCaptureResolution, getCameraPublishOptions } from '../service';
 
 const CAMERA_STOPPED_PROFILES = ['cameraStopped', 'cameraStoppedByLock'];
@@ -44,6 +40,11 @@ const LKVideoControls = ({
   const { localParticipant } = useLocalParticipant();
   const tracks = useTracks([Track.Source.Camera]);
   const dispatch = useDispatch();
+  const [meetingSettings] = useMeetingSettings();
+  const {
+    cameraStops: { consumeExpectedStreamStop, expectStreamStop },
+    liveKitTracker: { restartCameraTrack },
+  } = useAppInstance();
   const [publishOnActive, setPublishOnActive] = useState(false);
   const isMounted = useRef(false);
   const isActive = localParticipant.isCameraEnabled || isConnecting;
@@ -111,11 +112,11 @@ const LKVideoControls = ({
 
   const publishCamera = useCallback(async () => {
     const newCameraId = `${localParticipant.identity}_app_${Date.now()}`;
-    const cameraSettings = getMeetingSettings()?.public?.media?.livekit?.camera?.publishOptions;
-    const simulcastOptions = getCameraPublishOptions();
+    const cameraSettings = meetingSettings?.public?.media?.livekit?.camera?.publishOptions;
+    const simulcastOptions = getCameraPublishOptions(meetingSettings);
     const captureOptions = {
       facingMode: cameraFacingMode,
-      resolution: getCameraCaptureResolution(),
+      resolution: getCameraCaptureResolution(meetingSettings),
     };
     const publishOptions = {
       dtx: true,
@@ -159,6 +160,7 @@ const LKVideoControls = ({
     sendUserShareWebcam,
     handleCameraPublishError,
     cameraFacingMode,
+    meetingSettings,
   ]);
 
   useEffect(() => {
@@ -170,7 +172,7 @@ const LKVideoControls = ({
     if (localTrack) {
       restartCameraTrack(localTrack, {
         facingMode: cameraFacingMode,
-        resolution: getCameraCaptureResolution(),
+        resolution: getCameraCaptureResolution(meetingSettings),
       }).catch((error) => {
         logger.warn({
           logCode: 'livekit_camera_restart_error',
@@ -220,6 +222,8 @@ const LKVideoControls = ({
 };
 
 const LKVideoControlsContainer = (props) => {
+  const liveKitRoom = useLiveKitRoom();
+
   return (
     <RoomContext.Provider value={liveKitRoom}>
       <LKVideoControls {...props} />
