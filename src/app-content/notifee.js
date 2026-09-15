@@ -7,8 +7,9 @@ import { useTranslation } from 'react-i18next';
 import AudioQueries from '../components/audio/audio-controls/queries';
 import LeaveQueries from '../components/custom-drawer/queries';
 import useCurrentUser from '../graphql/hooks/useCurrentUser';
-import { setPendingMuteAssert } from '../store/redux/slices/wide-app/audio';
-import { stampMuteCommand } from '../services/webrtc/mute-intent.ts';
+import { setMutedState, setPendingMuteAssert } from '../store/redux/slices/wide-app/audio';
+import AudioManager from '../services/webrtc/audio-manager';
+import { markMuteCommandDelivered } from '../services/webrtc/mute-intent.ts';
 import logger from '../services/logger';
 import Colors from '../constants/colors';
 
@@ -80,38 +81,43 @@ const NotifeeController = () => {
   const { data: currentUserData } = useCurrentUser();
   const voice = currentUserVoiceData?.user_current[0]?.voice;
   const currentUserId = currentUserData?.user_current[0]?.userId;
-  const displayedMuted = pendingMuteAssert !== null
-    ? audioIsMuted
-    : (voice?.muted ?? audioIsMuted);
+  const displayedMuted = audioIsMuted
+    || (pendingMuteAssert === null && voice?.muted === true);
   const serviceStopTimer = useRef(null);
   const serviceStopDelay = useRef(null);
   const serviceRunning = useRef(false);
   const intentWhileConnected = useRef(false);
   const fgsStartFailed = useRef(false);
 
-  const toggleMute = useCallback(async () => {
+  // Takes an explicit target: the label can lag the state, and a toggle would then
+  // do the opposite of what the user pressed.
+  const setMuted = useCallback(async (muted) => {
     // Only unmuting is refused while the session is down (mirrors audio-controls).
-    if (mediaInterrupted && displayedMuted) return;
+    if (mediaInterrupted && !muted) return;
+
+    // With no audio bridge, only Redux carries the mute to the rejoin.
+    if (!audioIsConnected) dispatch(setMutedState(muted));
 
     // Explicit user mute toggle supersedes previous mute asserts
     // (mirrors audio-controls' toggleVoice)
     dispatch(setPendingMuteAssert(null));
 
     try {
-      stampMuteCommand(!displayedMuted);
+      const command = AudioManager.applyUserMuteCommand(muted, voice?.muted);
       await userSetMuted({
         variables: {
-          muted: !displayedMuted,
+          muted,
           userId: voice?.userId ?? currentUserId,
         },
       });
+      markMuteCommandDelivered(command);
     } catch (error) {
       logger.error({
         logCode: 'notifee_toggle_mute_failed',
         extraInfo: { errorMessage: error?.message },
       }, 'Error on trying to toggle muted from notification');
     }
-  }, [voice, displayedMuted, currentUserId, mediaInterrupted]);
+  }, [voice, currentUserId, mediaInterrupted, audioIsConnected]);
 
   const leave = useCallback(async () => {
     try {
@@ -130,8 +136,8 @@ const NotifeeController = () => {
 
   // notifee's onBackgroundEvent handler is global and cannot be unregistered,
   // so route events through a ref holding the latest callbacks
-  const handlersRef = useRef({ toggleMute, leave });
-  handlersRef.current = { toggleMute, leave };
+  const handlersRef = useRef({ setMuted, leave });
+  handlersRef.current = { setMuted, leave };
 
   const display = useCallback(async () => {
     const channelId = await notifee.createChannel({
@@ -159,8 +165,9 @@ const NotifeeController = () => {
               id: 'leave',
             },
           },
-          ...(isListenOnly ? [] : [
-            audioIsMuted
+          // No mute action without audio, nor Unmute while setMuted would refuse it.
+          ...(isListenOnly || !audioIsConnected || (mediaInterrupted && displayedMuted) ? [] : [
+            displayedMuted
               ? {
                 title: t('app.actionsBar.unmuteLabel'),
                 pressAction: {
@@ -180,18 +187,35 @@ const NotifeeController = () => {
       },
     });
 
+    const serviceTypes = await getServiceTypes(isListenOnly);
+
+    if (!serviceRunning.current) return;
+
+    // A stop sent while the display was in flight can reach the service before
+    // its start, so send it again.
+    const undoIfStopped = () => {
+      if (serviceRunning.current) return;
+
+      notifee.stopForegroundService();
+      notifee.cancelNotification(NOTIFICATION_ID);
+    };
+
     try {
-      await notifee.displayNotification(buildNotification(await getServiceTypes(isListenOnly)));
+      await notifee.displayNotification(buildNotification(serviceTypes));
+      undoIfStopped();
     } catch (error) {
       logger.warn({
         logCode: 'notifee_fgs_display_failed',
         extraInfo: { errorMessage: error?.message },
       }, 'Foreground service with mic type failed, retrying as mediaPlayback-only');
 
+      if (!serviceRunning.current) return;
+
       try {
         await notifee.displayNotification(buildNotification(
           [AndroidForegroundServiceType.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK],
         ));
+        undoIfStopped();
       } catch (retryError) {
         fgsStartFailed.current = true;
         logger.error({
@@ -200,11 +224,10 @@ const NotifeeController = () => {
         }, 'Failed to start the audio foreground service');
       }
     }
-  }, [audioIsMuted, isListenOnly, t]);
+  }, [displayedMuted, isListenOnly, mediaInterrupted, audioIsConnected, t]);
 
-  // Start/stop the foreground service with the audio connection; re-display on
-  // mute changes so the mute/unmute action label stays in sync (same id
-  // updates the notification in place)
+  // The service starts with audio and may outlive it while the session is up. Each
+  // change re-displays the notification in place to keep its actions current.
   useEffect(() => {
     if (Platform.OS !== 'android') return;
 
@@ -262,7 +285,9 @@ const NotifeeController = () => {
         serviceStopTimer.current = setTimeout(stopService, delay);
       }
     }
-  }, [audioIsConnected, sessionActive, mediaInterrupted, audioIntentSet, display]);
+
+    display();
+  }, [audioIsConnected, sessionActive, mediaInterrupted, audioRecovering, audioIntentSet, display]);
 
   // Retry a service start that failed while the app was in the background.
   useEffect(() => {
@@ -290,7 +315,7 @@ const NotifeeController = () => {
       if (detail.pressAction.id === 'leave') {
         await handlersRef.current.leave();
       } else if (detail.pressAction.id === 'mute' || detail.pressAction.id === 'unmute') {
-        await handlersRef.current.toggleMute();
+        await handlersRef.current.setMuted(detail.pressAction.id === 'mute');
       }
     });
 
@@ -302,7 +327,7 @@ const NotifeeController = () => {
       if (detail.pressAction.id === 'leave') {
         handlersRef.current.leave();
       } else if (detail.pressAction.id === 'mute' || detail.pressAction.id === 'unmute') {
-        handlersRef.current.toggleMute();
+        handlersRef.current.setMuted(detail.pressAction.id === 'mute');
       }
     });
 
