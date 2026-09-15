@@ -10,12 +10,40 @@ import ScreenshareManager from '../webrtc/screenshare-manager';
 export const LK_FATAL_ERROR_EVENT = 'liveKitFatalError';
 export const liveKitEvents = new EventEmitter2();
 
-export const liveKitRoom = new Room({
+const DEFAULT_ROOM_OPTIONS = {
   adaptiveStream: true,
   dynacast: true,
   stopLocalTrackOnUnpublish: false,
-  disconnectOnPageLeave: true,
-});
+};
+
+// Only the keys mobile honours are taken from the meeting settings: a server-authored
+// roomOptions is shaped for the web client, and merging its nested blocks would drop
+// the SDK's own defaults (echo cancellation, AGC) or replace a class instance.
+const SUPPORTED_ROOM_OPTION_KEYS = [
+  'adaptiveStream',
+  'dynacast',
+  'stopLocalTrackOnUnpublish',
+];
+
+export const resolveRoomOptions = (configured) => {
+  const picked = {};
+
+  if (configured) {
+    SUPPORTED_ROOM_OPTION_KEYS.forEach((key) => {
+      if (configured[key] !== undefined) picked[key] = configured[key];
+    });
+  }
+
+  return { ...DEFAULT_ROOM_OPTIONS, ...picked };
+};
+
+// Assigned in place: livekit-client hands the options object to LocalParticipant and
+// RTCEngine by reference at construction, so it must never be swapped for a new one.
+export const applyRoomOptions = (room, options) => {
+  if (room && options) Object.assign(room.options, options);
+};
+
+export const liveKitRoom = new Room(resolveRoomOptions());
 
 export const ROOM_CONNECTION_TIMEOUT = 15000;
 

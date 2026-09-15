@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useMutation } from '@apollo/client';
 import { useSelector, useDispatch, useStore } from 'react-redux';
 import {
@@ -22,6 +22,8 @@ import {
   liveKitRoom,
   disconnectLiveKitRoom,
   liveKitEvents,
+  applyRoomOptions,
+  resolveRoomOptions,
   LK_FATAL_ERROR_EVENT,
 } from '../../services/livekit';
 import { setIsConnected, setIsConnecting, setIsReconnecting } from '../../store/redux/slices/wide-app/audio';
@@ -109,6 +111,12 @@ const BBBLiveKitRoom = ({ children }) => {
     ?.reconnectOnFatalFailures ?? false;
   const selectiveSubscriptionEnabled = meetingSettings?.public?.media?.livekit
     ?.selectiveSubscription?.enabled ?? true;
+  const configuredRoomOptions = meetingSettings?.public?.media?.livekit?.roomOptions;
+  // A fresh object per render would re-run the connect effect.
+  const roomOptions = useMemo(
+    () => resolveRoomOptions(configuredRoomOptions),
+    [configuredRoomOptions],
+  );
   const fatalReconnectAttempts = useRef(0);
   const fatalReconnectResetTimer = useRef(null);
   const primaryMembership = usePrimaryLiveKitMembership();
@@ -177,6 +185,14 @@ const BBBLiveKitRoom = ({ children }) => {
             throw new Error('LiveKit membership has no token yet');
           }
 
+          applyRoomOptions(liveKitRoom, roomOptions);
+          logger.debug({
+            logCode: 'livekit_room_options_applied',
+            extraInfo: {
+              roomOptions,
+            },
+          }, 'LiveKit room options applied');
+
           return liveKitRoom.connect(url, livekitToken, connectOptions);
         })
         .then(async () => {
@@ -212,6 +228,7 @@ const BBBLiveKitRoom = ({ children }) => {
     isAudioConnecting,
     hasLiveKitToken,
     url,
+    roomOptions,
     joinAudio,
   ]);
 
