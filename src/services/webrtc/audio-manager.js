@@ -284,6 +284,20 @@ class AudioManager {
 
   // Connected, but needs acknowledgement from call states to be flagged as joined
   onAudioConnected(bridge) {
+    // Bridge died in the meantime, stale signal. Drop it.
+    if (!this.bridge || (bridge != null && this.bridge !== bridge)) {
+      this.logger.debug({
+        logCode: 'audio_connected_ignored',
+        extraInfo: {
+          clientSessionNumber: bridge?.clientSessionNumber ?? 'Unknown',
+          bridgeSessionNumber: this.bridge?.clientSessionNumber ?? null,
+          hasBridge: this.bridge != null,
+        },
+      }, 'Audio connected signal ignored; no live/matching bridge');
+
+      return;
+    }
+
     const role = bridge?.role || 'Unknown';
     const clientSessionNumber = bridge?.clientSessionNumber || 'Unknown';
     this.logger.info({

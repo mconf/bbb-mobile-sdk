@@ -1490,6 +1490,8 @@ export default class LiveKitAudioBridge {
     try {
       this.joinInFlight = true;
       await waitForRoomConnection(this.liveKitRoom);
+      if (this.stopping) return;
+
       this.originalStream = inputStream;
       this.shouldBeMuted = muted;
       this.lastServerMuteState = muted;
@@ -1501,6 +1503,8 @@ export default class LiveKitAudioBridge {
       this.listenOnly = !!isListenOnly;
 
       if (!muted) await this.publish(inputStream);
+
+      if (this.stopping) return;
 
       this.onstart();
     } catch (error) {
