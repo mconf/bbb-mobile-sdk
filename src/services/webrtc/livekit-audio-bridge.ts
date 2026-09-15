@@ -801,7 +801,7 @@ export default class LiveKitAudioBridge {
         }, 'LiveKit: published audio track without stream');
       }
 
-      this.onpublished();
+      if (this.publishGeneration === currentGeneration) this.onpublished();
     } catch (error) {
       const publishedAnyway = !!inputStream && this.isTrackPublishedWithStream(inputStream);
 
@@ -816,6 +816,7 @@ export default class LiveKitAudioBridge {
           inputDeviceId: this.inputDeviceId,
           streamData: MediaStreamUtils.getMediaStreamLogData(inputStream || this.originalStream),
           publishedAnyway,
+          stale: this.publishGeneration !== currentGeneration,
         },
       }, 'LiveKit: failed to publish audio track');
 
@@ -824,12 +825,15 @@ export default class LiveKitAudioBridge {
       // the case
       if (publishedAnyway) {
         this.reassertUnmuteIntent();
-        this.onpublished();
+
+        if (this.publishGeneration === currentGeneration) this.onpublished();
 
         return;
       }
 
-      if (LiveKitAudioBridge.isFatalPublishError(error as Error)) {
+      if (!this.stopping
+        && this.publishGeneration === currentGeneration
+        && LiveKitAudioBridge.isFatalPublishError(error as Error)) {
         this.handleFatalPublishError(error as Error);
       }
 
