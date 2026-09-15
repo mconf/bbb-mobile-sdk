@@ -161,6 +161,8 @@
   "app.createBreakoutRoom.title": "Breakout rooms",
   "app.createBreakoutRoom.askToJoin": "Ask to join",
   "app.createBreakoutRoom.join": "Join",
+  "app.video.mediaTimedOutError": "Your webcam stream has been interrupted. Try sharing it again",
+  "app.video.ejectedByLockSettings": "Your webcam was stopped because webcam sharing is locked",
   "app.videoDock.webcamFocusLabel": "Focus",
   "app.recording.startTitle": "Start recording",
   "app.recording.stopTitle": "Pause recording",

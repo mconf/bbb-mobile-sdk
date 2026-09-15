@@ -158,6 +158,8 @@
   "app.userList.label": "Usuários",
   "app.userList.menu.promoteUser.label": "Tornar moderador",
   "app.userList.menu.demoteUser.label": "Tornar espectador",
+  "app.video.mediaTimedOutError": "A transmissão da sua webcam foi interrompida. Tente compartilhar novamente",
+  "app.video.ejectedByLockSettings": "Sua webcam foi interrompida porque o compartilhamento de webcam está bloqueado",
   "app.videoDock.webcamFocusLabel": "Focar",
   "app.createBreakoutRoom.title": "Salas de apoio",
   "app.createBreakoutRoom.askToJoin": "Pedir para entrar",

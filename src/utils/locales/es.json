@@ -158,6 +158,8 @@
   "app.userList.label": "Usuarios",
   "app.userList.menu.promoteUser.label": "Promover a moderador",
   "app.userList.menu.demoteUser.label": "Degradar a espectador",
+  "app.video.mediaTimedOutError": "Se ha interrumpido la transmisión de tu cámara web. Prueba a compartirla de nuevo",
+  "app.video.ejectedByLockSettings": "Tu cámara web se detuvo porque el uso compartido de cámaras está bloqueado",
   "app.videoDock.webcamFocusLabel": "Enfocar",
   "app.createBreakoutRoom.title": "Grupos de trabajo",
   "app.recording.startTitle": "Iniciar grabación",

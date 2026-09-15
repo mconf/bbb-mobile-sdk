@@ -74,6 +74,18 @@ const notificationBarSlice = createSlice({
           state.text = 'mobileSdk.notificationBar.mediaReconnectFailed';
           state.extraInfo = action.payload.extraInfo;
           break;
+        case 'cameraStopped':
+          state.isShow = true;
+          state.profile = 'cameraStopped';
+          state.text = 'app.video.mediaTimedOutError';
+          state.extraInfo = action.payload.extraInfo;
+          break;
+        case 'cameraStoppedByLock':
+          state.isShow = true;
+          state.profile = 'cameraStoppedByLock';
+          state.text = 'app.video.ejectedByLockSettings';
+          state.extraInfo = action.payload.extraInfo;
+          break;
         case 'recordingStarted':
           state.isShow = true;
           state.messageTitle = 'mobileSdk.notification.recordLabel';

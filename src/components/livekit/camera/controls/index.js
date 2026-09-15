@@ -15,9 +15,19 @@ import {
   setLocalCameraId,
 } from '../../../../store/redux/slices/wide-app/video';
 import Styled from '../../../video/video-controls/styles';
-import { hideNotification, setProfile, showNotificationWithTimeout } from '../../../../store/redux/slices/wide-app/notification-bar';
+import {
+  cancelQueuedNotification,
+  hideNotification,
+  showNotificationWithTimeout,
+} from '../../../../store/redux/slices/wide-app/notification-bar';
+import {
+  consumeExpectedStreamStop,
+  expectStreamStop,
+} from '../../../../services/livekit/camera-state.ts';
 import { getMeetingSettings } from '../../../../graphql/local-states/useMeetingSettings';
 import { getCameraCaptureResolution, getCameraPublishOptions } from '../service';
+
+const CAMERA_STOPPED_PROFILES = ['cameraStopped', 'cameraStoppedByLock'];
 
 const LKVideoControls = ({
   disabled,
@@ -63,6 +73,10 @@ const LKVideoControls = ({
             }, `LiveKit: camera track already gone, skipping unpublish ${cameraId}`);
             return;
           }
+
+          // Marked before the server hears about it, so the row this camera loses
+          // is not read as a teardown the user did not ask for.
+          if (cameraId) expectStreamStop(cameraId);
 
           const trackPublication = await localParticipant.unpublishTrack(publication.track);
 
@@ -121,6 +135,13 @@ const LKVideoControls = ({
       if (!localPub) throw new Error('Local track publication failed');
 
       const cameraId = localPub.trackName ?? newCameraId;
+      // A camera that is back on makes any teardown notice about the previous one
+      // obsolete, including one still queued.
+      consumeExpectedStreamStop(cameraId);
+      CAMERA_STOPPED_PROFILES.forEach((profile) => {
+        cancelQueuedNotification(profile);
+        dispatch(hideNotification(profile));
+      });
       dispatch(setLocalCameraId(cameraId));
       dispatch(setIsConnected(true));
       sendUserShareWebcam(cameraId);
