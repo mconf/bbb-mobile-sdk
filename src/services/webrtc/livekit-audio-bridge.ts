@@ -251,14 +251,14 @@ export default class LiveKitAudioBridge {
   private isTrackPublishedWithStream(stream: MediaStream | null): boolean {
     if (!stream) return false;
 
-    const pubs = this.getLocalMicTrackPubs();
+    const trackIds = stream.getAudioTracks().map((track) => track.id);
 
-    if (pubs.length === 0) return false;
+    if (trackIds.length === 0) return false;
 
-    return pubs.some((pub) => {
-      const pubStream = pub.track?.mediaStream;
+    return this.getLocalMicTrackPubs().some((pub) => {
+      const track = pub.track?.mediaStreamTrack;
 
-      return pubStream?.id === stream.id && pubStream?.active;
+      return !!track && trackIds.includes(track.id) && track.readyState === 'live';
     });
   }
 
@@ -639,6 +639,29 @@ export default class LiveKitAudioBridge {
     return tracks.length > 0;
   }
 
+  private reassertUnmuteIntent(): void {
+    if (this.shouldBeMuted || !this.isLocalPublicationMuted()) return;
+
+    // The SDK's reconnect republish persists the track's own muted state, and nothing
+    // re-fires setSenderTrackEnabled while Redux/server already agree on
+    // unmuted. Re-assert it here without going through setSenderTrackEnabled
+    // to avoid re-acquiring a track.
+    this.getLocalMicTrackPubs()
+      .filter((pub) => pub.isMuted)
+      .forEach((pub) => {
+        pub.unmute().catch((error) => {
+          this.logger.warn({
+            logCode: 'livekit_audio_publish_reassert_error',
+            extraInfo: {
+              errorMessage: (error as Error).message,
+              bridgeName: this.bridgeName,
+              role: this.role,
+            },
+          }, 'LiveKit: failed to re-assert the unmute intent after a publish skip');
+        });
+      });
+  }
+
   private async publish(inputStream: MediaStream | null, force = false): Promise<void> {
     // If the stream is already published and active, skip
     if (inputStream && this.isTrackPublishedWithStream(inputStream)) {
@@ -648,6 +671,7 @@ export default class LiveKitAudioBridge {
           bridgeName: this.bridgeName,
           role: this.role,
           inputDeviceId: this.inputDeviceId,
+          streamData: MediaStreamUtils.getMediaStreamLogData(inputStream),
         },
       }, 'LiveKit: stream already published, skipping publish');
 
@@ -685,6 +709,24 @@ export default class LiveKitAudioBridge {
       // was stopped or superseded while the room was unusable, with its observers
       // already detached.
       if (this.stopping || this.publishGeneration !== currentGeneration) return;
+
+      // The SDK republishes local tracks before emitting Reconnected, which also
+      // ends the wait, and the server reads unpublishing them as a mute.
+      if (inputStream && this.isTrackPublishedWithStream(inputStream)) {
+        this.logger.debug({
+          logCode: 'livekit_audio_publish_republished_skip',
+          extraInfo: {
+            bridgeName: this.bridgeName,
+            role: this.role,
+            inputDeviceId: this.inputDeviceId,
+            streamData: MediaStreamUtils.getMediaStreamLogData(inputStream),
+          },
+        }, 'LiveKit: stream republished while waiting for the room, skipping publish');
+
+        this.reassertUnmuteIntent();
+
+        return;
+      }
 
       // @ts-ignore
       const basePublishOptions: TrackPublishOptions = {
@@ -761,6 +803,8 @@ export default class LiveKitAudioBridge {
 
       this.onpublished();
     } catch (error) {
+      const publishedAnyway = !!inputStream && this.isTrackPublishedWithStream(inputStream);
+
       this.logger.error({
         logCode: 'livekit_audio_publish_error',
         extraInfo: {
@@ -771,8 +815,19 @@ export default class LiveKitAudioBridge {
           role: this.role,
           inputDeviceId: this.inputDeviceId,
           streamData: MediaStreamUtils.getMediaStreamLogData(inputStream || this.originalStream),
+          publishedAnyway,
         },
       }, 'LiveKit: failed to publish audio track');
+
+      // A timeout on a stream that is published anyway is most likely a duplicate publish
+      // request, not a bugged room. No need to trigger the fatal error handling if that's
+      // the case
+      if (publishedAnyway) {
+        this.reassertUnmuteIntent();
+        this.onpublished();
+
+        return;
+      }
 
       if (LiveKitAudioBridge.isFatalPublishError(error as Error)) {
         this.handleFatalPublishError(error as Error);
