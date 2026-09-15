@@ -19,7 +19,9 @@ const ChatPopupList = () => {
 
   useFocusEffect(
     useCallback(() => {
-      if (lastMessage?.message && lastMessage?.messageType === "default"
+      // Regular messages and moderator broadcasts to breakout rooms pop up
+      if (lastMessage?.message
+      && (lastMessage?.messageType === 'default' || lastMessage?.messageType === 'breakoutRoomModeratorMsg')
       && !isBottomChatOpen) {
         setShowMessage(true);
       }

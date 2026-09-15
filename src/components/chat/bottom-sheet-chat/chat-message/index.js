@@ -44,6 +44,23 @@ const ChatMessage = ({
         />
       );
       break;
+    // A moderator's broadcast to every breakout room. Display-only: it is not
+    // actionable (no reactions/replies/edit) and its sender lives in the parent
+    // meeting, so `item.user` is usually null here.
+    case 'breakoutRoomModeratorMsg':
+      content = (
+        <UserMessage
+          senderName={item.senderName}
+          senderRole={item.senderRole}
+          userColor={item.user?.color}
+          senderId={item.senderId}
+          userImage={item.user?.avatar || null}
+          createdAt={item.createdAt}
+          message={item.message}
+          moderator
+        />
+      );
+      break;
     default:
       content = (
         <UserMessage

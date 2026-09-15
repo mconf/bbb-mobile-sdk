@@ -10,13 +10,15 @@ import {
   setLoggedIn,
   updateMeetingData,
 } from '../../store/redux/slices/wide-app/client';
-import { disconnectLiveKitRoom } from '../../services/livekit';
 import logger from '../../services/logger';
+import { useAppInstance, useIsBreakoutInstance } from '../../app-instance/context';
 import Styled from './styles';
 import { Text } from '../../components/typography';
 
 const UserJoinScreen = () => {
   const navigation = useNavigation();
+  const instance = useAppInstance();
+  const isBreakoutInstance = useIsBreakoutInstance();
   const [dispatchUserJoin] = useMutation(USER_JOIN_MUTATION);
   const { data, loading, error } = useSubscription(GET_GUEST_LOBBY_INFO);
   const currentUser = data?.user_current[0];
@@ -55,7 +57,15 @@ const UserJoinScreen = () => {
       const handleNavigateToFeedbackScreen = (leaveReason) => {
         dispatch(setConnected(false));
         dispatch(setLoggedIn(false));
-        disconnectLiveKitRoom({ final: true });
+        instance.disconnectLiveKit({ final: true });
+
+        // A breakout room skips feedback: its end screen just sends the user
+        // back to the main room.
+        if (isBreakoutInstance) {
+          navigation.navigate('EndSessionScreen');
+          return;
+        }
+
         navigation.navigate('FeedbackScreen', {
           currentUser: {
             ...currentUser,

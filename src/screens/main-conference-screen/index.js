@@ -9,6 +9,7 @@ import MiniAudioPlayerIcon from '../../components/audio-player/mini-audio-player
 import TalkingIndicator from '../../components/talking-indicator';
 import TimerIndicator from '../../components/timer/timerIndicator';
 import useAppState from '../../hooks/use-app-state';
+import { useIsBreakoutInstance } from '../../app-instance/context';
 import PiPView from './pip-view';
 import Styled from './styles';
 import Settings from '../../../settings.json';
@@ -17,6 +18,8 @@ const DEVICE_HEIGHT = parseInt(Dimensions.get('window').height, 10);
 const DEVICE_WIDTH = parseInt(Dimensions.get('window').width, 10);
 
 const MainConferenceScreen = () => {
+  // Breakout rooms have no timer, so do not even open its subscription there
+  const isBreakoutInstance = useIsBreakoutInstance();
   const [isLoading, setIsLoading] = useState(false);
   // const initialChatMsgsFetched = useSelector((state) => state.client.initialChatMsgsFetched);
   const isPiPEnabled = useSelector((state) => state.layout.isPiPEnabled);
@@ -44,7 +47,7 @@ const MainConferenceScreen = () => {
         <Styled.ContainerView>
           <Styled.TopIndicatorBar>
             <TalkingIndicator />
-            {Settings.features.timer && (
+            {!isBreakoutInstance && Settings.features.timer && (
               <TimerIndicator />
             )}
           </Styled.TopIndicatorBar>
