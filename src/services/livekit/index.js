@@ -1,4 +1,4 @@
-import { Room } from 'livekit-client';
+import { ConnectionState, Room, RoomEvent } from 'livekit-client';
 import { EventEmitter2 } from 'eventemitter2';
 import logger from '../logger';
 import AudioManager from '../webrtc/audio-manager';
@@ -16,6 +16,50 @@ export const liveKitRoom = new Room({
   stopLocalTrackOnUnpublish: false,
   disconnectOnPageLeave: true,
 });
+
+export const ROOM_CONNECTION_TIMEOUT = 15000;
+
+// Both Connected and Reconnected have to be watched, or an operation fired during an
+// SDK resume waits out the whole timeout. Disconnected ends the wait whatever its
+// reason: the SDK only emits it once the room is torn down, so nothing can follow it.
+export const waitForRoomConnection = (room, timeout = ROOM_CONNECTION_TIMEOUT) => {
+  return new Promise((resolve, reject) => {
+    if (!room) {
+      reject(new Error('LiveKit room not available'));
+
+      return;
+    }
+
+    if (room.state === ConnectionState.Connected) {
+      resolve();
+
+      return;
+    }
+
+    const cleanup = () => {
+      clearTimeout(timer);
+      room.off(RoomEvent.Connected, onConnected);
+      room.off(RoomEvent.Reconnected, onConnected);
+      room.off(RoomEvent.Disconnected, onDisconnected);
+    };
+    const timer = setTimeout(() => {
+      cleanup();
+      reject(new Error('Room connection timeout'));
+    }, timeout);
+    const onConnected = () => {
+      cleanup();
+      resolve();
+    };
+    const onDisconnected = (reason) => {
+      cleanup();
+      reject(new Error(`Room disconnected while waiting for connection (reason=${reason})`));
+    };
+
+    room.once(RoomEvent.Connected, onConnected);
+    room.once(RoomEvent.Reconnected, onConnected);
+    room.once(RoomEvent.Disconnected, onDisconnected);
+  });
+};
 
 export const disconnectLiveKitRoom = ({
   final = false,
