@@ -63,6 +63,10 @@ export default class LiveKitAudioBridge {
   // callbacks from clearing isPublishPending when a newer publish superseded them.
   private publishGeneration: number;
 
+  // Set by stop() and never reset, so a publish waiting for a usable room can
+  // abort once the bridge is torn down.
+  private stopping: boolean;
+
   // Desired mute state, mirroring the last mute/unmute intent applied via
   // setSenderTrackEnabled.
   private shouldBeMuted: boolean;
@@ -82,6 +86,7 @@ export default class LiveKitAudioBridge {
     this.unpublishRequest = null;
     this.isPublishPending = false;
     this.publishGeneration = 0;
+    this.stopping = false;
     // eslint-disable-next-line no-underscore-dangle
     this._inputDeviceId = null;
 
@@ -620,6 +625,15 @@ export default class LiveKitAudioBridge {
     this.isPublishPending = true;
 
     try {
+      // The room may still be coming back, so wait for one that can carry media
+      // before touching the existing publication.
+      await waitForRoomConnection(this.liveKitRoom);
+
+      // Publishing now would put a live mic into the shared room for a bridge that
+      // was stopped or superseded while the room was unusable, with its observers
+      // already detached.
+      if (this.stopping || this.publishGeneration !== currentGeneration) return;
+
       // @ts-ignore
       const basePublishOptions: TrackPublishOptions = {
         audioPreset: AudioPresets.music,
@@ -781,6 +795,8 @@ export default class LiveKitAudioBridge {
   }
 
   stop(): Promise<boolean> {
+    this.stopping = true;
+
     return this.liveKitRoom.localParticipant.setMicrophoneEnabled(false)
       .then(() => this.unpublish())
       .then(() => {
@@ -811,6 +827,7 @@ export default class LiveKitAudioBridge {
         this.clearUnpublishRequest();
         this.originalStream = null;
         this.isPublishPending = false;
+        this.publishGeneration += 1;
         this.onended();
       });
   }
