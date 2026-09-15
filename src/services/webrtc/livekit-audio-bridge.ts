@@ -427,6 +427,10 @@ export default class LiveKitAudioBridge {
       },
     }, `LiveKit: audio track muted - ${trackSid}`);
 
+    this.scheduleUnpublishAfterMute();
+  }
+
+  private scheduleUnpublishAfterMute(): void {
     const lkAudioSettings = getMeetingSettings()?.public?.media?.livekit?.audio;
     const unpublishAfterMuteMs = lkAudioSettings?.unpublishAfterMuteMs
       ?? DEFAULT_UNPUBLISH_AFTER_MUTE_MS;
@@ -435,10 +439,25 @@ export default class LiveKitAudioBridge {
       this.clearUnpublishRequest();
 
       this.unpublishRequest = setTimeout(() => {
-        if (!this.hasMicrophoneTrack()) return;
-
-        this.unpublish();
         this.unpublishRequest = null;
+        // If the publication is unmuted, we don't need to unpublish anymore
+        // (this unpublish request is only set if the publication is muted)
+        if (!this.hasMicrophoneTrack() || !this.isLocalPublicationMuted()) return;
+        // Unpublishing renegotiates, which a half-dead connection turns into a room
+        // drop; Reconnected schedules it again once the room is back.
+        if (this.liveKitRoom.state !== ConnectionState.Connected) return;
+
+        this.unpublish('after_mute').catch((error) => {
+          this.logger.warn({
+            logCode: 'livekit_audio_unpublish_after_mute_error',
+            extraInfo: {
+              errorMessage: (error as Error)?.message,
+              errorName: (error as Error)?.name,
+              bridgeName: this.bridgeName,
+              role: this.role,
+            },
+          }, `LiveKit: unpublish after mute failed - ${(error as Error)?.message}`);
+        });
       }, unpublishAfterMuteMs);
     }
   }
@@ -545,6 +564,9 @@ export default class LiveKitAudioBridge {
     }
     this.reconnectRepublished = false;
     this.clearServerStateReconcile();
+    // The SDK replaces its PeerConnections on a full reconnect; a pending
+    // unpublish would target a sender the new connection never created (and fail).
+    this.clearUnpublishRequest();
   }
 
   private handleRoomReconnected(): void {
@@ -560,6 +582,8 @@ export default class LiveKitAudioBridge {
     // state, which may have drifted from BBB's authoritative state. Reinforce.
     this.reinforceMuteState('room_reconnected');
     this.reconcileMicPublication('room_reconnected');
+    // Reconnecting cancels the unpublish a recent mute scheduled, so schedule it again.
+    if (this.shouldBeMuted && this.isLocalPublicationMuted()) this.scheduleUnpublishAfterMute();
   }
 
   private handleRoomConnected(): void {
@@ -644,6 +668,11 @@ export default class LiveKitAudioBridge {
       // Cleared after the call: reinforceMuteState needs reconnectRepublished to
       // open the mic.
       this.reinforceMuteState('server_state_reconcile');
+      // reinforceMuteState does nothing for a publication already muted, so schedule
+      // the unpublish here.
+      if (this.shouldBeMuted && this.isLocalPublicationMuted() && !this.unpublishRequest) {
+        this.scheduleUnpublishAfterMute();
+      }
       this.serverStateReconcile = null;
       this.reconnectRepublished = false;
       this.preReconnectIntent = null;
@@ -1242,7 +1271,7 @@ export default class LiveKitAudioBridge {
         noiseSuppression: true,
       };
 
-      if (this.hasMicrophoneTrack()) await this.unpublish();
+      if (this.hasMicrophoneTrack()) await this.unpublish('republish');
 
       if (inputStream && !inputStream.active) {
         this.logger.warn({
@@ -1340,7 +1369,9 @@ export default class LiveKitAudioBridge {
     }
   }
 
-  private unpublish(): Promise<void | (void | LocalTrackPublication | undefined)[]> {
+  private unpublish(
+    reason = 'unspecified',
+  ): Promise<void | (void | LocalTrackPublication | undefined)[]> {
     const micTrackPublications = this.getLocalMicTrackPubs();
 
     if (!micTrackPublications || micTrackPublications.length === 0) return Promise.resolve();
@@ -1363,6 +1394,7 @@ export default class LiveKitAudioBridge {
             errorStack: (error as Error).stack,
             bridgeName: this.bridgeName,
             role: this.role,
+            reason,
           },
         }, 'LiveKit: failed to unpublish audio track');
       });
@@ -1421,7 +1453,7 @@ export default class LiveKitAudioBridge {
     if (this.intentApplied && this.lastServerMuteState) this.onmutestatechanged(true);
 
     return this.liveKitRoom.localParticipant.setMicrophoneEnabled(false)
-      .then(() => this.unpublish())
+      .then(() => this.unpublish('stop'))
       .then(() => {
         this.logger.info({
           logCode: 'livekit_audio_exit',
