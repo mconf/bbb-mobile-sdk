@@ -298,6 +298,7 @@ const BBBLiveKitRoom = ({ children }) => {
   // announce time, so a lock lifted in the meantime cannot downgrade it.
   const [cameraNotice, setCameraNotice] = useState(null);
   const barProfile = useSelector((state) => state.notificationBar.profile);
+  const displacedProfile = useSelector((state) => state.notificationBar.displaced?.profile);
   const noticeDismissed = useSelector(
     (state) => state.notificationBar.dismissed.mediaReconnectFailed ?? false,
   );
@@ -857,7 +858,8 @@ const BBBLiveKitRoom = ({ children }) => {
       || null;
 
     if (top) {
-      if (barProfile !== top) dispatch(setProfile({ profile: top }));
+      // A timed toast over the notice hands the slot back itself when it ends.
+      if (barProfile !== top && displacedProfile !== top) dispatch(setProfile({ profile: top }));
 
       return;
     }
@@ -873,6 +875,7 @@ const BBBLiveKitRoom = ({ children }) => {
     }
   }, [
     barProfile,
+    displacedProfile,
     noticeDismissed,
     reconnectingDismissed,
     reconnectingNotice,
