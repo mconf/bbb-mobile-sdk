@@ -10,6 +10,8 @@ const initialState = {
   text: '',
   // Profiles the user dismissed: not shown again until their condition clears.
   dismissed: {},
+  // Notice a timed toast took the single slot from, pending restoration.
+  displaced: null,
 };
 
 const notificationBarSlice = createSlice({
@@ -26,6 +28,12 @@ const notificationBarSlice = createSlice({
       // Hiding a profile means its condition is gone, so a later occurrence of it
       // is a new notice the user has not dismissed.
       if (action.payload) delete state.dismissed[action.payload];
+
+      // The condition behind the displaced notice is gone, so there is nothing
+      // left to restore.
+      if (!action.payload || state.displaced?.profile === action.payload) {
+        state.displaced = null;
+      }
 
       if (!action.payload || action.payload === state.profile) {
         state.isShow = false;
@@ -47,8 +55,33 @@ const notificationBarSlice = createSlice({
       }
     },
 
+    restoreNotification: (state) => {
+      const { profile, text, extraInfo } = state.displaced || {};
+
+      state.displaced = null;
+
+      if (!profile || state.profile || state.dismissed[profile]) return;
+
+      state.isShow = true;
+      state.profile = profile;
+      state.text = text;
+      state.extraInfo = extraInfo;
+    },
+
     // notification profiles
     setProfile: (state, action) => {
+      // Only timed toasts give the slot back, so remember the notice they replace:
+      // it has no timer of its own and nothing else would raise it again.
+      if (action.payload.timed
+        && state.profile
+        && state.profile !== action.payload.profile) {
+        state.displaced = {
+          profile: state.profile,
+          text: state.text,
+          extraInfo: { ...state.extraInfo },
+        };
+      }
+
       switch (action.payload.profile) {
         case 'handsUp':
           state.isShow = true;
@@ -120,7 +153,7 @@ export const showNotificationWithTimeout = createAsyncThunk(
       while (notificationQueue.length !== 0) {
         const profile = notificationQueue[0];
 
-        thunkAPI.dispatch(setProfile({ profile }));
+        thunkAPI.dispatch(setProfile({ profile, timed: true }));
         // eslint-disable-next-line no-await-in-loop, no-promise-executor-return
         await new Promise((resolve) => setTimeout(resolve, 5000));
         notificationQueue.shift();
@@ -130,6 +163,8 @@ export const showNotificationWithTimeout = createAsyncThunk(
       // A leftover head would make every later call take the already-draining
       // path and never show.
       notificationQueue.length = 0;
+      // The slot goes back to whoever held it before the first toast.
+      thunkAPI.dispatch(restoreNotification());
     }
   }
 );
@@ -148,5 +183,6 @@ export const {
   setProfile,
   hideNotification,
   dismissNotification,
+  restoreNotification,
 } = notificationBarSlice.actions;
 export default notificationBarSlice.reducer;
