@@ -20,6 +20,7 @@ import Settings from '../../../settings.json';
 import Queries from './queries';
 import LiveKitScreenshareViewContainer from '../livekit/screenshare';
 import ExternalVideo from '../external-video';
+import PresenterView from '../screenshare/presenter-view';
 
 const ContentArea = (props) => {
   const { style, fullscreen } = props;
@@ -47,6 +48,8 @@ const ContentArea = (props) => {
   const hasScreenshare = screenshareData?.screenshare.length > 0;
   const externalVideoUrl = externalVideoData?.meeting[0]?.externalVideo?.externalVideoUrl;
   const isPresentationOpen = useSelector((state) => state.layout.isPresentationOpen);
+  // The current user is sharing their own screen (LiveKit publisher state)
+  const isLocalSharing = useSelector((state) => state.screenshare.isLocalSharing);
   const prevHasScreenshareRef = useRef(hasScreenshare);
   const isAndroid = Platform.OS === 'android';
 
@@ -100,6 +103,13 @@ const ContentArea = (props) => {
       <ExternalVideo url={externalVideoUrl} />
     );
   };
+  // Shown instead of our own screenshare stream while the current user is the
+  // one sharing (previewing it would just show the app itself).
+  const presenterView = () => {
+    return (
+      <PresenterView />
+    );
+  };
   const presentationView = () => {
     return (
       <Styled.Presentation
@@ -125,6 +135,8 @@ const ContentArea = (props) => {
 
   // ** return methods **
   if (fullscreen) {
+    if (isLocalSharing) return presenterView();
+
     return (
       <>
         {!hasScreenshare && <WhiteboardScreen />}
@@ -156,19 +168,16 @@ const ContentArea = (props) => {
     );
   };
 
+  const getContentView = () => {
+    if (externalVideoUrl) return externalVideoView();
+    if (isLocalSharing) return presenterView();
+    if (hasScreenshare) return screenshareView();
+    return presentationView();
+  };
+
   return (
     <Styled.ContentAreaPressable>
-      {{
-        externalVideoUrl: externalVideoUrl ? externalVideoView() : null,
-        screenshare: hasScreenshare ? screenshareView() : null,
-        default: presentationView(),
-      }[
-        externalVideoUrl
-          ? 'externalVideoUrl'
-          : hasScreenshare
-            ? 'screenshare'
-            : 'default'
-      ]}
+      {getContentView()}
       {renderIcons()}
     </Styled.ContentAreaPressable>
   );
