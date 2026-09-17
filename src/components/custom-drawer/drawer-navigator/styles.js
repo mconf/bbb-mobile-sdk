@@ -43,6 +43,8 @@ const BetaTag = styled(Tag)`
   right: 12px;
 `;
 
+const LANDSCAPE_DRAWER_MAX_WIDTH = 360;
+
 const ScreenOptions = {
   contentOptions: {
     style: {
@@ -84,4 +86,5 @@ export default {
   HeaderRight,
   BetaTag,
   ScreenOptions,
+  LANDSCAPE_DRAWER_MAX_WIDTH,
 };

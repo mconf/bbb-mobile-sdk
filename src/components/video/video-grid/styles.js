@@ -12,123 +12,98 @@ const VideoListItem = styled(VideoContainer)`
 const ContentArea = styled(contentArea)`
 `;
 
+// Landscape: the presentation takes this share of the width and the cameras
+// stack in the remaining column.
+const LANDSCAPE_CONTENT_WIDTH = '65%';
+
+// Tile size as a function of the grid box (dimensionHeight is the measured
+// height of the whole grid area, presentation included). Portrait keeps the
+// historical thirds-based layout; landscape splits rows in halves because the
+// box is short and wide.
+const getItemSize = ({
+  usersCount, dimensionHeight, isPresentationOpen, isLandscape
+}) => {
+  const H = dimensionHeight || 0;
+  const px = (fraction) => `${parseInt(H * fraction, 10)}px`;
+
+  if (isLandscape) {
+    if (isPresentationOpen) {
+      // Single side column next to the presentation.
+      return { width: '100%', height: usersCount > 1 ? px(1 / 2) : px(1) };
+    }
+    if (usersCount <= 1) return { width: '100%', height: px(1) };
+    if (usersCount === 2) return { width: '50%', height: px(1) };
+    return { width: '50%', height: px(1 / 2), fillRow: usersCount % 2 === 1 };
+  }
+
+  if (isPresentationOpen) {
+    if (usersCount <= 1) return { width: '100%', height: px(2 / 3) };
+    if (usersCount === 2) return { width: '100%', height: px(1 / 3) };
+    return { width: '50%', height: px(1 / 3), fillRow: usersCount % 2 === 1 };
+  }
+
+  if (usersCount <= 1) return { width: '100%', height: px(1) };
+  if (usersCount === 2) return { width: '100%', height: px(1 / 2) };
+  if (usersCount <= 4) return { width: '50%', height: px(1 / 2), fillRow: usersCount % 2 === 1 };
+  return { width: '50%', height: px(1 / 3), fillRow: usersCount % 2 === 1 };
+};
+
 const Item = styled.View`
   display: flex;
   background-color: #d0c4cb;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  height: 100%;
 
-  ${({ dimensionHeight, isPresentationOpen }) => dimensionHeight // 1 user
-  && isPresentationOpen
-  && `
-    height: ${parseInt((dimensionHeight * 2) / 3, 10)}px;
-  `}
-
-  ${({ dimensionHeight, usersCount, isPresentationOpen }) => dimensionHeight // 2 user
-  && isPresentationOpen
-  && usersCount === 2
-  && `
-    height: ${parseInt((dimensionHeight) / 3, 10)}px;
-  `}
-
-
-  ${({ usersCount, dimensionHeight, isPresentationOpen }) => usersCount % 2 === 0
-  && isPresentationOpen
-  && usersCount > 2
-  && `
-      width: 50%;
-      height: ${parseInt((dimensionHeight) / 3, 10)}px;
-  `}
-
-  ${({ usersCount, dimensionHeight, isPresentationOpen }) => usersCount % 2 === 1
-  && isPresentationOpen
-  && usersCount > 2
-  && `
-      width: 50%;
-      flex-grow: 1;
-      flex-shrink: 1;
-      flex-basis: 0;
-      height: ${parseInt((dimensionHeight) / 3, 10)}px;
-  `}
-
-  ${({ dimensionHeight, isPresentationOpen }) => dimensionHeight // 1 user
-  && !isPresentationOpen
-  && `
-    height: ${parseInt((dimensionHeight * 3) / 3, 10)}px;
-  `}
-
-  ${({ dimensionHeight, usersCount, isPresentationOpen }) => dimensionHeight // 2 user
-  && !isPresentationOpen
-  && usersCount === 2
-  && `
-    height: ${parseInt((dimensionHeight * 1.5) / 3, 10)}px;
-  `}
-
-
-  ${({ usersCount, dimensionHeight, isPresentationOpen }) => usersCount % 2 === 0
-  && !isPresentationOpen
-  && usersCount > 2
-  && `
-      width: 50%;
-      height: ${parseInt((dimensionHeight * 1.5) / 3, 10)}px;
-  `}
-
-  ${({ usersCount, dimensionHeight, isPresentationOpen }) => usersCount % 2 === 1
-  && !isPresentationOpen
-  && usersCount > 2
-  && `
-      width: 50%;
-      flex-grow: 1;
-      flex-shrink: 1;
-      flex-basis: 0;
-      height: ${parseInt((dimensionHeight * 1.5) / 3, 10)}px;
-  `}
-
-  ${({ usersCount, dimensionHeight, isPresentationOpen }) => usersCount % 2 === 0
-  && !isPresentationOpen
-  && usersCount > 4
-  && `
-      width: 50%;
-      height: ${parseInt((dimensionHeight * 1) / 3, 10)}px;
-  `}
-
-  ${({ usersCount, dimensionHeight, isPresentationOpen }) => usersCount % 2 === 1
-  && !isPresentationOpen
-  && usersCount > 4
-  && `
-      width: 50%;
-      flex-grow: 1;
-      flex-shrink: 1;
-      flex-basis: 0;
-      height: ${parseInt((dimensionHeight * 1) / 3, 10)}px;
-  `}
-
+  ${(props) => {
+    const { width, height, fillRow } = getItemSize(props);
+    return `
+      width: ${width};
+      height: ${height};
+      ${fillRow ? `
+        flex-grow: 1;
+        flex-shrink: 1;
+        flex-basis: 0;
+      ` : ''}
+    `;
+  }}
 `;
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     width: '100%',
   }
 });
+
+// Wraps presentation + camera list; measured by the grid to size the tiles.
+// Column in portrait (presentation above the cameras), row in landscape
+// (presentation beside them).
+const GridContainer = styled.View`
+  flex: 1;
+  width: 100%;
+  flex-direction: ${({ isLandscape }) => (isLandscape ? 'row' : 'column')};
+`;
 
 const ContainerViewItem = styled.View`
   display: flex;
   background-color: #d0c4cb;
   align-items: center;
   justify-content: center;
-  width: 100%;
 
   ${({ isPresentationOpen }) => !isPresentationOpen
   && `
       display: none;
   `}
 
-  ${({ dimensionHeight }) => dimensionHeight
-  && `
-    height: ${parseInt(dimensionHeight / 3, 10)}px;
-  `}
+  ${({ isLandscape, dimensionHeight }) => (isLandscape
+    ? `
+      width: ${LANDSCAPE_CONTENT_WIDTH};
+      height: 100%;
+    `
+    : `
+      width: 100%;
+      height: ${parseInt((dimensionHeight || 0) / 3, 10)}px;
+    `)}
 `;
 
 const SessionAloneTitle = styled.Text`
@@ -208,6 +183,7 @@ export default {
   ContentArea,
   styles,
   Item,
+  GridContainer,
   ContainerViewItem,
   SessionAloneTitle,
   RenderSessionAlone,

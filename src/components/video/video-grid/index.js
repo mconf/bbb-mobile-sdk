@@ -1,19 +1,33 @@
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback, useState } from 'react';
-import { Dimensions, FlatList } from 'react-native';
+import { FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
 import useCurrentUser from '../../../graphql/hooks/useCurrentUser';
 import useUserList from '../../../graphql/hooks/useUserList';
+import { useOrientation } from '../../../hooks/use-orientation';
 import Styled from './styles';
 
-const DEVICE_HEIGHT = parseInt(Dimensions.get('window').height, 10);
+const getNumOfColumns = ({ usersCount, isLandscape, isPresentationOpen }) => {
+  if (isLandscape) {
+    // With the presentation open the cameras become a side column next to
+    // it; otherwise two wide tiles per row fill the screen.
+    if (isPresentationOpen) return 1;
+    return usersCount > 1 ? 2 : 1;
+  }
+  return usersCount > 2 ? 2 : 1;
+};
 
 const GridView = () => {
   const isPresentationOpen = useSelector((state) => state.layout.isPresentationOpen);
   const { data: userData } = useUserList();
   const { data: currentUserData } = useCurrentUser();
+  const isLandscape = useOrientation() === 'LANDSCAPE';
   const videoUsersCopy = userData?.user.filter(() => true);
+  const usersCount = videoUsersCopy?.length || 0;
   const [numOfColumns, setNumOfColumns] = useState(1);
+  // Measured instead of derived from the window size: it already accounts
+  // for the header, the indicator bar and the current orientation.
+  const [gridHeight, setGridHeight] = useState(0);
   const currentUserId = currentUserData?.user_current[0].userId;
 
   const removeCurrentUserFromVideoUsers = () => {
@@ -28,9 +42,13 @@ const GridView = () => {
 
   useFocusEffect(
     useCallback(() => {
-      setNumOfColumns(userData?.user.length > 2 ? 2 : 1);
-    }, [userData])
+      setNumOfColumns(getNumOfColumns({ usersCount, isLandscape, isPresentationOpen }));
+    }, [usersCount, isLandscape, isPresentationOpen])
   );
+
+  const onGridLayout = useCallback(({ nativeEvent }) => {
+    setGridHeight(Math.round(nativeEvent.layout.height));
+  }, []);
 
   const renderItem = (videoUser) => {
     const { item: vuItem } = videoUser;
@@ -52,9 +70,10 @@ const GridView = () => {
 
     return (
       <Styled.Item
-        usersCount={videoUsersCopy.length}
-        dimensionHeight={DEVICE_HEIGHT - 90}
+        usersCount={usersCount}
+        dimensionHeight={gridHeight}
         isPresentationOpen={isPresentationOpen}
+        isLandscape={isLandscape}
       >
         <Styled.VideoListItem
           cameraId={cameraId?.streamId || null}
@@ -65,7 +84,7 @@ const GridView = () => {
           local={local}
           visible={visible}
           isGrid
-          usersCount={videoUsersCopy.length}
+          usersCount={usersCount}
           userRole={role}
           userEmoji={emoji}
           raiseHand={raiseHand}
@@ -75,23 +94,26 @@ const GridView = () => {
   };
 
   return (
-    <>
+    <Styled.GridContainer isLandscape={isLandscape} onLayout={onGridLayout}>
       <Styled.ContainerViewItem
         isPresentationOpen={isPresentationOpen}
-        dimensionHeight={DEVICE_HEIGHT - 90}
+        isLandscape={isLandscape}
+        dimensionHeight={gridHeight}
       >
         <Styled.ContentArea />
       </Styled.ContainerViewItem>
-      <FlatList
-        data={videoUsersCopy}
-        style={Styled.styles.container}
-        renderItem={renderItem}
-        numColumns={numOfColumns}
-        initialNumToRender={2}
-        key={numOfColumns}
-        disableIntervalMomentum
-      />
-    </>
+      {gridHeight > 0 && (
+        <FlatList
+          data={videoUsersCopy}
+          style={Styled.styles.container}
+          renderItem={renderItem}
+          numColumns={numOfColumns}
+          initialNumToRender={2}
+          key={`${numOfColumns}-${isLandscape}`}
+          disableIntervalMomentum
+        />
+      )}
+    </Styled.GridContainer>
   );
 };
 

@@ -10,12 +10,6 @@ const ContainerView = styled.View`
   display: flex;
   align-items: center;
   justify-content: space-around;
-
-  ${({ orientation }) => orientation === 'LANDSCAPE'
-    && `
-    flex-direction: row;
-    justify-content: center;
-  `}
 `;
 
 const TopIndicatorBar = styled.View`

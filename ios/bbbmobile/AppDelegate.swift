@@ -32,6 +32,17 @@ public class AppDelegate: ExpoAppDelegate {
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
+  // react-native-orientation-locker: UIKit asks the delegate which
+  // orientations are allowed; without this the JS lock calls are ignored and
+  // Info.plist (all orientations) wins. Replaces the override that lived in
+  // the pre-Swift AppDelegate.mm.
+  public override func application(
+    _ application: UIApplication,
+    supportedInterfaceOrientationsFor window: UIWindow?
+  ) -> UIInterfaceOrientationMask {
+    return Orientation.getOrientation()
+  }
+
   // Linking API
   public override func application(
     _ app: UIApplication,

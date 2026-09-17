@@ -1,8 +1,8 @@
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { useIsFocused } from '@react-navigation/native';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, BackHandler } from "react-native";
+import { Alert, BackHandler, useWindowDimensions } from "react-native";
 import { useDispatch, useSelector } from 'react-redux';
 import Settings from '../../../../settings.json';
 import { ActivitySignProvider } from '../../../app-content/ActivitySign';
@@ -13,6 +13,7 @@ import useMeeting from '../../../graphql/hooks/useMeeting';
 import useUserCount from '../../../graphql/hooks/useUserCount';
 import useModalListener from '../../../hooks/listeners/use-modal-listener';
 import useAppState from '../../../hooks/use-app-state';
+import { useOrientation } from '../../../hooks/use-orientation';
 import BreakoutRoomScreen from '../../../screens/breakout-room-screen';
 import FullscreenWrapperScreen from '../../../screens/fullscreen-wrapper-screen';
 import InsideBreakoutRoomScreen from '../../../screens/inside-breakout-room-screen';
@@ -71,8 +72,22 @@ const DrawerNavigator = ({
   const users = currentUserCount?.user_aggregate?.aggregate?.count || 0;
   const isCameraConnected = useSelector((state) => state.video.isConnected);
   const dispatch = useDispatch();
+  const isLandscape = useOrientation() === 'LANDSCAPE';
+  const { width: windowWidth } = useWindowDimensions();
 
   useModalListener();
+
+  // The drawer is a fixed share of the window in portrait; in landscape that
+  // share would swallow most of the screen, so clamp it to a sane panel width.
+  const screenOptions = useMemo(() => ({
+    ...Styled.ScreenOptions,
+    drawerStyle: {
+      ...Styled.ScreenOptions.drawerStyle,
+      width: isLandscape
+        ? Math.min(Math.round(windowWidth * 0.5), Styled.LANDSCAPE_DRAWER_MAX_WIDTH)
+        : Styled.ScreenOptions.drawerStyle.width,
+    },
+  }), [isLandscape, windowWidth]);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
@@ -116,7 +131,7 @@ const DrawerNavigator = ({
             meetingUrl={meetingUrl}
           />
         )}
-        screenOptions={Styled.ScreenOptions}
+        screenOptions={screenOptions}
       >
         <Drawer.Screen
           name="Main"
