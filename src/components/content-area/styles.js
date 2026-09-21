@@ -1,12 +1,11 @@
+import styled from 'styled-components/native';
+import { css } from 'styled-components';
 import { MaterialIcons } from '@expo/vector-icons';
 import { TouchableRipple } from 'react-native-paper';
-import { css } from 'styled-components';
-import styled from 'styled-components/native';
-import Settings from '../../../settings.json';
-import Colors from '../../constants/colors';
 import presentation from '../presentation';
-import Pressable from '../pressable';
 import screenshare from '../screenshare';
+import Pressable from '../pressable';
+import Settings from '../../../settings.json';
 
 const Presentation = styled(presentation)``;
 const Screenshare = styled(screenshare)``;
@@ -79,31 +78,11 @@ const PIPIcon = ({ onPress }) => (
   </IconContainerPiP>
 );
 
-const ScreenshareBackground = styled.View`
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  object-fit: contain;
-  justify-content: center;
-  align-items: center;
-  background-color: ${Colors.contentLetterboxColor};
-  gap: 8px
-`;
-
-const ScreenshareText = styled.Text`
-  color: ${Colors.white};
-  font-weight: 600;
-  font-size: 20px;
-  text-align: center;
-`;
-
 export default {
   Presentation,
   Screenshare,
   ContentAreaPressable,
   PressableButton,
-  ScreenshareBackground,
-  ScreenshareText,
   FullscreenIcon,
   PIPIcon,
   MinimizeIcon

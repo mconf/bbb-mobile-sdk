@@ -1,20 +1,22 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  currentUserScreenshare: false,
   isConnecting: false,
   isConnected: false,
   isHangingUp: false,
   screenshareStream: null,
+  // Local (publisher-side) screenshare state. The fields above track the
+  // *viewer* side driven by the SFU ScreenshareManager; these track the
+  // current user's own share (LiveKit only for now).
+  isLocalSharing: false,
+  isLocalConnecting: false,
+  localScreenshareId: null,
 };
 
 const screenshareSlice = createSlice({
   name: 'screenshare',
   initialState,
   reducers: {
-    setCurrentUserScreenshare: (state, action) => {
-      state.currentUserScreenshare = action.payload;
-    },
     setIsConnecting: (state, action) => {
       state.isConnecting = action.payload;
     },
@@ -33,16 +35,27 @@ const screenshareSlice = createSlice({
     removeScreenshareStream: (state) => {
       state.screenshareStream = null;
     },
+    setIsLocalSharing: (state, action) => {
+      state.isLocalSharing = action.payload;
+    },
+    setIsLocalConnecting: (state, action) => {
+      state.isLocalConnecting = action.payload;
+    },
+    setLocalScreenshareId: (state, action) => {
+      state.localScreenshareId = action.payload;
+    },
   },
 });
 
 export const {
-  setCurrentUserScreenshare,
   setIsConnecting,
   setIsConnected,
   setIsHangingUp,
   setIsReconnecting,
   addScreenshareStream,
   removeScreenshareStream,
+  setIsLocalSharing,
+  setIsLocalConnecting,
+  setLocalScreenshareId,
 } = screenshareSlice.actions;
 export default screenshareSlice.reducer;

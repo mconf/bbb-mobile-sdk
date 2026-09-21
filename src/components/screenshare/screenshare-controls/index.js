@@ -1,103 +1,64 @@
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert } from 'react-native';
-import { setProfile } from "../../../store/redux/slices/wide-app/modal";
-import { useDispatch, useSelector } from 'react-redux';
-// import { setExpandActionsBar } from '../../../store/redux/slices/wide-app/layout';
+import { Alert, Platform } from 'react-native';
+import { useDispatch } from 'react-redux';
 import useCurrentUser from '../../../graphql/hooks/useCurrentUser';
 import useMeeting from '../../../graphql/hooks/useMeeting';
 import logger from '../../../services/logger';
+import { setProfile } from '../../../store/redux/slices/wide-app/modal';
 import LKScreenshareControls from '../../livekit/screenshare/controls';
 
+// Android's MediaProjection consent dialog rejects with this shape when the
+// user declines it (see @livekit/react-native-webrtc GetUserMediaImpl).
+const isUserDenial = (error) => error?.name === 'NotAllowedError'
+  || error?.message === 'NotAllowedError';
+
+// Actions-bar entry point. Screen sharing from the app is Android + LiveKit
+// only: iOS needs a broadcast extension and the SFU bridge has no publisher
+// on mobile, so the button is not rendered at all in those cases.
 const ScreenshareControlsContainer = () => {
-  const dispatch = useDispatch();
   const { data: meetingData, loading: meetingLoading } = useMeeting();
   const { data: currentUserData } = useCurrentUser();
   const { t } = useTranslation();
-  const isConnecting = useSelector((state) => state.screenshare.isConnecting);
-  const localScreenshareId = useSelector((state) => state.video.localScreenshareId);
+  const dispatch = useDispatch();
 
-  const meeting = meetingData?.meeting[0];
+  const { screenShareBridge } = meetingData?.meeting[0] || {};
   const isPresenter = currentUserData?.user_current[0]?.presenter ?? false;
-  const { screenShareBridge } = meeting || {};
-  const buttonEnabled = screenShareBridge != null && !meetingLoading;
+  const isAndroid = Platform.OS === 'android';
+  const buttonEnabled = isAndroid && screenShareBridge === 'livekit' && !meetingLoading;
 
   const fireDisabledScreenshareAlert = () => {
-    disabledScreenshareAlert();
-  };
-
-  const disabledScreenshareAlert = () => {
-    // dispatch(setExpandActionsBar(false));
-    dispatch(setProfile({ profile: "screenshare_permission" }));
-  };
-
-  const fireBetaWarning = (onConfirm) => {
-    Alert.alert(
-      t('mobileSdk.screenshare.betaWarningTitle'),
-      t('mobileSdk.screenshare.betaWarningMessage'),
-      [
-        {
-          text: t('app.settings.main.cancel.label'),
-          style: 'cancel'
-        },
-        {
-          text: t('mobileSdk.screenshare.betaWarningConfirm', 'Continue'),
-          onPress: onConfirm,
-        },
-      ],
-      { cancelable: true },
-    );
+    dispatch(setProfile({ profile: 'screenshare_permission' }));
   };
 
   const handleScreensharePublishError = (error, publishScreenshare) => {
     logger.error({
       logCode: 'screenshare_publish_failure',
       extraInfo: {
-        errorCode: error.code,
-        errorMessage: error.message,
+        errorCode: error?.code,
+        errorName: error?.name,
+        errorMessage: error?.message,
       },
-    }, `Screenshare published failed: ${error.message} - ${error.name}`);
+    }, `Screenshare publish failed: ${error?.message} - ${error?.name}`);
 
-    if (error.name === 'NotAllowedError' || error.name === 'SecurityError') {
-      const buttons = [
+    // The user dismissed the system capture prompt: nothing to explain.
+    if (isUserDenial(error)) return;
+
+    Alert.alert(
+      t('mobileSdk.screenshare.failed.title'),
+      t('mobileSdk.screenshare.failed.message'),
+      [
         {
           text: t('app.settings.main.cancel.label'),
           style: 'cancel',
         },
         {
-          text: t('app.settings.main.label'),
-          onPress: () => Linking.openSettings(),
-        },
-        {
           text: t('mobileSdk.error.tryAgain'),
           onPress: publishScreenshare,
         },
-      ];
-
-      Alert.alert(
-        t('mobileSdk.screenshare.blockedLabel'),
-        t('mobileSdk.screenshare.permissionLabel'),
-        buttons,
-        { cancelable: true },
-      );
-    }
-  };
-
-  // TODO: replace with custom warning
-  const fireIosWarning = (onConfirm) => {
-    Alert.alert(
-      t('mobileSdk.screenshare.iosDisabledTitle'),
-      t('mobileSdk.screenshare.iosDisabledMessage'),
-      [
-        {
-          text: t('mobileSdk.screenshare.betaWarningConfirm', 'Continue'),
-          onPress: onConfirm,
-        },
       ],
-
       { cancelable: true },
     );
-  }
+  };
 
   if (!buttonEnabled) {
     return null;
@@ -108,20 +69,14 @@ const ScreenshareControlsContainer = () => {
       return (
         <LKScreenshareControls
           disabled={!isPresenter}
-          isConnecting={isConnecting}
-          localScreenshareId={localScreenshareId}
           fireDisabledScreenshareAlert={fireDisabledScreenshareAlert}
-          fireBetaWarning={fireBetaWarning}
-          fireIosWarning={fireIosWarning}
           handleScreensharePublishError={handleScreensharePublishError}
-          isPresenter={isPresenter}
         />
       );
+
     case 'bbb-webrtc-sfu':
     default:
-      return (
-        <></>
-      );
+      return null;
   }
 };
 

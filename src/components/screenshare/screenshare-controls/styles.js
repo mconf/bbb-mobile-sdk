@@ -14,26 +14,28 @@ const LoadingWrapper = styled.View`
   justifyContent: center;
 `;
 
-const ScreenshareButton = ({ isActive, isConnecting, onPress, isPresenter }) => (
+const getIconColor = ({ disabled, isActive }) => {
+  if (disabled) return Colors.lightGray200;
+  return isActive ? Colors.blueIconColor : Colors.lightGray300;
+};
+
+const getContainerColor = ({ disabled, isActive }) => {
+  if (disabled) return Colors.lightGray300;
+  return isActive ? Colors.white : Colors.lightGray200;
+};
+
+// `disabled` only dims the button: it stays pressable so the container can
+// explain why (presenter-only) instead of silently ignoring the tap.
+const ScreenshareButton = ({
+  isActive, isConnecting, disabled, onPress,
+}) => (
   <View>
     <IconButtonComponent
       onPress={onPress}
       size={32}
       icon={isActive ? 'monitor-share' : 'monitor-off'}
-      iconColor={
-        !isPresenter
-          ? Colors.lightGray200
-          : isActive
-            ? Colors.blueIconColor
-            : Colors.lightGray300
-      }
-      containerColor={
-        !isPresenter
-          ? Colors.lightGray300
-          : isActive
-            ? Colors.white
-            : Colors.lightGray200
-      }
+      iconColor={getIconColor({ disabled, isActive })}
+      containerColor={getContainerColor({ disabled, isActive })}
       animated
     />
     <LoadingWrapper pointerEvents="none">
@@ -48,5 +50,5 @@ const ScreenshareButton = ({ isActive, isConnecting, onPress, isPresenter }) => 
 );
 
 export default {
-  ScreenshareButton
+  ScreenshareButton,
 };
