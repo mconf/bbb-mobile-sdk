@@ -20,6 +20,46 @@ import { setIsPresentationOpen } from '../../../../store/redux/slices/wide-app/l
 import ControlsStyled from '../../../screenshare/screenshare-controls/styles';
 import PresenterViewStyled from '../../../screenshare/presenter-view/styles';
 
+// The Android capturer can fail silently: @livekit/react-native-webrtc starts its
+// mediaProjection foreground service with startForegroundService (asynchronous)
+// and requests the projection right after, so MediaProjectionManager throws
+// "Media projections require a foreground service of type
+// FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION" before the service is up. The
+// library swallows that error, leaving a published track that never carries a
+// single frame - viewers just see black. A successful capture emits its first
+// frame immediately, so no outbound traffic within the window below means the
+// capture is dead and the publication has to be retried; by then the service is
+// running. Drop this once the library waits for its own service.
+const CAPTURE_PROBE_TIMEOUT = 4000;
+const CAPTURE_PROBE_INTERVAL = 500;
+
+const wait = (ms) => new Promise((resolve) => { setTimeout(resolve, ms); });
+
+const isCapturing = async (publication) => {
+  const report = await publication?.track?.getRTCStatsReport?.();
+  let capturing = false;
+
+  report?.forEach?.((stat) => {
+    if (stat.type !== 'outbound-rtp') return;
+    if ((stat.framesEncoded ?? 0) > 0 || (stat.bytesSent ?? 0) > 0) capturing = true;
+  });
+
+  return capturing;
+};
+
+const waitForCapture = async (publication) => {
+  const deadline = Date.now() + CAPTURE_PROBE_TIMEOUT;
+
+  while (Date.now() < deadline) {
+    // eslint-disable-next-line no-await-in-loop
+    if (await isCapturing(publication)) return true;
+    // eslint-disable-next-line no-await-in-loop
+    await wait(CAPTURE_PROBE_INTERVAL);
+  }
+
+  return isCapturing(publication);
+};
+
 // Publishes/unpublishes the local screen as a LiveKit ScreenShare track. No
 // GraphQL mutation is involved: the server-side LiveKit observer turns the
 // track publication into the meeting's screenshare record (the `stream` in the
@@ -40,10 +80,18 @@ export const useLKScreenshare = ({ handleScreensharePublishError } = {}) => {
     if (!isScreenShareEnabled) dispatch(setLocalScreenshareId(null));
   }, [isScreenShareEnabled]);
 
-  const unpublishScreenshare = useCallback(async () => {
+  // `releaseCapturer: false` leaves the native capturer alive, which keeps the
+  // media projection foreground service running - required between a failed
+  // capture and its retry, see waitForCapture above.
+  const unpublishScreenshare = useCallback(async ({ releaseCapturer = true } = {}) => {
     const localPublications = tracks
       .map((trackReference) => trackReference.publication)
       .filter((publication) => publication?.isLocal);
+    // Includes a share still mid-publish, which is not in `tracks` yet.
+    const localTracks = new Set([
+      ...localPublications.map((publication) => publication?.track),
+      localParticipant.getTrackPublication(Track.Source.ScreenShare)?.track,
+    ].filter(Boolean));
     const handleUnpublishError = (error) => {
       logger.error({
         logCode: 'livekit_screenshare_unpublish_error',
@@ -74,6 +122,12 @@ export const useLKScreenshare = ({ handleScreensharePublishError } = {}) => {
     } catch (error) {
       handleUnpublishError(error);
     } finally {
+      // On React Native, livekit-client's track stop only flags the JS track as
+      // ended: the Android capturer - and with it the media projection service
+      // and its notification - is disposed only on an explicit native release.
+      if (releaseCapturer) {
+        localTracks.forEach((track) => track.mediaStreamTrack?.release?.());
+      }
       dispatch(setLocalScreenshareId(null));
       dispatch(setIsLocalSharing(false));
     }
@@ -105,13 +159,25 @@ export const useLKScreenshare = ({ handleScreensharePublishError } = {}) => {
       // On Android this opens the system MediaProjection consent dialog and,
       // once accepted, starts the mediaProjection foreground service bundled
       // in @livekit/react-native-webrtc before capturing.
-      const localPub = await localParticipant.setScreenShareEnabled(
+      const enableScreenShare = () => localParticipant.setScreenShareEnabled(
         true,
         captureOptions,
         publishOptions,
       );
+      let localPub = await enableScreenShare();
 
       if (!localPub) throw new Error('Local screenshare publication failed');
+
+      if (!await waitForCapture(localPub)) {
+        logger.warn({
+          logCode: 'livekit_screenshare_capture_retry',
+          extraInfo: { screenshareId: localPub.trackSid },
+        }, 'LiveKit: screenshare captured no frames, retrying');
+        await unpublishScreenshare({ releaseCapturer: false });
+        localPub = await enableScreenShare();
+
+        if (!localPub) throw new Error('Local screenshare publication failed');
+      }
 
       const screenshareId = localPub.trackSid ?? screenshareName;
       dispatch(setLocalScreenshareId(screenshareId));
