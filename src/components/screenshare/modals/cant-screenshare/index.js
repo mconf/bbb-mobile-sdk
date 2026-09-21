@@ -1,11 +1,15 @@
-import ModalCard from "../../../modal/card";
+import { useTranslation } from 'react-i18next';
+import ModalCard from '../../../modal/card';
 
 const CantScreenshareModal = () => {
+  const { t } = useTranslation();
+
   return (
     <ModalCard
-      title="Você não tem permissão  para compartilhar a tela"
-      description="Essa funcão esta disponível apenas para o apresentador."
-      confirmButton="Continuar"
+      alert
+      title={t('mobileSdk.screenshare.presenterOnly.title')}
+      description={t('mobileSdk.screenshare.presenterOnly.message')}
+      confirmButton={t('app.modal.close')}
     />
   );
 };

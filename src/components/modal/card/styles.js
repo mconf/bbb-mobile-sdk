@@ -1,6 +1,6 @@
+import { Feather } from '@expo/vector-icons';
 import styled from 'styled-components/native';
 import Colors from '../../../constants/colors';
-import { Feather } from '@expo/vector-icons';
 
 const Container = styled.View`
   display: flex;
@@ -21,7 +21,7 @@ const Header = styled.View`
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  gap: 8px
+  gap: 8px;
 `;
 
 const TitleModal = styled.Text`

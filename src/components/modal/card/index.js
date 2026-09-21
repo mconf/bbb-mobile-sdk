@@ -1,11 +1,10 @@
-import { Modal, Checkbox } from 'react-native-paper';
 import { useState } from 'react';
+import { Modal, Checkbox } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { useOrientation } from '../../../hooks/use-orientation';
 import { hide } from '../../../store/redux/slices/wide-app/modal';
 import PrimaryButton from '../../buttons/primary-button';
 import Styled from './styles';
-
 
 const ModalCard = (props) => {
   const {
@@ -83,7 +82,8 @@ const ModalCard = (props) => {
 
           {confirmButton && (
             <PrimaryButton
-              onPress={handleConfirm} variant="primary"
+              onPress={handleConfirm}
+              variant="primary"
               disabled={checkbox && !checked}
               fullWidth={false}
             >
@@ -91,7 +91,6 @@ const ModalCard = (props) => {
             </PrimaryButton>
           )}
         </Styled.BottomButtonContainer>
-
       </Styled.Container>
     </Modal>
   );
