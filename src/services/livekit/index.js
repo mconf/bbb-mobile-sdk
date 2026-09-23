@@ -10,6 +10,7 @@ import AudioManager from '../webrtc/audio-manager';
 import VideoManager from '../webrtc/video-manager';
 import ScreenshareManager from '../webrtc/screenshare-manager';
 import { clearExpectedStreamStops, expectAllStreamStops } from './camera-state.ts';
+import { invalidateInFlightAudioJoin } from '../../hooks/audio-join-in-flight';
 
 // React Native has no DOM (window/CustomEvent), so cross-module LiveKit signals
 // go through this emitter instead of window.dispatchEvent/addEventListener.
@@ -183,6 +184,8 @@ export const disconnectLiveKitRoom = ({
     connectedOnce = false;
     // Every camera goes down with the session, which is not worth warning about.
     expectAllStreamStops();
+    // A join still waiting on its signaling socket never resolves once stopped.
+    invalidateInFlightAudioJoin();
   }
 
   liveKitRoom.disconnect()
