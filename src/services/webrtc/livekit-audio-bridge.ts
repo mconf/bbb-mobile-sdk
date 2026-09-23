@@ -140,6 +140,10 @@ export default class LiveKitAudioBridge {
 
   private joinInFlight: boolean;
 
+  // A user's mute pressed while joinAudio waits, which the join's own intent must
+  // not overwrite.
+  private mutedDuringJoin: boolean;
+
   private listenOnly: boolean;
 
   constructor({
@@ -160,6 +164,7 @@ export default class LiveKitAudioBridge {
     this.publishGeneration = 0;
     this.stopping = false;
     this.joinInFlight = false;
+    this.mutedDuringJoin = false;
     this.listenOnly = false;
     // eslint-disable-next-line no-underscore-dangle
     this._inputDeviceId = null;
@@ -1055,6 +1060,7 @@ export default class LiveKitAudioBridge {
   applyLocalMuteIntent(): void {
     if (this.stopping || this.listenOnly) return;
 
+    if (this.joinInFlight) this.mutedDuringJoin = true;
     this.shouldBeMuted = true;
     this.lastServerMuteState = true;
     // Otherwise the post-reconnect check would read this mute as one from the server.
@@ -1126,6 +1132,10 @@ export default class LiveKitAudioBridge {
         preReconnectIntent: this.preReconnectIntent,
       },
     }, `LiveKit: adopting a mute applied to the track by the server - ${trackSid}`);
+  }
+
+  wasMutedDuringJoin(): boolean {
+    return this.mutedDuringJoin;
   }
 
   hasUnechoedServerMute(): boolean {
@@ -1489,12 +1499,15 @@ export default class LiveKitAudioBridge {
 
     try {
       this.joinInFlight = true;
+      this.mutedDuringJoin = false;
       await waitForRoomConnection(this.liveKitRoom);
       if (this.stopping) return;
 
+      const joinMuted = muted || this.mutedDuringJoin;
+
       this.originalStream = inputStream;
-      this.shouldBeMuted = muted;
-      this.lastServerMuteState = muted;
+      this.shouldBeMuted = joinMuted;
+      this.lastServerMuteState = joinMuted;
       this.intentApplied = true;
       this.reconnectRepublished = false;
       this.reconnectSettledAt = null;
@@ -1502,7 +1515,7 @@ export default class LiveKitAudioBridge {
       this.reconnectHoldSince = null;
       this.listenOnly = !!isListenOnly;
 
-      if (!muted) await this.publish(inputStream);
+      if (!joinMuted) await this.publish(inputStream);
 
       if (this.stopping) return;
 
