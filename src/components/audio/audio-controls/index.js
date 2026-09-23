@@ -1,6 +1,6 @@
 import * as Linking from 'expo-linking';
 import {
-  useCallback, useEffect, useRef, useState,
+  useCallback, useEffect, useRef,
 } from 'react';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import { Alert } from 'react-native';
@@ -26,7 +26,6 @@ import Styled from './styles';
 const MUTE_ASSERT_CONVERGENCE_TIMEOUT_MS = 5000;
 
 const AudioControls = () => {
-  const [audioPermissionTainted, setAudioPermissionTainted] = useState(false);
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { joinAudio } = useAudioJoin();
@@ -190,15 +189,11 @@ const AudioControls = () => {
             {
               text: t('app.settings.main.cancel.label'),
               style: 'cancel',
-              onPress: () => {
-                setAudioPermissionTainted(true);
-              },
             },
             {
               text: t('app.settings.main.label'),
               onPress: () => {
                 Linking.openSettings();
-                setAudioPermissionTainted(true);
               },
             },
             {
@@ -269,19 +264,8 @@ const AudioControls = () => {
     // disagreeing. Muting still goes through.
     if (unmuteBlocked) return;
 
-    if (audioPermissionTainted) {
-      // Audio permission was tainted (i.e. user denied permission and didn't grant it)
-      // Try to join audio again
-      setAudioPermissionTainted(false);
-      joinAudio().then(() => {
-        toggleVoice(false);
-      });
-
-      return;
-    }
-
     toggleVoice();
-  }, [micDisabled, unmuteBlocked, audioPermissionTainted, toggleVoice, joinAudio]);
+  }, [micDisabled, unmuteBlocked, toggleVoice]);
 
   const onPressHeadphone = useCallback(() => {
     if (isActive) {
