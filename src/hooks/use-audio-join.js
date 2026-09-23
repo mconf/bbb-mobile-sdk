@@ -84,9 +84,9 @@ export const useAudioJoin = () => {
       isListenOnly: micDisabled,
       transparentListenOnly,
       audioBridge,
-    }).then(() => {
-      // If the join was cancelled while in progress, skip.
-      if (!AudioManager.bridge) return;
+    }).then((joined) => {
+      // A join overtaken by a later join or exit must not apply its mute state.
+      if (!joined || !AudioManager.bridge) return;
 
       dispatch(setMutedState(joinMuted));
 
