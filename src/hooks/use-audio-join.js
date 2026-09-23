@@ -11,14 +11,11 @@ import {
 import AudioManager from '../services/webrtc/audio-manager';
 import logger from '../services/logger';
 import useCurrentUser from '../graphql/hooks/useCurrentUser';
+import { getInFlightAudioJoin, setInFlightAudioJoin } from './audio-join-in-flight';
 
 const ANDROID_SDK_MIN_BTCONNECT = 31;
 
-let joinInFlight = null;
-
-export const invalidateInFlightAudioJoin = () => {
-  joinInFlight = null;
-};
+export { invalidateInFlightAudioJoin } from './audio-join-in-flight';
 
 export const useAudioJoin = () => {
   const dispatch = useDispatch();
@@ -114,15 +111,17 @@ export const useAudioJoin = () => {
   }, [disableMic, muteOnStart, audioBridge, currentUserLocked, meetingId, dispatch, store]);
 
   const joinAudio = useCallback(() => {
-    if (joinInFlight) return joinInFlight;
+    const inFlight = getInFlightAudioJoin();
+
+    if (inFlight) return inFlight;
 
     const join = doJoinAudio().finally(() => {
       // Only detach if this join is still the tracked one. We're relying
       // on useCallback to equality-check here.
-      if (joinInFlight === join) joinInFlight = null;
+      if (getInFlightAudioJoin() === join) setInFlightAudioJoin(null);
     });
 
-    joinInFlight = join;
+    setInFlightAudioJoin(join);
 
     return join;
   }, [doJoinAudio]);
