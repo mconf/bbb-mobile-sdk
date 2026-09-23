@@ -52,6 +52,9 @@ class AudioManager {
     // Tracks a bridge's in-flight stop() so a new bridge is never started
     // while the previous one is still tearing down (see _joinAudio/exitAudio).
     this._pendingStop = null;
+    // Bumped by every join and exit, so a join that waited on a teardown can tell
+    // it was overtaken.
+    this._joinSeq = 0;
   }
 
   get bridge() {
@@ -427,6 +430,9 @@ class AudioManager {
   async _joinAudio(callOptions = {}) {
     if (!this.initialized) throw new TypeError('Audio manager is not ready');
 
+    this._joinSeq += 1;
+    const joinSeq = this._joinSeq;
+
     // There's a stale bridge here. Tear it down and start again.
     if (this.bridge) {
       this._deattachProgressListeners(this.bridge);
@@ -442,15 +448,34 @@ class AudioManager {
       this._pendingStop = null;
     }
 
-    this.bridge = this._initializeBridge(callOptions);
+    // Resolved with false rather than thrown: the caller's error path runs exitAudio(),
+    // which would tear down the join that overtook this one.
+    if (joinSeq !== this._joinSeq) {
+      this.logger?.debug({
+        logCode: 'audio_join_superseded',
+        extraInfo: { joinSeq, currentJoinSeq: this._joinSeq },
+      }, 'Audio join dropped, a later join or exit took over while it waited');
 
-    return this.bridge.joinAudio({
-      inputStream: callOptions.inputStream,
-      isListenOnly: callOptions.isListenOnly,
-      muted: callOptions.muted,
-    }).catch((error) => {
+      return false;
+    }
+
+    const bridge = this._initializeBridge(callOptions);
+    this.bridge = bridge;
+
+    try {
+      await bridge.joinAudio({
+        inputStream: callOptions.inputStream,
+        isListenOnly: callOptions.isListenOnly,
+        muted: callOptions.muted,
+      });
+    } catch (error) {
+      // Not thrown, for the same reason as above.
+      if (joinSeq !== this._joinSeq) return false;
       throw error;
-    });
+    }
+
+    // A later join or exit may have replaced this bridge while it waited for the room.
+    return joinSeq === this._joinSeq;
   }
 
   async joinMicrophone({
@@ -463,13 +488,15 @@ class AudioManager {
       this.isListenOnly = isListenOnly;
       this.onAudioJoining();
       const inputStream = await this._mediaFactory();
-      await this._joinAudio({
+      const joined = await this._joinAudio({
         inputStream,
         isListenOnly,
         muted,
         transparentListenOnly,
         audioBridge,
       });
+
+      return joined !== false;
     } catch (error) {
       this.exitAudio();
       throw error;
@@ -477,6 +504,8 @@ class AudioManager {
   }
 
   exitAudio() {
+    this._joinSeq += 1;
+
     if (!this.bridge) {
       // Bridge is nil => there's no audio anymore - guarantee local states reflect that
       this.onAudioExit();
