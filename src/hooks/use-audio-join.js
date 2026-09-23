@@ -88,12 +88,16 @@ export const useAudioJoin = () => {
       // A join overtaken by a later join or exit must not apply its mute state.
       if (!joined || !AudioManager.bridge) return;
 
-      dispatch(setMutedState(joinMuted));
+      // A mute pressed while the join waited is kept, and no restored unmute follows it.
+      const mutedDuringJoin = AudioManager.bridge.wasMutedDuringJoin?.() === true;
+
+      dispatch(setMutedState(joinMuted || mutedDuringJoin));
 
       if (!micDisabled && meetingId != null) {
         dispatch(setAudioIntent({ meetingId, sessionToken }));
 
-        if (intentEstablished && restoredMute !== muteOnStart) {
+        if (intentEstablished && restoredMute !== muteOnStart
+          && (restoredMute || !mutedDuringJoin)) {
           dispatch(setPendingMuteAssert(restoredMute));
         }
       }
