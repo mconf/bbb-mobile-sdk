@@ -134,10 +134,25 @@ const NotifeeController = () => {
     }
   }, [dispatchLeaveSession]);
 
-  // notifee's onBackgroundEvent handler is global and cannot be unregistered,
-  // so route events through a ref holding the latest callbacks
+  // The event handlers outlive renders, so they read the latest callbacks here.
   const handlersRef = useRef({ setMuted, leave });
   handlersRef.current = { setMuted, leave };
+  const sessionActiveRef = useRef(sessionActive);
+  sessionActiveRef.current = sessionActive;
+
+  // Both app instances hear the shared notification during a breakout; only
+  // the one whose session is active acts on it.
+  const route = useCallback(({ type, detail }) => {
+    if (!sessionActiveRef.current) return undefined;
+    if (detail.notification?.android?.channelId !== CHANNEL_ID) return undefined;
+    if (type !== EventType.ACTION_PRESS) return undefined;
+
+    const { id } = detail.pressAction;
+    if (id === 'leave') return handlersRef.current.leave();
+    if (id === 'mute' || id === 'unmute') return handlersRef.current.setMuted(id === 'mute');
+
+    return undefined;
+  }, []);
 
   const display = useCallback(async () => {
     const channelId = await notifee.createChannel({
@@ -307,29 +322,8 @@ const NotifeeController = () => {
     // POST_NOTIFICATIONS runtime prompt (Android 13+)
     notifee.requestPermission();
 
-    // Background event = device locked || app not in view || killed/quit
-    notifee.onBackgroundEvent(async ({ type, detail }) => {
-      if (detail.notification?.android?.channelId !== CHANNEL_ID) return;
-      if (type !== EventType.ACTION_PRESS) return;
-
-      if (detail.pressAction.id === 'leave') {
-        await handlersRef.current.leave();
-      } else if (detail.pressAction.id === 'mute' || detail.pressAction.id === 'unmute') {
-        await handlersRef.current.setMuted(detail.pressAction.id === 'mute');
-      }
-    });
-
     // Foreground event = device unlocked || app in view
-    const unsubscribeForegroundEvents = notifee.onForegroundEvent(({ type, detail }) => {
-      if (detail.notification?.android?.channelId !== CHANNEL_ID) return;
-      if (type !== EventType.ACTION_PRESS) return;
-
-      if (detail.pressAction.id === 'leave') {
-        handlersRef.current.leave();
-      } else if (detail.pressAction.id === 'mute' || detail.pressAction.id === 'unmute') {
-        handlersRef.current.setMuted(detail.pressAction.id === 'mute');
-      }
-    });
+    const unsubscribeForegroundEvents = notifee.onForegroundEvent(route);
 
     return () => {
       unsubscribeForegroundEvents();
@@ -342,6 +336,16 @@ const NotifeeController = () => {
       }
     };
   }, []);
+
+  // The background handler is global and can't be removed, so the active instance
+  // registers it again whenever its session becomes active.
+  useEffect(() => {
+    if (!sessionActive) return;
+
+    notifee.onBackgroundEvent(async (event) => {
+      await route(event);
+    });
+  }, [sessionActive]);
 
   return null;
 };
