@@ -17,7 +17,9 @@ import {
 } from '@livekit/react-native';
 import {
   ConnectionState,
+  DisconnectReason,
   LogLevel,
+  RoomEvent,
 } from 'livekit-client';
 import AudioManager from '../../services/webrtc/audio-manager';
 import VideoManager from '../../services/webrtc/video-manager';
@@ -39,6 +41,7 @@ import {
   resolveRoomOptions,
   hasConnectedOnce,
   isReconnectingState,
+  stopAbandonedCameraTracks,
   LK_FATAL_ERROR_EVENT,
 } from '../../services/livekit';
 import {
@@ -410,6 +413,24 @@ const BBBLiveKitRoom = ({ children }) => {
     setReconnectEpoch((p) => p + 1);
   }, [clearReconnectNotice]);
 
+  // The server's camera row can outlive the dropped room, so the row observer may
+  // never see this stop. Marked as expected so it isn't announced twice if it does.
+  const resetLocalCamera = useCallback((trigger, source) => {
+    const { isConnected, localCameraId: cameraId } = store.getState().video;
+
+    if (!isConnected) return;
+
+    if (cameraId) expectStreamStop(cameraId);
+
+    logger.warn({
+      logCode: 'livekit_camera_stopped_unexpectedly',
+      extraInfo: { cameraId, trigger, source },
+    }, `LiveKit: camera stopped by a room teardown (${trigger})`);
+    dispatch(setLocalCameraId(null));
+    dispatch(setVideoIsConnected(false));
+    setCameraNotice('cameraStopped');
+  }, [dispatch, store]);
+
   // Both the fatal-error handler and the stall detector recover by tearing the
   // session down and letting the reconnect effect rebuild it. The two refusals
   // differ because a collision is worth retrying and a spent budget never is.
@@ -446,22 +467,8 @@ const BBBLiveKitRoom = ({ children }) => {
       dispatch(setIsReconnecting(false));
     }
 
-    // The disconnect below stops the capture and nothing republishes it. The
-    // server's camera row survives an app-driven reconnect, so the row observer
-    // never sees this one: mark it here or it gets announced twice if it does.
-    if (resetCamera && store.getState().video.isConnected) {
-      const cameraId = store.getState().video.localCameraId;
-
-      if (cameraId) expectStreamStop(cameraId);
-
-      logger.warn({
-        logCode: 'livekit_camera_stopped_unexpectedly',
-        extraInfo: { cameraId, trigger: 'forced_reconnect', source },
-      }, 'LiveKit: camera stopped by a forced room reconnect');
-      dispatch(setLocalCameraId(null));
-      dispatch(setVideoIsConnected(false));
-      setCameraNotice('cameraStopped');
-    }
+    // The disconnect below stops the capture and nothing republishes it.
+    if (resetCamera) resetLocalCamera('forced_reconnect', source);
 
     let timeout = null;
     Promise.race([
@@ -480,7 +487,23 @@ const BBBLiveKitRoom = ({ children }) => {
       });
 
     return 'started';
-  }, [dispatch, store, notifyReconnectExhausted]);
+  }, [dispatch, store, notifyReconnectExhausted, resetLocalCamera]);
+
+  useEffect(() => {
+    const onDisconnected = (reason) => {
+      if (stopAbandonedCameraTracks() === 0) return;
+      // A disconnect the app asked for already handles the camera state itself.
+      if (reason === DisconnectReason.CLIENT_INITIATED) return;
+
+      resetLocalCamera('room_disconnected', reason);
+    };
+
+    liveKitRoom.on(RoomEvent.Disconnected, onDisconnected);
+
+    return () => {
+      liveKitRoom.off(RoomEvent.Disconnected, onDisconnected);
+    };
+  }, [resetLocalCamera]);
 
   const initializeMediaManagers = (bridges) => {
     const mediaManagerConfigs = {

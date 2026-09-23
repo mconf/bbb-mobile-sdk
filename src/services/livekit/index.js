@@ -1,4 +1,9 @@
-import { ConnectionState, Room, RoomEvent } from 'livekit-client';
+import {
+  ConnectionState,
+  Room,
+  RoomEvent,
+  Track,
+} from 'livekit-client';
 import { EventEmitter2 } from 'eventemitter2';
 import logger from '../logger';
 import AudioManager from '../webrtc/audio-manager';
@@ -65,6 +70,67 @@ liveKitRoom.on(RoomEvent.Connected, () => {
 });
 
 export const hasConnectedOnce = () => connectedOnce;
+
+// When livekit-client gives up on a room by itself it leaves the local tracks
+// running, and no other module keeps a reference to the camera ones.
+const publishedCameraTracks = new Set();
+// Counted because camera switches can overlap and finish out of order.
+const restartingCameraTracks = new Map();
+
+export const restartCameraTrack = (track, options) => {
+  restartingCameraTracks.set(track, (restartingCameraTracks.get(track) ?? 0) + 1);
+
+  return track.restartTrack(options)
+    .finally(() => {
+      const pending = restartingCameraTracks.get(track) - 1;
+
+      if (pending > 0) {
+        restartingCameraTracks.set(track, pending);
+      } else {
+        restartingCameraTracks.delete(track);
+      }
+    });
+};
+
+liveKitRoom.on(RoomEvent.LocalTrackPublished, (publication) => {
+  if (publication?.source === Track.Source.Camera && publication.track) {
+    publishedCameraTracks.add(publication.track);
+  }
+});
+
+// A track that is still live on unpublish is kept: that is how the SDK drops its
+// publications right before a Disconnected nobody asked for.
+liveKitRoom.on(RoomEvent.LocalTrackUnpublished, (publication) => {
+  const { track } = publication ?? {};
+
+  if (
+    track
+    && !restartingCameraTracks.has(track)
+    && track.mediaStreamTrack?.readyState === 'ended'
+  ) {
+    publishedCameraTracks.delete(track);
+  }
+});
+
+// Returns how many captures were still running or being switched. A track being
+// republished is outside the room's publications, so any disconnect can leave one.
+export const stopAbandonedCameraTracks = () => {
+  let stopped = 0;
+
+  publishedCameraTracks.forEach((track) => {
+    // A camera being switched or restarted has no live capture yet; stopping it makes
+    // the switch release the capture it acquires.
+    if (
+      track.mediaStreamTrack?.readyState !== 'ended'
+      || restartingCameraTracks.has(track)
+      || !track.isMuted
+    ) stopped += 1;
+    track.stop();
+  });
+  publishedCameraTracks.clear();
+
+  return stopped;
+};
 
 const ROOM_CONNECTION_TIMEOUT = 15000;
 
@@ -136,6 +202,7 @@ export const disconnectLiveKitRoom = ({
     })
     .finally(() => {
       if (final) {
+        stopAbandonedCameraTracks();
         AudioManager.destroy();
         VideoManager.destroy();
         ScreenshareManager.destroy();

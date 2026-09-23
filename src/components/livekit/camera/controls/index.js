@@ -7,7 +7,7 @@ import { Track } from 'livekit-client';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import useDebounce from '../../../../hooks/use-debounce';
-import { liveKitRoom } from '../../../../services/livekit';
+import { liveKitRoom, restartCameraTrack } from '../../../../services/livekit';
 import logger from '../../../../services/logger';
 import {
   setIsConnected,
@@ -168,9 +168,14 @@ const LKVideoControls = ({
     }
     const localTrack = tracks.find((t) => t.publication?.isLocal)?.publication?.track;
     if (localTrack) {
-      localTrack.restartTrack({
+      restartCameraTrack(localTrack, {
         facingMode: cameraFacingMode,
         resolution: getCameraCaptureResolution(),
+      }).catch((error) => {
+        logger.warn({
+          logCode: 'livekit_camera_restart_error',
+          extraInfo: { errorMessage: error?.message },
+        }, `LiveKit: camera restart failed: ${error?.message}`);
       });
     }
     dispatch(showNotificationWithTimeout({ profile: 'cameraToggle' }));
