@@ -27,6 +27,11 @@ const trimError = (error: Error): Record<string, unknown> => ({
 const trimValue = (value: unknown, key: string, depth: number): unknown => {
   if (value instanceof Error) return trimError(value);
 
+  // Protobuf int64 fields (joinedAt, versions, byte counters) arrive as BigInt,
+  // which JSON.stringify refuses to serialize. String, not Number: these are
+  // identifiers and counters that only have to be readable in a log line.
+  if (typeof value === 'bigint') return value.toString();
+
   if (typeof value === 'string') {
     if (SDP_FIELDS.has(key)) return summarizeSdp(value);
 
