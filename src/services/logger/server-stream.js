@@ -11,6 +11,10 @@ const isBot = /bot|crawler|spider|crawling/i.test(userAgent);
 
 const defaultHeaders = { 'Content-Type': 'application/json' };
 
+// JSON.stringify throws on BigInt, which reaches us through protobuf int64
+// fields in the LiveKit SDK log context.
+const bigIntSafeReplacer = (key, value) => (typeof value === 'bigint' ? value.toString() : value);
+
 export class ServerStream {
     constructor(opts = {}) {
         const {
@@ -38,27 +42,35 @@ export class ServerStream {
             this.currentThrottleTimeout = setTimeout(() => {
                 const recs = this.recordsAsArray();
                 if (recs.length) {
-                    const xhr = new XMLHttpRequest();
-                    xhr.onreadystatechange = () => {
-                        if (xhr.readyState === XMLHttpRequest.DONE) {
-                            if (xhr.status >= 400) {
-                                if (typeof onError === 'function') {
-                                    onError.call(this, recs, xhr);
-                                } else {
-                                    // Do nothing - muffle the logs for the time being - prlanzarin
-                                    //console.warn('Browser Bunyan: A server log write failed');
+                    // A batch we cannot send must cost us that batch, not the
+                    // stream: throwing here skips onreadystatechange, so the
+                    // records would never be cleared and nothing would re-arm.
+                    try {
+                        const xhr = new XMLHttpRequest();
+                        xhr.onreadystatechange = () => {
+                            if (xhr.readyState === XMLHttpRequest.DONE) {
+                                if (xhr.status >= 400) {
+                                    if (typeof onError === 'function') {
+                                        onError.call(this, recs, xhr);
+                                    } else {
+                                        // Do nothing - muffle the logs for the time being - prlanzarin
+                                        //console.warn('Browser Bunyan: A server log write failed');
+                                    }
                                 }
+                                this.records = {};
+                                throttleRequests();
                             }
-                            this.records = {};
-                            throttleRequests();
+                        };
+                        xhr.open(method, this.url);
+                        for (const [name, value] of Object.entries(this.headers)) {
+                            xhr.setRequestHeader(name, value);
                         }
-                    };
-                    xhr.open(method, this.url);
-                    for (const [name, value] of Object.entries(this.headers)) {
-                        xhr.setRequestHeader(name, value);
+                        xhr.withCredentials = withCredentials;
+                        xhr.send(JSON.stringify(recs, bigIntSafeReplacer));
+                    } catch (error) {
+                        this.records = {};
+                        throttleRequests();
                     }
-                    xhr.withCredentials = withCredentials;
-                    xhr.send(JSON.stringify(recs));
                 } else {
                     throttleRequests();
                 }
