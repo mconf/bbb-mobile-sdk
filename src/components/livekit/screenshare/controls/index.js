@@ -17,6 +17,7 @@ import {
   setLocalScreenshareId,
 } from '../../../../store/redux/slices/wide-app/screenshare';
 import { setIsPresentationOpen } from '../../../../store/redux/slices/wide-app/layout';
+import { setProfile } from '../../../../store/redux/slices/wide-app/modal';
 import ControlsStyled from '../../../screenshare/screenshare-controls/styles';
 import PresenterViewStyled from '../../../screenshare/presenter-view/styles';
 
@@ -30,8 +31,18 @@ import PresenterViewStyled from '../../../screenshare/presenter-view/styles';
 // frame immediately, so no outbound traffic within the window below means the
 // capture is dead and the publication has to be retried; by then the service is
 // running. Drop this once the library waits for its own service.
-const CAPTURE_PROBE_TIMEOUT = 4000;
-const CAPTURE_PROBE_INTERVAL = 500;
+const CAPTURE_PROBE_TIMEOUT = 2000;
+const CAPTURE_PROBE_INTERVAL = 250;
+const MAX_CAPTURE_ATTEMPTS = 3;
+
+// Set by any stop the user asks for - the hook is mounted twice (actions bar and
+// presenter view), so a ref would not reach the instance running the attempts.
+let stopRequested = false;
+// Capturers from attempts that produced no frames. They are deliberately not
+// released between attempts (that is what keeps the foreground service alive),
+// so they are collected here and disposed once the share ends - otherwise the
+// service and its notification outlive the share.
+const staleCapturers = new Set();
 
 const wait = (ms) => new Promise((resolve) => { setTimeout(resolve, ms); });
 
@@ -83,7 +94,12 @@ export const useLKScreenshare = ({ handleScreensharePublishError } = {}) => {
   // `releaseCapturer: false` leaves the native capturer alive, which keeps the
   // media projection foreground service running - required between a failed
   // capture and its retry, see waitForCapture above.
-  const unpublishScreenshare = useCallback(async ({ releaseCapturer = true } = {}) => {
+  const unpublishScreenshare = useCallback(async ({
+    releaseCapturer = true,
+    requestedByUser = true,
+  } = {}) => {
+    if (requestedByUser) stopRequested = true;
+
     const localPublications = tracks
       .map((trackReference) => trackReference.publication)
       .filter((publication) => publication?.isLocal);
@@ -127,6 +143,8 @@ export const useLKScreenshare = ({ handleScreensharePublishError } = {}) => {
       // and its notification - is disposed only on an explicit native release.
       if (releaseCapturer) {
         localTracks.forEach((track) => track.mediaStreamTrack?.release?.());
+        staleCapturers.forEach((track) => track.mediaStreamTrack?.release?.());
+        staleCapturers.clear();
       }
       dispatch(setLocalScreenshareId(null));
       dispatch(setIsLocalSharing(false));
@@ -155,6 +173,7 @@ export const useLKScreenshare = ({ handleScreensharePublishError } = {}) => {
     try {
       if (localParticipant.isScreenShareEnabled) await unpublishScreenshare();
 
+      stopRequested = false;
       dispatch(setIsLocalConnecting(true));
       // On Android this opens the system MediaProjection consent dialog and,
       // once accepted, starts the mediaProjection foreground service bundled
@@ -164,19 +183,52 @@ export const useLKScreenshare = ({ handleScreensharePublishError } = {}) => {
         captureOptions,
         publishOptions,
       );
-      let localPub = await enableScreenShare();
+      let localPub = null;
+      let capturing = false;
 
-      if (!localPub) throw new Error('Local screenshare publication failed');
+      // The share button is blocked while this runs (isLocalConnecting), so the
+      // attempts cannot overlap with a tap. Between them the capturer is kept
+      // alive on purpose: that keeps the foreground service up, which is what
+      // lets a later attempt win the race the first one lost.
+      for (let attempt = 1; attempt <= MAX_CAPTURE_ATTEMPTS && !stopRequested; attempt += 1) {
+        if (attempt > 1) {
+          // eslint-disable-next-line no-await-in-loop
+          await unpublishScreenshare({ releaseCapturer: false, requestedByUser: false });
+        }
 
-      if (!await waitForCapture(localPub)) {
-        logger.warn({
-          logCode: 'livekit_screenshare_capture_retry',
-          extraInfo: { screenshareId: localPub.trackSid },
-        }, 'LiveKit: screenshare captured no frames, retrying');
-        await unpublishScreenshare({ releaseCapturer: false });
+        // eslint-disable-next-line no-await-in-loop
         localPub = await enableScreenShare();
 
         if (!localPub) throw new Error('Local screenshare publication failed');
+
+        // eslint-disable-next-line no-await-in-loop
+        capturing = await waitForCapture(localPub);
+
+        if (capturing) break;
+
+        if (localPub.track) staleCapturers.add(localPub.track);
+
+        logger.warn({
+          logCode: 'livekit_screenshare_capture_retry',
+          extraInfo: { screenshareId: localPub.trackSid, attempt },
+        }, `LiveKit: screenshare captured no frames on attempt ${attempt}`);
+      }
+
+      // The user stopped mid-sequence: drop whatever the last attempt left
+      // behind instead of publishing it.
+      if (stopRequested) {
+        await unpublishScreenshare({ requestedByUser: false });
+        return;
+      }
+
+      if (!capturing) {
+        logger.error({
+          logCode: 'livekit_screenshare_capture_failure',
+          extraInfo: { attempts: MAX_CAPTURE_ATTEMPTS },
+        }, 'LiveKit: screenshare captured no frames, giving up');
+        await unpublishScreenshare({ requestedByUser: false });
+        dispatch(setProfile({ profile: 'screenshare_error' }));
+        return;
       }
 
       const screenshareId = localPub.trackSid ?? screenshareName;
@@ -236,6 +288,10 @@ const LKScreenshareControls = ({
   }, [disabled, isSharing]);
 
   const onButtonPress = useDebounce(useCallback(() => {
+    // Inert while the capture attempts run: the spinner is showing and a tap
+    // here would race a retry into a stop.
+    if (isConnecting) return;
+
     if (disabled) {
       fireDisabledScreenshareAlert();
       return;
@@ -249,6 +305,7 @@ const LKScreenshareControls = ({
   }, [
     disabled,
     isActive,
+    isConnecting,
     publishScreenshare,
     unpublishScreenshare,
     fireDisabledScreenshareAlert,

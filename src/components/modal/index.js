@@ -8,6 +8,7 @@ import AudioDeviceSelectorModal from '../actions-bar/audio-device-selector-contr
 import RecordControlsModal from '../record/modals/record-controls-modal';
 import RecordStatusModal from '../record/modals/record-status-modal';
 import CantScreenshareModal from '../screenshare/modals/cant-screenshare';
+import ScreenshareFailedModal from '../screenshare/modals/screenshare-failed';
 import NotImplementedModal from './not-implemented';
 
 const MODAL_COMPONENTS = {
@@ -17,6 +18,7 @@ const MODAL_COMPONENTS = {
   not_implemented: NotImplementedModal,
   create_poll_permission: CantCreatePollModal,
   screenshare_permission: CantScreenshareModal,
+  screenshare_error: ScreenshareFailedModal,
   receive_poll: ReceivePollModal,
   poll_published: PublishedPollModal,
   record_controls: RecordControlsModal,
