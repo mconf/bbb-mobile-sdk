@@ -2,6 +2,7 @@ import { Divider } from 'react-native-paper';
 import styled from 'styled-components/native';
 import iconButton from '../../../components/icon-button';
 import Colors from '../../../constants/colors';
+import { Text } from '../../../components/typography';
 
 const ContainerView = styled.View`
   width: 100%;
@@ -28,7 +29,7 @@ const GuestPolicyTop = styled.View`
   padding: 12px;
 `;
 
-const GuestPolicyTopText = styled.Text`
+const GuestPolicyTopText = styled(Text)`
   font-size: 18px;
   font-weight: 500;
   color: ${Colors.white};

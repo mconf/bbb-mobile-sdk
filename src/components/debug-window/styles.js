@@ -1,5 +1,6 @@
 import styled from 'styled-components/native';
 import Colors from '../../constants/colors';
+import { Text } from '../typography';
 
 const ContainerInside = styled.View`
   background-color: #000000aa;
@@ -19,12 +20,12 @@ const TextContainer = styled.View`
   padding: 8px;
 `;
 
-const PayloadMessage = styled.Text`
+const PayloadMessage = styled(Text)`
   font-size: 10px;
   color: ${Colors.lightGray100};
 `;
 
-const TypeMessage = styled.Text`
+const TypeMessage = styled(Text)`
   font-size: 12px;
   font-weight: 800;
   color: white;

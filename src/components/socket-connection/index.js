@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Text, View } from 'react-native';
+import {
+  View,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Settings from '../../../settings.json';
 // collections
@@ -65,6 +67,7 @@ import {
   join,
 } from '../../store/redux/slices/wide-app/client';
 import usePrevious from '../../hooks/use-previous';
+import { Text } from '../typography';
 
 // TODO BAD - decouple, move elsewhere - everything from here to getMeetingData
 let GLOBAL_WS = null;

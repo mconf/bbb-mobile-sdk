@@ -1,5 +1,6 @@
 import styled from 'styled-components/native';
 import Colors from '../../../../constants/colors';
+import { Text } from '../../../../components/typography';
 
 const Container = styled.View`
   display: flex;
@@ -11,13 +12,13 @@ const Container = styled.View`
   border-radius: 12px;
 `;
 
-const TitleModal = styled.Text`
+const TitleModal = styled(Text)`
   font-size: 18px;
   font-weight: 500;
   color: ${Colors.lightGray400};
 `;
 
-const TitleDesc = styled.Text`
+const TitleDesc = styled(Text)`
   font-size: 16px;
   font-weight: 400;
   color: ${Colors.lightGray300};

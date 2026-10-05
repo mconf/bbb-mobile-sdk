@@ -5,7 +5,9 @@ import Icon from '@expo/vector-icons/MaterialIcons';
 import Tag from '../tag';
 import userAvatar from '../user-avatar';
 import Colors from '../../constants/colors';
+import Fonts from '../../constants/fonts';
 import Pressable from '../pressable';
+import { Text } from '../typography';
 
 const ViewContainer = styled.View`
   flex: 1;
@@ -26,7 +28,7 @@ const UserAvatar = styled(userAvatar)`
   margin-bottom: 10px;
 `;
 
-const NameUserAvatar = styled.Text`
+const NameUserAvatar = styled(Text)`
   color: ${Colors.white};
   font-size: 18px;
   padding-left: 20px;
@@ -81,6 +83,7 @@ const TextButtonLabel = {
   paddingRight: 20,
   color: Colors.lightGray400,
   fontSize: 16,
+  fontFamily: Fonts.regular,
   fontWeight: 400,
   textAlign: 'left',
 };
@@ -90,6 +93,7 @@ const TextButtonActive = {
   paddingRight: 20,
   color: Colors.white,
   fontSize: 16,
+  fontFamily: Fonts.regular,
   fontWeight: 400,
   textAlign: 'left',
 };

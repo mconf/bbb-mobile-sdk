@@ -2,6 +2,7 @@ import styled from 'styled-components/native';
 import { View } from 'react-native';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import Colors from '../../../constants/colors';
+import { Text as BaseText } from '../../typography';
 
 const Container = styled.View`
   display: flex;
@@ -30,7 +31,7 @@ const TextContainer = ({ children, running }) => (
   </View>
 );
 
-const Text = styled.Text`
+const Text = styled(BaseText)`
   color: ${({ running }) => (running ? Colors.white : Colors.blue)};
   font-size: 14px;
   font-weight: 600;

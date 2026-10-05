@@ -1,5 +1,6 @@
 import styled from 'styled-components/native';
 import Colors from '../../../constants/colors';
+import { Text } from '../../typography';
 
 const LoadingContainer = styled.View`
   display: flex;
@@ -52,7 +53,7 @@ const ButtonInnerContainer = styled.Pressable`
 
 // TODO: Added pollOptions since the old version had slightly different styles for that variant
 // when the refactor for styled components is being implemented, consider homogenizing these styles
-const ButtonText = styled.Text`
+const ButtonText = styled(Text)`
   color: ${({ variant, mode, disabled }) => {
     if (disabled) return Colors.white;
     if (mode === 'text') return Colors.white;

@@ -3,6 +3,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import userAvatar from '../../../../user-avatar';
 import Pressable from '../../../../pressable';
 import Colors from '../../../../../constants/colors';
+import { Text } from '../../../../typography';
 
 // Press and hold opens the message actions, so the message text is not
 // selectable: on Android a selectable Text swallows the long press.
@@ -37,20 +38,20 @@ const MessageTopContainer = styled.View`
 
 // The only part of the header allowed to shrink, so a long name ellipsizes
 // instead of pushing the timestamp out of the message.
-const MessageAuthor = styled.Text`
+const MessageAuthor = styled(Text)`
   flex-shrink: 1;
   color: ${Colors.lightGray400};
   font-weight: 500;
 `;
 
-const MessageTimestamp = styled.Text`
+const MessageTimestamp = styled(Text)`
   flex-shrink: 0;
   color: ${Colors.lightGray200};
   padding-left: 8px;
   font-style: italic;
 `;
 
-const MessageContent = styled.Text`
+const MessageContent = styled(Text)`
   color: ${Colors.lightGray300};
 `;
 
