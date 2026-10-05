@@ -1,14 +1,16 @@
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback, useState } from 'react';
-import { Dimensions, FlatList } from 'react-native';
+import { FlatList, useWindowDimensions } from 'react-native';
 import { useSelector } from 'react-redux';
 import useCurrentUser from '../../../graphql/hooks/useCurrentUser';
 import useUserList from '../../../graphql/hooks/useUserList';
 import Styled from './styles';
 
-const DEVICE_HEIGHT = parseInt(Dimensions.get('window').height, 10);
-
 const GridView = () => {
+  // Read at render time, not module load: on a cold start the window can still
+  // report a pre-layout height, and every box below is hard sized from it.
+  const { height } = useWindowDimensions();
+  const gridHeight = parseInt(height, 10) - 90;
   const isPresentationOpen = useSelector((state) => state.layout.isPresentationOpen);
   const { data: userData } = useUserList();
   const { data: currentUserData } = useCurrentUser();
@@ -53,7 +55,7 @@ const GridView = () => {
     return (
       <Styled.Item
         usersCount={videoUsersCopy.length}
-        dimensionHeight={DEVICE_HEIGHT - 90}
+        dimensionHeight={gridHeight}
         isPresentationOpen={isPresentationOpen}
       >
         <Styled.VideoListItem
@@ -78,7 +80,7 @@ const GridView = () => {
     <>
       <Styled.ContainerViewItem
         isPresentationOpen={isPresentationOpen}
-        dimensionHeight={DEVICE_HEIGHT - 90}
+        dimensionHeight={gridHeight}
       >
         <Styled.ContentArea />
       </Styled.ContainerViewItem>
