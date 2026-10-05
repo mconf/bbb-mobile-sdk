@@ -2,6 +2,7 @@ import { mediaDevices } from '@livekit/react-native-webrtc';
 import AudioBroker from './audio-broker';
 import LiveKitAudioBridge from './livekit-audio-bridge';
 import fetchIceServers from './fetch-ice-servers';
+import { stampMuteCommand } from './mute-intent';
 import {
   setAudioManagerInitialized,
   setIsConnecting,
@@ -51,6 +52,9 @@ class AudioManager {
     // Tracks a bridge's in-flight stop() so a new bridge is never started
     // while the previous one is still tearing down (see _joinAudio/exitAudio).
     this._pendingStop = null;
+    // Bumped by every join and exit, so a join that waited on a teardown can tell
+    // it was overtaken.
+    this._joinSeq = 0;
   }
 
   get bridge() {
@@ -89,6 +93,17 @@ class AudioManager {
     return this.audioSessionNumber;
   }
 
+  releaseInputStream() {
+    const stream = this.inputStream;
+
+    if (!stream) return;
+
+    this.inputStream = null;
+    stream.getTracks().forEach((track) => track.stop());
+
+    if (typeof stream.release === 'function') stream.release();
+  }
+
   async _mediaFactory(constraints = { audio: true }) {
     // Reuse the cached stream only if it still has a live audio track;
     // otherwise re-acquire, so a dead input track is regenerated rather than
@@ -98,6 +113,9 @@ class AudioManager {
       && this.inputStream.getAudioTracks().some((track) => track.readyState === 'live');
 
     if (hasLiveAudioTrack) return this.inputStream;
+
+    // A capture ended in JS still holds the native mic until it is released.
+    this.releaseInputStream();
 
     const inputStream = await mediaDevices.getUserMedia(constraints);
     this.inputStream = inputStream;
@@ -119,11 +137,16 @@ class AudioManager {
 
   _setSenderTrackEnabled(shouldEnable) {
     if (this.isListenOnly) return;
+    if (!this.bridge) return;
 
-    if (this.bridge) {
-      this.bridge.setSenderTrackEnabled(shouldEnable);
-      store.dispatch(setMutedState(!shouldEnable));
-    }
+    this.bridge.setSenderTrackEnabled(shouldEnable);
+
+    // The bridge can ignore a server mute during a reconnect, so mirror its intent.
+    const muted = typeof this.bridge.getMuteIntent === 'function'
+      ? this.bridge.getMuteIntent()
+      : !shouldEnable;
+
+    store.dispatch(setMutedState(muted));
   }
 
   _getStunFetchURL() {
@@ -173,6 +196,10 @@ class AudioManager {
     bridge.onmutestatechanged = (muted) => {
       store.dispatch(setMutedState(muted));
     };
+
+    bridge.ondeferredunmute = () => {
+      if (this.bridge === bridge) this.setMutedState(false);
+    };
   }
 
   _deattachProgressListeners(bridge) {
@@ -182,6 +209,7 @@ class AudioManager {
     bridge.onreconnecting = () => {};
     bridge.onreconnected = () => {};
     bridge.onmutestatechanged = () => {};
+    bridge.ondeferredunmute = () => {};
   }
 
   _initializeBridge({
@@ -273,6 +301,20 @@ class AudioManager {
 
   // Connected, but needs acknowledgement from call states to be flagged as joined
   onAudioConnected(bridge) {
+    // Bridge died in the meantime, stale signal. Drop it.
+    if (!this.bridge || (bridge != null && this.bridge !== bridge)) {
+      this.logger.debug({
+        logCode: 'audio_connected_ignored',
+        extraInfo: {
+          clientSessionNumber: bridge?.clientSessionNumber ?? 'Unknown',
+          bridgeSessionNumber: this.bridge?.clientSessionNumber ?? null,
+          hasBridge: this.bridge != null,
+        },
+      }, 'Audio connected signal ignored; no live/matching bridge');
+
+      return;
+    }
+
     const role = bridge?.role || 'Unknown';
     const clientSessionNumber = bridge?.clientSessionNumber || 'Unknown';
     this.logger.info({
@@ -388,6 +430,9 @@ class AudioManager {
   async _joinAudio(callOptions = {}) {
     if (!this.initialized) throw new TypeError('Audio manager is not ready');
 
+    this._joinSeq += 1;
+    const joinSeq = this._joinSeq;
+
     // There's a stale bridge here. Tear it down and start again.
     if (this.bridge) {
       this._deattachProgressListeners(this.bridge);
@@ -403,14 +448,34 @@ class AudioManager {
       this._pendingStop = null;
     }
 
-    this.bridge = this._initializeBridge(callOptions);
+    // Resolved with false rather than thrown: the caller's error path runs exitAudio(),
+    // which would tear down the join that overtook this one.
+    if (joinSeq !== this._joinSeq) {
+      this.logger?.debug({
+        logCode: 'audio_join_superseded',
+        extraInfo: { joinSeq, currentJoinSeq: this._joinSeq },
+      }, 'Audio join dropped, a later join or exit took over while it waited');
 
-    return this.bridge.joinAudio({
-      inputStream: callOptions.inputStream,
-      muted: callOptions.muted,
-    }).catch((error) => {
+      return false;
+    }
+
+    const bridge = this._initializeBridge(callOptions);
+    this.bridge = bridge;
+
+    try {
+      await bridge.joinAudio({
+        inputStream: callOptions.inputStream,
+        isListenOnly: callOptions.isListenOnly,
+        muted: callOptions.muted,
+      });
+    } catch (error) {
+      // Not thrown, for the same reason as above.
+      if (joinSeq !== this._joinSeq) return false;
       throw error;
-    });
+    }
+
+    // A later join or exit may have replaced this bridge while it waited for the room.
+    return joinSeq === this._joinSeq;
   }
 
   async joinMicrophone({
@@ -423,13 +488,15 @@ class AudioManager {
       this.isListenOnly = isListenOnly;
       this.onAudioJoining();
       const inputStream = await this._mediaFactory();
-      await this._joinAudio({
+      const joined = await this._joinAudio({
         inputStream,
         isListenOnly,
         muted,
         transparentListenOnly,
         audioBridge,
       });
+
+      return joined !== false;
     } catch (error) {
       this.exitAudio();
       throw error;
@@ -437,6 +504,8 @@ class AudioManager {
   }
 
   exitAudio() {
+    this._joinSeq += 1;
+
     if (!this.bridge) {
       // Bridge is nil => there's no audio anymore - guarantee local states reflect that
       this.onAudioExit();
@@ -458,6 +527,24 @@ class AudioManager {
 
   setMutedState(isMuted) {
     this._setSenderTrackEnabled(!isMuted);
+  }
+
+  // An unmute waits for the server, unless it already reports unmuted; then it applies
+  // now, or later if the server muted the track moments ago.
+  applyUserMuteCommand(muted, serverMuted) {
+    const command = stampMuteCommand(muted);
+
+    if (this.isListenOnly || typeof this.bridge?.applyLocalMuteIntent !== 'function') return command;
+
+    if (muted) {
+      this.bridge.applyLocalMuteIntent();
+      store.dispatch(setMutedState(this.bridge.getMuteIntent()));
+    } else if (serverMuted === false && this.bridge.getMuteIntent()) {
+      if (this.bridge.hasUnechoedServerMute?.()) this.bridge.deferUserUnmute();
+      else this.setMutedState(false);
+    }
+
+    return command;
   }
 
   isLocalStreamMuted() {
