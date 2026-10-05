@@ -303,5 +303,11 @@
   "mobileSdk.sharedNotes.authenticationFailed": "Error de autenticación",
   "mobileSdk.sharedNotes.securityViolation": "Violación de seguridad: {reason}",
   "mobileSdk.sharedNotes.unsupportedEditor": "Esta reunión usa el editor antiguo de notas compartidas, que esta aplicación ya no admite. Abra las notas compartidas en un navegador.",
-  "mobileSdk.sharedNotes.loadFailed": "No se pudieron cargar las notas compartidas. Verifique su conexión e inténtelo de nuevo."
+  "mobileSdk.sharedNotes.loadFailed": "No se pudieron cargar las notas compartidas. Verifique su conexión e inténtelo de nuevo.",
+  "app.timerScreen.title": "Temporizador",
+  "mobileSdk.timer.title": "Temporizador",
+  "mobileSdk.timer.stopwatch": "Contador",
+  "mobileSdk.timer.start": "Iniciar",
+  "mobileSdk.timer.stop": "Parar",
+  "mobileSdk.timer.reset": "Restablecer"
 }

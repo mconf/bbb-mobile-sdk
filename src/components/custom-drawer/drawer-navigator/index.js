@@ -4,9 +4,11 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, BackHandler } from "react-native";
 import { useDispatch, useSelector } from 'react-redux';
+import Settings from '../../../../settings.json';
 import { ActivitySignProvider } from '../../../app-content/ActivitySign';
 import NotifeeController from '../../../app-content/notifee';
 import Colors from '../../../constants/colors';
+import useCurrentUser from '../../../graphql/hooks/useCurrentUser';
 import useMeeting from '../../../graphql/hooks/useMeeting';
 import useUserCount from '../../../graphql/hooks/useUserCount';
 import useModalListener from '../../../hooks/listeners/use-modal-listener';
@@ -15,6 +17,7 @@ import FullscreenWrapperScreen from '../../../screens/fullscreen-wrapper-screen'
 import InsideBreakoutRoomScreen from '../../../screens/inside-breakout-room-screen';
 import MainConferenceScreen from '../../../screens/main-conference-screen';
 import SelectLanguageScreen from '../../../screens/select-language-screen';
+import TimerScreen from '../../../screens/timer-screen';
 import UserNotesScreen from '../../../screens/user-notes-screen';
 import UserParticipantsNavigator from '../../../screens/user-participants-screen/navigator';
 import { toggleFacingMode } from '../../../store/redux/slices/wide-app/video';
@@ -35,6 +38,7 @@ const UserParticipantsNavigatorWithUnmount = withUnmountOnBlur(UserParticipantsN
 const SelectLanguageScreenWithUnmount = withUnmountOnBlur(SelectLanguageScreen);
 const UserNotesScreenWithUnmount = withUnmountOnBlur(UserNotesScreen);
 const InsideBreakoutRoomScreenWithUnmount = withUnmountOnBlur(InsideBreakoutRoomScreen);
+const TimerScreenWithUnmount = withUnmountOnBlur(TimerScreen);
 const FullscreenWrapperScreenWithUnmount = withUnmountOnBlur(FullscreenWrapperScreen);
 
 const DrawerNavigator = ({
@@ -51,6 +55,8 @@ const DrawerNavigator = ({
   const hasSharedNotes = meetingData?.meeting[0]?.componentsFlags?.hasSharedNotes;
   const { data: currentUserCount } = useUserCount();
   const users = currentUserCount?.user_aggregate?.aggregate?.count || 0;
+  const { data: userData } = useCurrentUser();
+  const amIModerator = userData?.user_current[0]?.isModerator;
   const isCameraConnected = useSelector((state) => state.video.isConnected);
   const dispatch = useDispatch();
 
@@ -208,6 +214,34 @@ const DrawerNavigator = ({
               drawerIcon: (config) => (
                 <Styled.DrawerIcon
                   icon="account-group"
+                  size={24}
+                  iconColor={config.color}
+                />
+              ),
+            }}
+          />
+        )}
+
+        {amIModerator && Settings.features.timer && (
+          <Drawer.Screen
+            name="TimerScreen"
+            component={TimerScreenWithUnmount}
+            options={{
+              title: t('app.timerScreen.title'),
+              headerRight: () => {
+                if (!isCameraConnected) return null;
+                return (
+                  <Styled.DrawerIcon
+                    icon="camera-flip-outline"
+                    size={24}
+                    iconColor={Colors.white}
+                    onPress={() => dispatch(toggleFacingMode())}
+                  />
+                );
+              },
+              drawerIcon: (config) => (
+                <Styled.DrawerIcon
+                  icon="timer-outline"
                   size={24}
                   iconColor={config.color}
                 />
