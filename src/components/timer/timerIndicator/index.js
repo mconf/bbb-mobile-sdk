@@ -35,7 +35,7 @@ const TimerIndicator = () => {
   const [runningTime, setRunningTime] = useState(0);
 
   const currentDate = new Date();
-  const startedAtDate = new Date(timerData?.timer[0].startedAt);
+  const startedAtDate = new Date(timerData?.timer[0]?.startedAt);
   const adjustedCurrent = new Date(currentDate.getTime());
   const timeDifferenceMs = adjustedCurrent.getTime() - startedAtDate.getTime();
 

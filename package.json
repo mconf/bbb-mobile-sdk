@@ -38,7 +38,7 @@
     "@openspacelabs/react-native-zoomable-view": "2.4.2",
     "@react-native-community/netinfo": "11.4.1",
     "@react-native-community/slider": "5.0.1",
-    "@react-native-picker/picker": "2.11.1",
+    "@react-native-picker/picker": "2.11.4",
     "@react-navigation/drawer": "7.13.6",
     "@react-navigation/elements": "2.9.36",
     "@react-navigation/native": "7.3.14",
