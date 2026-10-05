@@ -2,9 +2,11 @@ import { useNavigation } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
 import { Dimensions, Platform } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
+import Settings from '../../../settings.json';
 import MiniAudioPlayerIcon from '../../components/audio-player/mini-audio-player-icon';
 import ScreenWrapper from '../../components/screen-wrapper';
 import TalkingIndicator from '../../components/talking-indicator';
+import TimerIndicator from '../../components/timer/timerIndicator';
 import VideoGrid from '../../components/video/video-grid';
 import useAppState from '../../hooks/use-app-state';
 import { setIsPiPEnabled } from '../../store/redux/slices/wide-app/layout';
@@ -42,6 +44,9 @@ const MainConferenceScreen = () => {
         <Styled.ContainerView>
           <Styled.TopIndicatorBar>
             <TalkingIndicator />
+            {Settings.features.timer && (
+              <TimerIndicator />
+            )}
           </Styled.TopIndicatorBar>
           <VideoGrid />
           <MiniAudioPlayerIcon />

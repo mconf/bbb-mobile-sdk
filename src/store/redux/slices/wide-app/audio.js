@@ -8,6 +8,9 @@ const initialState = {
   isReconnecting: false,
   isHangingUp: false,
   isListenOnly: false,
+  // The media session is down and cannot carry audio: distinct from
+  // isReconnecting, which tracks the audio bridge's own rejoin.
+  mediaInterrupted: false,
   inputStreamId: null,
   audioError: null,
   audioDevices: [],
@@ -44,6 +47,9 @@ const audioSlice = createSlice({
     },
     setIsReconnecting: (state, action) => {
       state.isReconnecting = action.payload;
+    },
+    setMediaInterrupted: (state, action) => {
+      state.mediaInterrupted = action.payload;
     },
     setInputStreamId: (state, action) => {
       state.inputStreamId = action.payload;
@@ -85,6 +91,7 @@ export const {
   setIsHangingUp,
   setIsConnected,
   setIsReconnecting,
+  setMediaInterrupted,
   setIsListenOnly,
   setAudioError,
   setAudioDevices,

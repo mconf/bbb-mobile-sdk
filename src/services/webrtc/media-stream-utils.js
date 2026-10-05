@@ -74,17 +74,21 @@ const getMediaStreamLogData = (stream) => {
     const videoTracks = getVideoTracks(stream);
 
     return {
+      // react-native-webrtc hardcodes MediaStream.active to true; it stays for log
+      // parity with bbb-html5, and per-track readyState is the real liveness signal.
       active: stream.active,
       id: stream.id,
       audio: audioTracks.map((track) => ({
         id: track.id,
         enabled: track.enabled,
+        readyState: track.readyState,
         deviceId: getDeviceIdFromTrack(track),
         label: track.label,
       })),
       video: videoTracks.map((track) => ({
         id: track.id,
         enabled: track.enabled,
+        readyState: track.readyState,
         deviceId: getDeviceIdFromTrack(track),
         label: track.label,
       })),

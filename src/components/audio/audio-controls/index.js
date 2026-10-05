@@ -1,6 +1,6 @@
 import * as Linking from 'expo-linking';
 import {
-  useCallback, useEffect, useRef, useState,
+  useCallback, useEffect, useRef,
 } from 'react';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import { Alert } from 'react-native';
@@ -10,6 +10,7 @@ import { useAudioJoin, invalidateInFlightAudioJoin } from '../../../hooks/use-au
 import useCurrentUser from '../../../graphql/hooks/useCurrentUser';
 import useMeeting from '../../../graphql/hooks/useMeeting';
 import AudioManager from '../../../services/webrtc/audio-manager';
+import { markMuteCommandDelivered, stampMuteCommand } from '../../../services/webrtc/mute-intent.ts';
 import {
   setAudioError,
   setAudioIntent,
@@ -25,7 +26,6 @@ import Styled from './styles';
 const MUTE_ASSERT_CONVERGENCE_TIMEOUT_MS = 5000;
 
 const AudioControls = () => {
-  const [audioPermissionTainted, setAudioPermissionTainted] = useState(false);
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { joinAudio } = useAudioJoin();
@@ -36,6 +36,7 @@ const AudioControls = () => {
   const isListenOnly = useSelector((state) => state.audio.isListenOnly);
   const audioError = useSelector((state) => state.audio.audioError);
   const localMutedState = useSelector((state) => state.audio.isMuted);
+  const mediaInterrupted = useSelector((state) => state.audio.mediaInterrupted);
   const pendingMuteAssert = useSelector((state) => state.audio.pendingMuteAssert);
   const pendingMuteAssertEpoch = useSelector((state) => state.audio.pendingMuteAssertEpoch);
   const [userSetMuted] = useMutation(Queries.USER_SET_MUTED);
@@ -44,6 +45,9 @@ const AudioControls = () => {
   // pendingMuteAssertEpoch.
   const muteAssertFiredEpoch = useRef(null);
   const muteAssertTimeout = useRef(null);
+  // The bridge can leave the local state unchanged when it delays a server mute, so
+  // the last value pushed to it is tracked separately.
+  const lastPushedServerMuted = useRef(null);
 
   const currentUserLocked = currentUserData?.user_current[0]?.locked ?? false;
   const meetingMicLocked = meetingData?.meeting[0]?.lockSettings?.disableMic;
@@ -54,8 +58,13 @@ const AudioControls = () => {
     loading: currentUserVoiceLoading,
   } = useSubscription(Queries.USER_CURRENT_VOICE);
   const voice = currentUserVoiceData?.user_current[0]?.voice;
-  const isMuted = voice?.muted;
-  const unmutedAndConnected = !isMuted && isConnected;
+  const serverMuted = voice?.muted;
+  // A local mute shows before the server confirms it. The server state can be absent, or
+  // stale while a re-assert is pending.
+  const displayedMuted = localMutedState
+    || (pendingMuteAssert === null && serverMuted === true);
+  const unmutedAndConnected = !displayedMuted && isConnected;
+  const unmuteBlocked = mediaInterrupted && displayedMuted;
 
   // Mute reconciliation effect: applies the server's mute state
   // locally if it differs from the local state based on specific conditions.
@@ -66,11 +75,20 @@ const AudioControls = () => {
     //   unmuting the local mic track.
     // - While a mute re-assert is pending - the restored mute intent must reach the
     //   server first, or the reconciliation would flip it back to muteOnStart
-    if (currentUserVoiceLoading || !voice) return;
+    if (currentUserVoiceLoading || !voice) {
+      // Cleared while the voice record is absent, so the first value after it
+      // returns is pushed to the bridge even if it matches the local state.
+      lastPushedServerMuted.current = null;
+
+      return;
+    }
     if (pendingMuteAssert !== null) return;
 
-    if (localMutedState !== isMuted) AudioManager.setMutedState(isMuted);
-  }, [isMuted, currentUserVoiceLoading, localMutedState, voice, pendingMuteAssert]);
+    if (localMutedState !== serverMuted || lastPushedServerMuted.current !== serverMuted) {
+      lastPushedServerMuted.current = serverMuted;
+      AudioManager.setMutedState(serverMuted);
+    }
+  }, [serverMuted, currentUserVoiceLoading, localMutedState, voice, pendingMuteAssert]);
 
   // Mute state re-assertion after a rejoin (breakouts, reconnects, etc): once
   // a rejoined session's voice record exists, push our restored mute intent to the
@@ -113,6 +131,9 @@ const AudioControls = () => {
 
     if (!fired) {
       muteAssertFiredEpoch.current = epoch;
+      // Only the unmute direction is stamped, so a restored unmute is not re-muted
+      // by the bridge while a restored mute can still be deferred on a reconnect.
+      if (pendingMuteAssert === false) stampMuteCommand(false);
 
       userSetMuted({ variables: { muted: pendingMuteAssert, userId: voice.userId } })
         .then(() => {
@@ -168,15 +189,11 @@ const AudioControls = () => {
             {
               text: t('app.settings.main.cancel.label'),
               style: 'cancel',
-              onPress: () => {
-                setAudioPermissionTainted(true);
-              },
             },
             {
               text: t('app.settings.main.label'),
               onPress: () => {
                 Linking.openSettings();
-                setAudioPermissionTainted(true);
               },
             },
             {
@@ -214,19 +231,20 @@ const AudioControls = () => {
   }, [audioError, joinAudio]);
 
   const toggleVoice = useCallback(async (mutedVal) => {
-    const userId = currentUserVoiceData?.user_current[0]?.voice?.userId;
-    const currMuted = currentUserVoiceData?.user_current[0]?.voice?.muted;
-    const muted = typeof mutedVal === 'boolean' ? mutedVal : !currMuted;
+    const userId = voice?.userId ?? currentUserData?.user_current[0]?.userId;
+    const muted = typeof mutedVal === 'boolean' ? mutedVal : !displayedMuted;
 
     // Explicit user mute toggle supersedes previous mute asserts
     dispatch(setPendingMuteAssert(null));
 
     try {
+      const command = AudioManager.applyUserMuteCommand(muted, serverMuted);
       await userSetMuted({ variables: { muted, userId } });
+      markMuteCommandDelivered(command);
     } catch (e) {
       logger.error('Error on trying to toggle muted');
     }
-  }, [currentUserVoiceData]);
+  }, [voice, serverMuted, currentUserData, displayedMuted]);
 
   const onPressMic = useCallback(() => {
     // Lock settings are applied to the user
@@ -238,17 +256,16 @@ const AudioControls = () => {
         null,
         { cancelable: true },
       );
-    } else if (audioPermissionTainted) {
-      // Audio permission was tainted (i.e. user denied permission and didn't grant it)
-      // Try to join audio again
-      setAudioPermissionTainted(false);
-      joinAudio().then(() => {
-        toggleVoice(false);
-      });
-    } else {
-      toggleVoice();
+
+      return;
     }
-  }, [micDisabled, audioPermissionTainted, toggleVoice, joinAudio]);
+
+    // Unmuting while the media session is down would leave local and server state
+    // disagreeing. Muting still goes through.
+    if (unmuteBlocked) return;
+
+    toggleVoice();
+  }, [micDisabled, unmuteBlocked, toggleVoice]);
 
   const onPressHeadphone = useCallback(() => {
     if (isActive) {
@@ -271,6 +288,8 @@ const AudioControls = () => {
       isConnecting={isConnecting}
       isListenOnly={isListenOnly}
       unmutedAndConnected={unmutedAndConnected}
+      mediaInterrupted={mediaInterrupted}
+      unmuteBlocked={unmuteBlocked}
       isActive={isActive}
       onPressJoined={onPressMic}
       onPressNotJoined={onPressHeadphone}

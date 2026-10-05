@@ -151,6 +151,8 @@
   "app.userList.label": "Usuários",
   "app.userList.menu.promoteUser.label": "Tornar moderador",
   "app.userList.menu.demoteUser.label": "Tornar espectador",
+  "app.video.mediaTimedOutError": "A transmissão da sua webcam foi interrompida. Tente compartilhar novamente",
+  "app.video.ejectedByLockSettings": "Sua webcam foi interrompida porque o compartilhamento de webcam está bloqueado",
   "app.videoDock.webcamFocusLabel": "Focar",
   "app.createBreakoutRoom.title": "Salas de apoio",
   "app.createBreakoutRoom.askToJoin": "Pedir para entrar",
@@ -233,8 +235,8 @@
   "mobileSdk.notificationBar.handsUp": "Você está com a mão levantada.",
   "mobileSdk.notificationBar.cameraToggle": "Você mudou a câmera.",
   "mobileSdk.notificationBar.mediaReconnecting": "Problema de conexão detectado. Restaurando seu áudio e vídeo...",
+  "mobileSdk.notificationBar.mediaReconnectFailed": "Não foi possível restaurar seu áudio e vídeo. Saia e entre novamente na reunião.",
   "mobileSdk.upload.notification.header": "Um arquivo foi carregado:",
-  "mobileSdk.notification.recordLabel": "Gravação",
   "mobileSdk.record.noPermission.label": "Você não possui permissão para gravar reuniões.",
   "mobileSdk.breakout.durationLabel": "Duração da sala de apoio",
   "mobileSdk.breakout.noBreakoutsTitle": "Não há Salas de Apoio disponíveis no momento.",
@@ -298,5 +300,11 @@
   "mobileSdk.sharedNotes.authenticationFailed": "Falha na autenticação",
   "mobileSdk.sharedNotes.securityViolation": "Violação de segurança: {reason}",
   "mobileSdk.sharedNotes.unsupportedEditor": "Esta reunião usa o editor antigo de notas compartilhadas, que este aplicativo não suporta mais. Abra as notas compartilhadas em um navegador.",
-  "mobileSdk.sharedNotes.loadFailed": "Não foi possível carregar as notas compartilhadas. Verifique sua conexão e tente novamente."
+  "mobileSdk.sharedNotes.loadFailed": "Não foi possível carregar as notas compartilhadas. Verifique sua conexão e tente novamente.",
+  "app.timerScreen.title": "Temporizador",
+  "mobileSdk.timer.title": "Temporizador",
+  "mobileSdk.timer.stopwatch": "Cronômetro",
+  "mobileSdk.timer.start": "Iniciar",
+  "mobileSdk.timer.stop": "Parar",
+  "mobileSdk.timer.reset": "Reiniciar"
 }

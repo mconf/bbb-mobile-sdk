@@ -1,6 +1,7 @@
 import styled from 'styled-components/native';
 import { Button } from 'react-native-paper';
 import Colors from '../../constants/colors';
+import { Text } from '../../components/typography';
 
 const ContainerView = styled.View`
   width: 100%;
@@ -12,7 +13,7 @@ const ContainerView = styled.View`
   gap: 24px;
 `;
 
-const Title = styled.Text`
+const Title = styled(Text)`
   color: ${Colors.white};
   font-size: 21px;
   text-align: center;
@@ -24,7 +25,7 @@ const Image = styled.Image`
   height: 150px;
 `;
 
-const Subtitle = styled.Text`
+const Subtitle = styled(Text)`
   color: ${Colors.white};
   font-size: 16px;
   text-align: center;

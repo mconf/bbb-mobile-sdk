@@ -188,10 +188,28 @@ function generateLoggerStreams(config) {
 }
 
 // Creates the logger with the array of streams of the chosen targets
+// bunyan JSON.stringifies every record it builds, and the remote stream
+// stringifies it again on flush - both throw on BigInt, which reaches us through
+// protobuf int64 fields (LiveKit participant/track info). Coerce them as the
+// record is built, so neither serialization ever sees one. Depth-capped: log
+// payloads are small, and LiveKit objects can be cyclic.
+const MAX_SERIALIZER_DEPTH = 6;
+
+const bigIntSafe = (value, depth = 0) => {
+  if (typeof value === 'bigint') return value.toString();
+  if (!value || typeof value !== 'object') return value;
+  if (depth >= MAX_SERIALIZER_DEPTH) return '[deep]';
+  if (Array.isArray(value)) return value.map((item) => bigIntSafe(item, depth + 1));
+
+  return Object.fromEntries(
+    Object.entries(value).map(([key, item]) => [key, bigIntSafe(item, depth + 1)]),
+  );
+};
+
 const logger = createLogger({
   name: 'clientLogger',
   streams: generateLoggerStreams(LOG_CONFIG),
-  serializers: stdSerializers,
+  serializers: { ...stdSerializers, extraInfo: bigIntSafe },
   src: true,
 });
 

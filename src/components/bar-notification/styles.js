@@ -1,4 +1,6 @@
 import styled from 'styled-components/native';
+import IconButtonComponent from '../icon-button';
+import { Text as BaseText } from '../typography';
 
 const IndexContainer = styled.View`
   ${(props) => props.index === 1 && `
@@ -18,14 +20,20 @@ const Container = styled.View`
 const NotificationContainer = styled.View`
     background-color: #000000aa;
     border-radius: 8px;
+    flex-direction: row;
     align-items: center;
 `;
 
 const TextContainer = styled.View`
   padding: 8px 16px;
+  flex-shrink: 1;
 `;
 
-const Text = styled.Text`
+const DismissButton = styled(IconButtonComponent)`
+  margin: 0px 4px 0px 0px;
+`;
+
+const Text = styled(BaseText)`
   font-size: 12px;
   color: white;
 `;
@@ -36,4 +44,5 @@ export default {
   NotificationContainer,
   TextContainer,
   Text,
+  DismissButton,
 };

@@ -24,6 +24,9 @@
       "logTag": "bbb-app"
     }
   },
+  "features": {
+    "timer": true
+  },
   "whiteboard": true,
   "feedback": {
     "enabled": false,

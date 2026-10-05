@@ -19,17 +19,24 @@ const AudioButtonComponent = ({
   isConnecting,
   isListenOnly,
   unmutedAndConnected,
+  mediaInterrupted,
+  unmuteBlocked,
   onPressJoined,
   isActive,
   onPressNotJoined
 }) => {
+  // The icon keeps rendering the mute state, but an interrupted session is not
+  // carrying anything, so it does not get the live colours.
+  const micLive = unmutedAndConnected && !mediaInterrupted;
+
   if (isConnected && !isListenOnly) {
     return (
       <IconButtonComponent
         size={32}
         icon={unmutedAndConnected ? 'microphone' : 'microphone-off'}
-        iconColor={unmutedAndConnected ? Colors.blueIconColor : Colors.lightGray300}
-        containerColor={unmutedAndConnected ? Colors.white : Colors.lightGray200}
+        iconColor={micLive ? Colors.blueIconColor : Colors.lightGray300}
+        containerColor={micLive ? Colors.white : Colors.lightGray200}
+        disabled={unmuteBlocked}
         animated
         onPress={onPressJoined}
       />

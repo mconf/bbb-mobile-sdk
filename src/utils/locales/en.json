@@ -159,6 +159,8 @@
   "app.createBreakoutRoom.title": "Breakout rooms",
   "app.createBreakoutRoom.askToJoin": "Ask to join",
   "app.createBreakoutRoom.join": "Join",
+  "app.video.mediaTimedOutError": "Your webcam stream has been interrupted. Try sharing it again",
+  "app.video.ejectedByLockSettings": "Your webcam was stopped because webcam sharing is locked",
   "app.videoDock.webcamFocusLabel": "Focus",
   "app.recording.startTitle": "Start recording",
   "app.recording.stopTitle": "Pause recording",
@@ -229,8 +231,8 @@
   "mobileSdk.notificationBar.handsUp": "Your hand is raised.",
   "mobileSdk.notificationBar.cameraToggle": "You switched the camera.",
   "mobileSdk.notificationBar.mediaReconnecting": "Connection issue detected. Restoring your audio and video...",
+  "mobileSdk.notificationBar.mediaReconnectFailed": "Could not restore your audio and video. Please leave and rejoin the meeting.",
   "mobileSdk.upload.notification.header": "A file was uploaded:",
-  "mobileSdk.notification.recordLabel": "Recording",
   "mobileSdk.record.noPermission.label": "You do not have permission to record meetings",
   "mobileSdk.breakout.durationLabel": "Breakout rooms time remaining",
   "mobileSdk.breakout.noBreakoutsTitle": "There are no Breakout Rooms available at this time.",
@@ -304,5 +306,11 @@
   "mobileSdk.sharedNotes.authenticationFailed": "Authentication failed",
   "mobileSdk.sharedNotes.securityViolation": "Security violation: {reason}",
   "mobileSdk.sharedNotes.unsupportedEditor": "This meeting uses the old shared notes editor, which this app no longer supports. Open the shared notes in a browser instead.",
-  "mobileSdk.sharedNotes.loadFailed": "Could not load the shared notes. Check your connection and try again."
+  "mobileSdk.sharedNotes.loadFailed": "Could not load the shared notes. Check your connection and try again.",
+  "app.timerScreen.title": "Timer",
+  "mobileSdk.timer.title": "Timer",
+  "mobileSdk.timer.stopwatch": "Stopwatch",
+  "mobileSdk.timer.start": "Start",
+  "mobileSdk.timer.stop": "Stop",
+  "mobileSdk.timer.reset": "Reset"
 }
