@@ -9,6 +9,7 @@ import ScreenWrapper from '../../components/screen-wrapper';
 import Colors from '../../constants/colors';
 import { useOrientation } from '../../hooks/use-orientation';
 import UtilsService from '../../utils/functions';
+import logger from '../../services/logger';
 import Styled from './styles';
 import TimerPicker from './TimerPicker';
 
@@ -67,7 +68,7 @@ const TimerScreen = () => {
   const [runningTime, setRunningTime] = useState(0);
 
   const currentDate = new Date();
-  const startedAtDate = new Date(timerData?.timer[0].startedAt);
+  const startedAtDate = new Date(timerData?.timer[0]?.startedAt);
   const adjustedCurrent = new Date(currentDate.getTime());
   const timeDifferenceMs = adjustedCurrent.getTime() - startedAtDate.getTime();
 
