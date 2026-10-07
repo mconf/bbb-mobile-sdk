@@ -2638,7 +2638,7 @@ PODS:
     - React-Core
   - RNCallKeep (4.3.16):
     - React
-  - RNCPicker (2.11.1):
+  - RNCPicker (2.11.4):
     - boost
     - DoubleConversion
     - fast_float
@@ -3475,7 +3475,7 @@ SPEC CHECKSUMS:
   ReactCommon: 5f0e5c09a64a2717215dd84380e1a747810406f2
   ReactNativeIncallManager: c6e08cc005da0f73d5a1ecbd58ad33bc61d5d79f
   RNCallKeep: 1930a01d8caf48f018be4f2db0c9f03405c2f977
-  RNCPicker: 66c392786945ecee5275242c148e6a4601221d3a
+  RNCPicker: bf95ec4b2483e2ab256047130bc536b437cd916c
   RNGestureHandler: 3a73f098d74712952870e948b3d9cf7b6cae9961
   RNNotifee: ae77e56b1ab0b625163248488052035ca16d487e
   RNReanimated: d60fc0b1c70e8413d16e506897ca7f2a27f697be
