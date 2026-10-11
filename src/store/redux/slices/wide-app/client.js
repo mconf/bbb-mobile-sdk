@@ -261,6 +261,10 @@ const join = createAsyncThunk(
       joinResponseUrl = response.url;
       parsedResponseURL = new URL(joinResponseUrl);
       host = parsedResponseURL.host;
+      const { host: expectedHost } = new URL(url);
+      if (host !== expectedHost) {
+        throw new Error('join failed: unexpected host in response URL', { cause: 401 });
+      }
       const params = new URLSearchParams(parsedResponseURL.search);
       sessionToken = params.get('sessionToken');
     } catch (error) {
