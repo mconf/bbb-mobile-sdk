@@ -50,7 +50,8 @@ these still hold):
 - iOS: Xcode 16.2.
 
 **There is no test framework** (no jest/mocha/vitest). Do not look for or invent
-a test command; verify changes by running the app.
+a test command; verify changes by running the app. A change to the in-conference
+app attaches a pass of the device smoke checklist in `docs/smoke-checklist.md`.
 
 **Typecheck gate for TS edits:** `.ts`/`.tsx` are *not* linted (see Repo hygiene),
 so `npx tsc --noEmit --skipLibCheck` is the only static check. It's clean on `src/`
