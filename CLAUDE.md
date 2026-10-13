@@ -210,6 +210,27 @@ info, device info, and app/build version. Note: log records include
   `plugins.pickRandomUser` toggle whether screens/controls render (combined with
   meeting state and user role from GraphQL hooks).
 
+## Porting rules
+
+These apply when behaviour from the BBB web client is brought into this app, or when
+code is moved so that it can be shared with a web codebase.
+
+- **No web-only code in shared folders.** A folder shared with a web codebase must not use
+  the DOM or browser globals (`window`, `document`) or browser-only packages. Platform
+  behaviour is passed in by the caller, not imported. No such folder exists yet;
+  `shared-notes-editor/` is the shared-notes WebView bundle, not shared code.
+- **The web plugin SDK is imported for types only.** Use `import type` from
+  `bigbluebutton-html-plugin-sdk`; never import a runtime value from it. When a value is
+  needed (an enum string, a constant), declare it locally with the same string.
+- **Tests and fixtures change only in a labelled, reviewed behaviour PR.** Test files and
+  recorded fixtures are not edited, skipped or relabelled in a port or refactor PR, so they
+  keep proving that the behaviour did not change. A change to expected behaviour goes in
+  its own PR, labelled as a behaviour change and reviewed. This repo has no test framework
+  yet; the rule applies as soon as tests exist.
+- **No pushes across repositories.** Work only in the repository the session or PR belongs
+  to. A change needed in another repository is requested (an issue or a hand-off note) and
+  made by whoever owns that repository.
+
 ## Repo hygiene â€” read before editing
 
 - **Editor backup litter may be present.** Files may have `*.js~` / `.*.un~`
