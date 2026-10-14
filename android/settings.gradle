@@ -1,5 +1,5 @@
 pluginManagement {
-   def reactNativeGradlePlugin = new File(
+  def reactNativeGradlePlugin = new File(
     providers.exec {
       workingDir(rootDir)
       commandLine("node", "--print", "require.resolve('@react-native/gradle-plugin/package.json', { paths: [require.resolve('react-native/package.json')] })")
@@ -16,7 +16,7 @@ pluginManagement {
   ).absolutePath
   includeBuild(expoPluginsPath)
 }
- 
+
 plugins {
   id("com.facebook.react.settings")
   id("expo-autolinking-settings")
