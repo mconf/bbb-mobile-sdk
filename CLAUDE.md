@@ -12,11 +12,23 @@ React Native SDK. The same root `App` component is `export default`ed from
 imports `App` and mounts it itself, passing `joinURL`, `defaultLanguage`, and
 `onLeaveSession` props.
 
-Expo **bare workflow** (SDK 53, RN 0.79.5, React 19): `android/` and `ios/` are
-committed, so editing `app.json`/config-plugins does nothing until you re-run
-`expo prebuild` â€” and prebuild overwrites hand-maintained native files (custom
-iOS `RCTAudioModule`/`JitsiAudioSession`, manifest tweaks). **Native dirs are
-maintained by hand here.**
+Expo **bare workflow** (SDK 56, RN 0.85, React 19.2, Hermes v1): `android/` and
+`ios/` are committed. Most native config lives in `app.json` (schemes, background
+modes, team ID, notify-kit foreground service, splash, JitPack repo), but
+`expo prebuild --clean` still wipes these hand-maintained bits, which must be
+re-applied afterwards (diff against git):
+- Android: `LiveKitReactNative.setup(...)` in `MainApplication.onCreate`, the four
+  `<uses-feature>` entries + `tools:replace` on the notifee `ForegroundService` in
+  `AndroidManifest.xml`, and `res/drawable/ic_notification.xml` (LiveKit screen
+  share foreground notification; screenshare crashes without it).
+- iOS: `RCTAudioModule`/`JitsiAudioSession*` files in `ios/` **and** their
+  entries in `project.pbxproj` (`NativeModules.AudioModule`), the Podfile
+  `post_install` hooks (pod deployment-target bump, `fmt` consteval patch), and
+  `bbbmobile/PrivacyInfo.xcprivacy`.
+- iOS (Xcode 27 only): the `SceneDelegate` + window-creation change in
+  `AppDelegate.swift` (the UIScene manifest itself comes from `app.json`). Apps
+  built with the iOS 27 SDK crash at launch without it; SDK 56's template has no
+  scene support (expo/expo#46663, native support from SDK 57).
 
 ## Commands
 
@@ -27,7 +39,7 @@ npm install
 
 npm start              # expo start --dev-client  (NOT Expo Go â€” native modules require a dev client)
 npm run android        # expo run:android
-npm run ios            # expo run:ios  (Xcode 16.2, iOS deployment target 15.1)
+npm run ios            # expo run:ios  (Xcode 26.4+, iOS deployment target 16.4)
 npm run lint           # eslint . --ext .js  (airbnb config)
 npm run lint:file <f>  # lint a single file
 npm run build          # babel src/ -d lib/  â€” transpiles the SDK into lib/ (gitignored); prepublish runs this
@@ -47,13 +59,18 @@ these still hold):
 - Android: JDK 17 and the Android SDK on your PATH. If a build fails with an
   `ANDROID_SDK` error: `export ANDROID_SDK_ROOT="$HOME/Android/sdk"` (Linux) or
   `"$HOME/Library/Android/sdk"` (macOS).
-- iOS: Xcode 16.2.
+- iOS: Xcode 26.4+.
+
+`.env` sets `EXPO_PUBLIC_USE_RN_FETCH=1` so `fetch` stays React Native's instead
+of SDK 56's `expo/fetch` (only applies to standalone builds of this repo; a host
+app embedding the SDK decides this for itself).
 
 **There is no test framework** (no jest/mocha/vitest). Do not look for or invent
 a test command; verify changes by running the app.
 
 **Typecheck gate for TS edits:** `.ts`/`.tsx` are *not* linted (see Repo hygiene),
-so `npx tsc --noEmit --skipLibCheck` is the only static check. It's clean on `src/`
+so `npx tsc --noEmit --skipLibCheck` is the only static check. (`tsconfig.json` sets
+`strict: false`; TS 6 flipped the default to strict.) It's clean on `src/`
 â€” the sole errors come from the untracked `tmp-livekit-live.ts` reference file, so
 exclude it (`... | grep -v '^tmp-livekit-live.ts'`). Run it + `npm run build`.
 
@@ -226,7 +243,7 @@ info, device info, and app/build version. Note: log records include
   TS-aware) â€” expected repo-wide; diff against HEAD before blaming your edit.
 - The `README.md` is stale (claims Node 18 / Expo 52); trust `.nvmrc` and
   `package.json`.
-- **Versioning:** the SDK release version is `package.json` (0.21.4), and the
+- **Versioning:** the SDK release version is `package.json`, and the
   `bbb-breakout-sdk` git-dependency tag tracks it. `app.json` `version` (1.0.0)
   is unrelated â€” bump `package.json` + the breakout tag for SDK releases.
 
