@@ -61,6 +61,17 @@ target 'bbbmobile' do
       end
     end
 
+    # Xcode 27 rejects deployment targets below iOS 15.0; some pods (RNSVG,
+    # lottie) still declare 12.4-13.4. Raise them to the app's minimum.
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        target_version = config.build_settings['IPHONEOS_DEPLOYMENT_TARGET']
+        if target_version && Gem::Version.new(target_version) < Gem::Version.new('15.1')
+          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.1'
+        end
+      end
+    end
+
     # Newer Apple Clang versions misdetect fmt's consteval support, causing
     # "call to consteval function ... is not a constant expression" errors in
     # fmt/format-inl.h. fmt/base.h computes FMT_USE_CONSTEVAL itself and
