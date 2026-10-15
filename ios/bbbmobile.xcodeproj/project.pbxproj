@@ -33,7 +33,7 @@
 		C0F25D4D7F3C561AB10A6405 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-bbbmobile/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		C5516E26D282CBC01EDC4886 /* Pods-bbbmobile.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-bbbmobile.release.xcconfig"; path = "Target Support Files/Pods-bbbmobile/Pods-bbbmobile.release.xcconfig"; sourceTree = "<group>"; };
 		CFC250117A365BFC741F47DB /* Pods-bbbmobile.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-bbbmobile.debug.xcconfig"; path = "Target Support Files/Pods-bbbmobile/Pods-bbbmobile.debug.xcconfig"; sourceTree = "<group>"; };
-		E037AF1B87C3FDB317E60363 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = bbbmobile/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		E037AF1B87C3FDB317E60363 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = bbbmobile/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = bbbmobile/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* bbbmobile-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "bbbmobile-Bridging-Header.h"; path = "bbbmobile/bbbmobile-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -93,7 +93,6 @@
 				CFC250117A365BFC741F47DB /* Pods-bbbmobile.debug.xcconfig */,
 				C5516E26D282CBC01EDC4886 /* Pods-bbbmobile.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
