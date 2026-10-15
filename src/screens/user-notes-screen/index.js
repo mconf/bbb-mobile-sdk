@@ -223,18 +223,17 @@ const NotesEditorWebView = ({ initialConfig, liveConfig, onOpenActionsBar }) => 
 const UserNotesScreen = () => {
   const sessionToken = useSelector((state) => state.client.meetingData.sessionToken);
   const host = useSelector((state) => state.client.meetingData.host);
-  const directHost = useSelector((state) => state.client.meetingData.directHost);
   const [meetingSettings] = useMeetingSettings();
-
-  // The JSESSIONID cookie that authorizes the Hocuspocus handshake belongs to
-  // the API host (directHost), which on cluster-proxy setups is not the html5
-  // client host stored in `host`.
-  const apiHost = directHost || host;
   const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
 
   const notesSettings = meetingSettings?.public?.notes;
   const sharedNotesSettings = meetingSettings?.public?.sharedNotes;
+  // The editor page must live on the Hocuspocus host itself: the handshake is
+  // rejected when it comes from another origin, and on cluster-proxy setups the
+  // API host (directHost) is not the meeting's server. Empty in settings.yml
+  // means "same host as the BBB server".
+  const notesHost = sharedNotesSettings?.serverHostname || host;
   const externalId = notesSettings?.id || DEFAULT_NOTES_EXTERNAL_ID;
 
   const {
@@ -259,16 +258,15 @@ const UserNotesScreen = () => {
   const initialConfig = useMemo(() => ({
     padId,
     sessionToken,
-    // Empty in settings.yml means "same host as the BBB server".
-    serverHostname: sharedNotesSettings?.serverHostname || apiHost,
+    serverHostname: notesHost,
     // Keeps the BBB session cookie first-party for the Hocuspocus auth_request.
-    baseUrl: `https://${apiHost}/`,
+    baseUrl: `https://${notesHost}/`,
     defaultLocale: 'en',
     staticFormattingToolbar: sharedNotesSettings?.staticFormattingToolbar ?? true,
     maxDocumentChars: sharedNotesSettings?.maxDocumentChars || DEFAULT_MAX_DOCUMENT_CHARS,
     maxLengthForContentUpdate: sharedNotesSettings?.maxLengthForContentUpdate
       || DEFAULT_MAX_LENGTH_FOR_CONTENT_UPDATE,
-  }), [padId, sessionToken, apiHost, sharedNotesSettings]);
+  }), [padId, sessionToken, notesHost, sharedNotesSettings]);
 
   const liveConfig = useMemo(() => ({
     locale: toBcp47(i18n.language),
@@ -343,7 +341,7 @@ const UserNotesScreen = () => {
     );
   }
 
-  if (!padId || !sessionToken || !apiHost) {
+  if (!padId || !sessionToken || !notesHost) {
     return withChrome(<Styled.Spinner animating size="large" />);
   }
 
