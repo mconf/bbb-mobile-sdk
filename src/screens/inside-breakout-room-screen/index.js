@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux';
-// import BbbBreakoutSdk from 'bbb-breakout-sdk';
+import BbbBreakoutSdk from 'bbb-breakout-sdk';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { setMainRoomBlockedByBreakout } from '../../store/redux/slices/wide-app/client';
@@ -11,17 +11,16 @@ const InsideBreakoutRoomScreen = (props) => {
   const navigation = useNavigation();
 
   return (
-  <></>
-    // <BbbBreakoutSdk
-    //   joinURL={route.params.joinURL}
-    //   onLeaveSession={() => {
-    //     if (navigation.canGoBack()) {
-    //       navigation.goBack();
-    //     }
-    //     dispatch(setMainRoomBlockedByBreakout(false));
-    //   }}
-    //   defaultLanguage={i18n.language}
-    // />
+    <BbbBreakoutSdk
+      joinURL={route.params.joinURL}
+      onLeaveSession={() => {
+        if (navigation.canGoBack()) {
+          navigation.goBack();
+        }
+        dispatch(setMainRoomBlockedByBreakout(false));
+      }}
+      defaultLanguage={i18n.language}
+    />
   );
 };
 
