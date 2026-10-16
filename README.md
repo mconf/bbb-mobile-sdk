@@ -4,10 +4,10 @@
 
 ### Versions
     $ node -v
-    v18.20.3
+    v24
 
     $ npm -v
-    v10.7.0
+    v11.19
 
     $ expo -V
     52.x.x

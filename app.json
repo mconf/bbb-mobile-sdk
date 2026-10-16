@@ -3,29 +3,45 @@
     "name": "bbbmobile",
     "slug": "bbbmobile",
     "owner": "mconf",
-    "scheme": "bigbluebutton",
+    "scheme": [
+      "bigbluebutton",
+      "org.bbb.mobilesdk"
+    ],
     "version": "1.0.0",
-    "newArchEnabled": true,
     "orientation": "default",
     "icon": "./src/assets/native/icon.png",
     "userInterfaceStyle": "dark",
     "backgroundColor": "#06172A",
-    "splash": {
-      "image": "./src/assets/native/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#06172A"
-    },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "enableBsdiffPatchSupport": false
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
       "supportsTablet": true,
-      "usesIcloudStorage": true,
       "bitcode": false,
-      "bundleIdentifier": "org.bbb.mobilesdk"
+      "bundleIdentifier": "org.bbb.mobilesdk",
+      "appleTeamId": "GN7LTX8MS8",
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "audio",
+          "fetch",
+          "voip"
+        ],
+        "UIApplicationSceneManifest": {
+          "UIApplicationSupportsMultipleScenes": false,
+          "UISceneConfigurations": {
+            "UIWindowSceneSessionRoleApplication": [
+              {
+                "UISceneConfigurationName": "Default Configuration",
+                "UISceneDelegateClassName": "$(PRODUCT_MODULE_NAME).SceneDelegate"
+              }
+            ]
+          }
+        }
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -56,7 +72,48 @@
       "@config-plugins/react-native-webrtc",
       "expo-secure-store",
       "expo-font",
-      "expo-asset"
+      "expo-asset",
+      [
+        "expo-audio",
+        {
+          "enableBackgroundPlayback": false
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./src/assets/native/splash.png",
+          "backgroundColor": "#06172A",
+          "resizeMode": "contain",
+          "ios": {
+            "enableFullScreenImage_legacy": true
+          }
+        }
+      ],
+      "expo-status-bar",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "extraMavenRepos": [
+              "https://www.jitpack.io"
+            ]
+          }
+        }
+      ],
+      [
+        "react-native-notify-kit",
+        {
+          "android": {
+            "foregroundService": {
+              "types": [
+                "mediaPlayback",
+                "microphone"
+              ]
+            }
+          }
+        }
+      ]
     ],
     "web": {
       "favicon": "./src/assets/native/favicon.png"
