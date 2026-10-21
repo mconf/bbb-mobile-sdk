@@ -1,15 +1,22 @@
 import { useEffect, useRef } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useSubscription } from "@apollo/client";
-import { setProfile } from "../../store/redux/slices/wide-app/modal";
+import { hide, setProfile } from "../../store/redux/slices/wide-app/modal";
 import useCurrentUser from "../../graphql/hooks/useCurrentUser";
 import useCurrentPoll from "../../graphql/hooks/useCurrentPoll";
 import usePublishedPolls from "../../graphql/hooks/usePublishedPolls.js";
 import Queries from "./queries";
 import Settings from "../../../settings.json";
 
+// bbb-plugin-pick-random-user registers as BbbPluginPickRandomUser;
+// PickRandomUserPlugin is the name used by older versions of the plugin
+const PICK_RANDOM_USER_PLUGIN_NAMES = ['BbbPluginPickRandomUser', 'PickRandomUserPlugin'];
+// Picks older than this (in seconds) are not shown, same as the plugin's default
+const PICKED_USER_TIME_WINDOW = 10;
+
 const useModalListener = () => {
   const dispatch = useDispatch();
+  const modalProfile = useSelector((state) => state.modal.profile);
 
   // CurrentUser
   const { data: currentUserData } = useCurrentUser();
@@ -45,12 +52,13 @@ const useModalListener = () => {
     error: pickRandomUserError,
   } = useSubscription(Queries.PLUGIN_DATA_CHANNEL_NEW_ITEMS, {
     variables: {
-      pluginName: 'PickRandomUserPlugin',
+      pluginNames: PICK_RANDOM_USER_PLUGIN_NAMES,
       channelName: 'pickRandomUser',
       subChannelName: 'default',
     },
     skip: !isPickRandomUserEnabled,
   });
+  const lastPickedEntryId = useRef(undefined);
 
   useEffect(() => {
     if (!isPickRandomUserEnabled) return;
@@ -58,17 +66,29 @@ const useModalListener = () => {
       if (pickRandomUserError) {
         console.error("PickRandomUserPlugin error: ", pickRandomUserError);
       } else {
-        const pickedUserData = pickRandomUserData?.pluginDataChannelEntry_public?.[0]?.payloadJson;
+        const entries = pickRandomUserData?.pluginDataChannelEntry_public;
+        if (!entries) return;
+        const lastPick = entries[0];
 
-        // when the list is emptied it triggers this
-        if (!pickedUserData || !pickedUserData.name) {
-          console.warn("Missing pickRandomUserPlugin data");
+        // the presenter cleared the picked users list
+        if (!lastPick) {
+          if (modalProfile === "pick_random_user") dispatch(hide());
           return;
-        };
+        }
+
+        if (lastPick.entryId === lastPickedEntryId.current) return;
+        lastPickedEntryId.current = lastPick.entryId;
+
+        const pickedUserData = lastPick.payloadJson;
+        const secondsSincePick = (Date.now() - new Date(lastPick.createdAt).getTime()) / 1000;
+        if (!pickedUserData?.name || secondsSincePick > PICKED_USER_TIME_WINDOW) return;
 
         handleDispatch("pick_random_user", {
-          selectedUserName: pickedUserData?.name,
-          selectedUserColor: pickedUserData?.color,
+          selectedUserId: pickedUserData.userId,
+          selectedUserName: pickedUserData.name,
+          selectedUserColor: pickedUserData.color,
+          selectedUserAvatar: pickedUserData.avatar,
+          selectedUserRole: pickedUserData.role,
         });
 
         return;
