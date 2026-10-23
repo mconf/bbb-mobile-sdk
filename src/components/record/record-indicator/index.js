@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { Pressable, Animated } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/core';
@@ -36,58 +36,12 @@ const RecordingIndicator = ({ recordMeeting, recordPolicies }) => {
 
   const hasRecordingPermission = amIModerator;
 
-  const isRecording = recordMeeting?.isRecording;
-  const recordingTimeFromServer = recordMeeting?.previousRecordedTimeInSeconds ?? 0;
-  const startedAt = recordMeeting?.startedAt ? new Date(recordMeeting.startedAt).getTime() : null;
-
-  const [time, setTime] = useState(recordingTimeFromServer);
-  const intervalRef = useRef(null);
-
-  useFocusEffect(
-    useCallback(() => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-
-      if (isRecording && startedAt) {
-        intervalRef.current = setInterval(() => {
-          const now = Date.now();
-          const elapsed = Math.floor((now - startedAt) / 1000);
-          const totalTime = recordingTimeFromServer + elapsed;
-          setTime(totalTime);
-        }, 1000);
-      } else {
-        setTime(recordingTimeFromServer);
-      }
-
-      return () => {
-        if (intervalRef.current) {
-          clearInterval(intervalRef.current);
-          intervalRef.current = null;
-        }
-      };
-    }, [isRecording, recordingTimeFromServer, startedAt])
-  );
-
   const handleOpenRecordingViewerModal = () => {
-    dispatch(setProfile({
-      profile: 'record_status',
-      extraInfo: {
-        recordMeeting,
-        newTime: time
-      }
-    }));
+    dispatch(setProfile({ profile: 'record_status' }));
   };
 
   const handleOpenRecordingControlsModal = () => {
-    dispatch(setProfile({
-      profile: 'record_controls',
-      extraInfo: {
-        recordMeeting,
-        newTime: time
-      }
-    }));
+    dispatch(setProfile({ profile: 'record_controls' }));
   };
 
   useEffect(() => {
