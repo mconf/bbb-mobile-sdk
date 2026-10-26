@@ -44,6 +44,20 @@ const InCallManagerController = () => {
     InCallManager.stop({ media: 'video' });
   }, [audioIsConnected]);
 
+  // InCallManager is a process-wide native singleton and there is one
+  // controller per App instance (main room + nested breakout). Their
+  // start/stop calls are sequential by construction (the main room exits audio
+  // before a breakout joins and vice versa), but if a nested App is unmounted
+  // abruptly while its audio is still up, release the session here so the
+  // main room starts from a clean state.
+  const wasConnected = useRef(false);
+  wasConnected.current = audioIsConnected;
+  useEffect(() => {
+    return () => {
+      if (wasConnected.current) InCallManager.stop({ media: 'video' });
+    };
+  }, []);
+
   return null;
 };
 
