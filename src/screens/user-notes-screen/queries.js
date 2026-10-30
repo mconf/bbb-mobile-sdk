@@ -7,7 +7,6 @@ const SHARED_NOTES_SUBSCRIPTION = gql`
     sharedNotes(where: { sharedNotesExtId: { _eq: $externalId } }) {
       padId
       sharedNotesExtId
-      sharedNotesEditor
       lastUpdatedAt
     }
   }

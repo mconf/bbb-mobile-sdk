@@ -305,7 +305,6 @@
   "mobileSdk.sharedNotes.connectionClosed": "Connection closed.",
   "mobileSdk.sharedNotes.authenticationFailed": "Authentication failed",
   "mobileSdk.sharedNotes.securityViolation": "Security violation: {reason}",
-  "mobileSdk.sharedNotes.unsupportedEditor": "This meeting uses the old shared notes editor, which this app no longer supports. Open the shared notes in a browser instead.",
   "mobileSdk.sharedNotes.loadFailed": "Could not load the shared notes. Check your connection and try again.",
   "app.timerScreen.title": "Timer",
   "mobileSdk.timer.title": "Timer",
