@@ -23,7 +23,6 @@ const CONFIG_PLACEHOLDER = '/*__BBB_NOTES_CONFIG__*/';
 const DEFAULT_NOTES_EXTERNAL_ID = 'notes';
 const DEFAULT_MAX_DOCUMENT_CHARS = 99999;
 const DEFAULT_MAX_LENGTH_FOR_CONTENT_UPDATE = 1500;
-const ETHERPAD_EDITOR = 'etherpad';
 
 // Escaped so a display name can never close the inline <script> it lands in.
 const serializeForScript = (value) => JSON.stringify(value)
@@ -247,13 +246,9 @@ const UserNotesScreen = () => {
 
   const sharedNotes = sharedNotesData?.sharedNotes?.[0];
   const padId = sharedNotes?.padId;
-  const sharedNotesEditor = sharedNotes?.sharedNotesEditor;
 
   const currentUser = currentUserData?.user_current?.[0];
   const meeting = meetingData?.meeting?.[0];
-
-  // As on the web: anything that is not 'etherpad' is BlockNote.
-  const isEtherpadSharedNotes = sharedNotesEditor === ETHERPAD_EDITOR;
 
   const initialConfig = useMemo(() => ({
     padId,
@@ -295,15 +290,6 @@ const UserNotesScreen = () => {
   ]);
 
   useEffect(() => {
-    if (isEtherpadSharedNotes) {
-      logger.warn({
-        logCode: 'shared_notes_unsupported_editor',
-        extraInfo: { sharedNotesEditor },
-      }, 'This meeting uses the Etherpad shared notes, which the app no longer supports');
-    }
-  }, [isEtherpadSharedNotes, sharedNotesEditor]);
-
-  useEffect(() => {
     if (sharedNotesError) {
       logger.error({
         logCode: 'shared_notes_subscription_error',
@@ -328,12 +314,6 @@ const UserNotesScreen = () => {
       </Styled.ContainerScreen>
     </ScreenWrapper>
   );
-
-  if (isEtherpadSharedNotes) {
-    return withChrome(
-      <Styled.MessageText>{t('mobileSdk.sharedNotes.unsupportedEditor')}</Styled.MessageText>,
-    );
-  }
 
   if (sharedNotesError) {
     return withChrome(
