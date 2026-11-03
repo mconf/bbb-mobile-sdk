@@ -103,14 +103,14 @@ const CustomDrawer = (props) => {
           {currentUser?.name}
         </Styled.NameUserAvatar>
       </Styled.CustomDrawerContainer>
-      <Styled.DrawerScrollView {...props}>
+      <Styled.DrawerScrollView {...props} bottomInset={insets.bottom}>
         <Styled.ContainerDrawerItemList>
           <DrawerItemList {...props} />
           {Settings.showNotImplementedFeatures && renderNotImplementedItem()}
           {isLandscape && renderBottomDrawerItems()}
         </Styled.ContainerDrawerItemList>
       </Styled.DrawerScrollView>
-      <Styled.ContainerCustomBottomButtons>
+      <Styled.ContainerCustomBottomButtons bottomInset={insets.bottom}>
         {!isLandscape && renderBottomDrawerItems()}
       </Styled.ContainerCustomBottomButtons>
       <BBBLiveKitRoom />

@@ -44,6 +44,7 @@ const ContainerDrawerItemList = styled.View`
 
 const ContainerCustomBottomButtons = styled.View`
   padding-bottom:  5%;
+  margin-bottom: ${({ bottomInset }) => bottomInset || 0}px;
   padding-left: 12px;
   padding-right: 12px;
   gap: 4px
@@ -138,10 +139,10 @@ const DrawerItemBottom = ({ label, onPress, iconName }) => {
   );
 };
 
-const DrawerScrollView = ({ children }) => (
+const DrawerScrollView = ({ children, bottomInset }) => (
   <DrawerContentScrollView
     style={{ backgroundColor: Colors.white }}
-    contentContainerStyle={{ paddingTop: 8 }}
+    contentContainerStyle={{ paddingTop: 8, paddingBottom: bottomInset || 0 }}
   >
     {children}
   </DrawerContentScrollView>
