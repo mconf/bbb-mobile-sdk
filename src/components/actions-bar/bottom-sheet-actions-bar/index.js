@@ -4,6 +4,7 @@ import React, {
 import { View } from 'react-native';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { useRoute } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { useOrientation } from '../../../hooks/use-orientation';
 import ActionsBar from '../index';
@@ -22,6 +23,10 @@ const BottomSheetActionsBar = ({ alwaysOpen }) => {
   const route = useRoute();
   const orientation = useOrientation();
   const dispatch = useDispatch();
+  // Android nav bar (3-button mode) / iOS home indicator: the app is drawn
+  // edge-to-edge, so the sheet is lifted above the bar (bottomInset) and the
+  // strip behind the bar is painted with the sheet's color while it is open.
+  const { bottom: bottomInset } = useSafeAreaInsets();
 
   const detailedInfo = useSelector((state) => state.layout.detailedInfo);
   const expandedActionsBar = useSelector((state) => state.layout.expandActionsBar);
@@ -76,32 +81,43 @@ const BottomSheetActionsBar = ({ alwaysOpen }) => {
     }
   }, [isModalShow]);
 
+  const currentStyles = Styled[renderWithOpacity ? 'opacityStyles' : 'styles'];
+
   // renders
   return (
-    <BottomSheet
-      ref={bottomSheetRef}
-      index={detailedInfo ? 0 : -1}
-      enablePanDownToClose={!alwaysOpen}
-      enableDynamicSizing={false}
-      snapPoints={snapPoints}
-      handleIndicatorStyle={Styled[renderWithOpacity ? 'opacityStyles' : 'styles'].indicatorStyle}
-      style={Styled[renderWithOpacity ? 'opacityStyles' : 'styles'].style}
-      handleStyle={Styled[renderWithOpacity ? 'opacityStyles' : 'styles'].handleStyle}
-      backgroundStyle={Styled[renderWithOpacity ? 'opacityStyles' : 'styles'].backgroundStyle}
-      onChange={handleSheetChanges}
-    >
-      <View style={Styled[renderWithOpacity ? 'opacityStyles' : 'styles'].contentContainer}>
-        <ActionsBar />
-        <BottomSheetScrollView>
-          <Styled.ControlsContainer>
-            <DeviceSelectorControl />
-            <AudioButton />
-            <DebugControl />
-            <Screenshare />
-          </Styled.ControlsContainer>
-        </BottomSheetScrollView>
-      </View>
-    </BottomSheet>
+    <>
+      {detailedInfo && bottomInset > 0 && (
+        <View
+          pointerEvents="none"
+          style={[currentStyles.backgroundStyle, Styled.insetFiller(bottomInset)]}
+        />
+      )}
+      <BottomSheet
+        ref={bottomSheetRef}
+        index={detailedInfo ? 0 : -1}
+        enablePanDownToClose={!alwaysOpen}
+        enableDynamicSizing={false}
+        snapPoints={snapPoints}
+        bottomInset={bottomInset}
+        handleIndicatorStyle={currentStyles.indicatorStyle}
+        style={currentStyles.style}
+        handleStyle={currentStyles.handleStyle}
+        backgroundStyle={currentStyles.backgroundStyle}
+        onChange={handleSheetChanges}
+      >
+        <View style={currentStyles.contentContainer}>
+          <ActionsBar />
+          <BottomSheetScrollView>
+            <Styled.ControlsContainer>
+              <DeviceSelectorControl />
+              <AudioButton />
+              <DebugControl />
+              <Screenshare />
+            </Styled.ControlsContainer>
+          </BottomSheetScrollView>
+        </View>
+      </BottomSheet>
+    </>
   );
 };
 
