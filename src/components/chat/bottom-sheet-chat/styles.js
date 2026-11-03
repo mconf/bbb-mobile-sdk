@@ -26,7 +26,7 @@ const SendMessageContainer = styled.View`
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding: 8px 8px 32px 8px;
+  padding: 8px 8px ${({ bottomInset }) => Math.max(32, (bottomInset || 0) + 8)}px 8px;
 `;
 
 const TextInput = styled(textInput)`
