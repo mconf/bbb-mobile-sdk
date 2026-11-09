@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import ScreenshareManager from '../../../services/webrtc/screenshare-manager';
 import { setFocusedElement, setFocusedId, setIsFocused } from './wide-app/layout';
 
 // Slice
@@ -75,7 +74,8 @@ const screenshareCleanupListener = (action, listenerApi) => {
       listenerApi.dispatch(setFocusedElement(''));
     }
 
-    ScreenshareManager.unsubscribe();
+    // The manager of the App this store belongs to (listenerApi.extra is the AppInstance)
+    listenerApi.extra.screenshareManager.unsubscribe();
   }
 };
 

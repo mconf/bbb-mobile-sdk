@@ -8,18 +8,21 @@ import {
   setMutedState,
   setPendingMuteAssert,
 } from '../store/redux/slices/wide-app/audio';
-import AudioManager from '../services/webrtc/audio-manager';
 import logger from '../services/logger';
 import useCurrentUser from '../graphql/hooks/useCurrentUser';
-import { getInFlightAudioJoin, setInFlightAudioJoin } from './audio-join-in-flight';
+import { useAppInstance } from '../app-instance/context';
 
 const ANDROID_SDK_MIN_BTCONNECT = 31;
 
-export { invalidateInFlightAudioJoin } from './audio-join-in-flight';
-
+// The in-flight join dedupe guard lives on the App instance
+// (instance.audioJoinGuard) so a nested breakout App never cancels or reuses
+// the main room's join. `invalidateInFlightAudioJoin` is returned by the hook
+// for React callers; listener effects reach it through listenerApi.extra.
 export const useAudioJoin = () => {
   const dispatch = useDispatch();
   const store = useStore();
+  const instance = useAppInstance();
+  const { audioManager: AudioManager, audioJoinGuard, invalidateInFlightAudioJoin } = instance;
   const { data: meetingData } = useMeeting();
   const { data: currentUserData } = useCurrentUser();
   const meeting = meetingData?.meeting[0];
@@ -108,23 +111,24 @@ export const useAudioJoin = () => {
       }, `Audio published failed: ${error.message}`);
       dispatch(setAudioError(error.name));
     });
-  }, [disableMic, muteOnStart, audioBridge, currentUserLocked, meetingId, dispatch, store]);
+  }, [
+    disableMic, muteOnStart, audioBridge, currentUserLocked, meetingId,
+    dispatch, store, AudioManager,
+  ]);
 
   const joinAudio = useCallback(() => {
-    const inFlight = getInFlightAudioJoin();
-
-    if (inFlight) return inFlight;
+    if (audioJoinGuard.inFlight) return audioJoinGuard.inFlight;
 
     const join = doJoinAudio().finally(() => {
       // Only detach if this join is still the tracked one. We're relying
       // on useCallback to equality-check here.
-      if (getInFlightAudioJoin() === join) setInFlightAudioJoin(null);
+      if (audioJoinGuard.inFlight === join) audioJoinGuard.inFlight = null;
     });
 
-    setInFlightAudioJoin(join);
+    audioJoinGuard.inFlight = join;
 
     return join;
-  }, [doJoinAudio]);
+  }, [doJoinAudio, audioJoinGuard]);
 
-  return { joinAudio };
+  return { joinAudio, invalidateInFlightAudioJoin };
 };

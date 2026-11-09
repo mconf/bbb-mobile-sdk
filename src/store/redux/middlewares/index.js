@@ -1,5 +1,5 @@
-export { default as screenshareCleanupObserver } from './screenshareCleanupObserver';
-export { default as videoStreamCleanupObserver } from './videoStreamCleanupObserver';
-export { default as voiceCallStateObserver } from './voiceCallStateObserver';
-export { default as ConnectionStatusTracker } from './connectionStatus';
-export { default as logoutOrEjectionObserver } from './logoutOrEjectionObserver';
+export { default as createScreenshareCleanupObserver } from './screenshareCleanupObserver';
+export { default as createVideoStreamCleanupObserver } from './videoStreamCleanupObserver';
+export { default as createVoiceCallStateObserver } from './voiceCallStateObserver';
+export { default as createConnectionStatusTracker } from './connectionStatus';
+export { default as createLogoutOrEjectionObserver } from './logoutOrEjectionObserver';

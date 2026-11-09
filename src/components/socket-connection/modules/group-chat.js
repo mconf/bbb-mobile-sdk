@@ -1,4 +1,4 @@
-import { store } from '../../../store/redux/store';
+import { store } from '../../../store/redux/legacy-store';
 import Module from './module';
 import {
   addGroupChat,

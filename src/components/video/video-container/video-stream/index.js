@@ -2,10 +2,12 @@ import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { selectMetadata } from '../../../../store/redux/slices/meeting';
 import { isClientReady } from '../../../../store/redux/slices/wide-app/client';
-import VideoManager from '../../../../services/webrtc/video-manager';
+import { useMediaManagers } from '../../../../app-instance/context';
 import Styled from './styles';
 
 const SFUVideoStream = (props) => {
+  // This App instance's video manager (see src/app-instance)
+  const { videoManager: VideoManager } = useMediaManagers();
   const {
     cameraId,
     local,

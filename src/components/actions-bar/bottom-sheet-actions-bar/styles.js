@@ -57,7 +57,17 @@ const ControlsContainer = styled.View`
   gap: 12px;
 `;
 
+// Fills the area behind the Android navigation bar under the lifted sheet.
+const insetFiller = (height) => ({
+  position: 'absolute',
+  left: 0,
+  right: 0,
+  bottom: 0,
+  height,
+});
+
 export default {
+  insetFiller,
   styles,
   opacityStyles,
   ControlsContainer

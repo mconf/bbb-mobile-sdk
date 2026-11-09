@@ -4,7 +4,7 @@ import { selectMetadata } from '../../../../store/redux/slices/meeting';
 import { selectLocalVideoStreams } from '../../../../store/redux/slices/video-streams';
 import { isClientReady } from '../../../../store/redux/slices/wide-app/client';
 import useDebounce from '../../../../hooks/use-debounce';
-import VideoManager from '../../../../services/webrtc/video-manager';
+import { useMediaManagers } from '../../../../app-instance/context';
 import Styled from '../styles';
 
 const SFUVideoControls = ({
@@ -18,6 +18,8 @@ const SFUVideoControls = ({
   fireDisabledCamAlert,
   handleCameraPublishError,
 }) => {
+  // This App instance's video manager (see src/app-instance)
+  const { videoManager: VideoManager } = useMediaManagers();
   const userRequestedHangup = useSelector((state) => state.video.userRequestedHangup);
   const localVideoStreams = useSelector(selectLocalVideoStreams);
   const ready = useSelector((state) => isClientReady(state) && state.video.signalingTransportOpen);

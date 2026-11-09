@@ -6,7 +6,7 @@ import {
   readyStateChanged,
   cleanupStaleData,
 } from '../../../store/redux/slices/screenshare';
-import { store } from '../../../store/redux/store';
+import { store } from '../../../store/redux/legacy-store';
 
 const SCREENSHARES_TOPIC = 'screenshare';
 

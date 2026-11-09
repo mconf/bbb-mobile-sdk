@@ -5,7 +5,7 @@ import {
 } from '@livekit/react-native';
 import { Track } from 'livekit-client';
 import Styled from './styles';
-import { liveKitRoom } from '../../../services/livekit';
+import { useLiveKitRoom } from '../../../app-instance/context';
 
 const LiveKitCameraView = ({
   trackName,
@@ -29,6 +29,8 @@ const LiveKitCameraViewContainer = ({
   isGrid,
   renderPlaceholder,
 }) => {
+  const liveKitRoom = useLiveKitRoom();
+
   return (
     <RoomContext.Provider value={liveKitRoom}>
       <LiveKitCameraView

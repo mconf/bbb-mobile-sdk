@@ -6,7 +6,7 @@ import {
   readyStateChanged,
   cleanupStaleData,
 } from '../../../store/redux/slices/video-streams';
-import { store } from '../../../store/redux/store';
+import { store } from '../../../store/redux/legacy-store';
 
 const VIDEO_STREAMS_TOPIC = 'video-streams';
 

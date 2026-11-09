@@ -5,25 +5,27 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable } from 'react-native';
 import { ActivityIndicator, Menu, Provider } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 import ScreenWrapper from '../../components/screen-wrapper';
 import Colors from '../../constants/colors';
 import useCurrentUser from '../../graphql/hooks/useCurrentUser';
 import useGuestWaitingList from '../../graphql/hooks/useGuestWaitingList';
+import useMeeting from '../../graphql/hooks/useMeeting';
 import useUserList from '../../graphql/hooks/useUserList';
 import {
   SET_PRESENTER,
   SET_ROLE
 } from '../../graphql/mutations/userList';
 import { useOrientation } from '../../hooks/use-orientation';
-import { isBreakout } from '../../store/redux/slices/wide-app/client';
 import Styled from './styles';
 
 const UserParticipantsScreen = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [selectedUser, setSelectedUser] = useState({});
   const [menuAnchor, setMenuAnchor] = useState({ x: 0, y: 0 });
-  const meetingIsBreakout = useSelector(isBreakout);
+  // Server-side flag (the legacy client-slice selector is never set on the
+  // GraphQL plane, so it always read as "not a breakout").
+  const { data: meetingData } = useMeeting();
+  const meetingIsBreakout = meetingData?.meeting?.[0]?.isBreakout ?? false;
 
   const { t } = useTranslation();
   const orientation = useOrientation();

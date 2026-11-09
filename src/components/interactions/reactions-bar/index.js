@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useSubscription } from '@apollo/client';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { setIsReactionsBarOpen } from '../../../store/redux/slices/wide-app/layout';
 import { useIsUserReactionsEnabled } from '../../../hooks/use-features';
 import useMeetingSettings from '../../../graphql/local-states/useMeetingSettings';
@@ -18,6 +19,7 @@ const ReactionsBar = () => {
   const { data } = useSubscription(Queries.USER_CURRENT_REACTION_SUBSCRIPTION);
   const [setReactionEmoji] = useMutation(Queries.SET_REACTION_EMOJI);
   const dispatch = useDispatch();
+  const insets = useSafeAreaInsets();
   const { t } = useTranslation();
 
   const reactions = meetingSettings?.public?.userReaction?.reactions ?? [];
@@ -52,7 +54,7 @@ const ReactionsBar = () => {
   }
 
   return (
-    <Styled.Container onStartShouldSetResponder={() => true}>
+    <Styled.Container bottomInset={insets.bottom} onStartShouldSetResponder={() => true}>
       {reactions.map(({ id, native }) => (
         <Styled.ReactionButton
           key={id}

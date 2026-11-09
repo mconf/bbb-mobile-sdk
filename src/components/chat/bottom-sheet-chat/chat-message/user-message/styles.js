@@ -23,6 +23,18 @@ const Card = styled(Pressable).attrs(() => ({
   `}
 `;
 
+// Moderator broadcast to breakout rooms. Same box as Card (flex, padding,
+// border) so it lines up with regular messages, but a plain View: it has no
+// long-press actions.
+const OrangeCard = styled.View`
+  flex: 1;
+  padding: 8px;
+  border-radius: 8px;
+  border-width: 1px;
+  border-color: transparent;
+  background-color: ${Colors.orange}20;
+`;
+
 const ContainerItem = styled.View`
   display: flex;
   flex-direction: row;
@@ -46,7 +58,7 @@ const MessageAuthor = styled(Text)`
 
 const MessageTimestamp = styled(Text)`
   flex-shrink: 0;
-  color: ${Colors.lightGray200};
+  color: ${({ moderator }) => (moderator ? Colors.lightGray300 : Colors.lightGray200)};
   padding-left: 8px;
   font-style: italic;
 `;
@@ -86,6 +98,7 @@ const UserAvatar = styled(userAvatar)`
 
 export default {
   Card,
+  OrangeCard,
   ContainerItem,
   MessageTopContainer,
   MessageAuthor,

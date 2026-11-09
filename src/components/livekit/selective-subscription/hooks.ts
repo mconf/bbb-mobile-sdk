@@ -14,9 +14,10 @@ import {
   type Room,
 } from 'livekit-client';
 import { useRemoteParticipants, useSpeakingParticipants } from '@livekit/react-native';
-import { liveKitRoom } from '../../../services/livekit';
+import { useLiveKitRoom } from '../../../app-instance/context';
 import logger from '../../../services/logger';
-import { getMeetingSettings } from '../../../graphql/local-states/useMeetingSettings';
+import useMeetingSettings from '../../../graphql/local-states/useMeetingSettings';
+import type MeetingClientSettings from '../../../types/meetingClientSettings';
 import {
   MEDIA_GROUP_STREAMS_SUBSCRIPTION,
 } from './queries';
@@ -48,8 +49,8 @@ const PARTICIPANTS_UPDATE_FILTER = [
   RoomEvent.ActiveSpeakersChanged,
 ];
 
-const getSelectiveSubscriptionConfig = () => {
-  const selSubConfig = getMeetingSettings()?.public?.media?.livekit?.selectiveSubscription;
+const getSelectiveSubscriptionConfig = (settings?: MeetingClientSettings) => {
+  const selSubConfig = settings?.public?.media?.livekit?.selectiveSubscription;
   const selectiveSubscriptionEnabled = selSubConfig?.enabled ?? true;
   const audioSubscriptionPoolSize = selectiveSubscriptionEnabled
     ? selSubConfig?.audioSubscriptionPoolSize ?? 0
@@ -285,7 +286,10 @@ export const useMediaSubscriptions = () => {
   });
   // For now only audio is handled, but this is ready for other media types.
   const { senders, inAnyGroup } = useMediaSenders(remoteParticipants, MediaType.AUDIO);
-  const { audioSubscriptionPoolSize, muteDebounceMs } = getSelectiveSubscriptionConfig();
+  // Room and settings belong to this App instance (see src/app-instance)
+  const liveKitRoom = useLiveKitRoom();
+  const [meetingSettings] = useMeetingSettings();
+  const { audioSubscriptionPoolSize, muteDebounceMs } = getSelectiveSubscriptionConfig(meetingSettings);
   const participantsLastSpokeAt = useParticipantsLastSpokeAt(liveKitRoom);
   const debouncedUnmutedUsers = useDebouncedMuteState(
     remoteParticipants,
@@ -418,6 +422,7 @@ export const useMediaSubscriptions = () => {
       }
     });
   }, [
+    liveKitRoom,
     senders,
     inAnyGroup,
     remoteParticipants,

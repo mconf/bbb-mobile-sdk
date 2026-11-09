@@ -5,42 +5,55 @@ const MUTE_COMMAND_CEILING_MS = 120000;
 
 export interface MuteCommand { muted: boolean; at: number; delivered: boolean }
 
-let pendingCommand: MuteCommand | null = null;
+export interface MuteIntent {
+  stampMuteCommand: (muted: boolean) => MuteCommand;
+  markMuteCommandDelivered: (command: MuteCommand | null) => void;
+  pendingMuteCommand: () => boolean | null;
+  consumeMuteCommand: (muted: boolean) => boolean;
+}
 
-const liveCommand = (): MuteCommand | null => {
-  if (pendingCommand === null) return null;
+// Per App instance (instance.muteIntent): the main room and a breakout have
+// separate microphones and must not consume each other's commands.
+export const createMuteIntent = (): MuteIntent => {
+  let pendingCommand: MuteCommand | null = null;
 
-  const lifetime = pendingCommand.muted ? MUTE_COMMAND_CEILING_MS : UNMUTE_COMMAND_LIFETIME_MS;
+  const liveCommand = (): MuteCommand | null => {
+    if (pendingCommand === null) return null;
 
-  if (Date.now() - pendingCommand.at >= lifetime) pendingCommand = null;
+    const lifetime = pendingCommand.muted ? MUTE_COMMAND_CEILING_MS : UNMUTE_COMMAND_LIFETIME_MS;
 
-  return pendingCommand;
-};
+    if (Date.now() - pendingCommand.at >= lifetime) pendingCommand = null;
 
-export const stampMuteCommand = (muted: boolean): MuteCommand => {
-  pendingCommand = { muted, at: Date.now(), delivered: false };
+    return pendingCommand;
+  };
 
-  return pendingCommand;
-};
+  return {
+    stampMuteCommand: (muted) => {
+      pendingCommand = { muted, at: Date.now(), delivered: false };
 
-// A later command replaces the stamp, so an earlier one resolving late marks nothing.
-export const markMuteCommandDelivered = (command: MuteCommand | null): void => {
-  if (command !== null && pendingCommand === command) command.delivered = true;
-};
+      return pendingCommand;
+    },
 
-export const pendingMuteCommand = (): boolean | null => liveCommand()?.muted ?? null;
+    // A later command replaces the stamp, so an earlier one resolving late marks nothing.
+    markMuteCommandDelivered: (command) => {
+      if (command !== null && pendingCommand === command) command.delivered = true;
+    },
 
-export const consumeMuteCommand = (muted: boolean): boolean => {
-  const command = liveCommand();
+    pendingMuteCommand: () => liveCommand()?.muted ?? null,
 
-  // Kept on a mismatch, so a check for one direction cannot consume the other's.
-  if (command === null || command.muted !== muted) return false;
+    consumeMuteCommand: (muted) => {
+      const command = liveCommand();
 
-  // A voice mute seen before the command reaches the server (a reconnect's, say)
-  // says nothing about it.
-  if (muted && !command.delivered) return true;
+      // Kept on a mismatch, so a check for one direction cannot consume the other's.
+      if (command === null || command.muted !== muted) return false;
 
-  pendingCommand = null;
+      // A voice mute seen before the command reaches the server (a reconnect's, say)
+      // says nothing about it.
+      if (muted && !command.delivered) return true;
 
-  return true;
+      pendingCommand = null;
+
+      return true;
+    },
+  };
 };

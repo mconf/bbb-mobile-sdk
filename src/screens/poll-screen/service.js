@@ -1,4 +1,4 @@
-import { store } from '../../store/redux/store';
+import { store } from '../../store/redux/legacy-store';
 import { CurrentPollModule } from '../../components/socket-connection/modules/current-poll';
 import makeCall from '../../services/api/makeCall';
 import { GLOBAL_MESSAGE_SENDER } from '../../components/socket-connection/index';

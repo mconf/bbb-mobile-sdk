@@ -1,8 +1,8 @@
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { useAudioJoin, invalidateInFlightAudioJoin } from '../../../hooks/use-audio-join';
-import AudioManager from '../../../services/webrtc/audio-manager';
+import { useAudioJoin } from '../../../hooks/use-audio-join';
+import { useMediaManagers } from '../../../app-instance/context';
 import {
   setAudioIntent,
   setPendingMuteAssert,
@@ -12,7 +12,9 @@ import Settings from '../../../../settings.json';
 
 const AudioButton = () => {
   const { t } = useTranslation();
-  const { joinAudio } = useAudioJoin();
+  const { joinAudio, invalidateInFlightAudioJoin } = useAudioJoin();
+  // This App instance's audio manager (see src/app-instance)
+  const { audioManager: AudioManager } = useMediaManagers();
   const dispatch = useDispatch();
   const isConnected = useSelector((state) => state.audio.isConnected);
   const isConnecting = useSelector(({ audio }) => audio.isConnecting || audio.isReconnecting);

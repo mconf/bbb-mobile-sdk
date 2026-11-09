@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import { useConnectionState } from '@livekit/react-native';
 import { ConnectionState } from 'livekit-client';
-import { liveKitRoom } from '../../../services/livekit';
+import { useLiveKitRoom } from '../../../app-instance/context';
 import { useMediaSubscriptions } from './hooks';
 
 const SelectiveSubscription: React.FC = () => {
+  const liveKitRoom = useLiveKitRoom();
   const connectionState = useConnectionState(liveKitRoom);
   const { handleSubscriptionChanges } = useMediaSubscriptions();
 

@@ -5,6 +5,7 @@ import { hide, setProfile } from "../../store/redux/slices/wide-app/modal";
 import useCurrentUser from "../../graphql/hooks/useCurrentUser";
 import useCurrentPoll from "../../graphql/hooks/useCurrentPoll";
 import usePublishedPolls from "../../graphql/hooks/usePublishedPolls.js";
+import { useIsBreakoutInstance } from '../../app-instance/context';
 import Queries from "./queries";
 import Settings from "../../../settings.json";
 
@@ -17,6 +18,10 @@ const PICKED_USER_TIME_WINDOW = 10;
 const useModalListener = () => {
   const dispatch = useDispatch();
   const modalProfile = useSelector((state) => state.modal.profile);
+  // Breakout rooms have no polls, no pickRandomUser plugin and no breakouts of
+  // their own. Gated on the instance flag (known on the first render) so the
+  // subscriptions are never opened there.
+  const isBreakoutInstance = useIsBreakoutInstance();
 
   // CurrentUser
   const { data: currentUserData } = useCurrentUser();
@@ -26,6 +31,7 @@ const useModalListener = () => {
   // Breakouts
   const { data: breakoutInviteData } = useSubscription(
     Queries.BREAKOUT_INVITE_SUBSCRIPTION,
+    { skip: isBreakoutInstance },
   );
   const breakoutsData = breakoutInviteData?.breakoutRoom;
   const isFreeJoin = breakoutInviteData?.breakoutRoom[0]?.freeJoin;
@@ -34,18 +40,18 @@ const useModalListener = () => {
   const amIPresenter = currentUser?.presenter;
 
   // Active Polls
-  const { data: pollData } = useCurrentPoll();
+  const { data: pollData } = useCurrentPoll({ skip: isBreakoutInstance });
   const activePollData = pollData?.poll[0];
   const hasCurrentPoll = pollData?.poll?.length > 0;
 
   // Published Polls
-  const { data: publishedData } = usePublishedPolls();
+  const { data: publishedData } = usePublishedPolls({ skip: isBreakoutInstance });
   const publishedPollData = publishedData?.poll;
   const hasPublishedPolls = publishedPollData?.length > 0;
   const prevPublishedPollCount = useRef(undefined);
 
   // PickRandomUserPlugin
-  const isPickRandomUserEnabled = Settings?.plugins?.pickRandomUser?.modal;
+  const isPickRandomUserEnabled = !isBreakoutInstance && Settings?.plugins?.pickRandomUser?.modal;
   const {
     data: pickRandomUserData,
     loading: pickRandomUserLoading,

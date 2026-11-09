@@ -38,28 +38,35 @@ const UserMessage = ({
   onToggleReaction,
   onLongPress,
   onPressReplied,
+  // Moderator broadcast to breakout rooms: highlighted card, moderator avatar,
+  // no long-press actions.
+  moderator = false,
 }) => {
   const { t } = useTranslation();
   const isDeleted = !!deletedAt;
+  const MessageCard = moderator ? Styled.OrangeCard : Styled.Card;
+  const cardProps = moderator
+    ? {}
+    : {
+      highlighted,
+      disabled: isDeleted,
+      // A deleted message has no actions left, so it does not take the hold.
+      onLongPress: isDeleted ? undefined : onLongPress,
+    };
 
   return (
     <Styled.ContainerItem>
       <Styled.UserAvatar
         userName={senderName}
-        userRole={senderRole}
+        userRole={moderator ? 'MODERATOR' : senderRole}
         userColor={userColor}
         userId={senderId}
         userImage={userImage}
       />
-      {/* A deleted message has no actions left, so it does not take the hold. */}
-      <Styled.Card
-        highlighted={highlighted}
-        disabled={isDeleted}
-        onLongPress={isDeleted ? undefined : onLongPress}
-      >
+      <MessageCard {...cardProps}>
         <Styled.MessageTopContainer>
           <Styled.MessageAuthor numberOfLines={1}>{senderName}</Styled.MessageAuthor>
-          <Styled.MessageTimestamp>
+          <Styled.MessageTimestamp moderator={moderator}>
             {formatTime(createdAt)}
           </Styled.MessageTimestamp>
         </Styled.MessageTopContainer>
@@ -98,7 +105,7 @@ const UserMessage = ({
             />
           </>
         )}
-      </Styled.Card>
+      </MessageCard>
     </Styled.ContainerItem>
   );
 };

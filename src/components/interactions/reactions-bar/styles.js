@@ -9,7 +9,7 @@ const BOTTOM_OFFSET = LayoutConstants.ACTIONS_BAR_COLLAPSED_HEIGHT + 10;
 
 const Container = styled.View`
   position: absolute;
-  bottom: ${BOTTOM_OFFSET}px;
+  bottom: ${({ bottomInset }) => BOTTOM_OFFSET + (bottomInset || 0)}px;
   left: 12px;
   right: 12px;
   flex-direction: row;

@@ -1,6 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import AudioManager from '../../../services/webrtc/audio-manager';
-import { invalidateInFlightAudioJoin } from '../../../hooks/use-audio-join';
 
 const voiceCallStatesSlice = createSlice({
   name: 'voice-call-states',
@@ -50,9 +48,13 @@ const selectVoiceCallStateByDocumentId = (state, documentId) => {
   return state.voiceCallStatesCollection.voiceCallStatesCollection[documentId];
 };
 
-// Middleware effects and listeners
-const voiceCallStateChangePredicate = (action, currentState) => {
+// Middleware effects and listeners.
+// Listener predicates only receive (action, currentState, originalState) - no
+// listenerApi - so the predicate closes over the AppInstance whose store the
+// observer is installed in (see middlewares/voiceCallStateObserver.js).
+const createVoiceCallStateChangePredicate = (instance) => (action, currentState) => {
   if (!editVoiceCallState.match(action) && !addVoiceCallState.match(action)) return false;
+  const { audioManager } = instance;
   const { voiceCallStateObject } = action.payload;
   const currentVoiceCallState = selectVoiceCallStateByDocumentId(
     currentState,
@@ -60,9 +62,9 @@ const voiceCallStateChangePredicate = (action, currentState) => {
   );
 
   // Not for us - skip
-  if (currentVoiceCallState.userId !== AudioManager.userId
+  if (currentVoiceCallState.userId !== audioManager.userId
     // eslint-disable-next-line eqeqeq
-    || currentVoiceCallState.clientSession != AudioManager.getCurrentAudioSessionNumber()
+    || currentVoiceCallState.clientSession != audioManager.getCurrentAudioSessionNumber()
   ) {
     return false;
   }
@@ -70,7 +72,10 @@ const voiceCallStateChangePredicate = (action, currentState) => {
   return true;
 };
 
+// Effects reach the per-instance managers through listenerApi.extra (the
+// AppInstance passed to createListenerMiddleware({ extra })).
 const voiceCallStateChangeListener = (action, listenerApi) => {
+  const { audioManager: AudioManager, invalidateInFlightAudioJoin } = listenerApi.extra;
   const currentState = listenerApi.getState();
   const previousState = listenerApi.getOriginalState();
   const { voiceCallStateObject } = action.payload;
@@ -114,7 +119,7 @@ export const {
 export {
   selectVoiceCallStateByDocumentId,
   voiceCallStateChangeListener,
-  voiceCallStateChangePredicate,
+  createVoiceCallStateChangePredicate,
 };
 
 export default voiceCallStatesSlice.reducer;

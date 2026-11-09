@@ -1,5 +1,4 @@
 import ScreenshareBroker from './screenshare-broker';
-import fetchIceServers from './fetch-ice-servers';
 import {
   setIsConnecting,
   setIsConnected,
@@ -9,16 +8,28 @@ import {
   removeScreenshareStream,
 } from '../../store/redux/slices/wide-app/screenshare';
 
-let store;
-
-export const injectStore = (_store) => {
-  store = _store;
-};
-
+// One ScreenshareManager per AppInstance (see src/app-instance); the instance
+// is injected by constructor and owns the Redux store this manager writes to.
 class ScreenshareManager {
-  static reconnectCondition() {
+  constructor(instance) {
+    this.instance = instance;
+    this.initialized = false;
+    this.iceServers = null;
+    // <ScreenshareBroker>
+    this.broker = null;
+    // <MediaStream>
+    this.screenshareStream = null;
+  }
+
+  get store() {
+    return this.instance.store;
+  }
+
+  // Passed to the SFU broker as `() => this.reconnectCondition()`: the broker
+  // .bind()s whatever it receives to itself, so never hand it the bare method.
+  reconnectCondition() {
     try {
-      const currentState = store.getState();
+      const currentState = this.store.getState();
       if (!currentState) return false;
       const { client } = currentState;
       return client.sessionState.connected
@@ -37,15 +48,6 @@ class ScreenshareManager {
     }
   }
 
-  constructor() {
-    this.initialized = false;
-    this.iceServers = null;
-    // <ScreenshareBroker>
-    this.broker = null;
-    // <MediaStream>
-    this.screenshareStream = null;
-  }
-
   set broker(_broker) {
     this._broker = _broker;
   }
@@ -57,7 +59,7 @@ class ScreenshareManager {
   storeMediaStream(mediaStream) {
     if (mediaStream) {
       this.screenshareStream = mediaStream;
-      store.dispatch(addScreenshareStream(mediaStream.toURL()));
+      this.store.dispatch(addScreenshareStream(mediaStream.toURL()));
     }
   }
 
@@ -66,7 +68,7 @@ class ScreenshareManager {
   }
 
   deleteMediaStream() {
-    store.dispatch(removeScreenshareStream());
+    this.store.dispatch(removeScreenshareStream());
     this.screenshareStream = null;
   }
 
@@ -84,7 +86,7 @@ class ScreenshareManager {
       offering: false,
       traceLogs: true,
       logger: this.logger,
-      reconnectCondition: ScreenshareManager.reconnectCondition,
+      reconnectCondition: () => this.reconnectCondition(),
       mediaServer,
     });
 
@@ -147,7 +149,7 @@ class ScreenshareManager {
 
     this.initialized = true;
     try {
-      this.iceServers = await fetchIceServers(this._getStunFetchURL());
+      this.iceServers = await this.instance.iceServerCache.fetch(this._getStunFetchURL());
     } catch (error) {
       this.logger.error({
         logCode: 'sfuscreenshare_stun-turn_fetch_failed',
@@ -167,8 +169,8 @@ class ScreenshareManager {
         role: 'recv',
       },
     }, 'Screenshare reconnecting (viewer)');
-    store.dispatch(setIsReconnecting(true));
-    store.dispatch(setIsConnected(false));
+    this.store.dispatch(setIsReconnecting(true));
+    this.store.dispatch(setIsConnected(false));
   }
 
   onScreenshareReconnected() {
@@ -176,25 +178,25 @@ class ScreenshareManager {
   }
 
   onScreenshareSubscribing() {
-    store.dispatch(setIsConnecting(true));
+    this.store.dispatch(setIsConnecting(true));
   }
 
   onScreenshareSubscribed() {
     const remoteStream = this.broker.getRemoteStream();
     if (remoteStream) this.storeMediaStream(remoteStream);
-    store.dispatch(setIsConnected(true));
-    store.dispatch(setIsConnecting(false));
-    store.dispatch(setIsReconnecting(false));
+    this.store.dispatch(setIsConnected(true));
+    this.store.dispatch(setIsConnecting(false));
+    this.store.dispatch(setIsReconnecting(false));
     this.logger.info({ logCode: 'screenshare_joined' }, 'Screenshare Joined');
   }
 
   onScreenshareUnsubscribed() {
     const mediaStream = this.getMediaStream();
 
-    store.dispatch(setIsConnected(false));
-    store.dispatch(setIsConnecting(false));
-    store.dispatch(setIsHangingUp(false));
-    store.dispatch(setIsReconnecting(false));
+    this.store.dispatch(setIsConnected(false));
+    this.store.dispatch(setIsConnecting(false));
+    this.store.dispatch(setIsHangingUp(false));
+    this.store.dispatch(setIsReconnecting(false));
     this.broker = null;
 
     if (mediaStream) {
@@ -222,7 +224,7 @@ class ScreenshareManager {
 
   unsubscribe() {
     if (this.broker) {
-      store.dispatch(setIsHangingUp(true));
+      this.store.dispatch(setIsHangingUp(true));
       this.broker.stop();
       this.broker = null;
     }
@@ -232,18 +234,18 @@ class ScreenshareManager {
 
   deinit() {
     this.initialized = false;
-    this.userId = null;
+    this._userId = null;
     this._host = null;
     this._directHost = null;
     this._sessionToken = null;
     this.iceServers = null;
   }
 
+  // Idempotent: unsubscribe() without a broker only re-asserts the flags.
   destroy() {
     this.unsubscribe();
     this.deinit();
   }
 }
 
-const screenshareManager = new ScreenshareManager();
-export default screenshareManager;
+export default ScreenshareManager;

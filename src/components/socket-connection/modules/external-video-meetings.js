@@ -6,7 +6,7 @@ import {
   readyStateChanged,
   cleanupStaleData,
 } from '../../../store/redux/slices/external-video-meetings';
-import { store } from '../../../store/redux/store';
+import { store } from '../../../store/redux/legacy-store';
 
 const EXTERNAL_VIDEO_TOPIC = 'external-video-meetings';
 

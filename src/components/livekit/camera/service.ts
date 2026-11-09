@@ -1,6 +1,6 @@
 import { VideoPreset, type TrackPublishOptions, type VideoResolution } from 'livekit-client';
 import logger from '../../../services/logger';
-import { getMeetingSettings } from '../../../graphql/local-states/useMeetingSettings';
+import type MeetingClientSettings from '../../../types/meetingClientSettings';
 import { type CameraProfile, type LiveKitPresetConfig } from '../../../types/meetingClientSettings';
 import {
   assemblePresetFromConfig,
@@ -24,20 +24,25 @@ interface CaptureSettings {
   frameRate: number | undefined;
 }
 
-const getCameraProfiles = (): CameraProfile[] => (
-  getMeetingSettings()?.public?.kurento?.cameraProfiles ?? []
+// Meeting settings are per App instance (see src/app-instance), so every entry
+// point here takes the current settings as a parameter instead of reading a
+// module-level accessor. Callers get them from useMeetingSettings().
+const getCameraProfiles = (settings?: MeetingClientSettings): CameraProfile[] => (
+  settings?.public?.kurento?.cameraProfiles ?? []
 );
 
 // Mobile has no camera-profile selection UI, so the "selected" profile is the
 // configured default (falling back to the highest visible profile / first).
-const getSelectedCameraProfile = (): CameraProfile | undefined => {
-  const profiles = getCameraProfiles();
+const getSelectedCameraProfile = (settings?: MeetingClientSettings): CameraProfile | undefined => {
+  const profiles = getCameraProfiles(settings);
   const visible = profiles.filter((p) => !p.hidden);
 
   return profiles.find((p) => p.default) ?? visible[visible.length - 1] ?? profiles[0];
 };
 
-const getVisibleProfiles = (): CameraProfile[] => getCameraProfiles().filter((p) => !p.hidden);
+const getVisibleProfiles = (settings?: MeetingClientSettings): CameraProfile[] => (
+  getCameraProfiles(settings).filter((p) => !p.hidden)
+);
 
 // Mobile has no pre-publish MediaStream to inspect (setCameraEnabled creates the
 // track internally), so capture settings come from the selected profile's
@@ -100,20 +105,20 @@ const profileToPreset = (
   );
 };
 
-const getDefaultCameraPresets = (): VideoPreset[] => {
-  const { width, height, frameRate } = getCameraCaptureSettings(getSelectedCameraProfile());
+const getDefaultCameraPresets = (settings?: MeetingClientSettings): VideoPreset[] => {
+  const { width, height, frameRate } = getCameraCaptureSettings(getSelectedCameraProfile(settings));
 
   return [new VideoPreset(width, height, DEFAULT_CAM_BITRATE, frameRate ?? DEFAULT_CAM_FPS, 'medium')];
 };
 
 // Derives simulcast presets from camera quality profiles. The selected profile
 // is the TOP layer; lower visible profiles become lower simulcast layers.
-const getProfileBasedPresets = (): VideoPreset[] => {
-  const visibleProfiles = getVisibleProfiles();
-  const selectedProfile = getSelectedCameraProfile();
+const getProfileBasedPresets = (settings?: MeetingClientSettings): VideoPreset[] => {
+  const visibleProfiles = getVisibleProfiles(settings);
+  const selectedProfile = getSelectedCameraProfile(settings);
 
   if (!selectedProfile || visibleProfiles.length === 0) {
-    return getDefaultCameraPresets();
+    return getDefaultCameraPresets(settings);
   }
 
   const selectedIndex = visibleProfiles.findIndex((p) => p.id === selectedProfile.id);
@@ -139,8 +144,9 @@ const getProfileBasedPresets = (): VideoPreset[] => {
 // interpolation between the auto-generated profile-based defaults.
 const resolveExplicitPresets = (
   configPresets: LiveKitPresetConfig[],
+  settings?: MeetingClientSettings,
 ): VideoPreset[] => {
-  const defaults = getProfileBasedPresets();
+  const defaults = getProfileBasedPresets(settings);
   const first = defaults[0];
   const last = defaults[defaults.length - 1];
   const firstFps = first.encoding.maxFramerate;
@@ -169,7 +175,7 @@ const resolveExplicitPresets = (
     return assemblePresetFromConfig(config, positionalDefaults);
   });
 
-  const { frameRate } = getCameraCaptureSettings(getSelectedCameraProfile());
+  const { frameRate } = getCameraCaptureSettings(getSelectedCameraProfile(settings));
 
   return deduplicatePresets(resolved, frameRate);
 };
@@ -178,18 +184,20 @@ const resolveExplicitPresets = (
 // try and converge capture resolution with the configured default profile
 // (settings.yml provided) Without this, mobile captures at RN's default (h720 = 1280x720).
 // Profiles without explict constraints will fallback to the original default.
-export const getCameraCaptureResolution = (): VideoResolution => {
-  const { width, height, frameRate } = getCameraCaptureSettings(getSelectedCameraProfile());
+export const getCameraCaptureResolution = (settings?: MeetingClientSettings): VideoResolution => {
+  const { width, height, frameRate } = getCameraCaptureSettings(getSelectedCameraProfile(settings));
 
   return { width, height, frameRate: frameRate ?? DEFAULT_CAM_FPS };
 };
 
-export const getCameraPublishOptions = (): Partial<TrackPublishOptions> => {
-  const configPresets = getMeetingSettings()?.public?.media?.livekit?.camera?.presets;
+export const getCameraPublishOptions = (
+  settings?: MeetingClientSettings,
+): Partial<TrackPublishOptions> => {
+  const configPresets = settings?.public?.media?.livekit?.camera?.presets;
 
   const presets = configPresets?.length
-    ? resolveExplicitPresets(configPresets)
-    : getProfileBasedPresets();
+    ? resolveExplicitPresets(configPresets, settings)
+    : getProfileBasedPresets(settings);
 
   const layers = presets.length > 1 ? presets.slice(0, -1) : [];
   const topEncoding = presets[presets.length - 1]?.encoding;
@@ -197,7 +205,7 @@ export const getCameraPublishOptions = (): Partial<TrackPublishOptions> => {
   logger.debug({
     logCode: 'livekit_camera_presets',
     extraInfo: {
-      selectedProfile: getSelectedCameraProfile()?.id,
+      selectedProfile: getSelectedCameraProfile(settings)?.id,
       presetCount: presets.length,
       simulcastLayerCount: layers.length,
       presets: presets.map((p) => ({

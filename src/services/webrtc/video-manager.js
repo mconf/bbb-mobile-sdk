@@ -1,7 +1,6 @@
 import ReconnectingWebSocket from 'reconnecting-websocket';
 import { mediaDevices } from '@livekit/react-native-webrtc';
 import VideoBroker from './video-broker';
-import fetchIceServers from './fetch-ice-servers';
 import {
   setIsConnecting,
   setIsConnected,
@@ -15,21 +14,11 @@ import {
 
 const PING_INTERVAL_MS = 15000;
 
-let store;
-
-export const injectStore = (_store) => {
-  store = _store;
-};
-
+// One VideoManager per AppInstance (see src/app-instance); the instance is
+// injected by constructor and owns the Redux store this manager writes to.
 class VideoManager {
-  static getLocalCameraIdFromStore() {
-    const currentState = store.getState();
-    if (!currentState) return false;
-
-    return currentState.video?.localCameraId;
-  }
-
-  constructor() {
+  constructor(instance) {
+    this.instance = instance;
     this.initialized = false;
     this.iceServers = null;
     this.ws = null;
@@ -47,6 +36,17 @@ class VideoManager {
 
     this._onWSError = this._onWSError.bind(this);
     this._onWSClosed = this._onWSClosed.bind(this);
+  }
+
+  get store() {
+    return this.instance.store;
+  }
+
+  getLocalCameraIdFromStore() {
+    const currentState = this.store.getState();
+    if (!currentState) return false;
+
+    return currentState.video?.localCameraId;
   }
 
   set ws(_ws) {
@@ -90,13 +90,13 @@ class VideoManager {
   storeMediaStream(cameraId, mediaStream) {
     if (mediaStream) {
       this.videoStreams.set(cameraId, mediaStream);
-      store.dispatch(addVideoStream({ cameraId, streamId: mediaStream.toURL() }));
+      this.store.dispatch(addVideoStream({ cameraId, streamId: mediaStream.toURL() }));
     }
   }
 
   deleteMediaStream(cameraId) {
     if (cameraId) {
-      store.dispatch(removeVideoStream({ cameraId }));
+      this.store.dispatch(removeVideoStream({ cameraId }));
       return this.videoStreams.delete(cameraId);
     }
 
@@ -122,7 +122,7 @@ class VideoManager {
   }
 
   _onWSClosed() {
-    store.dispatch(setSignalingTransportOpen(false));
+    this.store.dispatch(setSignalingTransportOpen(false));
     this.logger.info({
       logCode: 'videomanager_websocket_closed',
       extraInfo: {
@@ -212,7 +212,7 @@ class VideoManager {
         this.ws.addEventListener('error', this._onWSError);
         this.ws.removeEventListener('error', preloadErrorCatcher);
         this._wsListenersSetup = true;
-        store.dispatch(setSignalingTransportOpen(true));
+        this.store.dispatch(setSignalingTransportOpen(true));
         this._flushWsQueue();
         this.logger.info({
           logCode: 'videomanager_websocket_open',
@@ -381,7 +381,7 @@ class VideoManager {
 
     this.initialized = true;
     try {
-      this.iceServers = await fetchIceServers(this._getStunFetchURL());
+      this.iceServers = await this.instance.iceServerCache.fetch(this._getStunFetchURL());
     } catch (error) {
       this.logger.error({
         logCode: 'sfuvideo_stun-turn_fetch_failed',
@@ -408,8 +408,8 @@ class VideoManager {
 
   onVideoPublishing() {
     this.bumpPublishSessionNumber();
-    store.dispatch(userRequestedHangup(false));
-    store.dispatch(setIsConnecting(true));
+    this.store.dispatch(userRequestedHangup(false));
+    this.store.dispatch(setIsConnecting(true));
   }
 
   buildCameraId() {
@@ -419,8 +419,8 @@ class VideoManager {
   }
 
   onVideoPublished(cameraId) {
-    store.dispatch(setIsConnected(true));
-    store.dispatch(setIsConnecting(false));
+    this.store.dispatch(setIsConnected(true));
+    this.store.dispatch(setIsConnecting(false));
     this.logger.info({
       logCode: 'video_joined',
       extraInfo: {
@@ -439,7 +439,7 @@ class VideoManager {
       this.onVideoPublishing();
       const inputStream = await this._mediaFactory();
       cameraId = this.buildCameraId(inputStream);
-      store.dispatch(setLocalCameraId(cameraId));
+      this.store.dispatch(setLocalCameraId(cameraId));
       this.storeMediaStream(cameraId, inputStream);
       const broker = this._initializePublisherBroker({ cameraId, inputStream, ...options });
       await broker.joinVideo();
@@ -455,14 +455,14 @@ class VideoManager {
   _unpublish(cameraId, { isUserAction = false } = { }) {
     const broker = this.getBroker(cameraId);
 
-    store.dispatch(userRequestedHangup(isUserAction));
+    this.store.dispatch(userRequestedHangup(isUserAction));
 
     if (broker) {
-      store.dispatch(setIsHangingUp(true));
+      this.store.dispatch(setIsHangingUp(true));
       broker.stop();
     } else {
       // No broker/broker. Trailing request, just guarantee everything is cleaned up.
-      store.dispatch(setIsConnected(false));
+      this.store.dispatch(setIsConnected(false));
       this.onLocalVideoExit(cameraId);
     }
   }
@@ -523,13 +523,13 @@ class VideoManager {
 
   onLocalVideoExit(cameraId) {
     // Reset local camera ID
-    if (VideoManager.getLocalCameraIdFromStore() === cameraId) {
-      store.dispatch(setLocalCameraId(null));
+    if (this.getLocalCameraIdFromStore() === cameraId) {
+      this.store.dispatch(setLocalCameraId(null));
     }
 
-    store.dispatch(setIsConnected(false));
-    store.dispatch(setIsConnecting(false));
-    store.dispatch(setIsHangingUp(false));
+    this.store.dispatch(setIsConnected(false));
+    this.store.dispatch(setIsConnecting(false));
+    this.store.dispatch(setIsHangingUp(false));
 
     this.deleteBroker(cameraId);
     const mediaStream = this.getMediaStream(cameraId);
@@ -561,15 +561,15 @@ class VideoManager {
     this._closeWS();
   }
 
+  // Idempotent: a second call finds no brokers and a closed WS.
   destroy() {
-    // eslint-disable-next-line no-restricted-syntax
-    for (const cameraId of this.brokers.keys()) {
+    // stopVideo() mutates this.brokers, so iterate over a snapshot.
+    Array.from(this.brokers.keys()).forEach((cameraId) => {
       this.stopVideo(cameraId);
-    }
+    });
 
     this.deinit();
   }
 }
 
-const videoManager = new VideoManager();
-export default videoManager;
+export default VideoManager;

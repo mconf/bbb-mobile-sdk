@@ -6,7 +6,7 @@ import {
   useTracks,
   RoomContext,
 } from '@livekit/react-native';
-import { liveKitRoom } from '../../../services/livekit';
+import { useLiveKitRoom } from '../../../app-instance/context';
 import {
   setFocusedElement,
   setFocusedId,
@@ -149,6 +149,8 @@ const VideoComponent = (props) => {
 };
 
 const VideoContainer = (props) => {
+  const liveKitRoom = useLiveKitRoom();
+
   return (
     <RoomContext.Provider value={liveKitRoom}>
       <VideoComponent {...props} />

@@ -6,16 +6,10 @@ import {
 } from 'livekit-client';
 import { EventEmitter2 } from 'eventemitter2';
 import logger from '../logger';
-import AudioManager from '../webrtc/audio-manager';
-import VideoManager from '../webrtc/video-manager';
-import ScreenshareManager from '../webrtc/screenshare-manager';
-import { clearExpectedStreamStops, expectAllStreamStops } from './camera-state.ts';
-import { invalidateInFlightAudioJoin } from '../../hooks/audio-join-in-flight';
 
 // React Native has no DOM (window/CustomEvent), so cross-module LiveKit signals
-// go through this emitter instead of window.dispatchEvent/addEventListener.
+// go through a per-instance emitter instead of window.dispatchEvent/addEventListener.
 export const LK_FATAL_ERROR_EVENT = 'liveKitFatalError';
-export const liveKitEvents = new EventEmitter2();
 
 const DEFAULT_ROOM_OPTIONS = {
   adaptiveStream: true,
@@ -53,84 +47,100 @@ export const applyRoomOptions = (room, options) => {
   if (room && options) Object.assign(room.options, options);
 };
 
-export const liveKitRoom = new Room(resolveRoomOptions());
-
 export const isReconnectingState = (state) => state === ConnectionState.Reconnecting
   || state === ConnectionState.SignalReconnecting;
 
-// A room reports Disconnected before it has ever connected as well, and only a drop
-// after a connect is an interruption. Reset on a final teardown because this Room is a
-// module global reused across breakout entry, leave and SDK re-mounts.
-let connectedOnce = false;
+// Every mounted App (main room or nested breakout) owns exactly one Room and
+// one event emitter, created by createAppInstance() and reachable through
+// `instance.liveKitRoom` / `instance.liveKitEvents` (or `useLiveKitRoom()` in
+// React). There is deliberately no module-level Room anymore: a Room holds a
+// single connection, and the breakout room and the main room are different
+// connections.
+export const createLiveKitEvents = () => new EventEmitter2();
 
-// Permanent rather than a per-teardown once(): this Room outlives every session, so
-// those listeners would pile up.
-liveKitRoom.on(RoomEvent.Connected, () => {
-  connectedOnce = true;
-  clearExpectedStreamStops();
-});
+export const createLiveKitRoom = () => new Room(resolveRoomOptions());
 
-export const hasConnectedOnce = () => connectedOnce;
+// Per-room session bookkeeping, attached to the room once at instance creation
+// (the Room outlives every session of its instance, so per-teardown once()
+// listeners would pile up). `onConnected` runs on every Connected.
+export const createLiveKitRoomTracker = (room, { onConnected } = {}) => {
+  // A room reports Disconnected before it has ever connected as well, and only a
+  // drop after a connect is an interruption. Reset on a final teardown because the
+  // Room is reused across breakout entry, leave and SDK re-mounts.
+  let connectedOnce = false;
 
-// When livekit-client gives up on a room by itself it leaves the local tracks
-// running, and no other module keeps a reference to the camera ones.
-const publishedCameraTracks = new Set();
-// Counted because camera switches can overlap and finish out of order.
-const restartingCameraTracks = new Map();
+  // When livekit-client gives up on a room by itself it leaves the local tracks
+  // running, and no other module keeps a reference to the camera ones.
+  const publishedCameraTracks = new Set();
+  // Counted because camera switches can overlap and finish out of order.
+  const restartingCameraTracks = new Map();
 
-export const restartCameraTrack = (track, options) => {
-  restartingCameraTracks.set(track, (restartingCameraTracks.get(track) ?? 0) + 1);
-
-  return track.restartTrack(options)
-    .finally(() => {
-      const pending = restartingCameraTracks.get(track) - 1;
-
-      if (pending > 0) {
-        restartingCameraTracks.set(track, pending);
-      } else {
-        restartingCameraTracks.delete(track);
-      }
-    });
-};
-
-liveKitRoom.on(RoomEvent.LocalTrackPublished, (publication) => {
-  if (publication?.source === Track.Source.Camera && publication.track) {
-    publishedCameraTracks.add(publication.track);
-  }
-});
-
-// A track that is still live on unpublish is kept: that is how the SDK drops its
-// publications right before a Disconnected nobody asked for.
-liveKitRoom.on(RoomEvent.LocalTrackUnpublished, (publication) => {
-  const { track } = publication ?? {};
-
-  if (
-    track
-    && !restartingCameraTracks.has(track)
-    && track.mediaStreamTrack?.readyState === 'ended'
-  ) {
-    publishedCameraTracks.delete(track);
-  }
-});
-
-// Returns how many captures were still running or being switched. A track being
-// republished is outside the room's publications, so any disconnect can leave one.
-export const stopAbandonedCameraTracks = () => {
-  let stopped = 0;
-
-  publishedCameraTracks.forEach((track) => {
-    // A camera being switched or restarted has no live capture yet; stopping it makes
-    // the switch release the capture it acquires.
-    if (
-      track.mediaStreamTrack?.readyState !== 'ended'
-      || restartingCameraTracks.has(track)
-      || !track.isMuted
-    ) stopped += 1;
-    track.stop();
+  room.on(RoomEvent.Connected, () => {
+    connectedOnce = true;
+    if (onConnected) onConnected();
   });
-  publishedCameraTracks.clear();
 
-  return stopped;
+  room.on(RoomEvent.LocalTrackPublished, (publication) => {
+    if (publication?.source === Track.Source.Camera && publication.track) {
+      publishedCameraTracks.add(publication.track);
+    }
+  });
+
+  // A track that is still live on unpublish is kept: that is how the SDK drops its
+  // publications right before a Disconnected nobody asked for.
+  room.on(RoomEvent.LocalTrackUnpublished, (publication) => {
+    const { track } = publication ?? {};
+
+    if (
+      track
+      && !restartingCameraTracks.has(track)
+      && track.mediaStreamTrack?.readyState === 'ended'
+    ) {
+      publishedCameraTracks.delete(track);
+    }
+  });
+
+  const restartCameraTrack = (track, options) => {
+    restartingCameraTracks.set(track, (restartingCameraTracks.get(track) ?? 0) + 1);
+
+    return track.restartTrack(options)
+      .finally(() => {
+        const pending = restartingCameraTracks.get(track) - 1;
+
+        if (pending > 0) {
+          restartingCameraTracks.set(track, pending);
+        } else {
+          restartingCameraTracks.delete(track);
+        }
+      });
+  };
+
+  // Returns how many captures were still running or being switched. A track being
+  // republished is outside the room's publications, so any disconnect can leave one.
+  const stopAbandonedCameraTracks = () => {
+    let stopped = 0;
+
+    publishedCameraTracks.forEach((track) => {
+      // A camera being switched or restarted has no live capture yet; stopping it
+      // makes the switch release the capture it acquires.
+      if (
+        track.mediaStreamTrack?.readyState !== 'ended'
+        || restartingCameraTracks.has(track)
+        || !track.isMuted
+      ) stopped += 1;
+      track.stop();
+    });
+    publishedCameraTracks.clear();
+
+    return stopped;
+  };
+
+  return {
+    hasConnectedOnce: () => connectedOnce,
+    resetConnectedOnce: () => { connectedOnce = false; },
+    restartCameraTrack,
+    stopAbandonedCameraTracks,
+  };
 };
 
 const ROOM_CONNECTION_TIMEOUT = 15000;
@@ -177,21 +187,23 @@ export const waitForRoomConnection = (room, timeout = ROOM_CONNECTION_TIMEOUT) =
   });
 };
 
-export const disconnectLiveKitRoom = ({
-  final = false,
-}) => {
+// Disconnects the instance's room and, when `final`, destroys the instance's
+// three WebRTC managers. Returns the promise so callers that hand media over to
+// another instance (entering a breakout) can await the teardown before moving on.
+export const disconnectLiveKitRoom = (instance, { final = false } = {}) => {
   if (final) {
-    connectedOnce = false;
+    instance.liveKitTracker.resetConnectedOnce();
     // Every camera goes down with the session, which is not worth warning about.
-    expectAllStreamStops();
+    instance.cameraStops.expectAllStreamStops();
     // A join still waiting on its signaling socket never resolves once stopped.
-    invalidateInFlightAudioJoin();
+    instance.invalidateInFlightAudioJoin();
   }
 
-  liveKitRoom.disconnect()
+  return instance.liveKitRoom.disconnect()
     .then(() => {
       logger.debug({
         logCode: 'livekit_room_destroyed',
+        extraInfo: { appInstanceId: instance.id, final },
       }, 'LiveKit room destroyed');
     })
     .catch((error) => {
@@ -205,17 +217,10 @@ export const disconnectLiveKitRoom = ({
     })
     .finally(() => {
       if (final) {
-        stopAbandonedCameraTracks();
-        AudioManager.destroy();
-        VideoManager.destroy();
-        ScreenshareManager.destroy();
+        instance.liveKitTracker.stopAbandonedCameraTracks();
+        instance.audioManager.destroy();
+        instance.videoManager.destroy();
+        instance.screenshareManager.destroy();
       }
     });
-};
-
-export default {
-  disconnectLiveKitRoom,
-  liveKitRoom,
-  liveKitEvents,
-  LK_FATAL_ERROR_EVENT,
 };

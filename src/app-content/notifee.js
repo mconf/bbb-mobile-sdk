@@ -8,19 +8,62 @@ import AudioQueries from '../components/audio/audio-controls/queries';
 import LeaveQueries from '../components/custom-drawer/queries';
 import useCurrentUser from '../graphql/hooks/useCurrentUser';
 import { setMutedState, setPendingMuteAssert } from '../store/redux/slices/wide-app/audio';
-import AudioManager from '../services/webrtc/audio-manager';
-import { markMuteCommandDelivered } from '../services/webrtc/mute-intent.ts';
 import logger from '../services/logger';
 import Colors from '../constants/colors';
+import { useAppInstance } from '../app-instance/context';
+import { getActiveInstanceOrNull } from '../app-instance/active-instance';
 
 const CHANNEL_ID = 'main_meeting_channel';
 // Fixed id: the breakout instance's notification replaces the main room's
-// instead of duplicating it (two full app instances run during breakouts)
+// instead of duplicating it (two App instances run during breakouts, and the
+// OS foreground service is one process-wide resource)
 const NOTIFICATION_ID = 'audio_notification_main';
 // Android won't restart the service from the background, so its stop waits for a
 // possible rejoin. The longer delay covers a join in progress, but not forever.
 const SERVICE_STOP_DELAY_MS = 15000;
 const SERVICE_RECOVERY_CEILING_MS = 90000;
+
+// Notification action handlers, one entry per mounted NotifeeController
+// (i.e. per App instance), keyed by instance id. notifee's event handlers are
+// process-global (onBackgroundEvent cannot even be unregistered), so they are
+// registered ONCE below and dispatch to the handlers of the *active* App
+// instance: the breakout while one is open, the main room otherwise. Without
+// this, a "leave" press while a breakout is open would also leave the main
+// meeting, and a stale handler could outlive its App.
+const handlersByInstance = new Map();
+
+const dispatchNotificationAction = async (pressActionId) => {
+  const activeInstance = getActiveInstanceOrNull();
+  const handlers = activeInstance && handlersByInstance.get(activeInstance.id)?.current;
+
+  // The main room's session is inactive while a breakout holds its media.
+  if (!handlers || !handlers.sessionActive) return;
+
+  if (pressActionId === 'leave') {
+    await handlers.leave();
+  } else if (pressActionId === 'mute' || pressActionId === 'unmute') {
+    // Explicit target: the label can lag the state, and a toggle would then do
+    // the opposite of what the user pressed.
+    await handlers.setMuted(pressActionId === 'mute');
+  }
+};
+
+const isOurActionPress = ({ type, detail }) => (
+  detail?.notification?.android?.channelId === CHANNEL_ID
+  && type === EventType.ACTION_PRESS
+);
+
+// Background event = device locked || app not in view || killed/quit
+notifee.onBackgroundEvent(async (event) => {
+  if (!isOurActionPress(event)) return;
+  await dispatchNotificationAction(event.detail.pressAction?.id);
+});
+
+// Foreground event = device unlocked || app in view
+notifee.onForegroundEvent((event) => {
+  if (!isOurActionPress(event)) return;
+  dispatchNotificationAction(event.detail.pressAction?.id);
+});
 
 // Foreground service task runner/notification: keeps audio/mic working on
 // Android when the app is backgrounded or the screen is off. The promise
@@ -61,6 +104,8 @@ const getServiceTypes = async (isListenOnly) => {
 
 const NotifeeController = () => {
   const dispatch = useDispatch();
+  const instance = useAppInstance();
+  const { audioManager: AudioManager, muteIntent } = instance;
   const audioIsConnected = useSelector((state) => state.audio.isConnected);
   const audioIsMuted = useSelector((state) => state.audio.isMuted);
   const isListenOnly = useSelector((state) => state.audio.isListenOnly);
@@ -110,14 +155,14 @@ const NotifeeController = () => {
           userId: voice?.userId ?? currentUserId,
         },
       });
-      markMuteCommandDelivered(command);
+      muteIntent.markMuteCommandDelivered(command);
     } catch (error) {
       logger.error({
         logCode: 'notifee_toggle_mute_failed',
         extraInfo: { errorMessage: error?.message },
       }, 'Error on trying to toggle muted from notification');
     }
-  }, [voice, currentUserId, mediaInterrupted, audioIsConnected]);
+  }, [voice, currentUserId, mediaInterrupted, audioIsConnected, AudioManager, muteIntent]);
 
   const leave = useCallback(async () => {
     try {
@@ -134,25 +179,9 @@ const NotifeeController = () => {
     }
   }, [dispatchLeaveSession]);
 
-  // The event handlers outlive renders, so they read the latest callbacks here.
-  const handlersRef = useRef({ setMuted, leave });
-  handlersRef.current = { setMuted, leave };
-  const sessionActiveRef = useRef(sessionActive);
-  sessionActiveRef.current = sessionActive;
-
-  // Both app instances hear the shared notification during a breakout; only
-  // the one whose session is active acts on it.
-  const route = useCallback(({ type, detail }) => {
-    if (!sessionActiveRef.current) return undefined;
-    if (detail.notification?.android?.channelId !== CHANNEL_ID) return undefined;
-    if (type !== EventType.ACTION_PRESS) return undefined;
-
-    const { id } = detail.pressAction;
-    if (id === 'leave') return handlersRef.current.leave();
-    if (id === 'mute' || id === 'unmute') return handlersRef.current.setMuted(id === 'mute');
-
-    return undefined;
-  }, []);
+  // The module-level dispatcher reads the latest callbacks through this ref
+  const handlersRef = useRef({ setMuted, leave, sessionActive });
+  handlersRef.current = { setMuted, leave, sessionActive };
 
   const display = useCallback(async () => {
     const channelId = await notifee.createChannel({
@@ -322,30 +351,22 @@ const NotifeeController = () => {
     // POST_NOTIFICATIONS runtime prompt (Android 13+)
     notifee.requestPermission();
 
-    // Foreground event = device unlocked || app in view
-    const unsubscribeForegroundEvents = notifee.onForegroundEvent(route);
+    handlersByInstance.set(instance.id, handlersRef);
 
     return () => {
-      unsubscribeForegroundEvents();
+      handlersByInstance.delete(instance.id);
       clearTimeout(serviceStopTimer.current);
       serviceRunning.current = false;
 
+      // Two controllers are sequential by construction (the main room exits
+      // audio before a breakout joins, and re-displays the notification when
+      // its audio reconnects after the breakout unmounts).
       if (Platform.OS === 'android') {
         notifee.stopForegroundService();
         notifee.cancelNotification(NOTIFICATION_ID);
       }
     };
-  }, []);
-
-  // The background handler is global and can't be removed, so the active instance
-  // registers it again whenever its session becomes active.
-  useEffect(() => {
-    if (!sessionActive) return;
-
-    notifee.onBackgroundEvent(async (event) => {
-      await route(event);
-    });
-  }, [sessionActive]);
+  }, [instance]);
 
   return null;
 };

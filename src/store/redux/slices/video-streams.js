@@ -2,7 +2,6 @@ import { createSlice, createSelector } from '@reduxjs/toolkit';
 import { selectMainUsers } from './users';
 import { sortVideoUsers } from '../../../services/sorts/video';
 import { selectLocalCameraId } from './wide-app/video';
-import VideoManager from '../../../services/webrtc/video-manager';
 import Settings from '../../../../settings.json';
 
 // Slice
@@ -54,9 +53,11 @@ const selectVideoStreams = (state) => Object.values(
   state.videoStreamsCollection.videoStreamsCollection
 );
 
+const selectCurrentUserId = (state) => state.client.meetingData?.internalUserID;
+
 const selectSortedVideoUsers = createSelector(
-  [selectVideoStreams, selectMainUsers, selectLocalCameraId],
-  (videoStreams, users, localCameraId) => {
+  [selectVideoStreams, selectMainUsers, selectLocalCameraId, selectCurrentUserId],
+  (videoStreams, users, localCameraId, currentUserId) => {
     return sortVideoUsers(users.map((user) => {
       const {
         stream: cameraId,
@@ -65,7 +66,7 @@ const selectSortedVideoUsers = createSelector(
         pin,
       } = videoStreams.find((stream) => stream.userId === user.intId) || {};
       const local = (typeof cameraId === 'string' && localCameraId === cameraId)
-        || user.intId === VideoManager.userId;
+        || (currentUserId != null && user.intId === currentUserId);
 
       return {
         name: user.name,
@@ -88,8 +89,6 @@ const selectVideoStreamByDocumentId = (state, documentId) => {
   return state.videoStreamsCollection.videoStreamsCollection[documentId];
 };
 
-const selectCurrentUserId = (state) => state.client.meetingData?.internalUserID;
-
 const selectLocalVideoStreams = createSelector(
   [selectVideoStreams, selectCurrentUserId],
   (videoStreams, currentUserId) => {
@@ -110,8 +109,10 @@ const videoStreamCleanupListener = (action, listenerApi) => {
     videoStreamObject.id
   );
   listenerApi.cancelActiveListeners();
-  // Stop video manager units (if they exist)
-  if (removedVideoStream?.stream) VideoManager.stopVideo(removedVideoStream.stream);
+  // Stop video manager units (if they exist) - the manager of the App this
+  // store belongs to, via listenerApi.extra (the AppInstance).
+  const { videoManager } = listenerApi.extra;
+  if (removedVideoStream?.stream) videoManager.stopVideo(removedVideoStream.stream);
 };
 
 export const {

@@ -30,10 +30,14 @@ const CustomDrawer = (props) => {
 
   const leaveSession = () => {
     if (isBreakoutRoom) {
+      // Tell the server right away (instead of waiting for the socket to close)
+      // so the user leaves the breakout's participant list immediately, then
+      // show the breakout end screen that routes back to the main room.
+      dispatchLeaveSession().catch(() => {});
       navigation.navigate('EndSessionScreen');
     } else {
       dispatchLeaveSession();
-    };
+    }
   };
 
   const onClickFeatureNotImplemented = () => {
@@ -99,14 +103,14 @@ const CustomDrawer = (props) => {
           {currentUser?.name}
         </Styled.NameUserAvatar>
       </Styled.CustomDrawerContainer>
-      <Styled.DrawerScrollView {...props}>
+      <Styled.DrawerScrollView {...props} bottomInset={insets.bottom}>
         <Styled.ContainerDrawerItemList>
           <DrawerItemList {...props} />
           {Settings.showNotImplementedFeatures && renderNotImplementedItem()}
           {isLandscape && renderBottomDrawerItems()}
         </Styled.ContainerDrawerItemList>
       </Styled.DrawerScrollView>
-      <Styled.ContainerCustomBottomButtons>
+      <Styled.ContainerCustomBottomButtons bottomInset={insets.bottom}>
         {!isLandscape && renderBottomDrawerItems()}
       </Styled.ContainerCustomBottomButtons>
       <BBBLiveKitRoom />

@@ -4,10 +4,7 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useCallback, useEffect, useState } from 'react';
 import { Dimensions } from 'react-native';
 import { useOrientation } from '../../hooks/use-orientation';
-import { invalidateInFlightAudioJoin } from '../../hooks/use-audio-join';
-import AudioManager from '../../services/webrtc/audio-manager';
-import VideoManager from '../../services/webrtc/video-manager';
-import { disconnectLiveKitRoom } from '../../services/livekit';
+import { useAppInstance } from '../../app-instance/context';
 import ScreenWrapper from '../../components/screen-wrapper';
 import UtilsService from '../../utils/functions';
 import Styled from './styles';
@@ -27,6 +24,8 @@ const DEVICE_WIDTH = parseInt(Dimensions.get("window").width, 10);
 //TODO: move breakoutTimeRemaining to a component
 const BreakoutRoomScreen = () => {
   const dispatch = useDispatch();
+  const instance = useAppInstance();
+  const [joiningBreakout, setJoiningBreakout] = useState(false);
   const localCameraId = useSelector((state) => state.video.localCameraId);
   const [time, setTime] = useState(-100);
   const [requestedUrl, setRequestedUrl] = useState(false);
@@ -111,17 +110,30 @@ const BreakoutRoomScreen = () => {
 
   // ***** FUNCTIONS *****
 
-  const joinSession = (breakoutRoomJoinUrl) => {
-    // Entering a breakout cancels any pending main room audio join
-    invalidateInFlightAudioJoin();
-    AudioManager.exitAudio();
-    VideoManager.unpublish(localCameraId);
-    dispatch(setMainRoomBlockedByBreakout(true));
-    disconnectLiveKitRoom({ final: true });
-    navigation.navigate('InsideBreakoutRoomScreen', { joinURL: breakoutRoomJoinUrl });
+  // Hands media over to the nested breakout App: the main room's media must be
+  // fully torn down (managers destroyed) BEFORE the nested App mounts and
+  // brings its own up, so the final disconnect is awaited before navigating.
+  const joinSession = async (breakoutRoomJoinUrl) => {
+    if (joiningBreakout) return;
+    setJoiningBreakout(true);
+
+    try {
+      // Entering a breakout cancels any pending main room audio join
+      instance.invalidateInFlightAudioJoin();
+      instance.audioManager.exitAudio();
+      if (localCameraId) instance.videoManager.unpublish(localCameraId);
+      // Set before the disconnect: BBBLiveKitRoom's connect effect re-runs on
+      // the connection state change and must already see the room as blocked.
+      dispatch(setMainRoomBlockedByBreakout(true));
+      await instance.disconnectLiveKit({ final: true });
+      navigation.navigate('InsideBreakoutRoomScreen', { joinURL: breakoutRoomJoinUrl });
+    } finally {
+      setJoiningBreakout(false);
+    }
   };
 
   const handleJoinButton = (breakoutRoomMeetingId, breakoutRoomJoinUrl) => {
+    if (joiningBreakout) return;
     if (!breakoutRoomJoinUrl) {
       setRequestedUrl(true);
       handleDispatchRequestJoinUrl(breakoutRoomMeetingId);

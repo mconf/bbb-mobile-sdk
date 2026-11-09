@@ -6,7 +6,7 @@ import {
   readyStateChanged,
   cleanupStaleData
 } from '../../../store/redux/slices/pads-sessions';
-import { store } from '../../../store/redux/store';
+import { store } from '../../../store/redux/legacy-store';
 
 const PADS_SESSIONS_TOPIC = 'pads-sessions';
 

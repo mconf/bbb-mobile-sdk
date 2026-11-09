@@ -13,15 +13,14 @@ import {
   type Room,
   type TrackPublishOptions,
 } from 'livekit-client';
+import type { EventEmitter2 } from 'eventemitter2';
 import {
-  liveKitRoom,
-  liveKitEvents,
   waitForRoomConnection,
   LK_FATAL_ERROR_EVENT,
 } from '../livekit';
 import MediaStreamUtils from './media-stream-utils';
-import { consumeMuteCommand, pendingMuteCommand } from './mute-intent';
-import { getMeetingSettings } from '../../graphql/local-states/useMeetingSettings';
+import type { MuteIntent } from './mute-intent';
+import type MeetingClientSettings from '../../types/meetingClientSettings';
 
 const BRIDGE_NAME = 'livekit';
 const SENDRECV_ROLE = 'sendrecv';
@@ -54,6 +53,18 @@ interface SetInputStreamOptions {
   force?: boolean;
 }
 
+interface LiveKitAudioBridgeOptions {
+  userId: string;
+  logger: any;
+  clientSessionNumber: number;
+  // Per-App-instance objects (see src/app-instance): the bridge must drive the
+  // Room of the App that owns this AudioManager, never a module-level one.
+  liveKitRoom: Room;
+  liveKitEvents: EventEmitter2;
+  getMeetingSettings: () => MeetingClientSettings;
+  muteIntent: MuteIntent;
+}
+
 export default class LiveKitAudioBridge {
   public readonly bridgeName: string;
 
@@ -62,6 +73,12 @@ export default class LiveKitAudioBridge {
   public _inputDeviceId: string | null;
 
   private readonly liveKitRoom: Room;
+
+  private readonly liveKitEvents: EventEmitter2;
+
+  private readonly getMeetingSettings: () => MeetingClientSettings;
+
+  private readonly muteIntent: MuteIntent;
 
   private readonly role: string;
 
@@ -150,7 +167,11 @@ export default class LiveKitAudioBridge {
     userId,
     logger,
     clientSessionNumber,
-  }) {
+    liveKitRoom,
+    liveKitEvents,
+    getMeetingSettings,
+    muteIntent,
+  }: LiveKitAudioBridgeOptions) {
     this.role = SENDRECV_ROLE;
     this.bridgeName = BRIDGE_NAME;
     this.logger = logger;
@@ -159,6 +180,9 @@ export default class LiveKitAudioBridge {
     this.originalStream = null;
     this.bridgeAcquiredStream = false;
     this.liveKitRoom = liveKitRoom;
+    this.liveKitEvents = liveKitEvents;
+    this.getMeetingSettings = getMeetingSettings;
+    this.muteIntent = muteIntent;
     this.unpublishRequest = null;
     this.isPublishPending = false;
     this.publishGeneration = 0;
@@ -366,7 +390,7 @@ export default class LiveKitAudioBridge {
     }, 'LiveKit: fatal audio publish error detected, triggering reconnection');
 
     // Handled in components/livekit/index.js (BBBLiveKitRoom)
-    liveKitEvents.emit(LK_FATAL_ERROR_EVENT, { error, source: 'audio' });
+    this.liveKitEvents.emit(LK_FATAL_ERROR_EVENT, { error, source: 'audio' });
   }
 
   private isTrackPublishedWithStream(stream: MediaStream | null): boolean {
@@ -463,7 +487,7 @@ export default class LiveKitAudioBridge {
   }
 
   private scheduleUnpublishAfterMute(): void {
-    const lkAudioSettings = getMeetingSettings()?.public?.media?.livekit?.audio;
+    const lkAudioSettings = this.getMeetingSettings()?.public?.media?.livekit?.audio;
     const unpublishAfterMuteMs = lkAudioSettings?.unpublishAfterMuteMs
       ?? DEFAULT_UNPUBLISH_AFTER_MUTE_MS;
 
@@ -505,11 +529,11 @@ export default class LiveKitAudioBridge {
     // their unmute if the mute isn't confirmed yet or their unmute is pending or recent.
     if (this.serverMuteUnechoedSince !== null
       && (!this.serverMuteEchoed
-        || pendingMuteCommand() === false
+        || this.muteIntent.pendingMuteCommand() === false
         || this.adoptedMuteSupersededByUserUnmute())
       && this.reconnectingSince === null
       && this.liveKitRoom.state === ConnectionState.Connected) {
-      consumeMuteCommand(false);
+      this.muteIntent.consumeMuteCommand(false);
       this.shouldBeMuted = false;
       this.lastServerMuteState = false;
       this.endServerMuteEchoWindow();
@@ -543,7 +567,7 @@ export default class LiveKitAudioBridge {
 
     // A client-requested unmute is granted server-side, so arriving here before
     // BBB's voice state lands is the grant, not a desync.
-    if (consumeMuteCommand(false)) {
+    if (this.muteIntent.consumeMuteCommand(false)) {
       // Ends the server mute window so the voice unmute that follows isn't refused.
       this.endServerMuteEchoWindow();
       this.logger.debug({
@@ -866,7 +890,7 @@ export default class LiveKitAudioBridge {
         extraInfo: {
           bridgeName: this.bridgeName,
           role: this.role,
-          pendingCommand: pendingMuteCommand(),
+          pendingCommand: this.muteIntent.pendingMuteCommand(),
           serverMuteUnechoedSince: this.serverMuteUnechoedSince,
         },
       }, 'LiveKit: server unmute ignored, it predates a pending mute');
@@ -882,8 +906,8 @@ export default class LiveKitAudioBridge {
     // The server's confirmation of a mute already applied locally finds the intent
     // unchanged, and still has to clear its stamp.
     const clientInitiated = shouldEnable
-      ? previousIntent !== this.shouldBeMuted && consumeMuteCommand(false)
-      : consumeMuteCommand(true);
+      ? previousIntent !== this.shouldBeMuted && this.muteIntent.consumeMuteCommand(false)
+      : this.muteIntent.consumeMuteCommand(true);
     // An accepted voice state ends a delayed unmute: a mute cancels it, an unmute
     // applies it.
     if (shouldEnable) {
@@ -1214,7 +1238,7 @@ export default class LiveKitAudioBridge {
   }
 
   private isServerUnmuteStale(): boolean {
-    const pending = pendingMuteCommand();
+    const pending = this.muteIntent.pendingMuteCommand();
 
     if (pending !== null) return pending;
 
