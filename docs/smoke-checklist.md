@@ -6,7 +6,12 @@ checklist is run by hand on a device. A PR that changes the in-conference app at
 [baseline](#baseline).
 
 The checklist records what the app does today. A step that fails on the baseline is not fixed
-here: it is recorded, and a later PR may only change it as a labelled behaviour change.
+here: it is recorded. A later PR changes a step, its expected result or the baseline only as a
+behaviour change: labelled `behaviour-change`, naming each step it changes.
+
+The baseline is recorded again, in a PR that does nothing else, when the base branch takes in
+changes to the in-conference app, such as a newer `master`. Passes are compared with the
+baseline of their own base.
 
 ## Setup
 
