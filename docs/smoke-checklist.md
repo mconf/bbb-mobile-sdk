@@ -1,8 +1,8 @@
 # Smoke checklist: the app with no plugins
 
 The SDK has no automated tests, so a build alone does not show that the app still works. This
-checklist is run by hand on a device. A PR that changes the in-conference app attaches a pass
-(see [Recording a pass](#recording-a-pass)), and the result is compared with the
+checklist is run by hand on a device. Every PR that changes anything but documentation attaches
+a pass (see [Recording a pass](#recording-a-pass)), and the result is compared with the
 [baseline](#baseline).
 
 The checklist records what the app does today. A step that fails on the baseline is not fixed

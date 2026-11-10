@@ -66,8 +66,9 @@ of SDK 56's `expo/fetch` (only applies to standalone builds of this repo; a host
 app embedding the SDK decides this for itself).
 
 **There is no test framework** (no jest/mocha/vitest). Do not look for or invent
-a test command; verify changes by running the app. A change to the in-conference
-app attaches a pass of the device smoke checklist in `docs/smoke-checklist.md`.
+a test command; verify changes by running the app. Every PR that changes anything
+but documentation attaches a pass of the device smoke checklist in
+`docs/smoke-checklist.md`.
 
 **Typecheck gate for TS edits:** `.ts`/`.tsx` are *not* linted (see Repo hygiene),
 so `npx tsc --noEmit --skipLibCheck` is the only static check. (`tsconfig.json` sets
