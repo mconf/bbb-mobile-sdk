@@ -26,7 +26,7 @@ here: it is recorded, and a later PR may only change it as a labelled behaviour 
 | S3 | Poll | On the web, start a poll; answer it on the phone; publish the results on the web. | The phone shows the poll dialog; the web receives the answer; the phone shows the results dialog. |
 | S4 | Breakout invite | On the web, create breakout rooms with the phone user in one of them. On the phone, accept the invite, join the room, then use "Leave breakout room" in the drawer. | The invite dialog opens; the breakout list opens; the phone enters the room with audio; leaving returns to the main room and its audio rejoins. |
 | S5 | Audio-output row | Open the drawer and tap "Change audio output"; tap the "Change audio output" row in the sheet; switch to the speaker and back. | The sheet expands; the selector lists the outputs (Android: earpiece and speaker phone, plus any headset); audio follows the choice. |
-| S6 | Landscape | On the main screen, rotate the phone. If the screen rotates, open the drawer and tap "Change audio output", then rotate back. | Today the app stays in portrait. If a change lets the main screen rotate, the audio-output row still opens without a crash. |
+| S6 | Landscape | On the main screen, rotate the phone. Then tap the pencil button on the presentation; it opens the presentation in fullscreen, in landscape. Swipe the drawer open from the left edge and tap "Change audio output". Leave fullscreen. | The main screen stays in portrait. In fullscreen, the drawer and the audio-output row open without a crash. Leaving fullscreen returns to portrait. |
 | S7 | pick-random-user | With the phone in the main room, pick a random user on the web with the pick-random-user plugin. | The phone shows "Participant picked!" ("You have been randomly picked" when the phone user is picked) with the picked user's avatar and name. Picks older than 10 seconds are not shown. Record the plugin version. |
 
 ## Recording a pass
@@ -65,7 +65,7 @@ S2 Audio:             pass
 S3 Poll:              pass; the first poll published after the phone joins opens no results dialog, later ones do
 S4 Breakout invite:   pass; the microphone is unmuted on entering the room; leaving goes through an end screen ("Access Main Room"); after the return the actions bar is hidden until the main screen is tapped
 S5 Audio-output row:  pass
-S6 Landscape:         the app stays in portrait (the root component locks it), so the landscape path cannot be reached
+S6 Landscape:         the main screen stays in portrait (the root component locks it); the fullscreen route is not recorded yet
 S7 pick-random-user:  pass; the phone user was picked: "You have been randomly picked" with the avatar and name; "Clear All" on the web closes the dialog
 Notes:       the phone joined as a viewer; the web user was moderator and presenter
 ```
