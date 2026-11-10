@@ -237,8 +237,9 @@ code is moved so that it can be shared with a web codebase.
   behaviour is passed in by the caller, not imported. No such folder exists yet;
   `shared-notes-editor/` is the shared-notes WebView bundle, not shared code.
 - **The web plugin SDK is imported for types only.** Use `import type` from
-  `bigbluebutton-html-plugin-sdk`; never import a runtime value from it. When a value is
-  needed (an enum string, a constant), declare it locally with the same string.
+  `bigbluebutton-html-plugin-sdk`; never import a runtime value from it. Do not copy a value
+  from it either (an enum string, a constant), even by retyping it: that needs a licence
+  check by a maintainer. Note the value in the PR and wait.
 - **Tests and fixtures change only in a labelled, reviewed behaviour PR.** Test files and
   recorded fixtures are not edited, skipped or relabelled in a port or refactor PR, so they
   keep proving that the behaviour did not change. A change to expected behaviour goes in
