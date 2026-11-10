@@ -245,6 +245,8 @@ code is moved so that it can be shared with a web codebase.
   keep proving that the behaviour did not change. A change to expected behaviour goes in
   its own PR, labelled `behaviour-change` and reviewed. This repo has no test framework
   yet; the rule applies as soon as tests exist.
+- **This repository is public.** Nothing private goes into it: no code, names, links or
+  ids taken from private repositories or plans, in files, commits, branch names or PR text.
 - **No pushes across repositories.** Work only in the repository the session or PR belongs
   to. A change needed in another repository is requested (an issue or a hand-off note) and
   made by whoever owns that repository.
