@@ -20,7 +20,10 @@ re-applied afterwards (diff against git):
 - Android: `LiveKitReactNative.setup(...)` in `MainApplication.onCreate`, the four
   `<uses-feature>` entries + `tools:replace` on the notifee `ForegroundService` in
   `AndroidManifest.xml`, and `res/drawable/ic_notification.xml` (LiveKit screen
-  share foreground notification; screenshare crashes without it).
+  share foreground notification; screenshare crashes without it), and the
+  `subprojects` hook in `android/build.gradle` that pins library modules'
+  `buildToolsVersion` to the root one (otherwise AGP defaults them to 35.0.0,
+  which the Nix SDK in `flake.nix` doesn't ship).
 - iOS: `RCTAudioModule`/`JitsiAudioSession*` files in `ios/` **and** their
   entries in `project.pbxproj` (`NativeModules.AudioModule`), the Podfile
   `post_install` hooks (pod deployment-target bump, `fmt` consteval patch), and
