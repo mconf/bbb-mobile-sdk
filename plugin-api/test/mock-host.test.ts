@@ -1,0 +1,58 @@
+import { act, renderHook } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
+import { createMockHost } from '../src/testing/index.js';
+
+const MUTATION = 'mutation Example($value: String!) { example(value: $value) }';
+
+describe('mock host', () => {
+  it('shows a mutation as loading while it is being sent', async () => {
+    const { host } = createMockHost();
+    const { result } = renderHook(() => host.useCustomMutation<{ value: string }>(MUTATION));
+    let sent: Promise<void> = Promise.resolve();
+    act(() => { sent = result.current[0]({ variables: { value: 'a' } }); });
+    expect(result.current[1].loading).toBe(true);
+    await act(async () => { await sent; });
+    expect(result.current[1]).toEqual({ loading: false });
+  });
+
+  it('keeps the mutation state of each hook apart', async () => {
+    const { host, controller } = createMockHost();
+    const failure = new Error('refused');
+    const first = renderHook(() => host.useCustomMutation<{ value: string }>(MUTATION));
+    const second = renderHook(() => host.useCustomMutation<{ value: string }>(MUTATION));
+    controller.setMutationError(MUTATION, failure);
+    await act(async () => { await first.result.current[0]({ variables: { value: 'a' } }); });
+    expect(first.result.current[1].error).toBe(failure);
+    expect(second.result.current[1].error).toBeUndefined();
+  });
+
+  it('records every mutation sent, with its variables', async () => {
+    const { host, controller } = createMockHost();
+    const { result } = renderHook(() => host.useCustomMutation<{ value: string }>(MUTATION));
+    await act(async () => { await result.current[0]({ variables: { value: 'a' } }); });
+    expect(controller.mutations).toEqual([{ mutation: MUTATION, variables: { value: 'a' } }]);
+  });
+
+  it('gives copies of its lists, taken when they are read', () => {
+    const { host, controller } = createMockHost();
+    const before = controller.notices;
+    host.notify({ message: 'hello' });
+    expect(before).toEqual([]);
+    expect(controller.notices).toEqual([{ message: 'hello' }]);
+  });
+
+  it('records data-channel writes with their channel', () => {
+    const { host, controller } = createMockHost();
+    const { result } = renderHook(() => host.useDataChannel<{ seen: boolean }>('channel', undefined, 'sub'));
+    result.current.pushEntry({ seen: true });
+    result.current.deleteEntry(['entry-1']);
+    expect(controller.dataChannelWrites).toEqual([
+      {
+        channelName: 'channel', subChannelName: 'sub', type: 'push', payload: { seen: true },
+      },
+      {
+        channelName: 'channel', subChannelName: 'sub', type: 'delete', entryIds: ['entry-1'],
+      },
+    ]);
+  });
+});

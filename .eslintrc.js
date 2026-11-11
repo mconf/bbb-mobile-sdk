@@ -33,7 +33,10 @@ module.exports = {
     // shared notes: the BlockNote editor is a web bundle with its own toolchain,
     // and editor-bundle.js is its generated single-line output
     '**/shared-notes-editor/**',
-    '**/user-notes-screen/editor-bundle.js'
+    '**/user-notes-screen/editor-bundle.js',
+
+    // plugin API: its own package, with its own toolchain
+    '**/plugin-api/**'
   ],
   rules: {
     'react/jsx-filename-extension': [
