@@ -1,6 +1,6 @@
 {
   "name": "bbbmobile",
-  "version": "0.27.0",
+  "version": "0.27.1",
   "private": true,
   "description": "BigBlueButton mobile sdk",
   "main": "index.js",
@@ -79,7 +79,7 @@
     "react-native-htmlview": "0.17.0",
     "react-native-incall-manager": "4.2.2",
     "react-native-keyboard-controller": "1.21.6",
-    "react-native-notify-kit": "10.6.0",
+    "react-native-notify-kit": "10.10.0",
     "react-native-orientation-locker": "1.7.0",
     "react-native-paper": "5.15.3",
     "react-native-reanimated": "4.3.1",

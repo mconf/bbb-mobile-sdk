@@ -20,5 +20,16 @@ allprojects {
   }
 }
 
+// Library modules without buildToolsVersion fall back to AGP's default (35.0.0);
+// pin them to the root version so only one build-tools version is required.
+subprojects { sub ->
+  def pin = {
+    if (sub.plugins.hasPlugin('com.android.library')) {
+      sub.android.buildToolsVersion = rootProject.ext.buildToolsVersion
+    }
+  }
+  if (sub.state.executed) { pin() } else { sub.afterEvaluate(pin) }
+}
+
 apply plugin: "expo-root-project"
 apply plugin: "com.facebook.react.rootproject"
