@@ -52,6 +52,13 @@ npm run build:notes-editor  # rebuilds the BlockNote shared-notes WebView bundle
                             # (shared-notes-editor/ -> src/screens/user-notes-screen/
                             # editor-bundle.js). Separate npm package with its own
                             # deps; the generated output IS committed. See its README.
+
+# plugin-api/ is the plugin contract package (types, definePlugin, mock host).
+# Separate npm package with its own deps, lockfile and toolchain; run these inside it:
+#   npm ci && npm test       # vitest: unit tests + conformance cases on the mock host
+#   npm run api:check        # API report (etc/*.api.md) and the version rule
+#   npm pack                 # tarball that plugins install; it is not published to npm
+# See its README.
 ```
 
 **Native build prerequisites** (the README's Node/Expo versions are stale, but
@@ -65,10 +72,12 @@ these still hold):
 of SDK 56's `expo/fetch` (only applies to standalone builds of this repo; a host
 app embedding the SDK decides this for itself).
 
-**There is no test framework** (no jest/mocha/vitest). Do not look for or invent
-a test command; verify changes by running the app. Every PR that changes anything
-but documentation attaches a pass of the device smoke checklist in
-`docs/smoke-checklist.md`.
+**The app has no test framework** (no jest/mocha/vitest). Do not look for or invent
+a test command for it; verify changes by running the app. The only automated tests
+are in `plugin-api/` (vitest, run inside that folder), and they cover that folder
+only. It is excluded from the root `tsconfig.json` and from ESLint, and the app does
+not import it yet. Every PR that changes anything but documentation attaches a pass
+of the device smoke checklist in `docs/smoke-checklist.md`.
 
 **Typecheck gate for TS edits:** `.ts`/`.tsx` are *not* linted (see Repo hygiene),
 so `npx tsc --noEmit --skipLibCheck` is the only static check. (`tsconfig.json` sets
@@ -285,8 +294,8 @@ code is moved so that it can be shared with a web codebase.
 - **Tests and fixtures change only in a labelled, reviewed behaviour PR.** Test files and
   recorded fixtures are not edited, skipped or relabelled in a port or refactor PR, so they
   keep proving that the behaviour did not change. A change to expected behaviour goes in
-  its own PR, labelled `behaviour-change` and reviewed. This repo has no test framework
-  yet; the rule applies as soon as tests exist.
+  its own PR, labelled `behaviour-change` and reviewed. Today the only tests are in
+  `plugin-api/`; the rule applies to them and to any test added later.
 - **This repository is public.** Nothing private goes into it: no code, names, links or
   ids taken from private repositories or plans, in files, commits, branch names or PR text.
 - **No pushes across repositories.** Work only in the repository the session or PR belongs
@@ -300,9 +309,10 @@ code is moved so that it can be shared with a web codebase.
   `jarn.lock.diff`, `*.patch`, `*.txt` logs). **Only the plain `.js`/`.ts` files
   are live** â€” it's easy to edit the wrong twin and see no effect. Do not create
   new backup files.
-- `.eslintrc.js` **ignores** `lib/`, `android/`, `ios/`, `src/services/`, and
-  `socket-connection/` â€” so lint does *not* cover the WebRTC/LiveKit/logger/DDP
-  layer where much of the hard logic lives.
+- `.eslintrc.js` **ignores** `lib/`, `android/`, `ios/`, `src/services/`,
+  `socket-connection/`, `shared-notes-editor/` and `plugin-api/` â€” so lint
+  does *not* cover the WebRTC/LiveKit/logger/DDP layer where much of the hard
+  logic lives.
 - `npm run lint` is `eslint . --ext .js` â€” **`.ts`/`.tsx` are not linted at all**
   (tsc is their only checker). A `.js` importing a `.ts` module always emits
   pre-existing `import/no-unresolved` + `import/extensions` errors (resolver isn't
