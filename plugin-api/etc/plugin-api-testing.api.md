@@ -48,6 +48,7 @@ export interface MockHostController {
     readonly mutations: readonly MockMutationCall[];
     readonly notices: readonly Notice[];
     readonly openedSelectors: readonly string[];
+    pressDialogAction(id: string, actionIndex: number): void;
     setCapabilities(capabilities: Capabilities): void;
     setCurrentUser(result: GraphqlResult<HostCurrentUser>): void;
     setDataChannelEntries(channelName: string, result: GraphqlResult<DataChannelEntry<unknown>[]>, subChannelName?: string): void;

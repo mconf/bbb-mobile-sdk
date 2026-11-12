@@ -122,6 +122,14 @@ export interface MockHostController {
    * succeed again.
    */
   setMutationError(mutation: string, error: unknown): void;
+  /**
+   * Presses a button of the shown dialog, the first in `dialogs`, as the user would: the
+   * dialog closes, then the button's `onPress` runs. A queued dialog cannot be pressed.
+   *
+   * @throws Error if the shown dialog is not a confirm dialog with this id, or it has no
+   * button at `actionIndex`.
+   */
+  pressDialogAction(id: string, actionIndex: number): void;
 
   /** Every mutation sent, oldest first. */
   readonly mutations: readonly MockMutationCall[];
@@ -238,6 +246,16 @@ export function createMockHost(options: MockHostOptions = {}): MockHost {
   const notices: Notice[] = [];
   const logs: MockLogEntry[] = [];
 
+  const showDialog = (entry: MockDialog): void => {
+    const index = dialogs.findIndex((shown) => shown.dialog.id === entry.dialog.id);
+    dialogs = index === -1
+      ? [...dialogs, entry]
+      : dialogs.map((shown, at) => (at === index ? entry : shown));
+  };
+  const closeDialog = (id: string): void => {
+    dialogs = dialogs.filter((entry) => entry.dialog.id !== id);
+  };
+
   const log = (level: keyof PluginLogger) => (record: PluginLogRecord, message: string): void => {
     logs.push({ level, record, message });
   };
@@ -315,9 +333,15 @@ export function createMockHost(options: MockHostOptions = {}): MockHost {
     setActionsSheetItems: (items) => { actionsSheetItems = [...items]; },
     openSelector: (id) => { openedSelectors.push(id); },
     dialogs: {
-      confirm: (dialog) => { dialogs.push({ kind: 'confirm', dialog }); },
-      info: (dialog) => { dialogs.push({ kind: 'info', dialog }); },
-      close: (id) => { dialogs = dialogs.filter((entry) => entry.dialog.id !== id); },
+      confirm: (dialog) => {
+        if (!Array.isArray(dialog.actions) || dialog.actions.length === 0) {
+          logger.error({ logCode: 'mock_host_dialog_without_actions' }, 'Dialog has no buttons');
+          return;
+        }
+        showDialog({ kind: 'confirm', dialog });
+      },
+      info: (dialog) => { showDialog({ kind: 'info', dialog }); },
+      close: closeDialog,
     },
     notify: (notice) => { notices.push(notice); },
 
@@ -341,6 +365,18 @@ export function createMockHost(options: MockHostOptions = {}): MockHost {
       } else {
         mutationErrors.set(mutation, error);
       }
+    },
+    pressDialogAction: (id, actionIndex) => {
+      const [entry] = dialogs;
+      if (entry?.kind !== 'confirm' || entry.dialog.id !== id) {
+        throw new Error(`mock host: the shown dialog is not a confirm dialog with id "${id}"`);
+      }
+      const action = entry.dialog.actions[actionIndex];
+      if (action === undefined) {
+        throw new Error(`mock host: dialog "${id}" has no button at index ${actionIndex}`);
+      }
+      closeDialog(id);
+      action.onPress();
     },
 
     get mutations() { return [...mutations]; },

@@ -9,5 +9,6 @@ describeHostConformance('mock host', () => {
     failMutation: (mutation, error) => controller.setMutationError(mutation, error),
     errorLogCount: () => controller.logs.filter((entry) => entry.level === 'error').length,
     dialogIds: () => controller.dialogs.map((entry) => entry.dialog.id),
+    pressDialogAction: (id, actionIndex) => controller.pressDialogAction(id, actionIndex),
   };
 });

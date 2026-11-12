@@ -63,7 +63,11 @@ export interface MobilePluginHost {
   setActionsSheetItems(items: readonly ActionsSheetItem[]): void;
   /** Opens the option list of one of this plugin's selector items. */
   openSelector(id: string): void;
-  /** Dialogs the host draws. They are queued and never replace another dialog. */
+  /**
+   * Dialogs the host draws. They are queued, and never replace a dialog with another id.
+   * A dialog with the id of one that is shown or queued replaces it in place and keeps
+   * its turn.
+   */
   readonly dialogs: {
     /** Shows a dialog that asks the user to choose an action. */
     confirm(dialog: ConfirmDialog): void;

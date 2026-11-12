@@ -1,6 +1,6 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import type { MobilePluginHost } from '../../src/index.js';
+import type { DialogAction, MobilePluginHost } from '../../src/index.js';
 
 /**
  * What the conformance suite needs from the host under test, besides the host itself.
@@ -16,10 +16,13 @@ export interface HostHarness {
   errorLogCount(): number;
   /** The ids of the dialogs shown or queued, in order. */
   dialogIds(): readonly string[];
+  /** Presses a button of the shown confirm dialog with this id, as the user would. */
+  pressDialogAction(id: string, actionIndex: number): void;
 }
 
 const SEMVER = /^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$/;
 const MUTATION = 'mutation Conformance($value: String!) { conformance(value: $value) }';
+const OK_ACTION: DialogAction = { label: 'OK', kind: 'primary', onPress: () => {} };
 
 /**
  * The cases every host must pass. A case that needs host code that does not exist yet
@@ -118,8 +121,63 @@ export function describeHostConformance(name: string, createHarness: () => HostH
       it('keeps every dialog asked for, in order', () => {
         const harness = createHarness();
         harness.host.dialogs.info({ id: 'first', title: 'First', body: 'Body' });
-        harness.host.dialogs.confirm({ id: 'second', title: 'Second', body: ['Body'], actions: [] });
+        harness.host.dialogs.confirm({
+          id: 'second', title: 'Second', body: ['Body'], actions: [OK_ACTION],
+        });
         expect(harness.dialogIds()).toEqual(['first', 'second']);
+      });
+
+      it('drops a confirm dialog with no buttons or no actions list and logs an error', () => {
+        const harness = createHarness();
+        const errorsBefore = harness.errorLogCount();
+        harness.host.dialogs.confirm({
+          id: 'empty',
+          title: 'Empty',
+          body: ['Body'],
+          // @ts-expect-error The type needs a button; a plugin that bypasses the type can send none.
+          actions: [],
+        });
+        // @ts-expect-error The type needs actions; a plugin that bypasses the type can leave them out.
+        harness.host.dialogs.confirm({ id: 'missing', title: 'Missing', body: ['Body'] });
+        expect(harness.dialogIds()).toEqual([]);
+        expect(harness.errorLogCount()).toBe(errorsBefore + 2);
+      });
+
+      it('replaces a dialog shown or queued with the same id in place', () => {
+        const harness = createHarness();
+        const pressed: string[] = [];
+        const ask = (id: string, label: string): void => harness.host.dialogs.confirm({
+          id,
+          title: id,
+          body: ['Body'],
+          actions: [{ label, kind: 'primary', onPress: () => { pressed.push(label); } }],
+        });
+        ask('first', 'A');
+        ask('second', 'B');
+        harness.host.dialogs.info({ id: 'third', title: 'Third', body: 'Body' });
+        ask('second', 'C');
+        ask('first', 'D');
+        expect(harness.dialogIds()).toEqual(['first', 'second', 'third']);
+        harness.pressDialogAction('first', 0);
+        harness.pressDialogAction('second', 0);
+        expect(pressed).toEqual(['D', 'C']);
+      });
+
+      it('closes the dialog before it calls the pressed action', () => {
+        const harness = createHarness();
+        const seen: (readonly string[])[] = [];
+        harness.host.dialogs.confirm({
+          id: 'ask',
+          title: 'Ask',
+          body: ['Body'],
+          actions: [
+            OK_ACTION,
+            { label: 'Not now', kind: 'link', onPress: () => { seen.push(harness.dialogIds()); } },
+          ],
+        });
+        harness.pressDialogAction('ask', 1);
+        expect(seen).toEqual([[]]);
+        expect(harness.dialogIds()).toEqual([]);
       });
 
       it('closes only the dialog with the given id, shown or queued', () => {
@@ -135,6 +193,7 @@ export function describeHostConformance(name: string, createHarness: () => HostH
 
       it.todo('shows a queued dialog only after the one before it closes');
       it.todo('drops a confirm dialog whose isStillRelevant returns false when its turn comes');
+      it.todo('closes a dialog the user dismisses without a button, and calls no action');
     });
 
     describe('notices', () => {

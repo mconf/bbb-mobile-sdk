@@ -60,12 +60,13 @@ export interface DialogAction {
   label: string;
   /** How the button looks: a filled button, an outlined button or a text link. */
   kind: 'primary' | 'secondary' | 'link';
-  /** Called when the user presses the button. */
+  /** Called when the user presses the button, after the host closes the dialog. */
   onPress(): void;
 }
 
 /**
- * A dialog that asks the user to choose an action.
+ * A dialog that asks the user to choose an action. When the user dismisses it without a
+ * button, by going back or tapping outside it, the host closes it and calls no action.
  *
  * @public
  */
@@ -76,8 +77,15 @@ export interface ConfirmDialog {
   title: string;
   /** Paragraphs of the dialog body. */
   body: readonly string[];
-  /** The buttons of the dialog, in the order shown. */
-  actions: readonly DialogAction[];
+  /**
+   * The buttons of the dialog, in the order shown. There is at least one. A list built at
+   * run time, such as the result of `map`, does not type-check here: write it as
+   * `[first, ...rest]`.
+   *
+   * A host drops a confirm dialog with no buttons or no `actions` list, and logs an error to
+   * the plugin's logger. Only a plugin that bypasses the type can send one.
+   */
+  actions: readonly [DialogAction, ...DialogAction[]];
   /** Asked when the dialog's turn comes; if it returns false, the dialog is dropped. */
   isStillRelevant?(): boolean;
 }

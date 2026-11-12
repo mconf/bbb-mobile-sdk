@@ -19,7 +19,7 @@ export interface Capabilities {
 
 // @public
 export interface ConfirmDialog {
-    actions: readonly DialogAction[];
+    actions: readonly [DialogAction, ...DialogAction[]];
     body: readonly string[];
     id: string;
     isStillRelevant?(): boolean;
