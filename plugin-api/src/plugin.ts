@@ -9,7 +9,8 @@ import type { MobilePluginHost } from './host.js';
 export interface PluginParts {
   /**
    * A component with no UI. The host keeps it mounted while the plugin is active in
-   * the meeting, across screen changes. It must render nothing.
+   * the meeting, across screen changes. It draws nothing on screen; it may render
+   * providers.
    */
   Headless?: ComponentType;
 }
@@ -37,8 +38,9 @@ export interface MobilePluginDefinition {
    */
   requiredHostApi: string;
   /**
-   * Creates the plugin's parts. The host calls it once each time the SDK is mounted.
-   * Keep the plugin's state inside what this function returns, not at module level.
+   * Creates the plugin's parts. The host calls it once per meeting, when the SDK is
+   * mounted, and never for a breakout room. Keep the plugin's state inside what this
+   * function returns, not at module level; that state lasts one meeting.
    */
   create(host: MobilePluginHost): PluginParts;
 }
