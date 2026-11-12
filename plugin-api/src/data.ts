@@ -185,6 +185,8 @@ export interface HostUserBasicInfo {
   name: string;
   /** Whether the user is a moderator. */
   isModerator: boolean;
+  /** Whether the user is a bot. */
+  bot: boolean;
 }
 
 /**

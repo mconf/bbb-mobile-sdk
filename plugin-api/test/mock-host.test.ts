@@ -112,8 +112,8 @@ describe('mock host', () => {
     const { host } = createMockHost();
     const current = renderHook(() => host.useCurrentUser()).result.current.data;
     const users = renderHook(() => host.useUsersBasicInfo()).result.current.data?.user;
-    expect(users?.map((user) => [user.userId, user.extId, user.name]))
-      .toEqual([[current?.userId, current?.extId, current?.name]]);
+    expect(users?.map((user) => [user.userId, user.extId, user.name, user.bot]))
+      .toEqual([[current?.userId, current?.extId, current?.name, false]]);
   });
 
   it("reads the 'default' sub-channel when none is named", () => {

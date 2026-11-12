@@ -52,6 +52,10 @@ export function describeHostConformance(name: string, createHarness: () => HostH
       it.todo('lets a pre-release host version satisfy only a range naming a pre-release of the same major.minor.patch');
     });
 
+    describe('users', () => {
+      it.todo('lists every user in the meeting, bots included, with bot set on each bot');
+    });
+
     describe('locale', () => {
       it('updates when the app language changes', () => {
         const harness = createHarness();

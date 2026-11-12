@@ -90,6 +90,7 @@ export interface HostCurrentUser {
 
 // @public
 export interface HostUserBasicInfo {
+    bot: boolean;
     extId: string;
     isModerator: boolean;
     name: string;
