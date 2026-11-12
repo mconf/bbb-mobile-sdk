@@ -110,9 +110,14 @@ rule 4, a version also passes against a pre-release when it is higher in semver 
 has the same `major.minor.patch`: `0.2.0-beta.2` and `0.2.0` both pass after
 `0.2.0-beta.1`, but `0.2.1`, a higher patch, does not.
 
-So a change to a report needs a higher minor (or major) version; a change that leaves the
-reports alone needs at most a higher patch version. The base branch is
-`origin/mobile-plugins/trunk`; set `API_BASE_REF` to compare with another ref.
+So a change to a report needs a higher minor (or major) version. So does a change to
+documented behaviour, or to a conformance case or todo, although it leaves the reports alone:
+they hold signatures, not TSDoc text, and the check cannot see it. Say so in the pull request
+description, and raise the version. A change that leaves the reports, the documented
+behaviour and the conformance cases alone needs at most a higher patch version.
+
+The base branch is `origin/mobile-plugins/trunk`; set `API_BASE_REF` to compare with another
+ref.
 
 Rule 4 reads the tip too: when two pull requests from one commit raise the version to the
 same value, the second fails once the first has merged. Nothing runs the check at merge
