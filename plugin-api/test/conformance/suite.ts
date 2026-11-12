@@ -100,12 +100,15 @@ export function describeHostConformance(name: string, createHarness: () => HostH
         expect(harness.dialogIds()).toEqual(['first', 'second']);
       });
 
-      it('closes only the dialog with the given id', () => {
+      it('closes only the dialog with the given id, shown or queued', () => {
         const harness = createHarness();
         harness.host.dialogs.info({ id: 'first', title: 'First', body: 'Body' });
         harness.host.dialogs.info({ id: 'second', title: 'Second', body: 'Body' });
+        harness.host.dialogs.info({ id: 'third', title: 'Third', body: 'Body' });
+        harness.host.dialogs.close('second');
+        expect(harness.dialogIds()).toEqual(['first', 'third']);
         harness.host.dialogs.close('first');
-        expect(harness.dialogIds()).toEqual(['second']);
+        expect(harness.dialogIds()).toEqual(['third']);
       });
 
       it.todo('shows a queued dialog only after the one before it closes');
