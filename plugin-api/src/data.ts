@@ -4,7 +4,10 @@
  * @public
  */
 export interface GraphqlResult<T> {
-  /** True until the first data or error arrives. */
+  /**
+   * True until the first data or error arrives. `useCustomSubscription` sets it again
+   * after its arguments change.
+   */
   loading: boolean;
   /** The data, once it arrived. */
   data?: T;

@@ -38,7 +38,15 @@ export interface MobilePluginHost {
   useCurrentUser(): GraphqlResult<HostCurrentUser>;
   /** Every user in the meeting, bots included. */
   useUsersBasicInfo(): GraphqlResult<{ user: HostUserBasicInfo[] }>;
-  /** Subscribes to a GraphQL subscription document written by the plugin. */
+  /**
+   * Subscribes to a GraphQL subscription document written by the plugin.
+   *
+   * The host compares `query` by its text and `variables` by their JSON with the top-level
+   * keys sorted, so a new but equal `variables` object does not subscribe again. When
+   * either changes, the hook returns the previous result first, then `loading: true` with
+   * no data, then the new data. If another hook already holds a subscription with the new
+   * arguments, the hook goes from the previous result straight to the new data.
+   */
   useCustomSubscription<T>(
     query: string,
     options?: { variables?: Record<string, unknown> },

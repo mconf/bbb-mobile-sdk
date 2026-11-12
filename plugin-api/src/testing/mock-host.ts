@@ -1,5 +1,5 @@
 import {
-  useCallback, useMemo, useState, useSyncExternalStore,
+  useCallback, useEffect, useMemo, useState, useSyncExternalStore,
 } from 'react';
 import { HOST_API_VERSION } from '../version.js';
 import type {
@@ -46,6 +46,18 @@ export interface MockMutationCall {
    * A JSON copy of the call's variables, taken when the call was made: a host sends
    * JSON. Variables that JSON cannot hold, such as a cycle, are kept as passed.
    */
+  variables: unknown;
+}
+
+/**
+ * A subscription a plugin's `useCustomSubscription` started on the mock host.
+ *
+ * @public
+ */
+export interface MockSubscription {
+  /** The subscription document, as the plugin passed it. */
+  query: string;
+  /** A JSON copy of the variables, taken when the subscription started. */
   variables: unknown;
 }
 
@@ -103,7 +115,10 @@ export interface MockHostController {
   setLocale(locale: string): void;
   /** Sets what `useCapabilities` returns. */
   setCapabilities(capabilities: Capabilities): void;
-  /** Sets the result of `useCustomSubscription` for this exact query text, for any variables. */
+  /**
+   * Sets the result of `useCustomSubscription` for this exact query text, for any variables.
+   * A hook whose arguments change returns this result at once, with no loading step.
+   */
   setSubscriptionResult(query: string, result: GraphqlResult<unknown>): void;
   /**
    * Sets what `useDataChannel` returns for a channel. Without `subChannelName`, it sets the
@@ -131,6 +146,11 @@ export interface MockHostController {
    */
   pressDialogAction(id: string, actionIndex: number): void;
 
+  /**
+   * Every subscription started, oldest first: one when a hook mounts, and one each time its
+   * query or variables change, compared as a host compares them.
+   */
+  readonly subscriptions: readonly MockSubscription[];
   /** Every mutation sent, oldest first. */
   readonly mutations: readonly MockMutationCall[];
   /** Every data-channel write, oldest first. */
@@ -172,6 +192,15 @@ const jsonCopy = (value: unknown): unknown => {
   }
 };
 
+// How a host compares subscription variables: JSON with the top-level keys sorted.
+const variablesKey = (variables?: Record<string, unknown>): string => (
+  variables === undefined
+    ? 'undefined'
+    : JSON.stringify(Object.fromEntries(
+      Object.entries(variables).sort(([a], [b]) => (a < b ? -1 : Number(a > b))),
+    ))
+);
+
 const DEFAULT_SUB_CHANNEL = 'default';
 
 const channelKey = (channelName: string, subChannelName: string): string => (
@@ -195,7 +224,9 @@ const channelKey = (channelName: string, subChannelName: string): string => (
  * - returns the locale as set: it does not turn `pt_BR` into `pt-BR`;
  * - has no app notices, so it never makes a plugin notice wait for one;
  * - is ready from the first render: `pushEntry` and mutation triggers are set at once, so
- *   it never drops a write made too early.
+ *   it never drops a write made too early;
+ * - returns a custom subscription's result by query text alone, and with no loading step
+ *   after its arguments change.
  *
  * @public
  */
@@ -241,6 +272,7 @@ export function createMockHost(options: MockHostOptions = {}): MockHost {
   const dataChannelResults = new Map<string, GraphqlResult<DataChannelEntry<unknown>[]>>();
   const mutationErrors = new Map<string, unknown>();
 
+  const subscriptions: MockSubscription[] = [];
   const mutations: MockMutationCall[] = [];
   const dataChannelWrites: MockDataChannelWrite[] = [];
   let actionsSheetItems: readonly ActionsSheetItem[] = [];
@@ -275,10 +307,22 @@ export function createMockHost(options: MockHostOptions = {}): MockHost {
 
     useCurrentUser: () => useSyncExternalStore(subscribe, () => currentUser),
     useUsersBasicInfo: () => useSyncExternalStore(subscribe, () => usersBasicInfo),
-    useCustomSubscription: <T>(query: string) => useSyncExternalStore(
-      subscribe,
-      () => (subscriptionResults.get(query) ?? LOADING) as GraphqlResult<T>,
-    ),
+    useCustomSubscription: <T>(
+      query: string,
+      subscriptionOptions?: { variables?: Record<string, unknown> },
+    ) => {
+      const variables = subscriptionOptions?.variables;
+      const key = variablesKey(variables);
+      // `key` stands for `variables`, so a new object with equal JSON is not recorded as a
+      // new subscription.
+      useEffect(() => {
+        subscriptions.push({ query, variables: jsonCopy(variables) });
+      }, [query, key]);
+      return useSyncExternalStore(
+        subscribe,
+        () => (subscriptionResults.get(query) ?? LOADING) as GraphqlResult<T>,
+      );
+    },
     useCustomMutation: <V>(mutation: string) => {
       // Each hook keeps the state of its own last call, as a host's mutation hook does.
       const [state, setState] = useState<MutationState>(IDLE);
@@ -405,6 +449,7 @@ export function createMockHost(options: MockHostOptions = {}): MockHost {
       action.onPress();
     },
 
+    get subscriptions() { return [...subscriptions]; },
     get mutations() { return [...mutations]; },
     get dataChannelWrites() { return [...dataChannelWrites]; },
     get actionsSheetItems() { return [...actionsSheetItems]; },

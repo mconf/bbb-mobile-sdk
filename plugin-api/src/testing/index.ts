@@ -13,4 +13,5 @@ export type {
   MockHostOptions,
   MockLogEntry,
   MockMutationCall,
+  MockSubscription,
 } from './mock-host.js';

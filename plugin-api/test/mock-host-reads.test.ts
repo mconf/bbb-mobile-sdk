@@ -134,11 +134,12 @@ describe('mock host reads', () => {
   it('gives a copy of every list, taken when it is read', async () => {
     const { host, controller } = createMockHost();
     const lists = [
-      'mutations', 'dataChannelWrites', 'actionsSheetItems', 'openedSelectors', 'dialogs',
-      'notices', 'logs',
+      'subscriptions', 'mutations', 'dataChannelWrites', 'actionsSheetItems', 'openedSelectors',
+      'dialogs', 'notices', 'logs',
     ] as const;
     const before = lists.map((name) => controller[name]);
     const { result } = renderHook(() => ({
+      subscription: host.useCustomSubscription(QUERY),
       channel: host.useDataChannel('channel', undefined, 'sub'),
       mutation: host.useCustomMutation(MUTATION),
     }));
