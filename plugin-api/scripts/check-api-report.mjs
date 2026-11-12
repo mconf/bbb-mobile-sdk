@@ -6,8 +6,9 @@
 // The check fails when:
 //   1. HOST_API_VERSION in src/version.ts differs from the version in package.json;
 //   2. a report in etc/ differs from what the build produces;
-//   3. a report differs from the base branch and the minor (or major) version is not
-//      higher than on the base branch.
+//   3. a report differs from the merge-base with the base branch and the minor (or major)
+//      version is not higher than both at that merge-base and at the tip of the base
+//      branch. A branch checked again after another one merged at its version then fails.
 //
 // The base branch is `origin/mobile-plugins/trunk`; set API_BASE_REF to use another ref.
 import { execFileSync, spawnSync } from 'node:child_process';
@@ -63,30 +64,43 @@ if (update) {
   process.exit(0);
 }
 
-// 3. A report change needs a higher minor version than the base branch has.
+// 3. A report change needs a higher minor version than the base branch has, at the
+// merge-base and at its tip.
 const base = tryGit('merge-base', 'HEAD', baseRef);
 if (base === null) {
   fail(`cannot find the base "${baseRef}". Fetch it, or set API_BASE_REF to another ref.`);
 }
 const prefix = git('rev-parse', '--show-prefix');
-const basePackage = tryGit('show', `${base}:${prefix}package.json`);
-if (basePackage === null) {
+const readVersion = (ref) => {
+  const text = tryGit('show', `${ref}:${prefix}package.json`);
+  return text === null ? null : JSON.parse(text).version;
+};
+const baseVersion = readVersion(base);
+const tipVersion = readVersion(baseRef);
+if (baseVersion === null) {
+  if (tipVersion !== null) {
+    fail(`the package is new on this branch, but "${baseRef}" already has it at version `
+      + `${tipVersion}. Rebase onto "${baseRef}".`);
+  }
   console.log(`api:check OK: the package is new on this branch (version ${version}, base ${base.slice(0, 8)}).`);
   process.exit(0);
 }
-const baseVersion = JSON.parse(basePackage).version;
 const changed = [
   ...git('diff', '--name-only', base, '--', 'etc').split('\n'),
   ...git('ls-files', '--others', '--exclude-standard', '--', 'etc').split('\n'),
 ].filter((file) => file.endsWith('.api.md'));
 const [major, minor] = parseVersion(version);
-const [baseMajor, baseMinor] = parseVersion(baseVersion);
-const bumped = major > baseMajor || (major === baseMajor && minor > baseMinor);
+const bumpedOver = (other) => {
+  const [otherMajor, otherMinor] = parseVersion(other);
+  return major > otherMajor || (major === otherMajor && minor > otherMinor);
+};
+const floors = tipVersion === null ? [baseVersion] : [baseVersion, tipVersion];
 
-if (changed.length > 0 && !bumped) {
+if (changed.length > 0 && !floors.every(bumpedOver)) {
   fail(`the API report changed (${[...new Set(changed)].join(', ')}) but the version is `
-    + `${version} and the base ${base.slice(0, 8)} has ${baseVersion}. Raise the minor version `
-    + 'in package.json and src/version.ts.');
+    + `${version}; the base ${base.slice(0, 8)} has ${baseVersion} and "${baseRef}" has `
+    + `${tipVersion ?? 'no package'}. Raise the minor version above both, in package.json `
+    + 'and src/version.ts.');
 }
 console.log(changed.length > 0
   ? `api:check OK: the API report changed and the version went from ${baseVersion} to ${version}.`
