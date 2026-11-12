@@ -2,6 +2,7 @@ import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import type { DataChannelEntry, DialogAction } from '../src/index.js';
 import { createMockHost } from '../src/testing/index.js';
+import { pushOf, triggerOf } from './ready.js';
 
 const MUTATION = 'mutation Example($value: String!) { example(value: $value) }';
 const OK_ACTION: DialogAction = { label: 'OK', kind: 'primary', onPress: () => {} };
@@ -23,7 +24,7 @@ describe('mock host', () => {
     const { host } = createMockHost();
     const { result } = renderHook(() => host.useCustomMutation<{ value: string }>(MUTATION));
     let sent: Promise<void> = Promise.resolve();
-    act(() => { sent = result.current[0]({ variables: { value: 'a' } }); });
+    act(() => { sent = triggerOf(result.current)({ variables: { value: 'a' } }); });
     expect(result.current[1].loading).toBe(true);
     await act(async () => { await sent; });
     expect(result.current[1]).toEqual({ loading: false });
@@ -35,7 +36,9 @@ describe('mock host', () => {
     const first = renderHook(() => host.useCustomMutation<{ value: string }>(MUTATION));
     const second = renderHook(() => host.useCustomMutation<{ value: string }>(MUTATION));
     controller.setMutationError(MUTATION, failure);
-    await act(async () => { await first.result.current[0]({ variables: { value: 'a' } }); });
+    await act(async () => {
+      await triggerOf(first.result.current)({ variables: { value: 'a' } });
+    });
     expect(first.result.current[1].error).toBe(failure);
     expect(second.result.current[1].error).toBeUndefined();
   });
@@ -43,7 +46,7 @@ describe('mock host', () => {
   it('records every mutation sent, with its variables', async () => {
     const { host, controller } = createMockHost();
     const { result } = renderHook(() => host.useCustomMutation<{ value: string }>(MUTATION));
-    await act(async () => { await result.current[0]({ variables: { value: 'a' } }); });
+    await act(async () => { await triggerOf(result.current)({ variables: { value: 'a' } }); });
     expect(controller.mutations).toEqual([{ mutation: MUTATION, variables: { value: 'a' } }]);
   });
 
@@ -58,7 +61,7 @@ describe('mock host', () => {
   it('records data-channel writes with their channel', () => {
     const { host, controller } = createMockHost();
     const { result } = renderHook(() => host.useDataChannel<{ seen: boolean }>('channel', undefined, 'sub'));
-    result.current.pushEntry({ seen: true });
+    pushOf(result.current)({ seen: true });
     result.current.deleteEntry(['entry-1']);
     expect(controller.dataChannelWrites).toEqual([
       {
@@ -75,12 +78,12 @@ describe('mock host', () => {
     const failure = new Error('refused');
     const { result } = renderHook(() => host.useCustomMutation<{ value: string }>(MUTATION));
     let inFlight: Promise<void> = Promise.resolve();
-    act(() => { inFlight = result.current[0]({ variables: { value: 'a' } }); });
+    act(() => { inFlight = triggerOf(result.current)({ variables: { value: 'a' } }); });
     controller.setMutationError(MUTATION, failure);
     await act(async () => { await inFlight; });
     expect(result.current[1]).toEqual({ loading: false });
     expect(controller.logs).toEqual([]);
-    await act(async () => { await result.current[0]({ variables: { value: 'b' } }); });
+    await act(async () => { await triggerOf(result.current)({ variables: { value: 'b' } }); });
     expect(result.current[1].error).toBe(failure);
   });
 
@@ -88,7 +91,7 @@ describe('mock host', () => {
     const { host, controller } = createMockHost();
     const { result } = renderHook(() => host.useCustomMutation<{ list: number[] }>(MUTATION));
     const variables = { list: [1] };
-    await act(async () => { await result.current[0]({ variables }); });
+    await act(async () => { await triggerOf(result.current)({ variables }); });
     variables.list.push(2);
     expect(controller.mutations).toEqual([{ mutation: MUTATION, variables: { list: [1] } }]);
   });
@@ -117,7 +120,7 @@ describe('mock host', () => {
   it("records a write with no sub-channel on the 'default' sub-channel", () => {
     const { host, controller } = createMockHost();
     const { result } = renderHook(() => host.useDataChannel<number>('channel'));
-    result.current.pushEntry(1);
+    pushOf(result.current)(1);
     result.current.replaceEntry('entry-1', 2);
     result.current.deleteEntry(['entry-1']);
     expect(controller.dataChannelWrites).toEqual([

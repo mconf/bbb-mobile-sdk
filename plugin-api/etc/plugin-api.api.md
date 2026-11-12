@@ -30,9 +30,9 @@ export interface ConfirmDialog {
 export interface DataChannel<T> {
     data: GraphqlResult<DataChannelEntry<T>[]>;
     deleteEntry(entryIds: string[]): void;
-    pushEntry(payload: T, options?: {
+    pushEntry: ((payload: T, options?: {
         receivers?: DataChannelReceiver[];
-    }): void;
+    }) => void) | undefined;
     replaceEntry(entryId: string, payload: T): void;
 }
 
@@ -127,7 +127,7 @@ export interface MobilePluginHost {
     setActionsSheetItems(items: readonly ActionsSheetItem[]): void;
     useCapabilities(): Capabilities;
     useCurrentUser(): GraphqlResult<HostCurrentUser>;
-    useCustomMutation<V>(mutation: string): [MutationTrigger<V>, MutationState];
+    useCustomMutation<V>(mutation: string): [MutationTrigger<V> | null, MutationState];
     useCustomSubscription<T>(query: string, options?: {
         variables?: Record<string, unknown>;
     }): GraphqlResult<T>;

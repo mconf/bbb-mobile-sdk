@@ -130,11 +130,23 @@ export interface DataChannel<T> {
    * means there is nothing to deliver, never that the data has not arrived yet.
    */
   data: GraphqlResult<DataChannelEntry<T>[]>;
-  /** Adds an entry. Without `receivers`, every user in the meeting receives it. */
-  pushEntry(payload: T, options?: { receivers?: DataChannelReceiver[] }): void;
-  /** Replaces the payload of an existing entry. */
+  /**
+   * Adds an entry. Without `receivers`, every user in the meeting receives it.
+   *
+   * It is undefined until the host can write to the channel, so a plugin checks it before
+   * a call. The host does not queue writes for later.
+   */
+  pushEntry: ((payload: T, options?: { receivers?: DataChannelReceiver[] }) => void) | undefined;
+  /**
+   * Replaces the payload of an existing entry. A call made while `pushEntry` is undefined
+   * is dropped, and the host logs the drop at debug level.
+   */
   replaceEntry(entryId: string, payload: T): void;
-  /** Deletes entries by id. The single id `'RESET_DATA_CHANNEL'` deletes every entry. */
+  /**
+   * Deletes entries by id. The single id `'RESET_DATA_CHANNEL'` deletes every entry. A call
+   * made while `pushEntry` is undefined is dropped, and the host logs the drop at debug
+   * level.
+   */
   deleteEntry(entryIds: string[]): void;
 }
 
