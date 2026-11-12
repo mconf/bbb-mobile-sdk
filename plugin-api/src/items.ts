@@ -60,7 +60,9 @@ export interface SelectorItem {
 }
 
 /**
- * An item a plugin adds to the actions sheet. New item types may be added in later versions.
+ * An item a plugin adds to the actions sheet. New item types may be added in later versions,
+ * so a plugin that reads items narrows them by `type` before it reads other fields. A host
+ * ignores an item whose type it does not know, and logs it.
  *
  * @public
  */
