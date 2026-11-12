@@ -42,6 +42,8 @@ export function describeHostConformance(name: string, createHarness: () => HostH
         expect(typeof host.pluginName).toBe('string');
         expect(host.pluginName.trim()).not.toBe('');
       });
+
+      it.todo("gives the plugin the definition's name as pluginName");
     });
 
     describe('host API range', () => {
