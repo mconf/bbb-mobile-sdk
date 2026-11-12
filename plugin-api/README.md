@@ -69,11 +69,11 @@ import { createMockHost } from '@mconf/bbb-mobile-plugin-api/testing';
 const { host, controller } = createMockHost();
 ```
 
-`react` is a peer dependency. The package is ES modules only: a test runner that loads it
-as CommonJS (such as Jest without a transform for this package) cannot import it. Its types
-import React's, so a TypeScript plugin also needs `@types/react`. Both entries resolve under
-the `moduleResolution` settings `node` and `bundler`, and under `node16` and `nodenext` from
-an ES module.
+`react` is a peer dependency, in the range `^18.2.0 || ^19.0.0`. The package is ES modules
+only: a test runner that loads it as CommonJS (such as Jest without a transform for this
+package) cannot import it. Its types import React's, so a TypeScript plugin also needs
+`@types/react`. Both entries resolve under the `moduleResolution` settings `node` and
+`bundler`, and under `node16` and `nodenext` from an ES module.
 
 ## Working on the contract
 
@@ -83,6 +83,7 @@ Use the Node version in the repository's `.nvmrc`.
 |---|---|
 | `npm ci` | Installs this folder's dependencies. |
 | `npm test` | Runs the unit tests and the conformance cases against the mock host. |
+| `npm run test:react18` | Installs React 18.2 in `test/react18`, then runs the same tests on it. |
 | `npm run typecheck` | Type-checks `src/` and `test/`. |
 | `npm run build` | Writes `dist/`. |
 | `npm run api:check` | Builds, then checks the API reports and the version rule. |
