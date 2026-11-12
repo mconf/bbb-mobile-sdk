@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import type {
-  ActionsSheetItem, DataChannelEntry, DialogAction, SelectorItem,
+  ActionsSheetItem, DataChannelEntry, DataChannelReceiver, DialogAction, SelectorItem,
 } from '../src/index.js';
 import { createMockHost } from '../src/testing/index.js';
 import { pushOf, triggerOf } from './ready.js';
@@ -246,5 +246,20 @@ describe('mock host', () => {
       { query, variables: undefined },
       { query, variables: {} },
     ]);
+  });
+
+  it('takes readonly arrays and gives readonly ones', () => {
+    const { host, controller } = createMockHost();
+    const { result } = renderHook(() => host.useDataChannel<number>('channel'));
+    const receivers: readonly DataChannelReceiver[] = [{ role: 'VIEWER' }];
+    const entryIds: readonly string[] = ['entry-1'];
+    pushOf(result.current)(1, { receivers });
+    result.current.deleteEntry(entryIds);
+    expect(controller.dataChannelWrites.map((write) => write.type)).toEqual(['push', 'delete']);
+    const changeRoles = (read: DataChannelEntry<unknown>): void => {
+      // @ts-expect-error A plugin cannot change the roles of an entry the host gave it.
+      read.toRoles.push('VIEWER');
+    };
+    expect(changeRoles).toBeTypeOf('function');
   });
 });

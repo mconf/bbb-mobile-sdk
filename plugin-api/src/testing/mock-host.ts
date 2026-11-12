@@ -67,9 +67,9 @@ export interface MockSubscription {
  * @public
  */
 export type MockDataChannelWrite = { channelName: string; subChannelName: string } & (
-  | { type: 'push'; payload: unknown; receivers?: DataChannelReceiver[] }
+  | { type: 'push'; payload: unknown; receivers?: readonly DataChannelReceiver[] }
   | { type: 'replace'; entryId: string; payload: unknown }
-  | { type: 'delete'; entryIds: string[] }
+  | { type: 'delete'; entryIds: readonly string[] }
 );
 
 /**
@@ -108,7 +108,7 @@ export interface MockHostController {
   /** Sets what `useCurrentUser` returns. */
   setCurrentUser(result: GraphqlResult<HostCurrentUser>): void;
   /** Sets what `useUsersBasicInfo` returns. */
-  setUsersBasicInfo(result: GraphqlResult<{ user: HostUserBasicInfo[] }>): void;
+  setUsersBasicInfo(result: GraphqlResult<{ user: readonly HostUserBasicInfo[] }>): void;
   /** Sets what `usePluginSettings` returns. */
   setPluginSettings(result: GraphqlResult<unknown>): void;
   /** Sets what `useLocale` returns, as the app's language change would. */
@@ -131,7 +131,7 @@ export interface MockHostController {
    */
   setDataChannelEntries(
     channelName: string,
-    result: GraphqlResult<DataChannelEntry<unknown>[]>,
+    result: GraphqlResult<readonly DataChannelEntry<unknown>[]>,
     subChannelName?: string,
   ): void;
   /**
@@ -252,7 +252,7 @@ export function createMockHost(options: MockHostOptions = {}): MockHost {
       presenter: false,
     },
   };
-  let usersBasicInfo: GraphqlResult<{ user: HostUserBasicInfo[] }> = {
+  let usersBasicInfo: GraphqlResult<{ user: readonly HostUserBasicInfo[] }> = {
     loading: false,
     data: {
       user: [{
@@ -273,7 +273,10 @@ export function createMockHost(options: MockHostOptions = {}): MockHost {
     placements: {},
   };
   const subscriptionResults = new Map<string, GraphqlResult<unknown>>();
-  const dataChannelResults = new Map<string, GraphqlResult<DataChannelEntry<unknown>[]>>();
+  const dataChannelResults = new Map<
+    string,
+    GraphqlResult<readonly DataChannelEntry<unknown>[]>
+  >();
   const mutationErrors = new Map<string, unknown>();
 
   const subscriptions: MockSubscription[] = [];
@@ -354,7 +357,9 @@ export function createMockHost(options: MockHostOptions = {}): MockHost {
       const key = channelKey(channelName, subChannelName);
       const data = useSyncExternalStore(
         subscribe,
-        () => (dataChannelResults.get(key) ?? LOADING) as GraphqlResult<DataChannelEntry<T>[]>,
+        () => (
+          dataChannelResults.get(key) ?? LOADING
+        ) as GraphqlResult<readonly DataChannelEntry<T>[]>,
       );
       return useMemo(() => {
         const channel = { channelName, subChannelName };
