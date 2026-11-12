@@ -41,6 +41,15 @@ npm pack        # builds dist/ and writes mconf-bbb-mobile-plugin-api-<version>.
 npm install --save-dev /path/to/mconf-bbb-mobile-plugin-api-<version>.tgz
 ```
 
+A plugin that bundles this package into its build can keep it as a dev dependency. A plugin
+that ships unbundled source, for the app's bundler to build, lists it as a peer dependency
+and as a dev dependency for its own tests. The app installs the same tarball itself: the app
+does not install a plugin's dev dependencies, and npm cannot fetch the peer, since the package
+is not on npm.
+
+Write the peer dependency by hand as a semver range, such as `^0.1.0` (the same range as
+`requiredHostApi`), not the `file:` spec that the install command writes.
+
 Record the commit the tarball was built from. During development, build the tarball from a
 local checkout the same way. Do not depend on the folder itself (`file:` to the folder): npm
 links it, and the folder's own `node_modules` brings a second copy of React, so hooks fail
