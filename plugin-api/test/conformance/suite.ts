@@ -25,6 +25,7 @@ export interface HostHarness {
 
 const SEMVER = /^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$/;
 const MUTATION = 'mutation Conformance($value: String!) { conformance(value: $value) }';
+const OTHER_MUTATION = 'mutation Other($value: String!) { other(value: $value) }';
 const OK_ACTION: DialogAction = { label: 'OK', kind: 'primary', onPress: () => {} };
 
 /**
@@ -93,6 +94,64 @@ export function describeHostConformance(name: string, createHarness: () => HostH
         });
         expect(result.current[1].error).toBeUndefined();
       });
+
+      it("shares the mutation state among a plugin's hooks with the same mutation", async () => {
+        const harness = createHarness();
+        const failure = new Error('refused');
+        harness.failMutation(MUTATION, failure);
+        const first = renderHook(() => harness.host.useCustomMutation<{ value: string }>(MUTATION));
+        const second = renderHook(() => harness.host.useCustomMutation<{ value: string }>(MUTATION));
+        const other = renderHook(() => harness.host.useCustomMutation<{ value: string }>(OTHER_MUTATION));
+        await waitFor(() => expect(first.result.current[0]).not.toBeNull());
+        let sent: Promise<void> = Promise.resolve();
+        act(() => { sent = triggerOf(first.result.current)({ variables: { value: 'a' } }); });
+        await waitFor(() => expect(second.result.current[1].loading).toBe(true));
+        await act(async () => { await sent; });
+        await waitFor(() => expect(second.result.current[1]).toEqual({ loading: false, error: failure }));
+        expect(other.result.current[1]).toEqual({ loading: false });
+      });
+
+      it("resets the mutation state when the plugin's last hook with that mutation unmounts", async () => {
+        const harness = createHarness();
+        const failure = new Error('refused');
+        harness.failMutation(MUTATION, failure);
+        const first = renderHook(() => harness.host.useCustomMutation<{ value: string }>(MUTATION));
+        const second = renderHook(() => harness.host.useCustomMutation<{ value: string }>(MUTATION));
+        await waitFor(() => expect(first.result.current[0]).not.toBeNull());
+        await act(async () => { await triggerOf(first.result.current)({ variables: { value: 'a' } }); });
+        await waitFor(() => expect(second.result.current[1]).toEqual({ loading: false, error: failure }));
+
+        first.unmount();
+        const third = renderHook(() => harness.host.useCustomMutation<{ value: string }>(MUTATION));
+        expect(third.result.current[1]).toEqual({ loading: false, error: failure });
+
+        second.unmount();
+        third.unmount();
+        const remounted = renderHook(() => harness.host.useCustomMutation<{ value: string }>(MUTATION));
+        expect(remounted.result.current[1]).toEqual({ loading: false });
+      });
+
+      it("drops a call through a kept trigger once the plugin's last hook with that mutation unmounted", async () => {
+        const harness = createHarness();
+        harness.failMutation(MUTATION, new Error('refused'));
+        const first = renderHook(() => harness.host.useCustomMutation<{ value: string }>(MUTATION));
+        await waitFor(() => expect(first.result.current[0]).not.toBeNull());
+        const kept = triggerOf(first.result.current);
+        first.unmount();
+        const errorsBefore = harness.errorLogCount();
+        await act(async () => { await kept({ variables: { value: 'a' } }); });
+
+        const later = renderHook(() => harness.host.useCustomMutation<{ value: string }>(MUTATION));
+        expect(later.result.current[1]).toEqual({ loading: false });
+        await waitFor(() => expect(later.result.current[0]).not.toBeNull());
+        harness.failMutation(MUTATION, undefined);
+        await act(async () => { await triggerOf(later.result.current)({ variables: { value: 'b' } }); });
+        await waitFor(() => expect(later.result.current[1]).toEqual({ loading: false }));
+        // A sent call with an error set is logged by the time a later call ends.
+        expect(harness.errorLogCount()).toBe(errorsBefore);
+      });
+
+      it.todo("never shows another plugin's calls in a plugin's mutation state");
 
       it('never rejects: a failure is logged and shows in the mutation state', async () => {
         const harness = createHarness();

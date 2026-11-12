@@ -1,5 +1,5 @@
 import {
-  useCallback, useEffect, useMemo, useState, useSyncExternalStore,
+  useCallback, useEffect, useMemo, useRef, useSyncExternalStore,
 } from 'react';
 import { HOST_API_VERSION } from '../version.js';
 import type {
@@ -135,9 +135,10 @@ export interface MockHostController {
     subChannelName?: string,
   ): void;
   /**
-   * Makes later calls of this mutation fail: the trigger still resolves, the failure is
-   * logged and shows in the state of the hook that sent it. Pass `undefined` to make it
-   * succeed again.
+   * Makes later calls of this mutation fail: the trigger still resolves and the failure is
+   * logged. If the call is still the last one of this mutation and no reset came between,
+   * the failure shows in the state of every hook with this mutation. Pass `undefined` to
+   * make it succeed again.
    */
   setMutationError(mutation: string, error: unknown): void;
   /**
@@ -279,6 +280,11 @@ export function createMockHost(options: MockHostOptions = {}): MockHost {
     GraphqlResult<readonly DataChannelEntry<unknown>[]>
   >();
   const mutationErrors = new Map<string, unknown>();
+  // The mock serves one plugin, so the mutation text alone keys the shared state.
+  const mutationStates = new Map<string, MutationState>();
+  const lastMutationCalls = new Map<string, number>();
+  const mutationHookCounts = new Map<string, number>();
+  let mutationCallCount = 0;
 
   const subscriptions: MockSubscription[] = [];
   const mutations: MockMutationCall[] = [];
@@ -332,19 +338,55 @@ export function createMockHost(options: MockHostOptions = {}): MockHost {
       );
     },
     useCustomMutation: <V>(mutation: string) => {
-      // Each hook keeps the state of its own last call, as a host's mutation hook does.
-      const [state, setState] = useState<MutationState>(IDLE);
+      const state = useSyncExternalStore(
+        subscribe,
+        () => mutationStates.get(mutation) ?? IDLE,
+      );
+      const hasMounted = useRef(false);
+      useEffect(() => {
+        hasMounted.current = true;
+        mutationHookCounts.set(mutation, (mutationHookCounts.get(mutation) ?? 0) + 1);
+        return () => {
+          const count = (mutationHookCounts.get(mutation) ?? 1) - 1;
+          if (count > 0) {
+            mutationHookCounts.set(mutation, count);
+            return;
+          }
+          // The state goes with the last hook. Forgetting the last call also keeps a call
+          // still in flight from setting the state of a hook mounted later.
+          mutationHookCounts.delete(mutation);
+          mutationStates.delete(mutation);
+          lastMutationCalls.delete(mutation);
+        };
+      }, [mutation]);
       const trigger = useCallback<MutationTrigger<V>>(async ({ variables }) => {
+        // With no hook of this mutation mounted, the call is dropped, as the contract says.
+        // The mock gives the trigger from the first render, so a call made before the hook
+        // first mounted still goes through.
+        if (hasMounted.current && !mutationHookCounts.has(mutation)) {
+          logger.debug(
+            { logCode: 'mock_host_mutation_dropped' },
+            'Mutation dropped: no hook with it is mounted',
+          );
+          return;
+        }
         // Read before the await, so a setMutationError made while this call is in flight
         // affects only later calls.
         const error = mutationErrors.get(mutation);
-        setState(SENDING);
+        mutationCallCount += 1;
+        const call = mutationCallCount;
+        lastMutationCalls.set(mutation, call);
+        mutationStates.set(mutation, SENDING);
+        emit();
         mutations.push({ mutation, variables: jsonCopy(variables) });
         await Promise.resolve();
-        if (error === undefined) {
-          setState(IDLE);
-        } else {
-          setState({ loading: false, error });
+        // The state shows the last call: an earlier call that ends while a later one is in
+        // flight must not turn loading false.
+        if (lastMutationCalls.get(mutation) === call) {
+          mutationStates.set(mutation, error === undefined ? IDLE : { loading: false, error });
+          emit();
+        }
+        if (error !== undefined) {
           logger.error({ logCode: 'mock_host_mutation_failed' }, 'Mutation failed');
         }
       }, [mutation]);

@@ -17,23 +17,43 @@ export interface GraphqlResult<T> {
 
 /**
  * Sends a mutation. The promise resolves when the mutation was sent and never rejects.
- * A failure may be known only after that: the host logs it and shows it in
- * {@link MutationState}. A resolved promise does not mean the server applied the change;
- * only data the plugin watches confirms it.
+ * A failure may be known only after that: the host logs it, and shows it in
+ * {@link MutationState} if the call is still the plugin's last call of that mutation and
+ * the state has not reset since the call. A resolved promise does not mean the server
+ * applied the change; only data the plugin watches confirms it.
  *
  * @public
  */
 export type MutationTrigger<V> = (args: { variables: V }) => Promise<void>;
 
 /**
- * State of the last call of a {@link MutationTrigger}.
+ * State of the plugin's last call of a mutation document.
+ *
+ * The state belongs to the mutation document within the plugin, compared by its text. A
+ * call from any hook of the plugin with that mutation updates the state of every such hook,
+ * as in the BBB web client. Another plugin's calls never show in it. The BBB web client
+ * also shares the state with other plugins' hooks; a host does not.
+ *
+ * Only the last call sets the state. If an earlier call fails while a later one is in
+ * flight, the host logs the failure, but the state does not show it. Apollo's
+ * `useMutation`, which the BBB web client uses, works the same way.
+ *
+ * A hook that mounts while other hooks of the plugin with that mutation are mounted starts
+ * with their state. The BBB web client starts each hook with `loading` true until it sends
+ * the hook the state. It sends the state only when the state changes, so a hook that mounts
+ * while others are mounted keeps `loading` true until the next call. A host does not do
+ * this.
+ *
+ * The state resets when the plugin's last hook with that mutation unmounts, as in the BBB
+ * web client. A hook mounted after that starts with `loading` false and no error, and a
+ * call still in flight no longer changes the state.
  *
  * @public
  */
 export interface MutationState {
   /**
-   * True from the call until the host knows whether it failed, which may be after the
-   * trigger's promise resolved. `error` is set at that point if the call failed.
+   * True from the last call until the host knows whether that call failed, which may be
+   * after the trigger's promise resolved. `error` is set at that point if it failed.
    */
   loading: boolean;
   /** Why the last call failed, if it failed. */

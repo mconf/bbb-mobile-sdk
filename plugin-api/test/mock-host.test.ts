@@ -7,6 +7,7 @@ import { createMockHost } from '../src/testing/index.js';
 import { pushOf, triggerOf } from './ready.js';
 
 const MUTATION = 'mutation Example($value: String!) { example(value: $value) }';
+const OTHER_MUTATION = 'mutation Other($value: String!) { other(value: $value) }';
 const OK_ACTION: DialogAction = { label: 'OK', kind: 'primary', onPress: () => {} };
 
 const selector = (id: string, label = id): SelectorItem => ({
@@ -42,17 +43,23 @@ describe('mock host', () => {
     expect(result.current[1]).toEqual({ loading: false });
   });
 
-  it('keeps the mutation state of each hook apart', async () => {
+  it('shares the mutation state among the hooks with the same mutation', async () => {
     const { host, controller } = createMockHost();
     const failure = new Error('refused');
     const first = renderHook(() => host.useCustomMutation<{ value: string }>(MUTATION));
     const second = renderHook(() => host.useCustomMutation<{ value: string }>(MUTATION));
+    const other = renderHook(() => host.useCustomMutation<{ value: string }>(OTHER_MUTATION));
+    let sent: Promise<void> = Promise.resolve();
+    act(() => { sent = triggerOf(first.result.current)({ variables: { value: 'a' } }); });
+    expect(second.result.current[1]).toEqual({ loading: true });
+    await act(async () => { await sent; });
+    expect(second.result.current[1]).toEqual({ loading: false });
     controller.setMutationError(MUTATION, failure);
     await act(async () => {
-      await triggerOf(first.result.current)({ variables: { value: 'a' } });
+      await triggerOf(first.result.current)({ variables: { value: 'b' } });
     });
-    expect(first.result.current[1].error).toBe(failure);
-    expect(second.result.current[1].error).toBeUndefined();
+    expect(second.result.current[1]).toEqual({ loading: false, error: failure });
+    expect(other.result.current[1]).toEqual({ loading: false });
   });
 
   it('records every mutation sent, with its variables', async () => {
@@ -60,6 +67,21 @@ describe('mock host', () => {
     const { result } = renderHook(() => host.useCustomMutation<{ value: string }>(MUTATION));
     await act(async () => { await triggerOf(result.current)({ variables: { value: 'a' } }); });
     expect(controller.mutations).toEqual([{ mutation: MUTATION, variables: { value: 'a' } }]);
+  });
+
+  it('drops and logs a call through a kept trigger once no hook with the mutation is mounted', async () => {
+    const { host, controller } = createMockHost();
+    const first = renderHook(() => host.useCustomMutation<{ value: string }>(MUTATION));
+    const second = renderHook(() => host.useCustomMutation<{ value: string }>(MUTATION));
+    const kept = triggerOf(first.result.current);
+    first.unmount();
+    await act(async () => { await kept({ variables: { value: 'a' } }); });
+    expect(controller.mutations).toHaveLength(1);
+
+    second.unmount();
+    await act(async () => { await kept({ variables: { value: 'b' } }); });
+    expect(controller.mutations).toEqual([{ mutation: MUTATION, variables: { value: 'a' } }]);
+    expect(controller.logs.map((entry) => entry.level)).toEqual(['debug']);
   });
 
   it('gives copies of its lists, taken when they are read', () => {

@@ -56,7 +56,12 @@ export interface MobilePluginHost {
   /**
    * Prepares a GraphQL mutation document written by the plugin. The trigger is null until
    * the host can send the mutation, so a plugin checks it before a call. The host does not
-   * queue calls for later.
+   * queue calls for later. The plugin's hooks with the same mutation share one
+   * {@link MutationState}, which shows the plugin's last call of that mutation.
+   *
+   * A trigger kept after its hook unmounted still works while another hook of the plugin
+   * with that mutation is mounted. Once none is, a call is dropped, as in the BBB web
+   * client, and the host logs the drop at debug level.
    */
   useCustomMutation<V>(mutation: string): [MutationTrigger<V> | null, MutationState];
   /**
