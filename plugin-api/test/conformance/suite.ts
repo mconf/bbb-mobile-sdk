@@ -47,7 +47,7 @@ export function describeHostConformance(name: string, createHarness: () => HostH
     });
 
     describe('host API range', () => {
-      it.todo('loads a plugin whose caret, tilde, x-range, exact or || range matches the host version');
+      it.todo("loads a plugin whose range, in npm's full grammar, matches the host version");
       it.todo('skips and logs a plugin whose range does not match the host version');
       it.todo('lets a pre-release host version satisfy only a range naming a pre-release of the same major.minor.patch');
     });

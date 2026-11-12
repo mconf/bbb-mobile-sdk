@@ -27,8 +27,9 @@ export interface MobilePluginDefinition {
    */
   name: string;
   /**
-   * The host API versions this plugin works with, as a semver range in npm's grammar:
-   * caret (`^0.1.0`), tilde (`~0.1.2`), x-ranges (`0.1.x`), exact versions and `||`.
+   * The host API versions this plugin works with, as a semver range in npm's full
+   * grammar: comparators (`>=0.1.0 <0.3.0`), hyphen ranges (`0.1.0 - 0.2.0`), x-ranges
+   * (`0.1.x`), caret (`^0.1.0`), tilde (`~0.1.2`), exact versions and `||`.
    *
    * The host compares the range with {@link MobilePluginHost.hostApiVersion} when it loads
    * the plugin. A plugin whose range does not match is skipped and logged. npm's
