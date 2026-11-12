@@ -87,7 +87,7 @@ export interface MutationState {
  * hooks already mounted get nothing new. The reader ends when the last hook reading it
  * unmounts; a hook mounted after that starts a new one.
  *
- * The BBB web client delivers the same, except for these bugs:
+ * The BBB web client delivers the same, with these differences:
  *
  * - after a delete, its `LatestItem` delivers nothing and keeps the deleted entry;
  * - it delivers an empty list, with `loading` false, before the first data;
@@ -95,6 +95,8 @@ export interface MutationState {
  * - when a hook mounts, every hook of that reader gets the last delivery again;
  * - when one hook unmounts, the reader of a mode other than the first one read on that
  *   channel can end while other hooks still read it.
+ *
+ * A host does not do any of these.
  *
  * @public
  */
