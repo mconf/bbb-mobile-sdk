@@ -115,9 +115,14 @@ export interface DataChannelEntry<T> {
 /**
  * Who receives a data-channel entry: one user, or every user with a role.
  *
+ * `role` is `'MODERATOR'`, `'VIEWER'` or `'PRESENTER'`; the server ignores its case. The
+ * server drops any other role, and an entry left with no receiver goes to every user.
+ *
  * @public
  */
-export type DataChannelReceiver = { userId: string } | { role: string };
+export type DataChannelReceiver =
+  | { userId: string }
+  | { role: 'MODERATOR' | 'VIEWER' | 'PRESENTER' | (string & {}) };
 
 /**
  * A data channel of the plugin: its entries and the calls that write to it.
@@ -168,8 +173,11 @@ export interface HostCurrentUser {
   extId: string;
   /** The name shown to other users. */
   name: string;
-  /** The user's role in the meeting, such as `'MODERATOR'` or `'VIEWER'`. */
-  role: string;
+  /**
+   * The user's role in the meeting: `'MODERATOR'` or `'VIEWER'`. Whether the user is the
+   * presenter is in `presenter`.
+   */
+  role: 'MODERATOR' | 'VIEWER' | (string & {});
   /** Whether the user is the presenter. */
   presenter: boolean;
 }

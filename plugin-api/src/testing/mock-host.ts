@@ -229,7 +229,8 @@ const channelKey = (channelName: string, subChannelName: string): string => (
  * - is ready from the first render: `pushEntry` and mutation triggers are set at once, so
  *   it never drops a write made too early;
  * - returns a custom subscription's result by query text alone, and with no loading step
- *   after its arguments change.
+ *   after its arguments change;
+ * - does not check icon names.
  *
  * @public
  */
