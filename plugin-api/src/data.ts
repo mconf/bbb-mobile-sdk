@@ -13,9 +13,10 @@ export interface GraphqlResult<T> {
 }
 
 /**
- * Sends a mutation. The promise resolves when the mutation was sent and never rejects:
- * the host logs a failure instead of throwing it. A resolved promise does not mean the
- * server applied the change; only data the plugin watches confirms it.
+ * Sends a mutation. The promise resolves when the mutation was sent and never rejects.
+ * A failure may be known only after that: the host logs it and shows it in
+ * {@link MutationState}. A resolved promise does not mean the server applied the change;
+ * only data the plugin watches confirms it.
  *
  * @public
  */
@@ -27,7 +28,10 @@ export type MutationTrigger<V> = (args: { variables: V }) => Promise<void>;
  * @public
  */
 export interface MutationState {
-  /** True while the last call is being sent. */
+  /**
+   * True from the call until the host knows whether it failed, which may be after the
+   * trigger's promise resolved. `error` is set at that point if the call failed.
+   */
   loading: boolean;
   /** Why the last call failed, if it failed. */
   error?: unknown;

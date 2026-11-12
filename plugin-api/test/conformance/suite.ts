@@ -1,4 +1,4 @@
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import type { MobilePluginHost } from '../../src/index.js';
 
@@ -82,7 +82,21 @@ export function describeHostConformance(name: string, createHarness: () => HostH
         await act(async () => {
           await expect(result.current[0]({ variables: { value: 'a' } })).resolves.toBeUndefined();
         });
-        expect(harness.errorLogCount()).toBe(errorsBefore + 1);
+        await waitFor(() => expect(harness.errorLogCount()).toBe(errorsBefore + 1));
+        expect(result.current[1].error).toBe(failure);
+      });
+
+      it.each([
+        ['succeeded', undefined],
+        ['failed', new Error('refused')],
+      ])('turns loading false only once it knows the call %s, and sets error with it', async (_outcome, failure) => {
+        const harness = createHarness();
+        if (failure !== undefined) harness.failMutation(MUTATION, failure);
+        const { result } = renderHook(() => harness.host.useCustomMutation<{ value: string }>(MUTATION));
+        await act(async () => {
+          await result.current[0]({ variables: { value: 'a' } });
+        });
+        await waitFor(() => expect(result.current[1].loading).toBe(false));
         expect(result.current[1].error).toBe(failure);
       });
     });
