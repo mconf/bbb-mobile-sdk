@@ -36,7 +36,7 @@ export interface MobilePluginHost {
 
   /** The user running the app. */
   useCurrentUser(): GraphqlResult<HostCurrentUser>;
-  /** Every user in the meeting. */
+  /** Every user in the meeting, bots included. */
   useUsersBasicInfo(): GraphqlResult<{ user: HostUserBasicInfo[] }>;
   /** Subscribes to a GraphQL subscription document written by the plugin. */
   useCustomSubscription<T>(

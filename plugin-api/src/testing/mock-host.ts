@@ -225,6 +225,7 @@ export function createMockHost(options: MockHostOptions = {}): MockHost {
         extId: 'mock-ext-id',
         name: 'Mock User',
         isModerator: false,
+        bot: false,
       }],
     },
   };
