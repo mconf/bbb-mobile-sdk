@@ -109,7 +109,7 @@ export interface MockHostController {
    * Sets what `useDataChannel` returns for a channel. Without `subChannelName`, it sets the
    * `'default'` sub-channel, which `useDataChannel` reads when the plugin names none. The
    * mock returns the entries as given: it does not sort them, filter them by mode or apply
-   * the plugin's writes.
+   * the plugin's writes. To test a mode, set what that mode would deliver.
    */
   setDataChannelEntries(
     channelName: string,
