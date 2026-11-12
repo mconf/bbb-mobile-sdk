@@ -179,6 +179,14 @@ const channelKey = (channelName: string, subChannelName: string): string => (
  * channels are loading until the test sets them. `setCurrentUser` does not change the
  * user list: a test that needs the new current user in the list sets the list too.
  *
+ * Some rules of the contract are host code that the mock does not have. The mock:
+ *
+ * - returns data-channel entries as the test set them: it does not sort them, apply the
+ *   read mode or apply the plugin's writes;
+ * - never calls a confirm dialog's `isStillRelevant`;
+ * - returns the locale as set: it does not turn `pt_BR` into `pt-BR`;
+ * - has no app notices, so it never makes a plugin notice wait for one.
+ *
  * @public
  */
 export function createMockHost(options: MockHostOptions = {}): MockHost {
