@@ -113,8 +113,11 @@ export interface MockHostController {
   setPluginSettings(result: GraphqlResult<unknown>): void;
   /** Sets what `useLocale` returns, as the app's language change would. */
   setLocale(locale: string): void;
-  /** Sets what `useCapabilities` returns. */
-  setCapabilities(capabilities: Capabilities): void;
+  /**
+   * Sets what `useCapabilities` returns. The fields left out, or given as `undefined`, keep
+   * their value.
+   */
+  setCapabilities(capabilities: Partial<Capabilities>): void;
   /**
    * Sets the result of `useCustomSubscription` for this exact query text, for any variables.
    * A hook whose arguments change returns this result at once, with no loading step.
@@ -423,7 +426,11 @@ export function createMockHost(options: MockHostOptions = {}): MockHost {
     setUsersBasicInfo: (result) => { usersBasicInfo = result; emit(); },
     setPluginSettings: (result) => { pluginSettings = result; emit(); },
     setLocale: (value) => { locale = value; emit(); },
-    setCapabilities: (value) => { capabilities = value; emit(); },
+    setCapabilities: (value) => {
+      const given = Object.entries(value).filter(([, field]) => field !== undefined);
+      capabilities = { ...capabilities, ...Object.fromEntries(given) };
+      emit();
+    },
     setSubscriptionResult: (query, result) => { subscriptionResults.set(query, result); emit(); },
     setDataChannelEntries: (channelName, result, subChannelName = DEFAULT_SUB_CHANNEL) => {
       dataChannelResults.set(channelKey(channelName, subChannelName), result);

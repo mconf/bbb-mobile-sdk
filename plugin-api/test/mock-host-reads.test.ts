@@ -64,10 +64,6 @@ describe('mock host reads', () => {
       controller.setPluginSettings(result);
       return result;
     }],
-    ['setCapabilities', ({ host }) => () => host.useCapabilities(), ({ controller }) => {
-      controller.setCapabilities(capabilities);
-      return capabilities;
-    }],
     ['setSubscriptionResult', ({ host }) => () => host.useCustomSubscription(QUERY), ({
       controller,
     }) => {
@@ -88,6 +84,17 @@ describe('mock host reads', () => {
     let expected: unknown;
     act(() => { expected = set(mock); });
     expect(result.current).toBe(expected);
+  });
+
+  it('re-renders a mounted hook after setCapabilities, and keeps the fields left out', () => {
+    const { host, controller } = createMockHost();
+    const { result } = renderHook(() => host.useCapabilities());
+    act(() => controller.setCapabilities(capabilities));
+    expect(result.current).toEqual(capabilities);
+    act(() => controller.setCapabilities({ inBreakout: false }));
+    expect(result.current).toEqual({ ...capabilities, inBreakout: false });
+    act(() => controller.setCapabilities({ mediaGroupAudioRouting: undefined }));
+    expect(result.current).toEqual({ ...capabilities, inBreakout: false });
   });
 
   it('keys data-channel entries by channel and sub-channel', () => {

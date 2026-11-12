@@ -205,8 +205,11 @@ export interface Capabilities {
   mediaGroupCameraRouting: boolean;
   /** The user is in a breakout room, so the main room's audio is off. */
   inBreakout: boolean;
-  /** Version of each placement the host draws, by placement name. */
-  placements: Readonly<Record<string, number>>;
+  /**
+   * Version of each placement the host draws, by placement name. A placement the host does
+   * not draw is absent. The placement names come in a later version of this package.
+   */
+  placements: Readonly<Partial<Record<string, number>>>;
 }
 
 /**

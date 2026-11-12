@@ -14,7 +14,7 @@ export interface Capabilities {
     inBreakout: boolean;
     mediaGroupAudioRouting: boolean;
     mediaGroupCameraRouting: boolean;
-    placements: Readonly<Record<string, number>>;
+    placements: Readonly<Partial<Record<string, number>>>;
 }
 
 // @public
