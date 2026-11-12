@@ -1,11 +1,23 @@
 import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import type { DataChannelEntry, DialogAction } from '../src/index.js';
+import type {
+  ActionsSheetItem, DataChannelEntry, DialogAction, SelectorItem,
+} from '../src/index.js';
 import { createMockHost } from '../src/testing/index.js';
 import { pushOf, triggerOf } from './ready.js';
 
 const MUTATION = 'mutation Example($value: String!) { example(value: $value) }';
 const OK_ACTION: DialogAction = { label: 'OK', kind: 'primary', onPress: () => {} };
+
+const selector = (id: string, label = id): SelectorItem => ({
+  type: 'selector',
+  id,
+  icon: 'translate',
+  label,
+  value: '',
+  options: [{ value: '', label: 'None' }],
+  onChange: () => {},
+});
 
 const entry = (entryId: string, subChannelName: string): DataChannelEntry<unknown> => ({
   entryId,
@@ -172,5 +184,31 @@ describe('mock host', () => {
     expect(presses).toBe(1);
     expect(controller.dialogs).toEqual([]);
     expect(() => controller.pressDialogAction('ask', 0)).toThrow(Error);
+  });
+
+  it('keeps the first item with an id, and logs and drops the later ones', () => {
+    const { host, controller } = createMockHost();
+    host.setActionsSheetItems([selector('a', 'First'), selector('b'), selector('a', 'Second')]);
+    expect(controller.actionsSheetItems.map((item) => [item.id, item.label]))
+      .toEqual([['a', 'First'], ['b', 'b']]);
+    expect(controller.logs.map((entry) => [entry.level, entry.record.logCode]))
+      .toEqual([['warn', 'mock_host_repeated_item_id']]);
+  });
+
+  it('opens only a selector item that exists and is not pending', () => {
+    const { host, controller } = createMockHost();
+    // An item of a type this contract does not have, as a newer plugin could send.
+    const other = { type: 'other', id: 'other' } as unknown as ActionsSheetItem;
+    host.setActionsSheetItems([selector('ready'), { ...selector('busy'), pending: true }, other]);
+    host.openSelector('missing');
+    host.openSelector('busy');
+    host.openSelector('other');
+    host.openSelector('ready');
+    expect(controller.openedSelectors).toEqual(['ready']);
+    expect(controller.logs.map((entry) => [entry.level, entry.record.logCode, entry.message])).toEqual([
+      ['warn', 'mock_host_selector_not_opened', 'No selector item has this id'],
+      ['warn', 'mock_host_selector_not_opened', 'The selector item is pending'],
+      ['warn', 'mock_host_selector_not_opened', 'No selector item has this id'],
+    ]);
   });
 });

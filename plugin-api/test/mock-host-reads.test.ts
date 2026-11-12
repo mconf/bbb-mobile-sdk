@@ -254,6 +254,7 @@ describe('mock host reads', () => {
     });
     host.notify({ message: 'first' });
     host.notify({ message: 'second', level: 'error', sticky: true });
+    host.setActionsSheetItems([{ ...selector, id: 'a' }, { ...selector, id: 'b' }]);
     host.openSelector('a');
     host.openSelector('b');
     expect(controller.logs).toEqual((['debug', 'info', 'warn', 'error'] as const).map((level) => ({

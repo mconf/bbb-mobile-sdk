@@ -126,6 +126,12 @@ export function describeHostConformance(name: string, createHarness: () => HostH
       it.todo('sends nothing to the hooks already mounted when another hook of the same reader mounts');
     });
 
+    describe('actions sheet', () => {
+      it.todo('keeps the first item with an id, and logs and drops each later item with that id');
+      it.todo('opens a selector even when the actions sheet is closed');
+      it.todo('logs and ignores openSelector for an id with no selector item, or a pending one');
+    });
+
     describe('dialogs', () => {
       it('keeps every dialog asked for, in order', () => {
         const harness = createHarness();
