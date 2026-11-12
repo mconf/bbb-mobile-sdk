@@ -46,6 +46,8 @@ export interface MobilePluginHost {
    * either changes, the hook returns the previous result first, then `loading: true` with
    * no data, then the new data. If another hook already holds a subscription with the new
    * arguments, the hook goes from the previous result straight to the new data.
+   *
+   * The host does not check the data against `T`: validate it before use.
    */
   useCustomSubscription<T>(
     query: string,
@@ -61,13 +63,19 @@ export interface MobilePluginHost {
    * Reads and writes one of the plugin's data channels. `mode` defaults to
    * `'Hooks::DataChannel::AllItems'`. `subChannelName` defaults to `'default'`, the
    * sub-channel the BBB web client uses when a plugin names none.
+   *
+   * The host does not check the payloads against `T`: any user that can write to the
+   * channel can send any JSON. Validate a payload before use.
    */
   useDataChannel<T>(
     channelName: string,
     mode?: DataChannelMode,
     subChannelName?: string,
   ): DataChannel<T>;
-  /** The plugin's settings, from the client settings the app loaded when it joined. */
+  /**
+   * The plugin's settings, from the client settings the app loaded when it joined. The
+   * host does not check them against `S`: validate them before use.
+   */
   usePluginSettings<S = Record<string, unknown>>(): GraphqlResult<S>;
   /** The app language as a BCP 47 tag, such as `pt-BR`. It updates when the language changes. */
   useLocale(): string;
