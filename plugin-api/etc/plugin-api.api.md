@@ -56,7 +56,7 @@ export type DataChannelMode = 'Hooks::DataChannel::AllItems' | 'Hooks::DataChann
 export type DataChannelReceiver = {
     userId: string;
 } | {
-    role: string;
+    role: 'MODERATOR' | 'VIEWER' | 'PRESENTER' | (string & {});
 };
 
 // @public
@@ -85,7 +85,7 @@ export interface HostCurrentUser {
     extId: string;
     name: string;
     presenter: boolean;
-    role: string;
+    role: 'MODERATOR' | 'VIEWER' | (string & {});
     userId: string;
 }
 

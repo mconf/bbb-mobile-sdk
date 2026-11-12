@@ -29,7 +29,11 @@ export interface SelectorItem {
   type: 'selector';
   /** Identifies the item among the plugin's items. */
   id: string;
-  /** The name of the icon shown at the start of the row. */
+  /**
+   * The icon shown at the start of the row: a name from the Material Design Icons set, as
+   * `MaterialCommunityIcons` of `@expo/vector-icons` names them, such as `'translate'`. For a
+   * name the set does not have, the host draws the row with no icon and logs a warning.
+   */
   icon: string;
   /** The text of the row. */
   label: string;
