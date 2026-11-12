@@ -1,0 +1,10 @@
+{
+  "name": "plugin-api-react18-run",
+  "private": true,
+  "type": "module",
+  "description": "React 18.2 for `npm run test:react18`, which runs the tests against the lowest React in the peer range.",
+  "devDependencies": {
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  }
+}

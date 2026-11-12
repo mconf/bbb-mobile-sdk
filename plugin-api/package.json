@@ -1,0 +1,66 @@
+{
+  "name": "@mconf/bbb-mobile-plugin-api",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Contract between the BigBlueButton mobile SDK plugin host and its plugins: types, definePlugin and a mock host for plugin unit tests.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mconf/bbb-mobile-sdk.git",
+    "directory": "plugin-api"
+  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "testing": [
+        "./dist/testing/index.d.ts"
+      ]
+    }
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./testing": {
+      "types": "./dist/testing/index.d.ts",
+      "default": "./dist/testing/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "node scripts/clean.mjs && tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:react18": "npm ci --prefix test/react18 && vitest run --config vitest.react18.config.mjs",
+    "api:check": "npm run build && node scripts/check-api-report.mjs",
+    "api:update": "npm run build && node scripts/check-api-report.mjs --update",
+    "prepack": "npm run build"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@microsoft/api-extractor": "7.60.0",
+    "@testing-library/dom": "10.4.2",
+    "@testing-library/react": "16.3.3",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.3",
+    "jsdom": "29.1.1",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "semver": "7.7.4",
+    "typescript": "6.0.3",
+    "vite": "8.3.5",
+    "vitest": "5.0.5"
+  },
+  "overrides": {
+    "minimatch@^10": "11.0.4"
+  }
+}
