@@ -66,9 +66,17 @@ export interface MobilePluginHost {
   /** What the current meeting and host can do. */
   useCapabilities(): Capabilities;
 
-  /** Replaces the items this plugin shows in the actions sheet. An empty list removes them. */
+  /**
+   * Replaces the items this plugin shows in the actions sheet. An empty list removes them.
+   * Item ids must be unique: the host keeps the first item with an id, and logs and drops
+   * each later item with the same id.
+   */
   setActionsSheetItems(items: readonly ActionsSheetItem[]): void;
-  /** Opens the option list of one of this plugin's selector items. */
+  /**
+   * Opens the option list of one of this plugin's selector items, even when the actions
+   * sheet is closed. The host logs and ignores an id that names no selector item, and the
+   * id of a pending item.
+   */
   openSelector(id: string): void;
   /**
    * Dialogs the host draws. They are queued, and never replace a dialog with another id.

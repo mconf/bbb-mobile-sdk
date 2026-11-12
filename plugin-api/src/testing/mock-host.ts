@@ -135,9 +135,9 @@ export interface MockHostController {
   readonly mutations: readonly MockMutationCall[];
   /** Every data-channel write, oldest first. */
   readonly dataChannelWrites: readonly MockDataChannelWrite[];
-  /** The items of the last `setActionsSheetItems` call. */
+  /** The items of the last `setActionsSheetItems` call, without the items it dropped. */
   readonly actionsSheetItems: readonly ActionsSheetItem[];
-  /** The id of every `openSelector` call, oldest first. */
+  /** The id of every `openSelector` call that opened a selector, oldest first. */
   readonly openedSelectors: readonly string[];
   /** The dialogs asked for and not closed, oldest first. */
   readonly dialogs: readonly MockDialog[];
@@ -332,8 +332,31 @@ export function createMockHost(options: MockHostOptions = {}): MockHost {
     useLocale: () => useSyncExternalStore(subscribe, () => locale),
     useCapabilities: () => useSyncExternalStore(subscribe, () => capabilities),
 
-    setActionsSheetItems: (items) => { actionsSheetItems = [...items]; },
-    openSelector: (id) => { openedSelectors.push(id); },
+    setActionsSheetItems: (items) => {
+      const ids = new Set<string>();
+      actionsSheetItems = items.filter((item) => {
+        if (!ids.has(item.id)) {
+          ids.add(item.id);
+          return true;
+        }
+        logger.warn(
+          { logCode: 'mock_host_repeated_item_id', extraInfo: { id: item.id } },
+          'Actions sheet item dropped: its id is already used',
+        );
+        return false;
+      });
+    },
+    openSelector: (id) => {
+      const item = actionsSheetItems.find((candidate) => candidate.id === id);
+      if (item?.type !== 'selector' || item.pending === true) {
+        logger.warn(
+          { logCode: 'mock_host_selector_not_opened', extraInfo: { id } },
+          item?.type === 'selector' ? 'The selector item is pending' : 'No selector item has this id',
+        );
+        return;
+      }
+      openedSelectors.push(id);
+    },
     dialogs: {
       confirm: (dialog) => {
         if (!Array.isArray(dialog.actions) || dialog.actions.length === 0) {
