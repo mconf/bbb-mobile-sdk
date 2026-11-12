@@ -70,7 +70,10 @@ const { host, controller } = createMockHost();
 ```
 
 `react` is a peer dependency. The package is ES modules only: a test runner that loads it
-as CommonJS (such as Jest without a transform for this package) cannot import it.
+as CommonJS (such as Jest without a transform for this package) cannot import it. Its types
+import React's, so a TypeScript plugin also needs `@types/react`. Both entries resolve under
+the `moduleResolution` settings `node` and `bundler`, and under `node16` and `nodenext` from
+an ES module.
 
 ## Working on the contract
 
