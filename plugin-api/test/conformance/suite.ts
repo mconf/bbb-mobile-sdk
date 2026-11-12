@@ -5,7 +5,9 @@ import { triggerOf } from '../ready.js';
 
 /**
  * What the conformance suite needs from the host under test, besides the host itself.
- * Each kind of host (the mock host, the SDK's host) provides its own harness.
+ * The mock host, and a variant of it that reports mutation failures late, provide the
+ * harnesses today. A harness for the SDK's host comes with the host code, and may need more
+ * than this interface has.
  */
 export interface HostHarness {
   host: MobilePluginHost;
