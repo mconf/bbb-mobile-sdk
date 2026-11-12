@@ -64,6 +64,7 @@ export function definePlugin(definition: MobilePluginDefinition): MobilePluginDe
 
 // @public
 export interface DialogAction {
+    accessibilityLabel?: string;
     kind: 'primary' | 'secondary' | 'link';
     label: string;
     onPress(): void;
@@ -181,6 +182,7 @@ export interface PluginParts {
 
 // @public
 export interface SelectorItem {
+    accessibilityLabel?: string;
     badge?: string;
     icon: string;
     id: string;
@@ -188,12 +190,14 @@ export interface SelectorItem {
     onChange(value: string): void;
     options: readonly SelectorOption[];
     pending?: boolean;
+    pendingLabel?: string;
     type: 'selector';
     value: string;
 }
 
 // @public
 export interface SelectorOption {
+    accessibilityLabel?: string;
     badge?: string;
     description?: string;
     disabled?: boolean;

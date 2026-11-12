@@ -8,6 +8,8 @@ export interface SelectorOption {
   value: string;
   /** The text of the option. */
   label: string;
+  /** What screen readers say for the option. Defaults to `label`. */
+  accessibilityLabel?: string;
   /** A second line under the label. */
   description?: string;
   /** A short mark next to the label, such as "New". */
@@ -31,12 +33,22 @@ export interface SelectorItem {
   icon: string;
   /** The text of the row. */
   label: string;
+  /**
+   * What screen readers say for the row. The host reads it, then a colon and the label of
+   * the selected option, so the plugin does not repeat the choice. Defaults to `label`.
+   */
+  accessibilityLabel?: string;
   /** The `value` of the selected option. */
   value: string;
   /** The options of the list, in the order shown. */
   options: readonly SelectorOption[];
   /** While true, the row shows a pending state and ignores taps. */
   pending?: boolean;
+  /**
+   * The text the row shows, and screen readers say, while it is pending. Without it, the
+   * host uses its own text.
+   */
+  pendingLabel?: string;
   /** A short mark on the row, such as "New". */
   badge?: string;
   /** Called with the `value` of the option the user picked. */
@@ -58,6 +70,8 @@ export type ActionsSheetItem = SelectorItem;
 export interface DialogAction {
   /** The text of the button. */
   label: string;
+  /** What screen readers say for the button. Defaults to `label`. */
+  accessibilityLabel?: string;
   /** How the button looks: a filled button, an outlined button or a text link. */
   kind: 'primary' | 'secondary' | 'link';
   /** Called when the user presses the button, after the host closes the dialog. */
