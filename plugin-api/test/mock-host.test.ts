@@ -1,9 +1,10 @@
 import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import type { DataChannelEntry } from '../src/index.js';
+import type { DataChannelEntry, DialogAction } from '../src/index.js';
 import { createMockHost } from '../src/testing/index.js';
 
 const MUTATION = 'mutation Example($value: String!) { example(value: $value) }';
+const OK_ACTION: DialogAction = { label: 'OK', kind: 'primary', onPress: () => {} };
 
 const entry = (entryId: string, subChannelName: string): DataChannelEntry<unknown> => ({
   entryId,
@@ -134,5 +135,39 @@ describe('mock host', () => {
         channelName: 'channel', subChannelName: 'default', type: 'delete', entryIds: ['entry-1'],
       },
     ]);
+  });
+
+  it('keeps what a replacing dialog says, at the place of the one it replaces', () => {
+    const { host, controller } = createMockHost();
+    host.dialogs.info({ id: 'first', title: 'First', body: 'Body' });
+    host.dialogs.info({ id: 'second', title: 'Second', body: 'Body' });
+    const replacement = {
+      id: 'first', title: 'Replaced', body: ['Body'], actions: [OK_ACTION] as const,
+    };
+    host.dialogs.confirm(replacement);
+    expect(controller.dialogs.map((entry) => entry.dialog.title)).toEqual(['Replaced', 'Second']);
+    expect(controller.dialogs[0]).toEqual({ kind: 'confirm', dialog: replacement });
+  });
+
+  it('presses a button of the shown dialog once, and refuses any other press', () => {
+    const { host, controller } = createMockHost();
+    let presses = 0;
+    host.dialogs.info({ id: 'info', title: 'Info', body: 'Body' });
+    host.dialogs.confirm({
+      id: 'ask',
+      title: 'Ask',
+      body: ['Body'],
+      actions: [{ label: 'OK', kind: 'primary', onPress: () => { presses += 1; } }],
+    });
+    expect(() => controller.pressDialogAction('info', 0)).toThrow(Error);
+    expect(() => controller.pressDialogAction('ask', 0)).toThrow(Error);
+    expect(presses).toBe(0);
+    host.dialogs.close('info');
+    expect(() => controller.pressDialogAction('ask', 1)).toThrow(Error);
+    expect(() => controller.pressDialogAction('none', 0)).toThrow(Error);
+    controller.pressDialogAction('ask', 0);
+    expect(presses).toBe(1);
+    expect(controller.dialogs).toEqual([]);
+    expect(() => controller.pressDialogAction('ask', 0)).toThrow(Error);
   });
 });

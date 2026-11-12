@@ -35,5 +35,6 @@ describeHostConformance('host that reports a failure after the send', () => {
     failMutation: (mutation, error) => { failures.set(mutation, error); },
     errorLogCount: () => controller.logs.filter((entry) => entry.level === 'error').length,
     dialogIds: () => controller.dialogs.map((entry) => entry.dialog.id),
+    pressDialogAction: (id, actionIndex) => controller.pressDialogAction(id, actionIndex),
   };
 });
