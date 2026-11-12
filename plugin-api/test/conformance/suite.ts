@@ -88,8 +88,16 @@ export function describeHostConformance(name: string, createHarness: () => HostH
     });
 
     describe('data channel', () => {
-      it.todo('returns entries newest first, with ties broken by entry id');
-      it.todo('returns only entries created after the subscription in the new-items mode');
+      it.todo('returns entries newest first by createdAt');
+      it.todo('stays loading until the first data or an error, and never returns an empty list before it');
+      it.todo('delivers every entry on each update in the all-items mode');
+      it.todo('delivers every entry first, then only the entries each update added or replaced, in the latest-item mode');
+      it.todo("delivers the channel's newest entry after any delete in the latest-item mode");
+      it.todo('delivers only entries created at or after the moment the hook subscribed, by the device clock, in the new-items mode');
+      it.todo('delivers nothing for a delete that leaves entries in the channel, in the new-items mode');
+      it.todo('delivers an empty list on a reset, or when deletes empty the channel, in the latest-item and new-items modes');
+      it.todo("shares one reader among the hooks of a plugin that read one channel, sub-channel and mode: a later hook gets the last delivery and the first hook's subscribe time");
+      it.todo('sends nothing to the hooks already mounted when another hook of the same reader mounts');
     });
 
     describe('dialogs', () => {

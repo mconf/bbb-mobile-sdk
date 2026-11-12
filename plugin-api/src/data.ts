@@ -34,8 +34,40 @@ export interface MutationState {
 }
 
 /**
- * Which entries of a data channel a plugin reads: every entry, only the latest one, or
- * only the entries created after the plugin subscribed.
+ * Which entries of a data channel {@link MobilePluginHost.useDataChannel} delivers. Each
+ * delivery is a list in the order of {@link DataChannel.data}.
+ *
+ * - `'Hooks::DataChannel::AllItems'`: each update delivers every entry of the channel.
+ * - `'Hooks::DataChannel::LatestItem'`: the first delivery holds every entry. After that,
+ *   each update delivers only the entries it added or replaced, so after a replace of an
+ *   older entry, `data[0]` is that entry and not the newest one. After any delete, the
+ *   update delivers the channel's newest entry, so `data` never holds a deleted entry.
+ * - `'Hooks::DataChannel::NewItems'`: each update delivers the entries it added or
+ *   replaced that were created at or after the moment the hook subscribed. The host reads
+ *   that moment from the device clock and compares it with the server's `createdAt`, so a
+ *   device clock that is off can let in or leave out entries created near that moment.
+ *   The first delivery holds the entries created at or after that moment, usually none. A
+ *   delete delivers nothing, unless it leaves the channel empty.
+ *
+ * In the `LatestItem` and `NewItems` modes a delivery is not the whole channel: a plugin
+ * that needs earlier entries keeps them itself. A reset, or deletes that leave the
+ * channel empty, deliver an empty list. An update with nothing to deliver leaves `data`
+ * as it was.
+ *
+ * The hooks of a plugin that read one channel, sub-channel and mode share one reader, as
+ * in the BBB web client. The first of them sets the subscribe time. A hook that mounts
+ * while another one reads first gets the reader's last delivery, not every entry, and the
+ * hooks already mounted get nothing new. The reader ends when the last hook reading it
+ * unmounts; a hook mounted after that starts a new one.
+ *
+ * The BBB web client delivers the same, except for these bugs:
+ *
+ * - after a delete, its `LatestItem` delivers nothing and keeps the deleted entry;
+ * - it delivers an empty list, with `loading` false, before the first data;
+ * - a `NewItems` reader that has delivered nothing yet delivers nothing on a reset;
+ * - when a hook mounts, every hook of that reader gets the last delivery again;
+ * - when one hook unmounts, the reader of a mode other than the first one read on that
+ *   channel can end while other hooks still read it.
  *
  * @public
  */
@@ -83,7 +115,13 @@ export type DataChannelReceiver = { userId: string } | { role: string };
  * @public
  */
 export interface DataChannel<T> {
-  /** The entries, newest first. Entries created at the same time are ordered by entry id. */
+  /**
+   * The entries the mode delivers, newest first by `createdAt`. The order of entries with
+   * the same `createdAt` is not defined, as in the BBB web client.
+   *
+   * `loading` stays true until the channel's first data or an error arrives. An empty list
+   * means there is nothing to deliver, never that the data has not arrived yet.
+   */
   data: GraphqlResult<DataChannelEntry<T>[]>;
   /** Adds an entry. Without `receivers`, every user in the meeting receives it. */
   pushEntry(payload: T, options?: { receivers?: DataChannelReceiver[] }): void;
