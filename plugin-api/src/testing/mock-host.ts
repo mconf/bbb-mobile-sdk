@@ -54,7 +54,7 @@ export interface MockMutationCall {
  *
  * @public
  */
-export type MockDataChannelWrite = { channelName: string; subChannelName?: string } & (
+export type MockDataChannelWrite = { channelName: string; subChannelName: string } & (
   | { type: 'push'; payload: unknown; receivers?: DataChannelReceiver[] }
   | { type: 'replace'; entryId: string; payload: unknown }
   | { type: 'delete'; entryIds: string[] }
@@ -106,8 +106,10 @@ export interface MockHostController {
   /** Sets the result of `useCustomSubscription` for this exact query text, for any variables. */
   setSubscriptionResult(query: string, result: GraphqlResult<unknown>): void;
   /**
-   * Sets what `useDataChannel` returns for a channel. The mock returns the entries as
-   * given: it does not sort them, filter them by mode or apply the plugin's writes.
+   * Sets what `useDataChannel` returns for a channel. Without `subChannelName`, it sets the
+   * `'default'` sub-channel, which `useDataChannel` reads when the plugin names none. The
+   * mock returns the entries as given: it does not sort them, filter them by mode or apply
+   * the plugin's writes.
    */
   setDataChannelEntries(
     channelName: string,
@@ -162,8 +164,10 @@ const jsonCopy = (value: unknown): unknown => {
   }
 };
 
-const channelKey = (channelName: string, subChannelName?: string): string => (
-  JSON.stringify([channelName, subChannelName ?? null])
+const DEFAULT_SUB_CHANNEL = 'default';
+
+const channelKey = (channelName: string, subChannelName: string): string => (
+  JSON.stringify([channelName, subChannelName])
 );
 
 /**
@@ -268,7 +272,7 @@ export function createMockHost(options: MockHostOptions = {}): MockHost {
     useDataChannel: <T>(
       channelName: string,
       _mode?: DataChannelMode,
-      subChannelName?: string,
+      subChannelName: string = DEFAULT_SUB_CHANNEL,
     ): DataChannel<T> => {
       const key = channelKey(channelName, subChannelName);
       const data = useSyncExternalStore(
@@ -276,9 +280,7 @@ export function createMockHost(options: MockHostOptions = {}): MockHost {
         () => (dataChannelResults.get(key) ?? LOADING) as GraphqlResult<DataChannelEntry<T>[]>,
       );
       return useMemo(() => {
-        const channel = subChannelName === undefined
-          ? { channelName }
-          : { channelName, subChannelName };
+        const channel = { channelName, subChannelName };
         return {
           data,
           pushEntry: (payload, pushOptions) => {
@@ -321,7 +323,7 @@ export function createMockHost(options: MockHostOptions = {}): MockHost {
     setLocale: (value) => { locale = value; emit(); },
     setCapabilities: (value) => { capabilities = value; emit(); },
     setSubscriptionResult: (query, result) => { subscriptionResults.set(query, result); emit(); },
-    setDataChannelEntries: (channelName, result, subChannelName) => {
+    setDataChannelEntries: (channelName, result, subChannelName = DEFAULT_SUB_CHANNEL) => {
       dataChannelResults.set(channelKey(channelName, subChannelName), result);
       emit();
     },

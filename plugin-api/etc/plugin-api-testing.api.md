@@ -10,7 +10,7 @@ export function createMockHost(options?: MockHostOptions): MockHost;
 // @public
 export type MockDataChannelWrite = {
     channelName: string;
-    subChannelName?: string;
+    subChannelName: string;
 } & ({
     type: 'push';
     payload: unknown;
