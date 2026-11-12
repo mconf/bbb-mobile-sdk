@@ -1,6 +1,6 @@
 # Smoke checklist: the app with no plugins
 
-The SDK has no automated tests, so a build alone does not show that the app still works. This
+The app has no automated tests, so a build alone does not show that it still works. This
 checklist is run by hand on a device. Every PR that changes anything but documentation attaches
 a pass (see [Recording a pass](#recording-a-pass)), and the result is compared with the
 [baseline](#baseline).
