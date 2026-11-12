@@ -5,6 +5,7 @@ import type {
   Capabilities, DataChannelEntry, GraphqlResult, SelectorItem,
 } from '../src/index.js';
 import { createMockHost } from '../src/testing/index.js';
+import { pushOf, triggerOf } from './ready.js';
 import type { MockHost } from '../src/testing/index.js';
 
 const QUERY = 'subscription First { first }';
@@ -141,8 +142,10 @@ describe('mock host reads', () => {
       channel: host.useDataChannel('channel', undefined, 'sub'),
       mutation: host.useCustomMutation(MUTATION),
     }));
-    await act(async () => { await result.current.mutation[0]({ variables: { value: 'a' } }); });
-    result.current.channel.pushEntry(1);
+    await act(async () => {
+      await triggerOf(result.current.mutation)({ variables: { value: 'a' } });
+    });
+    pushOf(result.current.channel)(1);
     host.setActionsSheetItems([selector]);
     host.openSelector('layout');
     host.dialogs.info({ id: 'info', title: 'Info', body: 'Body' });
@@ -165,7 +168,7 @@ describe('mock host reads', () => {
   it('records push receivers and replace writes', () => {
     const { host, controller } = createMockHost();
     const { result } = renderHook(() => host.useDataChannel<number>('channel', undefined, 'sub'));
-    result.current.pushEntry(1, { receivers: [{ userId: 'u1' }, { role: 'MODERATOR' }] });
+    pushOf(result.current)(1, { receivers: [{ userId: 'u1' }, { role: 'MODERATOR' }] });
     result.current.replaceEntry('e1', 2);
     expect(controller.dataChannelWrites).toEqual([
       {
@@ -187,13 +190,19 @@ describe('mock host reads', () => {
     const failing = renderHook(() => host.useCustomMutation<{ value: string }>(MUTATION));
     const other = renderHook(() => host.useCustomMutation<{ value: string }>(OTHER_MUTATION));
     controller.setMutationError(MUTATION, failure);
-    await act(async () => { await failing.result.current[0]({ variables: { value: 'a' } }); });
-    await act(async () => { await other.result.current[0]({ variables: { value: 'b' } }); });
+    await act(async () => {
+      await triggerOf(failing.result.current)({ variables: { value: 'a' } });
+    });
+    await act(async () => {
+      await triggerOf(other.result.current)({ variables: { value: 'b' } });
+    });
     expect(failing.result.current[1].error).toBe(failure);
     expect(other.result.current[1]).toEqual({ loading: false });
     expect(controller.mutations.map((call) => call.mutation)).toEqual([MUTATION, OTHER_MUTATION]);
     controller.setMutationError(MUTATION, undefined);
-    await act(async () => { await failing.result.current[0]({ variables: { value: 'c' } }); });
+    await act(async () => {
+      await triggerOf(failing.result.current)({ variables: { value: 'c' } });
+    });
     expect(failing.result.current[1]).toEqual({ loading: false });
     expect(controller.logs.map((log) => log.record.logCode)).toEqual(['mock_host_mutation_failed']);
   });

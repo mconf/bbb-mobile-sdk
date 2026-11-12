@@ -193,7 +193,9 @@ const channelKey = (channelName: string, subChannelName: string): string => (
  *   read mode or apply the plugin's writes;
  * - never calls a confirm dialog's `isStillRelevant`;
  * - returns the locale as set: it does not turn `pt_BR` into `pt-BR`;
- * - has no app notices, so it never makes a plugin notice wait for one.
+ * - has no app notices, so it never makes a plugin notice wait for one;
+ * - is ready from the first render: `pushEntry` and mutation triggers are set at once, so
+ *   it never drops a write made too early.
  *
  * @public
  */

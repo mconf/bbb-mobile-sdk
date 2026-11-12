@@ -40,8 +40,12 @@ export interface MobilePluginHost {
     query: string,
     options?: { variables?: Record<string, unknown> },
   ): GraphqlResult<T>;
-  /** Prepares a GraphQL mutation document written by the plugin. */
-  useCustomMutation<V>(mutation: string): [MutationTrigger<V>, MutationState];
+  /**
+   * Prepares a GraphQL mutation document written by the plugin. The trigger is null until
+   * the host can send the mutation, so a plugin checks it before a call. The host does not
+   * queue calls for later.
+   */
+  useCustomMutation<V>(mutation: string): [MutationTrigger<V> | null, MutationState];
   /**
    * Reads and writes one of the plugin's data channels. `mode` defaults to
    * `'Hooks::DataChannel::AllItems'`. `subChannelName` defaults to `'default'`, the

@@ -1,6 +1,7 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import type { DialogAction, MobilePluginHost } from '../../src/index.js';
+import { triggerOf } from '../ready.js';
 
 /**
  * What the conformance suite needs from the host under test, besides the host itself.
@@ -67,11 +68,14 @@ export function describeHostConformance(name: string, createHarness: () => HostH
     });
 
     describe('custom mutation', () => {
+      it.todo('sets the trigger only once it can send the mutation');
+
       it('resolves when the mutation was sent', async () => {
         const harness = createHarness();
         const { result } = renderHook(() => harness.host.useCustomMutation<{ value: string }>(MUTATION));
+        await waitFor(() => expect(result.current[0]).not.toBeNull());
         await act(async () => {
-          await expect(result.current[0]({ variables: { value: 'a' } })).resolves.toBeUndefined();
+          await expect(triggerOf(result.current)({ variables: { value: 'a' } })).resolves.toBeUndefined();
         });
         expect(result.current[1].error).toBeUndefined();
       });
@@ -81,9 +85,10 @@ export function describeHostConformance(name: string, createHarness: () => HostH
         const failure = new Error('refused');
         harness.failMutation(MUTATION, failure);
         const { result } = renderHook(() => harness.host.useCustomMutation<{ value: string }>(MUTATION));
+        await waitFor(() => expect(result.current[0]).not.toBeNull());
         const errorsBefore = harness.errorLogCount();
         await act(async () => {
-          await expect(result.current[0]({ variables: { value: 'a' } })).resolves.toBeUndefined();
+          await expect(triggerOf(result.current)({ variables: { value: 'a' } })).resolves.toBeUndefined();
         });
         await waitFor(() => expect(harness.errorLogCount()).toBe(errorsBefore + 1));
         expect(result.current[1].error).toBe(failure);
@@ -96,8 +101,9 @@ export function describeHostConformance(name: string, createHarness: () => HostH
         const harness = createHarness();
         if (failure !== undefined) harness.failMutation(MUTATION, failure);
         const { result } = renderHook(() => harness.host.useCustomMutation<{ value: string }>(MUTATION));
+        await waitFor(() => expect(result.current[0]).not.toBeNull());
         await act(async () => {
-          await result.current[0]({ variables: { value: 'a' } });
+          await triggerOf(result.current)({ variables: { value: 'a' } });
         });
         await waitFor(() => expect(result.current[1].loading).toBe(false));
         expect(result.current[1].error).toBe(failure);
@@ -105,6 +111,7 @@ export function describeHostConformance(name: string, createHarness: () => HostH
     });
 
     describe('data channel', () => {
+      it.todo('sets pushEntry only once it can write, and drops a replace or delete made before then with a debug log');
       it.todo('returns entries newest first by createdAt');
       it.todo('stays loading until the first data or an error, and never returns an empty list before it');
       it.todo('delivers every entry on each update in the all-items mode');
