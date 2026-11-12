@@ -56,6 +56,7 @@ npm run build:notes-editor  # rebuilds the BlockNote shared-notes WebView bundle
 # plugin-api/ is the plugin contract package (types, definePlugin, mock host).
 # Separate npm package with its own deps, lockfile and toolchain; run these inside it:
 #   npm ci && npm test       # vitest: unit tests + conformance cases on the mock host
+#   npm run typecheck        # type-checks src/ and test/; root tsc excludes this folder
 #   npm run api:check        # API report (etc/*.api.md) and the version rule
 #   npm pack                 # tarball that plugins install; it is not published to npm
 # See its README.
@@ -80,7 +81,8 @@ not import it yet. Every PR that changes anything but documentation attaches a p
 of the device smoke checklist in `docs/smoke-checklist.md`.
 
 **Typecheck gate for TS edits:** `.ts`/`.tsx` are *not* linted (see Repo hygiene),
-so `npx tsc --noEmit --skipLibCheck` is the only static check. (`tsconfig.json` sets
+so `npx tsc --noEmit --skipLibCheck` is the only static check of the app; it excludes
+`plugin-api/`, which runs its own `npm run typecheck`. (`tsconfig.json` sets
 `strict: false`; TS 6 flipped the default to strict.) It's clean on `src/`
 â€” the sole errors come from the untracked `tmp-livekit-live.ts` reference file, so
 exclude it (`... | grep -v '^tmp-livekit-live.ts'`). Run it + `npm run build`.
@@ -309,10 +311,10 @@ code is moved so that it can be shared with a web codebase.
   `jarn.lock.diff`, `*.patch`, `*.txt` logs). **Only the plain `.js`/`.ts` files
   are live** â€” it's easy to edit the wrong twin and see no effect. Do not create
   new backup files.
-- `.eslintrc.js` **ignores** `lib/`, `android/`, `ios/`, `src/services/`,
-  `socket-connection/`, `shared-notes-editor/` and `plugin-api/` â€” so lint
-  does *not* cover the WebRTC/LiveKit/logger/DDP layer where much of the hard
-  logic lives.
+- `.eslintrc.js` **ignores** `lib/`, `android/`, `ios/`, `src/services/` and
+  `socket-connection/` â€” so lint does *not* cover the WebRTC/LiveKit/logger/DDP
+  layer where much of the hard logic lives. It also ignores `shared-notes-editor/`
+  and `plugin-api/`, which have their own toolchains.
 - `npm run lint` is `eslint . --ext .js` â€” **`.ts`/`.tsx` are not linted at all**
   (tsc is their only checker). A `.js` importing a `.ts` module always emits
   pre-existing `import/no-unresolved` + `import/extensions` errors (resolver isn't
