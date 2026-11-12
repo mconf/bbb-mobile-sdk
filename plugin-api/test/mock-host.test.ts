@@ -1,8 +1,21 @@
 import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
+import type { DataChannelEntry } from '../src/index.js';
 import { createMockHost } from '../src/testing/index.js';
 
 const MUTATION = 'mutation Example($value: String!) { example(value: $value) }';
+
+const entry = (entryId: string, subChannelName: string): DataChannelEntry<unknown> => ({
+  entryId,
+  createdAt: '2026-01-01T00:00:00.000Z',
+  updatedAt: '2026-01-01T00:00:00.000Z',
+  createdBy: 'user-1',
+  channelName: 'channel',
+  subChannelName,
+  pluginName: 'mock-plugin',
+  toRoles: [],
+  payloadJson: { entryId },
+});
 
 describe('mock host', () => {
   it('shows a mutation as loading while it is being sent', async () => {
@@ -85,5 +98,41 @@ describe('mock host', () => {
     const users = renderHook(() => host.useUsersBasicInfo()).result.current.data?.user;
     expect(users?.map((user) => [user.userId, user.extId, user.name]))
       .toEqual([[current?.userId, current?.extId, current?.name]]);
+  });
+
+  it("reads the 'default' sub-channel when none is named", () => {
+    const { host, controller } = createMockHost();
+    const named = { loading: false, data: [entry('named', 'default')] };
+    const unnamed = { loading: false, data: [entry('unnamed', 'default')] };
+    const omitted = renderHook(() => host.useDataChannel('channel'));
+    act(() => controller.setDataChannelEntries('channel', named, 'default'));
+    expect(omitted.result.current.data).toBe(named);
+    const explicit = renderHook(() => host.useDataChannel('channel', undefined, 'default'));
+    act(() => controller.setDataChannelEntries('channel', unnamed));
+    expect(explicit.result.current.data).toBe(unnamed);
+    expect(omitted.result.current.data).toBe(unnamed);
+  });
+
+  it("records a write with no sub-channel on the 'default' sub-channel", () => {
+    const { host, controller } = createMockHost();
+    const { result } = renderHook(() => host.useDataChannel<number>('channel'));
+    result.current.pushEntry(1);
+    result.current.replaceEntry('entry-1', 2);
+    result.current.deleteEntry(['entry-1']);
+    expect(controller.dataChannelWrites).toEqual([
+      {
+        channelName: 'channel', subChannelName: 'default', type: 'push', payload: 1,
+      },
+      {
+        channelName: 'channel',
+        subChannelName: 'default',
+        type: 'replace',
+        entryId: 'entry-1',
+        payload: 2,
+      },
+      {
+        channelName: 'channel', subChannelName: 'default', type: 'delete', entryIds: ['entry-1'],
+      },
+    ]);
   });
 });

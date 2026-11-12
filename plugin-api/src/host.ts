@@ -42,7 +42,11 @@ export interface MobilePluginHost {
   ): GraphqlResult<T>;
   /** Prepares a GraphQL mutation document written by the plugin. */
   useCustomMutation<V>(mutation: string): [MutationTrigger<V>, MutationState];
-  /** Reads and writes one of the plugin's data channels. */
+  /**
+   * Reads and writes one of the plugin's data channels. `mode` defaults to
+   * `'Hooks::DataChannel::AllItems'`. `subChannelName` defaults to `'default'`, the
+   * sub-channel the BBB web client uses when a plugin names none.
+   */
   useDataChannel<T>(
     channelName: string,
     mode?: DataChannelMode,
