@@ -21,10 +21,11 @@ export interface PluginParts {
  * @public
  */
 export interface MobilePluginDefinition {
-  /** The plugin's name, as the meeting lists it. */
+  /**
+   * The plugin's name, as the meeting lists it. It is the plugin's only name: the host
+   * passes it as {@link MobilePluginHost.pluginName}.
+   */
   name: string;
-  /** Other names the meeting may list this plugin under, such as older names. */
-  aliases?: readonly string[];
   /**
    * The host API versions this plugin works with, as a semver range in npm's grammar:
    * caret (`^0.1.0`), tilde (`~0.1.2`), x-ranges (`0.1.x`), exact versions and `||`.
@@ -48,8 +49,8 @@ export interface MobilePluginDefinition {
 /**
  * Declares a plugin. It checks the shape of the definition and returns it unchanged.
  *
- * @throws TypeError if `name` or `requiredHostApi` is not a non-empty string, if
- * `aliases` is not an array of non-empty strings, or if `create` is not a function.
+ * @throws TypeError if `name` or `requiredHostApi` is not a non-empty string, or if
+ * `create` is not a function.
  *
  * @public
  */
@@ -61,12 +62,6 @@ export function definePlugin(definition: MobilePluginDefinition): MobilePluginDe
   }
   if (!isName(definition.requiredHostApi)) {
     throw new TypeError('definePlugin: "requiredHostApi" must be a non-empty string');
-  }
-  if (
-    definition.aliases !== undefined
-    && !(Array.isArray(definition.aliases) && definition.aliases.every(isName))
-  ) {
-    throw new TypeError('definePlugin: "aliases" must be an array of non-empty strings');
   }
   if (typeof definition.create !== 'function') {
     throw new TypeError('definePlugin: "create" must be a function');

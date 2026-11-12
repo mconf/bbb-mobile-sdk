@@ -14,15 +14,9 @@ describe('definePlugin', () => {
     expect(definePlugin(valid)).toBe(valid);
   });
 
-  it('accepts aliases', () => {
-    const definition = { ...valid, aliases: ['older-name'] };
-    expect(definePlugin(definition)).toBe(definition);
-  });
-
   it.each([
     ['an empty name', { ...valid, name: ' ' }],
     ['an empty host API range', { ...valid, requiredHostApi: '' }],
-    ['an empty alias', { ...valid, aliases: [''] }],
     ['a missing create', { ...valid, create: undefined as unknown as MobilePluginDefinition['create'] }],
   ])('rejects %s', (_case, definition) => {
     expect(() => definePlugin(definition)).toThrow(TypeError);

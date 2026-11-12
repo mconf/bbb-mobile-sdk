@@ -106,7 +106,6 @@ export interface InfoDialog {
 
 // @public
 export interface MobilePluginDefinition {
-    aliases?: readonly string[];
     create(host: MobilePluginHost): PluginParts;
     name: string;
     requiredHostApi: string;

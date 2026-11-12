@@ -28,7 +28,10 @@ import type {
 export interface MobilePluginHost {
   /** The version of the host API that the running host implements. */
   readonly hostApiVersion: string;
-  /** The name this plugin was loaded with. */
+  /**
+   * The plugin's {@link MobilePluginDefinition.name}. The host reads the plugin's settings
+   * and data channels under this name.
+   */
   readonly pluginName: string;
 
   /** The user running the app. */
