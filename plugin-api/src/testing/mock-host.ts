@@ -42,7 +42,10 @@ export interface MockHostOptions {
 export interface MockMutationCall {
   /** The mutation document, as the plugin passed it. */
   mutation: string;
-  /** The variables of the call. */
+  /**
+   * A JSON copy of the call's variables, taken when the call was made: a host sends
+   * JSON. Variables that JSON cannot hold, such as a cycle, are kept as passed.
+   */
   variables: unknown;
 }
 
@@ -150,6 +153,15 @@ const LOADING: GraphqlResult<never> = { loading: true };
 const IDLE: MutationState = { loading: false };
 const SENDING: MutationState = { loading: true };
 
+const jsonCopy = (value: unknown): unknown => {
+  if (value === undefined) return undefined;
+  try {
+    return JSON.parse(JSON.stringify(value));
+  } catch {
+    return value;
+  }
+};
+
 const channelKey = (channelName: string, subChannelName?: string): string => (
   JSON.stringify([channelName, subChannelName ?? null])
 );
@@ -158,9 +170,10 @@ const channelKey = (channelName: string, subChannelName?: string): string => (
  * Creates an in-memory host for plugin unit tests. It keeps what the test sets and
  * records what the plugin asks for; it draws nothing and talks to no server.
  *
- * Defaults: a loaded viewer as the current user, no other users, empty settings,
- * locale `en`, every capability off. Custom subscriptions and data channels are loading
- * until the test sets them.
+ * Defaults: a loaded viewer as the current user, a user list that holds only that user,
+ * empty settings, locale `en`, every capability off. Custom subscriptions and data
+ * channels are loading until the test sets them. `setCurrentUser` does not change the
+ * user list: a test that needs the new current user in the list sets the list too.
  *
  * @public
  */
@@ -184,7 +197,14 @@ export function createMockHost(options: MockHostOptions = {}): MockHost {
   };
   let usersBasicInfo: GraphqlResult<{ user: HostUserBasicInfo[] }> = {
     loading: false,
-    data: { user: [] },
+    data: {
+      user: [{
+        userId: 'mock-user-id',
+        extId: 'mock-ext-id',
+        name: 'Mock User',
+        isModerator: false,
+      }],
+    },
   };
   let pluginSettings: GraphqlResult<unknown> = { loading: false, data: {} };
   let locale = 'en';
@@ -230,10 +250,12 @@ export function createMockHost(options: MockHostOptions = {}): MockHost {
       // Each hook keeps the state of its own last call, as a host's mutation hook does.
       const [state, setState] = useState<MutationState>(IDLE);
       const trigger = useCallback<MutationTrigger<V>>(async ({ variables }) => {
-        setState(SENDING);
-        mutations.push({ mutation, variables });
-        await Promise.resolve();
+        // Read before the await, so a setMutationError made while this call is in flight
+        // affects only later calls.
         const error = mutationErrors.get(mutation);
+        setState(SENDING);
+        mutations.push({ mutation, variables: jsonCopy(variables) });
+        await Promise.resolve();
         if (error === undefined) {
           setState(IDLE);
         } else {

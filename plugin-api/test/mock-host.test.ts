@@ -55,4 +55,35 @@ describe('mock host', () => {
       },
     ]);
   });
+
+  it('fails only the calls made after setMutationError', async () => {
+    const { host, controller } = createMockHost();
+    const failure = new Error('refused');
+    const { result } = renderHook(() => host.useCustomMutation<{ value: string }>(MUTATION));
+    let inFlight: Promise<void> = Promise.resolve();
+    act(() => { inFlight = result.current[0]({ variables: { value: 'a' } }); });
+    controller.setMutationError(MUTATION, failure);
+    await act(async () => { await inFlight; });
+    expect(result.current[1]).toEqual({ loading: false });
+    expect(controller.logs).toEqual([]);
+    await act(async () => { await result.current[0]({ variables: { value: 'b' } }); });
+    expect(result.current[1].error).toBe(failure);
+  });
+
+  it('records the variables as they were when the mutation was sent', async () => {
+    const { host, controller } = createMockHost();
+    const { result } = renderHook(() => host.useCustomMutation<{ list: number[] }>(MUTATION));
+    const variables = { list: [1] };
+    await act(async () => { await result.current[0]({ variables }); });
+    variables.list.push(2);
+    expect(controller.mutations).toEqual([{ mutation: MUTATION, variables: { list: [1] } }]);
+  });
+
+  it('lists the current user among the users by default', () => {
+    const { host } = createMockHost();
+    const current = renderHook(() => host.useCurrentUser()).result.current.data;
+    const users = renderHook(() => host.useUsersBasicInfo()).result.current.data?.user;
+    expect(users?.map((user) => [user.userId, user.extId, user.name]))
+      .toEqual([[current?.userId, current?.extId, current?.name]]);
+  });
 });
