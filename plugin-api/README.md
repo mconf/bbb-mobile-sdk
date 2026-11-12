@@ -114,3 +114,7 @@ the tip of the base branch only as far as the last fetch.
 `test/conformance/suite.ts` holds the cases every host must pass. Today they run against the
 mock host. A case that needs host code that does not exist yet is an `it.todo`; it becomes a
 test in the pull request that adds that code.
+
+The suite runs against the mock host too, so that pull request also changes the mock: either
+the mock follows the new rule, or the case skips the mock and the rule is added to the list in
+the TSDoc of `createMockHost`.
