@@ -96,7 +96,10 @@ export interface DataChannelEntry<T> {
   subChannelName: string;
   /** The plugin that owns the channel. */
   pluginName: string;
-  /** The roles that receive the entry; empty when it was sent to every user. */
+  /**
+   * The roles the entry was sent to. Empty when it named no role: it went to every user,
+   * or only to users named by id.
+   */
   toRoles: string[];
   /** What the plugin wrote. */
   payloadJson: T;
@@ -139,7 +142,10 @@ export interface DataChannel<T> {
 export interface HostCurrentUser {
   /** The user's id in the meeting. */
   userId: string;
-  /** The user's id in the system that created the meeting. */
+  /**
+   * The `userID` given in the join call. Without one, the server uses the user's id in
+   * the meeting, which changes when the user joins again.
+   */
   extId: string;
   /** The name shown to other users. */
   name: string;
@@ -157,7 +163,7 @@ export interface HostCurrentUser {
 export interface HostUserBasicInfo {
   /** The user's id in the meeting. */
   userId: string;
-  /** The user's id in the system that created the meeting. */
+  /** The same id as {@link HostCurrentUser.extId}. */
   extId: string;
   /** The name shown to other users. */
   name: string;
@@ -176,7 +182,7 @@ export interface Capabilities {
   mediaGroupAudioRouting: boolean;
   /** The meeting routes cameras per viewer, by media group. */
   mediaGroupCameraRouting: boolean;
-  /** The app is inside a breakout room. */
+  /** The user is in a breakout room, so the main room's audio is off. */
   inBreakout: boolean;
   /** Version of each placement the host draws, by placement name. */
   placements: Readonly<Record<string, number>>;
