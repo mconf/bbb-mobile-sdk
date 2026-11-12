@@ -211,4 +211,40 @@ describe('mock host', () => {
       ['warn', 'mock_host_selector_not_opened', 'No selector item has this id'],
     ]);
   });
+
+  it('records a subscription on mount and on each change of its arguments', () => {
+    const { host, controller } = createMockHost();
+    const query = 'subscription Example($a: Int, $b: Int) { example(a: $a, b: $b) }';
+    const initialProps: { text: string; variables: Record<string, unknown> } = {
+      text: query, variables: { a: 1, b: { c: 1, d: 2 } },
+    };
+    const { rerender } = renderHook(
+      ({ text, variables }) => host.useCustomSubscription(text, { variables }),
+      { initialProps },
+    );
+    rerender({ text: query, variables: { a: 1, b: { c: 1, d: 2 } } });
+    rerender({ text: query, variables: { b: { c: 1, d: 2 }, a: 1, e: undefined } });
+    expect(controller.subscriptions).toHaveLength(1);
+    rerender({ text: query, variables: { a: 1, b: { d: 2, c: 1 } } });
+    rerender({ text: `${query} `, variables: { a: 1, b: { d: 2, c: 1 } } });
+    expect(controller.subscriptions).toEqual([
+      { query, variables: { a: 1, b: { c: 1, d: 2 } } },
+      { query, variables: { a: 1, b: { d: 2, c: 1 } } },
+      { query: `${query} `, variables: { a: 1, b: { d: 2, c: 1 } } },
+    ]);
+  });
+
+  it('tells no variables apart from empty variables', () => {
+    const { host, controller } = createMockHost();
+    const query = 'subscription Example { example }';
+    const { rerender } = renderHook(
+      ({ variables }) => host.useCustomSubscription(query, { variables }),
+      { initialProps: { variables: undefined as Record<string, unknown> | undefined } },
+    );
+    rerender({ variables: {} });
+    expect(controller.subscriptions).toEqual([
+      { query, variables: undefined },
+      { query, variables: {} },
+    ]);
+  });
 });

@@ -59,6 +59,7 @@ export interface MockHostController {
     setUsersBasicInfo(result: GraphqlResult<{
         user: HostUserBasicInfo[];
     }>): void;
+    readonly subscriptions: readonly MockSubscription[];
 }
 
 // @public
@@ -77,6 +78,12 @@ export interface MockLogEntry {
 // @public
 export interface MockMutationCall {
     mutation: string;
+    variables: unknown;
+}
+
+// @public
+export interface MockSubscription {
+    query: string;
     variables: unknown;
 }
 

@@ -73,6 +73,12 @@ export function describeHostConformance(name: string, createHarness: () => HostH
       it.todo('serves the plugin settings from the copy loaded at join, with no new subscription');
     });
 
+    describe('custom subscription', () => {
+      it.todo('subscribes again only when the query text, or the variables JSON with sorted top-level keys, changes');
+      it.todo('returns the previous result, then loading with no data, then the new data after its arguments change');
+      it.todo('goes straight to the new data when another hook already holds the new arguments');
+    });
+
     describe('custom mutation', () => {
       it.todo('sets the trigger only once it can send the mutation');
 
