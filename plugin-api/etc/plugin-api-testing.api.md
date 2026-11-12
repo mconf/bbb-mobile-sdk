@@ -14,14 +14,14 @@ export type MockDataChannelWrite = {
 } & ({
     type: 'push';
     payload: unknown;
-    receivers?: DataChannelReceiver[];
+    receivers?: readonly DataChannelReceiver[];
 } | {
     type: 'replace';
     entryId: string;
     payload: unknown;
 } | {
     type: 'delete';
-    entryIds: string[];
+    entryIds: readonly string[];
 });
 
 // @public
@@ -51,13 +51,13 @@ export interface MockHostController {
     pressDialogAction(id: string, actionIndex: number): void;
     setCapabilities(capabilities: Partial<Capabilities>): void;
     setCurrentUser(result: GraphqlResult<HostCurrentUser>): void;
-    setDataChannelEntries(channelName: string, result: GraphqlResult<DataChannelEntry<unknown>[]>, subChannelName?: string): void;
+    setDataChannelEntries(channelName: string, result: GraphqlResult<readonly DataChannelEntry<unknown>[]>, subChannelName?: string): void;
     setLocale(locale: string): void;
     setMutationError(mutation: string, error: unknown): void;
     setPluginSettings(result: GraphqlResult<unknown>): void;
     setSubscriptionResult(query: string, result: GraphqlResult<unknown>): void;
     setUsersBasicInfo(result: GraphqlResult<{
-        user: HostUserBasicInfo[];
+        user: readonly HostUserBasicInfo[];
     }>): void;
     readonly subscriptions: readonly MockSubscription[];
 }

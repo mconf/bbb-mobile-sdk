@@ -28,10 +28,10 @@ export interface ConfirmDialog {
 
 // @public
 export interface DataChannel<T> {
-    data: GraphqlResult<DataChannelEntry<T>[]>;
-    deleteEntry(entryIds: string[]): void;
+    data: GraphqlResult<readonly DataChannelEntry<T>[]>;
+    deleteEntry(entryIds: readonly string[]): void;
     pushEntry: ((payload: T, options?: {
-        receivers?: DataChannelReceiver[];
+        receivers?: readonly DataChannelReceiver[];
     }) => void) | undefined;
     replaceEntry(entryId: string, payload: T): void;
 }
@@ -45,7 +45,7 @@ export interface DataChannelEntry<T> {
     payloadJson: T;
     pluginName: string;
     subChannelName: string;
-    toRoles: string[];
+    toRoles: readonly string[];
     updatedAt: string;
 }
 
@@ -136,7 +136,7 @@ export interface MobilePluginHost {
     useLocale(): string;
     usePluginSettings<S = Record<string, unknown>>(): GraphqlResult<S>;
     useUsersBasicInfo(): GraphqlResult<{
-        user: HostUserBasicInfo[];
+        user: readonly HostUserBasicInfo[];
     }>;
 }
 
