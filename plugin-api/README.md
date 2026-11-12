@@ -10,6 +10,11 @@ The contract between the plugin host of the BigBlueButton mobile SDK and its plu
 This folder is its own npm package, with its own dependencies and lockfile. The app does not
 import it yet, and it is not part of the app's install, build, lint or type-check.
 
+Host code in the app must import the built package, never `src/`: Metro does not resolve
+the `.js` import paths in `src/` to their `.ts` files. Under Metro, the root entry resolves
+whether package exports are on or off. The app's `metro.config.js` turns them off, and then
+`./testing` does not resolve; it is meant for a test runner.
+
 ## Status and versioning
 
 The version is `0.x`. **There is no compatibility promise before 1.0: any 0.x release may
