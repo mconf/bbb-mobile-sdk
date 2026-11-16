@@ -1,0 +1,114 @@
+name: Checks
+
+on:
+  pull_request:
+    branches:
+      - mobile-plugins/trunk
+      - master
+  # Two pull requests can each pass and still fail together. So the checks also run on
+  # the result: after each push, and in a merge queue if one is turned on.
+  push:
+    branches:
+      - mobile-plugins/trunk
+      - master
+  merge_group:
+
+permissions:
+  contents: read
+
+concurrency:
+  # A newer run cancels a pending run in its group. Only pull request runs share one;
+  # every other run has its own group, so no push goes unchecked.
+  group: checks-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      # The baseline may not exceed the base's. On a pull request, the base is the first
+      # parent of the checked-out merge commit, so a re-run compares with the same commit.
+      # Elsewhere it is the commit the new commits were added to, so the whole history
+      # is fetched. After a forced push the old tip is not an ancestor, and a new branch
+      # has no old tip, so the base is then HEAD^1.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: ${{ github.event_name == 'pull_request' && 2 || 0 }}
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run lint:baseline
+        env:
+          LINT_BASE_REF: >-
+            ${{ github.event.merge_group.base_sha
+            || (github.event_name == 'push' && !github.event.forced
+            && github.event.before != '0000000000000000000000000000000000000000'
+            && github.event.before)
+            || 'HEAD^1' }}
+
+  typecheck:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+
+  plugin-api:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: plugin-api
+    steps:
+      # api:check compares the version and the API report with the base branch's merge-base
+      # and its current tip, so that two pull requests cannot take the same version.
+      # On a push or in a merge queue the base is one commit.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: |
+            plugin-api/package-lock.json
+            plugin-api/test/react18/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run typecheck
+      - run: npm run test:react18
+      - run: npm run api:check
+        env:
+          API_BASE_REF: >-
+            ${{ github.event.merge_group.base_sha
+            || (github.event_name == 'push' && !github.event.forced
+            && github.event.before != '0000000000000000000000000000000000000000'
+            && github.event.before)
+            || (github.event_name == 'push' && 'HEAD^1')
+            || format('origin/{0}', github.base_ref) }}
