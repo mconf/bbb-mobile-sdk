@@ -134,8 +134,9 @@ The base branch is `origin/mobile-plugins/trunk`; set `API_BASE_REF` to compare 
 ref.
 
 Rule 4 reads the tip too: when two pull requests from one commit raise the version to the
-same value, the second fails once the first has merged. Nothing runs the check at merge
-time, so it catches this only when it runs again after a `git fetch`.
+same value, the second fails once the first has merged. CI runs the check on pull requests,
+after a push to the base branch and in a merge queue. A merge queue fails the second before
+it merges. Without one, the run after the second push fails.
 
 `npm run api:update` rewrites both reports even when API Extractor warns. It fails on an API
 Extractor error, or on a version that breaks rule 1.

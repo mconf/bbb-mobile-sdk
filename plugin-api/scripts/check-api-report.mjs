@@ -19,8 +19,9 @@
 // 0.2.0-beta.1, but 0.2.1, a higher patch, does not.
 //
 // Rule 4 also reads the tip. Two branches can start from one merge-base and raise the
-// version to the same value. Once the first one merges, the check fails on the second,
-// but only when it runs again against a freshly fetched base.
+// version to the same value. Once the first one merges, the check fails on the second
+// when it runs again against a freshly fetched base: in CI, on the second pull request's
+// next run, after the push that merges it, or in a merge queue.
 //
 // --update rewrites both reports. It fails only on an API Extractor error or on rule 1;
 // a warning does not fail it, as with API Extractor's own --local.
