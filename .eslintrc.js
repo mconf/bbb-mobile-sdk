@@ -1,6 +1,6 @@
 module.exports = {
   env: {
-    es2021: true,
+    es2022: true,
   },
   extends: [
     'plugin:react/recommended',
@@ -10,12 +10,18 @@ module.exports = {
     ecmaFeatures: {
       jsx: true,
     },
-    ecmaVersion: 12,
+    ecmaVersion: 2022,
     parser: '@babel/eslint-parser',
     requireConfigFile: false,
     sourceType: 'module',
   },
   plugins: ['react', '@babel'],
+  // .js and .ts files import .ts modules without an extension
+  settings: {
+    'import/resolver': {
+      node: { extensions: ['.js', '.jsx', '.ts', '.tsx'] },
+    },
+  },
   ignorePatterns: [
     // build files
     '**/lib/**',
@@ -73,6 +79,46 @@ module.exports = {
     'brace-style': 'off',
     'import/no-extraneous-dependencies': 'off',
     'consistent-return': 'off',
-    'react/no-array-index-key': 'off'
+    'react/no-array-index-key': 'off',
+    'import/extensions': [
+      'error',
+      'ignorePackages',
+      {
+        js: 'never', mjs: 'never', jsx: 'never', ts: 'never', tsx: 'never',
+      },
+    ],
   },
+  overrides: [
+    {
+      // TypeScript: the rules above plus typescript-eslint's recommended rules (without
+      // type information), with the core rules that do not understand types replaced
+      files: ['*.ts', '*.tsx'],
+      parser: '@typescript-eslint/parser',
+      plugins: ['@typescript-eslint'],
+      extends: ['plugin:@typescript-eslint/recommended'],
+      rules: {
+        'no-undef': 'off',
+        'no-redeclare': 'off',
+        'no-dupe-class-members': 'off',
+        'no-unused-vars': 'off',
+        '@typescript-eslint/no-unused-vars': 'error',
+        'no-shadow': 'off',
+        '@typescript-eslint/no-shadow': 'error',
+        'no-useless-constructor': 'off',
+        '@typescript-eslint/no-useless-constructor': 'error',
+        'no-empty-function': 'off',
+        '@typescript-eslint/no-empty-function': [
+          'error',
+          { allow: ['arrowFunctions', 'functions', 'methods'] },
+        ],
+        'default-param-last': 'off',
+        '@typescript-eslint/default-param-last': 'error',
+        'no-loop-func': 'off',
+        '@typescript-eslint/no-loop-func': 'error',
+        // the types say which props are optional; React 19 has no defaultProps for functions
+        'react/require-default-props': 'off',
+        'react/jsx-filename-extension': ['warn', { extensions: ['.jsx', '.tsx'] }],
+      },
+    },
+  ],
 };
