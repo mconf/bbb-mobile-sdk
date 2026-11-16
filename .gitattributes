@@ -1,0 +1,5 @@
+# airbnb's linebreak-style rule requires LF, so the linted files keep LF in
+# every checkout, also with core.autocrlf set.
+*.js text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf

@@ -1,0 +1,234 @@
+{
+  "index.js": {
+    "import/first": 1,
+    "import/newline-after-import": 1,
+    "import/order": 1
+  },
+  "src/app-content/ActivitySign.js": {
+    "max-len": 1,
+    "react/jsx-no-constructed-context-values": 1
+  },
+  "src/app-instance/create-app-instance.js": {
+    "import/extensions": 2
+  },
+  "src/app-instance/types.ts": {
+    "@typescript-eslint/no-explicit-any": 8
+  },
+  "src/components/actions-bar/audio-device-selector-control/audio-device-selector-modal/styles.js": {
+    "no-unused-vars": 1
+  },
+  "src/components/buttons/primary-button/index.js": {
+    "max-len": 2
+  },
+  "src/components/buttons/primary-button/styles.js": {
+    "implicit-arrow-linebreak": 2,
+    "no-confusing-arrow": 2
+  },
+  "src/components/buttons/toggle-button/index.js": {
+    "import/order": 1,
+    "quotes": 2
+  },
+  "src/components/custom-drawer/drawer-navigator/index.js": {
+    "no-unused-vars": 1,
+    "quotes": 7,
+    "react/jsx-tag-spacing": 1
+  },
+  "src/components/external-video/index.js": {
+    "max-len": 1,
+    "no-console": 1,
+    "no-extra-semi": 2,
+    "no-unused-vars": 1,
+    "object-curly-newline": 2,
+    "quotes": 2
+  },
+  "src/components/external-video/players/styles.js": {
+    "import/order": 1
+  },
+  "src/components/external-video/players/youtube.js": {
+    "arrow-parens": 5,
+    "import/no-duplicates": 3,
+    "import/order": 2,
+    "no-empty": 1,
+    "no-unused-vars": 1,
+    "object-curly-newline": 4,
+    "react/jsx-tag-spacing": 1
+  },
+  "src/components/interactions/index.js": {
+    "semi": 1
+  },
+  "src/components/livekit/camera/controls/index.js": {
+    "object-curly-newline": 2,
+    "padded-blocks": 1,
+    "semi": 1
+  },
+  "src/components/livekit/index.js": {
+    "import/extensions": 2,
+    "max-len": 1
+  },
+  "src/components/livekit/screenshare/controls/index.js": {
+    "max-len": 1
+  },
+  "src/components/livekit/selective-subscription/hooks.ts": {
+    "max-len": 4
+  },
+  "src/components/livekit/selective-subscription/service.ts": {
+    "max-len": 1
+  },
+  "src/components/record/modals/record-controls-modal/index.js": {
+    "no-console": 1
+  },
+  "src/components/record/modals/record-controls-modal/styles.js": {
+    "no-unused-vars": 1
+  },
+  "src/components/record/modals/record-status-modal/index.js": {
+    "prefer-destructuring": 1
+  },
+  "src/components/record/record-indicator/index.js": {
+    "import/no-duplicates": 2,
+    "max-len": 1,
+    "no-unused-vars": 1,
+    "operator-linebreak": 2
+  },
+  "src/components/timer/timerIndicator/index.js": {
+    "import/extensions": 1,
+    "import/order": 1,
+    "max-len": 1,
+    "no-console": 1,
+    "no-extra-semi": 4,
+    "quotes": 1,
+    "semi": 4
+  },
+  "src/components/video/video-controls/index.js": {
+    "no-unused-vars": 1
+  },
+  "src/graphql/hooks/use-join-meeting.js": {
+    "no-console": 21,
+    "semi": 1
+  },
+  "src/graphql/hooks/useGuestPolicy.js": {
+    "no-undef": 1
+  },
+  "src/graphql/hooks/useSetRecordingStatus.js": {
+    "no-console": 1
+  },
+  "src/graphql/hooks/useWhoIsUnmuted.ts": {
+    "object-curly-newline": 2
+  },
+  "src/graphql/mutations/userList.js": {
+    "semi": 1
+  },
+  "src/hooks/listeners/use-modal-listener.js": {
+    "import/extensions": 1,
+    "no-console": 1,
+    "no-extra-semi": 2,
+    "no-useless-return": 2,
+    "object-shorthand": 1,
+    "quotes": 16
+  },
+  "src/screens/breakout-room-screen/index.js": {
+    "implicit-arrow-linebreak": 1,
+    "import/extensions": 1,
+    "import/order": 1,
+    "no-console": 2,
+    "no-else-return": 1,
+    "quotes": 12,
+    "react/jsx-curly-newline": 1,
+    "react/jsx-wrap-multilines": 2,
+    "semi": 1,
+    "spaced-comment": 1
+  },
+  "src/screens/breakout-room-screen/styles.js": {
+    "import/order": 1,
+    "quotes": 1,
+    "radix": 2,
+    "react/jsx-curly-brace-presence": 1
+  },
+  "src/screens/end-session-screen/styles.js": {
+    "no-unused-vars": 1
+  },
+  "src/screens/feedback-screen/email-feedback-screen/styles.js": {
+    "no-unused-vars": 1
+  },
+  "src/screens/feedback-screen/index.js": {
+    "max-len": 1
+  },
+  "src/screens/feedback-screen/problem-feedback-screen/index.js": {
+    "dot-notation": 1,
+    "prefer-destructuring": 2
+  },
+  "src/screens/feedback-screen/specific-problem-feedback-screen/styles.js": {
+    "no-unused-vars": 1
+  },
+  "src/screens/main-conference-screen/index.js": {
+    "no-unused-vars": 1
+  },
+  "src/screens/navigator-handler/index.js": {
+    "react/jsx-wrap-multilines": 1,
+    "semi": 3
+  },
+  "src/screens/navigator-handler/transfer-navigator/index.js": {
+    "import/order": 1
+  },
+  "src/screens/pick-random-user-screen/modal/index.js": {
+    "semi": 1
+  },
+  "src/screens/poll-screen/modals/published-poll/index.js": {
+    "prefer-destructuring": 1
+  },
+  "src/screens/poll-screen/previous-polls-screen/poll-card/index.js": {
+    "no-unused-vars": 3
+  },
+  "src/screens/poll-screen/previous-polls-screen/poll-card/styles.js": {
+    "no-confusing-arrow": 1,
+    "no-unused-vars": 2
+  },
+  "src/screens/timer-screen/TimerPicker/index.js": {
+    "jsx-quotes": 1,
+    "operator-linebreak": 1,
+    "react/jsx-curly-brace-presence": 2,
+    "semi": 1
+  },
+  "src/screens/timer-screen/index.js": {
+    "arrow-parens": 3,
+    "import/extensions": 1,
+    "import/order": 1,
+    "no-console": 1,
+    "no-extra-semi": 7,
+    "no-shadow": 5,
+    "no-unused-vars": 1,
+    "quotes": 14,
+    "react/jsx-curly-brace-presence": 2,
+    "semi": 3
+  },
+  "src/screens/timer-screen/styles.js": {
+    "implicit-arrow-linebreak": 2,
+    "operator-linebreak": 2
+  },
+  "src/screens/user-participants-screen/guest-policy/index.js": {
+    "no-multiple-empty-lines": 1,
+    "no-shadow": 1,
+    "semi": 2
+  },
+  "src/screens/user-participants-screen/queries.js": {
+    "semi": 1
+  },
+  "src/screens/user-participants-screen/waiting-users/index.js": {
+    "arrow-parens": 1,
+    "object-shorthand": 1,
+    "padded-blocks": 1,
+    "semi": 7
+  },
+  "src/store/redux/slices/record-meetings.js": {
+    "max-len": 1,
+    "operator-linebreak": 1
+  },
+  "src/store/redux/slices/uploaded-file.js": {
+    "operator-linebreak": 1
+  },
+  "src/utils/functions/index.js": {
+    "arrow-parens": 2,
+    "no-confusing-arrow": 2,
+    "no-console": 1,
+    "no-else-return": 1
+  }
+}
