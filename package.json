@@ -16,6 +16,7 @@
     "eject": "expo eject",
     "lint": "eslint . --ext .js,.ts,.tsx",
     "lint:file": "eslint",
+    "lint:baseline": "node scripts/eslint-baseline.mjs",
     "build": "babel src/ -d lib/",
     "build:notes-editor": "npm --prefix shared-notes-editor ci && npm --prefix shared-notes-editor run build",
     "prepublish": "npm run build"
