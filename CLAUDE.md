@@ -43,8 +43,10 @@ npm install
 npm start              # expo start --dev-client  (NOT Expo Go â€” native modules require a dev client)
 npm run android        # expo run:android
 npm run ios            # expo run:ios  (Xcode 26.4+, iOS deployment target 16.4)
-npm run lint           # eslint . --ext .js  (airbnb config)
+npm run lint           # eslint . --ext .js,.ts,.tsx  (airbnb config; typescript-eslint on .ts/.tsx)
 npm run lint:file <f>  # lint a single file
+npm run lint:baseline  # the lint gate: problems per file and rule against eslint-baseline.json
+npm run typecheck      # tsc --noEmit --skipLibCheck: the app's type check
 npm run build          # babel src/ -d lib/  â€” transpiles the SDK into lib/ (gitignored); prepublish runs this
 
 # Android gradle troubleshooting: cd android && ./gradlew clean
@@ -83,12 +85,19 @@ only. It is excluded from the root `tsconfig.json` and from ESLint, and the app 
 not import it yet. Every PR that changes anything but documentation attaches a pass
 of the device smoke checklist in `docs/smoke-checklist.md`.
 
-**Typecheck gate for TS edits:** `.ts`/`.tsx` are *not* linted (see Repo hygiene),
-so `npx tsc --noEmit --skipLibCheck` is the only static check of the app; it excludes
-`plugin-api/`, which runs its own `npm run typecheck`. (`tsconfig.json` sets
-`strict: false`; TS 6 flipped the default to strict.) It's clean on `src/`
-â€” the sole errors come from the untracked `tmp-livekit-live.ts` reference file, so
-exclude it (`... | grep -v '^tmp-livekit-live.ts'`). Run it + `npm run build`.
+**CI:** `.github/workflows/checks.yml` runs on every pull request to
+`mobile-plugins/trunk` and `master`, after every push to them, and in a merge queue.
+Its four jobs are `lint` (`npm run lint:baseline`), `typecheck`, `build`, and
+`plugin-api` (`npm test`, `npm run typecheck`, `npm run test:react18` and
+`npm run api:check` against the base branch, or outside a pull request the same base
+as `lint`). It uses no secrets, and it does not replace the device smoke checklist.
+
+**Typecheck gate for TS edits:** `npm run typecheck` (`tsc --noEmit --skipLibCheck`)
+type-checks the app; it excludes `plugin-api/`, which runs its own `npm run typecheck`.
+(`tsconfig.json` sets `strict: false`; TS 6 flipped the default to strict.) It's clean
+on `src/`; locally the sole errors come from the untracked `tmp-livekit-live.ts`
+reference file, so exclude it (`... | grep -v '^tmp-livekit-live.ts'`). Run it,
+`npm run lint:baseline` and `npm run build`; CI runs the same three.
 
 To run standalone: set `dev: true` in `settings.json` and edit the
 `defaultJoinURL` in `App.js` to point at your BBB server's `.../api/join?...` URL.
@@ -315,13 +324,31 @@ code is moved so that it can be shared with a web codebase.
   are live** â€” it's easy to edit the wrong twin and see no effect. Do not create
   new backup files.
 - `.eslintrc.js` **ignores** `lib/`, `android/`, `ios/`, `src/services/` and
-  `socket-connection/` â€” so lint does *not* cover the WebRTC/LiveKit/logger/DDP
-  layer where much of the hard logic lives. It also ignores `shared-notes-editor/`
-  and `plugin-api/`, which have their own toolchains.
-- `npm run lint` is `eslint . --ext .js` â€” **`.ts`/`.tsx` are not linted at all**
-  (tsc is their only checker). A `.js` importing a `.ts` module always emits
-  pre-existing `import/no-unresolved` + `import/extensions` errors (resolver isn't
-  TS-aware) â€” expected repo-wide; diff against HEAD before blaming your edit.
+  `socket-connection/`, and so does the lint baseline in CI. Only the build and the
+  type check of `.ts` files cover the WebRTC/LiveKit/logger/DDP layer, where much of
+  the hard logic lives. `.eslintrc.js` also ignores `shared-notes-editor/` and
+  `plugin-api/`, which have their own toolchains.
+- `npm run lint` covers `.js`, `.ts` and `.tsx`: TS files get typescript-eslint's
+  recommended rules (without type information) on top of the airbnb ones. The import
+  resolver knows `.ts`/`.tsx`, so any file imports a TS module without an extension.
+- **Lint baseline:** `npm run lint` is not clean, so the gate is `npm run lint:baseline`.
+  A file that does not parse always fails it. ESLint's default parser reads `.js` files
+  as ES2022; the Babel parser named in `parserOptions` is not used.
+  `eslint-baseline.json` counts the problems of each file per rule, and may only go
+  down. A count that goes up fails the check: fix the new problem, never raise the
+  baseline. (Counts are compared, not single problems: fixing one problem and adding
+  another of the same rule in the same file passes.) A count that goes down fails it
+  too, until the baseline goes down with it: run `npm run lint:baseline -- --update`
+  and commit `eslint-baseline.json` with the fix. The check also fails when the
+  baseline lists more than the base branch's (`LINT_BASE_REF`, default
+  `origin/mobile-plugins/trunk`; fetch it first). In CI, that base is the merge
+  commit's base parent on a pull request, and the queue's base in a merge queue. After
+  a push it is the previous tip, or `HEAD^1` after a forced push or on a new branch.
+  This comparison starts once the base branch has a baseline. Renames are followed
+  only while git sees them (above 50% similarity), so move a file in a pull request of
+  its own before rewriting it. Only files tracked by git are linted, so backup litter
+  and scratch files don't count; the check names the untracked files it skips, so
+  `git add` a new file before checking it.
 - The `README.md` is stale (claims Node 18 / Expo 52); trust `.nvmrc` and
   `package.json`.
 - **Versioning:** the SDK release version is `package.json` only. `app.json`
