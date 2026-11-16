@@ -57,11 +57,11 @@ Notes:       <anything else seen>
 
 ## Baseline
 
-Recorded on 2026-11-11, on `v0.27.0`.
+Recorded on 2026-11-16, on `v0.27.1`.
 
 ```text
 Smoke checklist pass
-Commit:      dee24c4 (v0.27.0)
+Commit:      368db23 (v0.27.1)
 Build:       debug, ./gradlew app:assembleDebug -PreactNativeArchitectures=arm64-v8a
 Device / OS: Samsung SM-S731B, Android 17
 Server:      BBB 4.1.x-develop (development build), audio bridge livekit, camera bridge livekit, pick-random-user 0.1.3
@@ -72,5 +72,5 @@ S4 Breakout invite:   pass; the microphone is unmuted on entering the room; leav
 S5 Audio-output row:  pass
 S6 Landscape:         fail; the main screen stays in portrait (the root component locks it); in fullscreen the drawer opens, but tapping "Change audio output" throws a render error ("'index' was provided but out of the provided snap points range! expected value to be between -1, 0", from snapToIndex(1) in the actions bar sheet); the screen goes blank and the phone leaves the meeting
 S7 pick-random-user:  pass; the phone user was picked: "You have been randomly picked" with the avatar and name; "Clear All" on the web closes the dialog
-Notes:       the phone joined as a viewer; the web user was moderator and presenter; in S2, "the phone hears the web user" was checked from the Android audio state (an active voice-communication track), not by ear; a dialog (poll, pick-random-user) closes the actions bar sheet
+Notes:       the phone joined as a viewer; the web user was moderator and presenter; in S2, "the phone hears the web user" was checked from the Android audio state, not by ear: the phone plays a voice-communication track while the web user is unmuted, and none while the web user is muted; a dialog (poll, pick-random-user) closes the actions bar sheet
 ```
