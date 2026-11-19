@@ -6,7 +6,7 @@ registerGlobals();
 
 import App from './App';
 
-// export for sdk purposes
+// export for sdk purposes (host apps import this)
 export default App;
 
 // registerRootComponent calls AppRegistry.registerComponent('main', () => App);
@@ -14,5 +14,8 @@ export default App;
 // the environment is set up appropriately
 // Only register root component if you are running the sdk alone.
 if (Settings.dev) {
-  registerRootComponent(App);
+  // In standalone/dev mode, use the standalone wrapper which provides
+  // server URL input and Greenlight room detection
+  const StandaloneApp = require('./standalone/App').default;
+  registerRootComponent(StandaloneApp);
 }
