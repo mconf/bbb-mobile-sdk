@@ -10,5 +10,6 @@
     "skipLibCheck": true,
     "noEmit": true
   },
-  "include": ["src", "test", "vitest.config.ts"]
+  "include": ["src", "test", "vitest.config.ts"],
+  "exclude": ["test/sdk-host"]
 }

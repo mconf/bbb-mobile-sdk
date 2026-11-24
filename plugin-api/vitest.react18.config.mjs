@@ -8,8 +8,11 @@ const path = (relative) => fileURLToPath(new URL(relative, import.meta.url));
 const react18 = path('./test/react18/node_modules/');
 
 export default defineConfig({
+  plugins: base.plugins,
+  oxc: base.oxc,
   resolve: {
     alias: [
+      ...base.resolve.alias,
       { find: /^(react|react-dom)(\/.*)?$/, replacement: `${react18}$1$2` },
       // Testing Library's CommonJS build would load this folder's React 19 with `require`.
       // Its ES module build imports React through the alias above.
