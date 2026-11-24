@@ -3,3 +3,9 @@
 *.js text eol=lf
 *.ts text eol=lf
 *.tsx text eol=lf
+# npm pack packs these as they are on disk; plugin-api's vendor:check compares the
+# result byte for byte, so they keep LF too.
+plugin-api/README.md text eol=lf
+plugin-api/package.json text eol=lf
+plugin-api/LICENSE text eol=lf
+*.tgz binary

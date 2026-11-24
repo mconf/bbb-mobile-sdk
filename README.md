@@ -37,6 +37,22 @@
 
     $ npm install
 
+## Embedding the SDK in an app
+
+The SDK lists the plugin contract, `@mconf/bbb-mobile-plugin-api`, as a peer dependency. The
+contract is not on npm, so the app installs it from this repository's `vendor/` tarball, at
+the same commit as the SDK:
+
+    $ npm install --save-exact ./path/to/mconf-bbb-mobile-plugin-api-<version>.tgz
+
+Install it again, by its path, on every SDK update. The tarball can change while its version
+stays the same. A plain `npm install` then keeps the copy already installed, and `npm ci`
+installs the copy cached under the lockfile's hash, or fails with EINTEGRITY.
+
+npm cannot install it for the app: a git or tarball dependency whose own dependency is a
+`file:` tarball fails to install. Without the contract, npm stops with E404, or, with
+`legacy-peer-deps`, the app's bundler cannot resolve `@mconf/bbb-mobile-plugin-api`.
+
 ## Breakout rooms
 
 Breakout rooms are handled by this same package: a breakout is the root `App`
