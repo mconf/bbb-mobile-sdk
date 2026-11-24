@@ -97,7 +97,7 @@ Use the Node version in the repository's `.nvmrc`.
 | Command | What it does |
 |---|---|
 | `npm ci` | Installs this folder's dependencies. |
-| `npm test` | Runs the unit tests and the conformance cases against the mock host. |
+| `npm test` | Runs the unit tests, the conformance cases against the mock host and the app's host, and the app's host tests. |
 | `npm run test:react18` | Installs React 18.2 in `test/react18`, then runs the same tests on it. |
 | `npm run typecheck` | Type-checks `src/` and `test/`, and `test/sdk-host` with the app's host code. |
 | `npm run build` | Writes `dist/`. |
@@ -139,6 +139,10 @@ they hold signatures, not TSDoc text, and the check cannot see it. Say so in the
 description, and raise the version. A change that leaves the reports, the documented
 behaviour and the conformance cases alone needs at most a higher patch version.
 
+Two changes to the suite promise nothing new, so they need no higher version. One is a todo
+that becomes a test of the rule it names. The other changes how cases are grouped or which
+host runs them; its pull request says which cases it moves.
+
 The base branch is `origin/mobile-plugins/trunk`; set `API_BASE_REF` to compare with another
 ref.
 
@@ -156,8 +160,9 @@ the tip of the base branch only as far as the last fetch.
 
 ### The app's host
 
-The app's plugin host is in the repository's `src/plugins/`. It imports only this package,
-`semver` and React types, so `test/sdk-host/` can test it here; the app has no test runner.
+The app's plugin host is in the repository's `src/plugins/`. Its TypeScript files import only
+this package's types, `semver` and React types, so `test/sdk-host/` can test them here; the
+app has no test runner.
 In CI only this folder is installed, so `vitest.config.ts` resolves the package name to
 `src/index.ts` and `semver` to this folder's copy. `tsconfig.sdk-host.json` type-checks those
 tests and the host code with bundler resolution, since the app's files are not ES modules
@@ -165,10 +170,16 @@ under `nodenext`.
 
 ### Conformance cases
 
-`test/conformance/suite.ts` holds the cases every host must pass. Today they run against the
-mock host. A case that needs host code that does not exist yet is an `it.todo`; it becomes a
-test in the pull request that adds that code.
+`test/conformance/suite.ts` holds the cases every host must pass. They run against the mock
+host and against the app's host (`test/sdk-host/conformance.test.ts`). A case that needs host
+code that does not exist yet is an `it.todo`; it becomes a test in the pull request that adds
+that code.
 
-The suite runs against the mock host too, so that pull request also changes the mock: either
-the mock follows the new rule, or the case skips the mock and the rule is added to the list in
-the TSDoc of `createMockHost`.
+`describeHostConformance` takes the groups of cases a harness runs; the others show as
+skipped. The app's host runs only the groups whose members it provides. The cases on loading
+definitions, such as the host API range check, are in `describeLoaderConformance`. Only a host
+that loads definitions runs them; the mock host does not.
+
+The mock host runs `describeHostConformance` too, so a pull request that turns one of its todos
+into a test also changes the mock. Either the mock follows the new rule, or the case skips the mock and the rule
+joins the list in the TSDoc of `createMockHost`.
