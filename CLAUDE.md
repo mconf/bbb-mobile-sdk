@@ -6,11 +6,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 `bbb-mobile-sdk` is the React Native + Expo client for **BigBlueButton**. It is
 dual-purpose: it runs standalone as an app *and* is published as an embeddable
-React Native SDK. The same root `App` component is `export default`ed from
-`index.js`; it is only registered as the native root via
-`registerRootComponent` when `settings.json` `dev` is `true`. A host app instead
-imports `App` and mounts it itself, passing `joinURL`, `defaultLanguage`, and
-`onLeaveSession` props.
+React Native SDK. The root `App` component is `export default`ed from
+`index.js`. When `settings.json` `dev` is `true`, `index.js` registers `DevRoot`
+(`src/plugins/dev-root.js`) as the native root via `registerRootComponent`;
+`DevRoot` renders `App`. A host app instead imports `App` and mounts it itself,
+passing `joinURL`, `defaultLanguage`, `onLeaveSession` and `plugins` props.
 
 Expo **bare workflow** (SDK 56, RN 0.85, React 19.2, Hermes v1): `android/` and
 `ios/` are committed. Most native config lives in `app.json` (schemes, background
@@ -110,6 +110,9 @@ reference file, so exclude it (`... | grep -v '^tmp-livekit-live.ts'`). Run it,
 
 To run standalone: set `dev: true` in `settings.json` and edit the
 `defaultJoinURL` in `App.js` to point at your BBB server's `.../api/join?...` URL.
+
+`BBB_SDK_DEV_PLUGINS` loads plugins from folders into a standalone build (README,
+"Loading a plugin from a folder").
 
 ## Architecture
 

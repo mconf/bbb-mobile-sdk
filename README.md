@@ -96,6 +96,22 @@ if it results in a error with gradle:
 iOS:
     $ npx expo run:ios
 
+### Loading a plugin from a folder
+
+A standalone development build can load plugins from folders on disk. Set
+`BBB_SDK_DEV_PLUGINS` to the plugin folders, separated as in `PATH`, when Metro starts:
+
+    $ BBB_SDK_DEV_PLUGINS=/path/to/plugin npx expo run:android
+
+Each folder is a package whose entry (`react-native`, else `browser`, else `main`) is its built
+code and whose default export is a plugin definition; Metro watches the folders. After a
+rebuild of a plugin, reload the app: Fast Refresh keeps the plugins created when `App` mounted.
+React, React Native and the plugin contract resolve to this app's copies; host apps run their
+own Metro and never load these folders.
+
+With plugins loaded, leaving the meeting mounts a new `App`, which joins again with fresh
+plugin state.
+
 ## License
 
 bbb-mobile-sdk is released under the [MIT License](https://github.com/mconf/bbb-mobile-sdk/blob/dev/LICENSE.md).
