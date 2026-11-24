@@ -51,14 +51,14 @@ const defaultJoinURL = () => '';
 // AppInstance, so the two never share a store, a LiveKit room or a manager.
 const App = (props) => {
   const {
-    joinURL, defaultLanguage, onLeaveSession, isBreakout = false,
+    joinURL, defaultLanguage, onLeaveSession, isBreakout = false, plugins,
   } = props;
   const _joinURL = joinURL
     || defaultJoinURL();
-  // useState initializer (not useMemo): the instance - and its LiveKit Room -
-  // must be created exactly once per mount. @livekit/react-native disconnects
-  // the room whenever the `room` prop identity changes.
-  const [instance] = useState(() => createAppInstance({ isBreakout: !!isBreakout }));
+  // useState initializer (not useMemo): the instance - its LiveKit Room and the
+  // meeting's plugins - must be created exactly once per mount.
+  // @livekit/react-native disconnects the room whenever the `room` prop identity changes.
+  const [instance] = useState(() => createAppInstance({ isBreakout: !!isBreakout, plugins }));
   // Memoized: the drawer's hardware-back effect depends on it, and a new
   // function per render would re-register that handler on every render.
   const _onLeaveSession = useMemo(

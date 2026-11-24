@@ -53,6 +53,12 @@ npm cannot install it for the app: a git or tarball dependency whose own depende
 `file:` tarball fails to install. Without the contract, npm stops with E404, or, with
 `legacy-peer-deps`, the app's bundler cannot resolve `@mconf/bbb-mobile-plugin-api`.
 
+The app passes its plugins to `App` as `plugins`, a list of definitions made with the
+contract's `definePlugin`. The SDK reads the list once, when `App` mounts, and calls each
+plugin's `create()` for that meeting; a breakout room creates none. The SDK logs and skips a
+plugin whose host API range does not include the SDK's host API version. Of plugins with the
+same name, it keeps the first, and logs and skips the others.
+
 ## Breakout rooms
 
 Breakout rooms are handled by this same package: a breakout is the root `App`

@@ -88,9 +88,10 @@ anything but documentation attaches a pass of the device smoke checklist in
 `docs/smoke-checklist.md`.
 
 The only automated tests are in `plugin-api/` (vitest, run inside that folder). They also
-cover the app's plugin host in `src/plugins/` (`plugin-api/test/sdk-host/`), which imports
-no React Native code so that they can. `plugin-api/` is excluded from the root
-`tsconfig.json` and from ESLint.
+cover the TypeScript files of the app's plugin host in `src/plugins/`, from
+`plugin-api/test/sdk-host/`. Those files import no React Native code, so that vitest
+can run them.
+`plugin-api/` is excluded from the root `tsconfig.json` and from ESLint.
 
 **CI:** `.github/workflows/checks.yml` runs on every pull request to
 `mobile-plugins/trunk` and `master`, after every push to them, and in a merge queue.
@@ -194,7 +195,9 @@ event emitter + room bookkeeping (`liveKitTracker`: connected-once flag,
 published camera tracks), the three WebRTC managers (constructed with the
 instance), the meeting-settings reactive var, the ICE-server cache, the
 audio-join guard, the expected camera stops (`cameraStops`), the client mute
-commands (`muteIntent`) and the LiveKit screen-capture attempt state.
+commands (`muteIntent`) and the LiveKit screen-capture attempt state. It also
+holds the meeting's plugins (`plugins`), which `src/plugins/` builds from the
+`plugins` prop at mount, and which are empty for a breakout room.
 React reads it through `useAppInstance()` / `useLiveKitRoom()` /
 `useMediaManagers()`; managers/bridges receive it by constructor; Redux
 listener effects reach it as `listenerApi.extra`. **Never create a module-level
