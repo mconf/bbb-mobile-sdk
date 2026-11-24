@@ -1,6 +1,12 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import type { DialogAction, MobilePluginHost } from '../../src/index.js';
+import {
+  HOST_API_VERSION,
+  definePlugin,
+  type DialogAction,
+  type MobilePluginDefinition,
+  type MobilePluginHost,
+} from '../../src/index.js';
 import { triggerOf } from '../ready.js';
 
 /**
@@ -28,13 +34,31 @@ const MUTATION = 'mutation Conformance($value: String!) { conformance(value: $va
 const OTHER_MUTATION = 'mutation Other($value: String!) { other(value: $value) }';
 const OK_ACTION: DialogAction = { label: 'OK', kind: 'primary', onPress: () => {} };
 
+/** The groups of cases in {@link describeHostConformance}. */
+export const CONFORMANCE_GROUPS = [
+  'identity', 'users', 'locale', 'settings', 'custom subscription', 'custom mutation',
+  'data channel', 'actions sheet', 'dialogs', 'notices', 'logger',
+] as const;
+
+export type ConformanceGroup = (typeof CONFORMANCE_GROUPS)[number];
+
 /**
  * The cases every host must pass. A case that needs host code that does not exist yet
  * is listed as `it.todo`, so the list shows what the contract promises.
+ *
+ * @param groups - The groups whose members the host provides; the others are skipped.
  */
-export function describeHostConformance(name: string, createHarness: () => HostHarness): void {
+export function describeHostConformance(
+  name: string,
+  createHarness: () => HostHarness,
+  groups: readonly ConformanceGroup[] = CONFORMANCE_GROUPS,
+): void {
+  const group = (title: ConformanceGroup, body: () => void): void => {
+    (groups.includes(title) ? describe : describe.skip)(title, body);
+  };
+
   describe(`host conformance: ${name}`, () => {
-    describe('identity', () => {
+    group('identity', () => {
       it('reports its host API version as a semver version', () => {
         const { host } = createHarness();
         expect(host.hostApiVersion).toMatch(SEMVER);
@@ -45,21 +69,13 @@ export function describeHostConformance(name: string, createHarness: () => HostH
         expect(typeof host.pluginName).toBe('string');
         expect(host.pluginName.trim()).not.toBe('');
       });
-
-      it.todo("gives the plugin the definition's name as pluginName");
     });
 
-    describe('host API range', () => {
-      it.todo("loads a plugin whose range, in npm's full grammar, matches the host version");
-      it.todo('skips and logs a plugin whose range does not match the host version');
-      it.todo('lets a pre-release host version satisfy only a range naming a pre-release of the same major.minor.patch');
-    });
-
-    describe('users', () => {
+    group('users', () => {
       it.todo('lists every user in the meeting, bots included, with bot set on each bot');
     });
 
-    describe('locale', () => {
+    group('locale', () => {
       it('updates when the app language changes', () => {
         const harness = createHarness();
         const { result } = renderHook(() => harness.host.useLocale());
@@ -72,17 +88,17 @@ export function describeHostConformance(name: string, createHarness: () => HostH
       it.todo('turns an app language written with an underscore (pt_BR) into a BCP 47 tag (pt-BR)');
     });
 
-    describe('settings', () => {
+    group('settings', () => {
       it.todo('serves the plugin settings from the copy loaded at join, with no new subscription');
     });
 
-    describe('custom subscription', () => {
+    group('custom subscription', () => {
       it.todo('subscribes again only when the query text, or the variables JSON with sorted top-level keys, changes');
       it.todo('returns the previous result, then loading with no data, then the new data after its arguments change');
       it.todo('goes straight to the new data when another hook already holds the new arguments');
     });
 
-    describe('custom mutation', () => {
+    group('custom mutation', () => {
       it.todo('sets the trigger only once it can send the mutation');
 
       it('resolves when the mutation was sent', async () => {
@@ -183,7 +199,7 @@ export function describeHostConformance(name: string, createHarness: () => HostH
       });
     });
 
-    describe('data channel', () => {
+    group('data channel', () => {
       it.todo('sets pushEntry only once it can write, and drops a replace or delete made before then with a debug log');
       it.todo('returns entries newest first by createdAt');
       it.todo('stays loading until the first data or an error, and never returns an empty list before it');
@@ -197,13 +213,13 @@ export function describeHostConformance(name: string, createHarness: () => HostH
       it.todo('sends nothing to the hooks already mounted when another hook of the same reader mounts');
     });
 
-    describe('actions sheet', () => {
+    group('actions sheet', () => {
       it.todo('keeps the first item with an id, and logs and drops each later item with that id');
       it.todo('opens a selector even when the actions sheet is closed');
       it.todo('logs and ignores openSelector for an id with no selector item, or a pending one');
     });
 
-    describe('dialogs', () => {
+    group('dialogs', () => {
       it('keeps every dialog asked for, in order', () => {
         const harness = createHarness();
         harness.host.dialogs.info({ id: 'first', title: 'First', body: 'Body' });
@@ -282,17 +298,94 @@ export function describeHostConformance(name: string, createHarness: () => HostH
       it.todo('closes a dialog the user dismisses without a button, and calls no action');
     });
 
-    describe('notices', () => {
+    group('notices', () => {
       it.todo('shows a plugin notice after an app notice, never in its place');
     });
 
-    describe('logger', () => {
+    group('logger', () => {
       it('accepts a record at every level', () => {
         const { host } = createHarness();
         (['debug', 'info', 'warn', 'error'] as const).forEach((level) => {
           expect(() => host.logger[level]({ logCode: 'conformance_log' }, 'message')).not.toThrow();
         });
       });
+    });
+  });
+}
+
+/**
+ * What the loader cases need from a host that loads plugin definitions, as a meeting
+ * starts. The mock host loads none: a plugin test passes its own definition to it.
+ */
+export interface LoaderHarness {
+  /** Loads the plugins as a meeting starts, and returns the names of those loaded. */
+  load(definitions: readonly MobilePluginDefinition[]): readonly string[];
+  /** How many warn and error records the host has logged. */
+  problemLogCount(): number;
+}
+
+// Ranges in npm's grammar that include the host version, whatever it is. For a release
+// version they add x-ranges, which never include a pre-release.
+const [MAJOR, MINOR] = HOST_API_VERSION.split('.');
+const MATCHING_RANGES = [
+  HOST_API_VERSION,
+  `=${HOST_API_VERSION}`,
+  `>=${HOST_API_VERSION}`,
+  `${HOST_API_VERSION} - ${HOST_API_VERSION}`,
+  `>=${HOST_API_VERSION} <99999.0.0`,
+  `^${HOST_API_VERSION}`,
+  `~${HOST_API_VERSION}`,
+  `99999.0.0 || ${HOST_API_VERSION}`,
+  ...(HOST_API_VERSION.includes('-') ? [] : [`${MAJOR}.${MINOR}.x`, `${MAJOR}.x`]),
+];
+
+const definitionNamed = (name: string, requiredHostApi = HOST_API_VERSION) => definePlugin({
+  name,
+  requiredHostApi,
+  create: () => ({}),
+});
+
+/** The cases every host that loads plugin definitions must pass. */
+export function describeLoaderConformance(name: string, createHarness: () => LoaderHarness): void {
+  describe(`loader conformance: ${name}`, () => {
+    describe('identity', () => {
+      it("gives the plugin the definition's name as pluginName", () => {
+        const names: string[] = [];
+        const definition = definePlugin({
+          name: 'ConformanceNamedPlugin',
+          requiredHostApi: HOST_API_VERSION,
+          create: (host: MobilePluginHost) => {
+            names.push(host.pluginName);
+            return {};
+          },
+        });
+        createHarness().load([definition]);
+        expect(names).toEqual(['ConformanceNamedPlugin']);
+      });
+    });
+
+    describe('host API range', () => {
+      it("loads a plugin whose range, in npm's full grammar, matches the host version", () => {
+        const harness = createHarness();
+        const definitions = MATCHING_RANGES.map((range, i) => definitionNamed(`Matching${i}`, range));
+        expect(harness.load(definitions)).toEqual(definitions.map((d) => d.name));
+        expect(harness.problemLogCount()).toBe(0);
+      });
+
+      it('skips and logs a plugin whose range does not match the host version', () => {
+        const harness = createHarness();
+        let created = 0;
+        const tooNew = definePlugin({
+          name: 'TooNew',
+          requiredHostApi: '>=99999.0.0',
+          create: () => { created += 1; return {}; },
+        });
+        expect(harness.load([tooNew])).toEqual([]);
+        expect(created).toBe(0);
+        expect(harness.problemLogCount()).toBeGreaterThan(0);
+      });
+
+      it.todo('lets a pre-release host version satisfy only a range naming a pre-release of the same major.minor.patch');
     });
   });
 }
