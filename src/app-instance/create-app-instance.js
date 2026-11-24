@@ -12,6 +12,8 @@ import AudioManager from '../services/webrtc/audio-manager';
 import VideoManager from '../services/webrtc/video-manager';
 import ScreenshareManager from '../services/webrtc/screenshare-manager';
 import { createIceServerCache } from '../services/webrtc/fetch-ice-servers';
+import { createPluginRegistry } from '../plugins/registry';
+import { createPluginHostLog } from '../plugins/app-log';
 
 let instanceCounter = 0;
 
@@ -20,7 +22,7 @@ let instanceCounter = 0;
 // listener middlewares receive the instance as `extra` and reach the managers
 // through it, while the managers only touch `instance.store` lazily (inside
 // methods), never in their constructors.
-export const createAppInstance = ({ isBreakout = false } = {}) => {
+export const createAppInstance = ({ isBreakout = false, plugins = undefined } = {}) => {
   instanceCounter += 1;
 
   /** @type {import('./types').AppInstance} */
@@ -49,6 +51,12 @@ export const createAppInstance = ({ isBreakout = false } = {}) => {
 
   instance.store = createAppStore(instance);
 
+  instance.pluginHostLog = createPluginHostLog(instance.store);
+  instance.plugins = createPluginRegistry(plugins, {
+    isBreakout,
+    log: instance.pluginHostLog.write,
+  });
+
   instance.audioJoinGuard = { inFlight: null };
   instance.invalidateInFlightAudioJoin = () => {
     instance.audioJoinGuard.inFlight = null;
@@ -62,6 +70,7 @@ export const createAppInstance = ({ isBreakout = false } = {}) => {
     if (instance.disposed) return Promise.resolve();
 
     instance.disposed = true;
+    instance.pluginHostLog.dispose();
 
     return instance.disconnectLiveKit({ final: true });
   };
