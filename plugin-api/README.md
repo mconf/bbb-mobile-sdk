@@ -99,7 +99,7 @@ Use the Node version in the repository's `.nvmrc`.
 | `npm ci` | Installs this folder's dependencies. |
 | `npm test` | Runs the unit tests and the conformance cases against the mock host. |
 | `npm run test:react18` | Installs React 18.2 in `test/react18`, then runs the same tests on it. |
-| `npm run typecheck` | Type-checks `src/` and `test/`. |
+| `npm run typecheck` | Type-checks `src/` and `test/`, and `test/sdk-host` with the app's host code. |
 | `npm run build` | Writes `dist/`. |
 | `npm run api:check` | Builds, then checks the API reports and the version rule. |
 | `npm run api:update` | Builds, then rewrites the API reports in `etc/`. |
@@ -153,6 +153,15 @@ Extractor error, or on a version that breaks rule 1.
 A pull request that changes the contract includes the report diff. Right before it merges,
 fetch the base branch, run `npm run api:check` again and paste its output: the check reads
 the tip of the base branch only as far as the last fetch.
+
+### The app's host
+
+The app's plugin host is in the repository's `src/plugins/`. It imports only this package,
+`semver` and React types, so `test/sdk-host/` can test it here; the app has no test runner.
+In CI only this folder is installed, so `vitest.config.ts` resolves the package name to
+`src/index.ts` and `semver` to this folder's copy. `tsconfig.sdk-host.json` type-checks those
+tests and the host code with bundler resolution, since the app's files are not ES modules
+under `nodenext`.
 
 ### Conformance cases
 

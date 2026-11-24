@@ -1,0 +1,18 @@
+{
+  // Type-checks test/sdk-host and the app's host code it imports (../src/plugins).
+  // The app's files are not ES modules under nodenext, as the root package.json has no
+  // "type". So this config resolves imports as the app's bundler, Metro, does.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "verbatimModuleSyntax": false,
+    "paths": {
+      "@mconf/bbb-mobile-plugin-api": ["./src/index.ts"],
+      "react": ["./node_modules/@types/react"],
+      "semver": ["./node_modules/@types/semver"]
+    }
+  },
+  "include": ["test/sdk-host"],
+  "exclude": []
+}

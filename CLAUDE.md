@@ -83,11 +83,14 @@ of SDK 56's `expo/fetch` (only applies to standalone builds of this repo; a host
 app embedding the SDK decides this for itself).
 
 **The app has no test framework** (no jest/mocha/vitest). Do not look for or invent
-a test command for it; verify changes by running the app. The only automated tests
-are in `plugin-api/` (vitest, run inside that folder), and they cover that folder
-only. It is excluded from the root `tsconfig.json` and from ESLint; the app installs it
-from `vendor/` but does not import it yet. Every PR that changes anything but
-documentation attaches a pass of the device smoke checklist in `docs/smoke-checklist.md`.
+a test command for it; verify changes by running the app. Every PR that changes
+anything but documentation attaches a pass of the device smoke checklist in
+`docs/smoke-checklist.md`.
+
+The only automated tests are in `plugin-api/` (vitest, run inside that folder). They also
+cover the app's plugin host in `src/plugins/` (`plugin-api/test/sdk-host/`), which imports
+no React Native code so that they can. `plugin-api/` is excluded from the root
+`tsconfig.json` and from ESLint.
 
 **CI:** `.github/workflows/checks.yml` runs on every pull request to
 `mobile-plugins/trunk` and `master`, after every push to them, and in a merge queue.
