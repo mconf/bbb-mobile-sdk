@@ -64,6 +64,10 @@ npm run build:notes-editor  # rebuilds the BlockNote shared-notes WebView bundle
 #   npm run typecheck        # type-checks src/ and test/; root tsc excludes this folder
 #   npm run api:check        # API report (etc/*.api.md) and the version rule
 #   npm pack                 # tarball that plugins install; it is not published to npm
+#   npm run vendor:update    # repacks it into ../vendor/, which the app installs; then,
+#                            # at the root: npm install --save-dev --save-exact
+#                            #   ./vendor/<the tarball>
+#   npm run vendor:check     # vendor/ and the root lockfile hold a fresh pack (CI runs it)
 # See its README.
 ```
 
@@ -81,16 +85,17 @@ app embedding the SDK decides this for itself).
 **The app has no test framework** (no jest/mocha/vitest). Do not look for or invent
 a test command for it; verify changes by running the app. The only automated tests
 are in `plugin-api/` (vitest, run inside that folder), and they cover that folder
-only. It is excluded from the root `tsconfig.json` and from ESLint, and the app does
-not import it yet. Every PR that changes anything but documentation attaches a pass
-of the device smoke checklist in `docs/smoke-checklist.md`.
+only. It is excluded from the root `tsconfig.json` and from ESLint; the app installs it
+from `vendor/` but does not import it yet. Every PR that changes anything but
+documentation attaches a pass of the device smoke checklist in `docs/smoke-checklist.md`.
 
 **CI:** `.github/workflows/checks.yml` runs on every pull request to
 `mobile-plugins/trunk` and `master`, after every push to them, and in a merge queue.
 Its four jobs are `lint` (`npm run lint:baseline`), `typecheck`, `build`, and
-`plugin-api` (`npm test`, `npm run typecheck`, `npm run test:react18` and
-`npm run api:check` against the base branch, or outside a pull request the same base
-as `lint`). It uses no secrets, and it does not replace the device smoke checklist.
+`plugin-api` (`npm test`, `npm run typecheck`, `npm run test:react18`,
+`npm run vendor:check`, and `npm run api:check` against the base branch, or outside a
+pull request the same base as `lint`). It uses no secrets, and it does not replace the
+device smoke checklist.
 
 **Typecheck gate for TS edits:** `npm run typecheck` (`tsc --noEmit --skipLibCheck`)
 type-checks the app; it excludes `plugin-api/`, which runs its own `npm run typecheck`.

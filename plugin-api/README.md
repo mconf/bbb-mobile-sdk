@@ -7,8 +7,9 @@ The contract between the plugin host of the BigBlueButton mobile SDK and its plu
 - `definePlugin`, which declares a plugin;
 - a mock host for plugin unit tests, under `@mconf/bbb-mobile-plugin-api/testing`.
 
-This folder is its own npm package, with its own dependencies and lockfile. The app does not
-import it yet, and it is not part of the app's install, build, lint or type-check.
+This folder is its own npm package, with its own dependencies and lockfile. The app installs
+its tarball from `vendor/` as a dev dependency, and host apps install the same tarball. It is
+not part of the app's build, lint or type-check.
 
 Host code in the app must import the built package, never `src/`: Metro does not resolve
 the `.js` import paths in `src/` to their `.ts` files. Under Metro, the root entry resolves
@@ -102,6 +103,14 @@ Use the Node version in the repository's `.nvmrc`.
 | `npm run build` | Writes `dist/`. |
 | `npm run api:check` | Builds, then checks the API reports and the version rule. |
 | `npm run api:update` | Builds, then rewrites the API reports in `etc/`. |
+| `npm run vendor:check` | Packs this folder and checks that `../vendor/` and the root lockfile hold that tarball. |
+| `npm run vendor:update` | Packs this folder into `../vendor/`, replacing the older tarball. |
+
+A change here that reaches the tarball (`src/`, `package.json`, this README) needs a new
+tarball: run `npm run vendor:update`, then, at the repository root,
+`npm install --save-dev --save-exact ./vendor/mconf-bbb-mobile-plugin-api-<version>.tgz`.
+Install it by its path: a plain `npm install` keeps the old integrity hash in the lockfile. CI runs
+`vendor:check`.
 
 ### API reports
 

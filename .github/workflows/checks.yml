@@ -103,6 +103,8 @@ jobs:
       - run: npm test
       - run: npm run typecheck
       - run: npm run test:react18
+      # The app installs this package from vendor/; the tarball must match a fresh pack.
+      - run: npm run vendor:check
       - run: npm run api:check
         env:
           API_BASE_REF: >-

@@ -41,6 +41,8 @@
     "test:react18": "npm ci --prefix test/react18 && vitest run --config vitest.react18.config.mjs",
     "api:check": "npm run build && node scripts/check-api-report.mjs",
     "api:update": "npm run build && node scripts/check-api-report.mjs --update",
+    "vendor:check": "node scripts/check-vendor-pack.mjs",
+    "vendor:update": "node scripts/check-vendor-pack.mjs --update",
     "prepack": "npm run build"
   },
   "peerDependencies": {
