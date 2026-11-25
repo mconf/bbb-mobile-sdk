@@ -6,6 +6,7 @@ import type { CameraStopTracker } from '../services/livekit/camera-state';
 import type { MuteIntent } from '../services/webrtc/mute-intent';
 import type { PluginRegistry } from '../plugins/registry';
 import type { DeferredLog } from '../plugins/deferred-log';
+import type { PluginActivationState } from '../plugins/activation-state';
 
 // One AppInstance exists per mounted root `App` (App.js). It owns everything
 // that used to be a module-level singleton, so that a breakout room (a second
@@ -57,6 +58,8 @@ export interface AppInstance {
 
   // The meeting's plugins (src/plugins); empty for a breakout room
   plugins: PluginRegistry;
+  // Which of them are active in the meeting (src/plugins/activation.ts)
+  pluginActivation: PluginActivationState;
   pluginHostLog: DeferredLog;
 
   dispose: () => Promise<void>;

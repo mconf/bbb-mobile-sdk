@@ -14,6 +14,7 @@ import ScreenshareManager from '../services/webrtc/screenshare-manager';
 import { createIceServerCache } from '../services/webrtc/fetch-ice-servers';
 import { createPluginRegistry } from '../plugins/registry';
 import { createPluginHostLog } from '../plugins/app-log';
+import { createPluginActivationState } from '../plugins/activation-state';
 
 let instanceCounter = 0;
 
@@ -56,6 +57,7 @@ export const createAppInstance = ({ isBreakout = false, plugins = undefined } = 
     isBreakout,
     log: instance.pluginHostLog.write,
   });
+  instance.pluginActivation = createPluginActivationState();
 
   instance.audioJoinGuard = { inFlight: null };
   instance.invalidateInFlightAudioJoin = () => {

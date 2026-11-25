@@ -200,7 +200,9 @@ instance), the meeting-settings reactive var, the ICE-server cache, the
 audio-join guard, the expected camera stops (`cameraStops`), the client mute
 commands (`muteIntent`) and the LiveKit screen-capture attempt state. It also
 holds the meeting's plugins (`plugins`), which `src/plugins/` builds from the
-`plugins` prop at mount, and which are empty for a breakout room.
+`plugins` prop at mount, and which are empty for a breakout room. Which of them are
+active (`pluginActivation`) is settled once after the join, from the meeting's plugin
+list and each plugin's `mobile.enabled` setting (`src/plugins/activation.ts`).
 React reads it through `useAppInstance()` / `useLiveKitRoom()` /
 `useMediaManagers()`; managers/bridges receive it by constructor; Redux
 listener effects reach it as `listenerApi.extra`. **Never create a module-level

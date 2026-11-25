@@ -59,6 +59,35 @@ plugin's `create()` for that meeting; a breakout room creates none. The SDK logs
 plugin whose host API range does not include the SDK's host API version. Of plugins with the
 same name, it keeps the first, and logs and skips the others.
 
+A plugin runs only in a meeting whose server turns it on. After the join, the SDK reads the
+meeting's plugin list once: the web plugins the server loaded, or failed to load, from their
+manifests (`pluginManifests`, `pluginManifestsFetchUrl`). If the server rejects a manifest's URL
+or its checksum, or cannot fetch or read the manifest, the list has no row with the plugin's name.
+
+The plugin is active when a manifest with its name loaded with no failure, and when its settings
+in the server's client settings set `mobile.enabled` to `true`:
+
+```yaml
+public:
+  plugins:
+    - name: <the plugin's name>
+      settings:
+        mobile:
+          enabled: true
+```
+
+Any other value, or no setting, leaves the plugin off. So does a list that cannot be read, or a
+load failure the server records at meeting creation (a `requiredSdkVersion` that the server's
+plugin SDK does not satisfy, for example). The `mobile` key goes in the plugin's existing
+`public.plugins` entry, since a `public.plugins` list in an override file replaces the base
+list. The server copies these settings into a meeting when it creates it.
+
+When the read ends, the SDK logs why each plugin is inactive (`plugin_host_not_listed`,
+`plugin_host_load_failed`, `plugin_host_mobile_disabled`), or one `plugin_host_list_unavailable`
+record when the list cannot be read, then one `plugin_host_activation` record. `create()` still
+runs at mount for each plugin the SDK loads; activation decides which of their parts the SDK will
+use. An app with no plugins reads nothing.
+
 ## Breakout rooms
 
 Breakout rooms are handled by this same package: a breakout is the root `App`
