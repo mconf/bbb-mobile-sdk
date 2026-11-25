@@ -13,7 +13,7 @@ export type PluginRegistry = readonly LoadedPlugin[];
 
 export const EMPTY_REGISTRY: PluginRegistry = Object.freeze([]);
 
-const errorInfo = (error: unknown): Record<string, unknown> => ({
+export const errorInfo = (error: unknown): Record<string, unknown> => ({
   errorName: error instanceof Error ? error.name : typeof error,
   errorMessage: error instanceof Error ? error.message : String(error),
 });
