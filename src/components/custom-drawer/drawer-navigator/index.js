@@ -13,6 +13,7 @@ import useMeeting from '../../../graphql/hooks/useMeeting';
 import useUserCount from '../../../graphql/hooks/useUserCount';
 import useModalListener from '../../../hooks/listeners/use-modal-listener';
 import useAppState from '../../../hooks/use-app-state';
+import usePluginActivation from '../../../plugins/use-plugin-activation';
 import BreakoutRoomScreen from '../../../screens/breakout-room-screen';
 import FullscreenWrapperScreen from '../../../screens/fullscreen-wrapper-screen';
 import InsideBreakoutRoomScreen from '../../../screens/inside-breakout-room-screen';
@@ -83,6 +84,7 @@ const DrawerNavigator = ({
   const dispatch = useDispatch();
 
   useModalListener();
+  usePluginActivation();
 
   // Shared by every drawer screen header: recording indicator + camera flip.
   const renderHeaderRight = () => {
