@@ -4,6 +4,7 @@ import {
   HOST_API_VERSION,
   definePlugin,
   type DialogAction,
+  type GraphqlResult,
   type MobilePluginDefinition,
   type MobilePluginHost,
 } from '../../src/index.js';
@@ -27,12 +28,32 @@ export interface HostHarness {
   dialogIds(): readonly string[];
   /** Presses a button of the shown confirm dialog with this id, as the user would. */
   pressDialogAction(id: string, actionIndex: number): void;
+  /**
+   * Gives the subscription with this query and these variables a result. The host may
+   * pass it only to a subscription already started, and only as data or an error.
+   */
+  setSubscriptionResult?(
+    query: string,
+    variables: Record<string, unknown> | undefined,
+    result: GraphqlResult<unknown>,
+  ): void;
+  /** How many times the host subscribed to this query text. */
+  subscriptionCount?(query: string): number;
 }
 
 const SEMVER = /^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$/;
 const MUTATION = 'mutation Conformance($value: String!) { conformance(value: $value) }';
 const OTHER_MUTATION = 'mutation Other($value: String!) { other(value: $value) }';
 const OK_ACTION: DialogAction = { label: 'OK', kind: 'primary', onPress: () => {} };
+const QUERY = 'subscription Conformance($id: Int) { conformance(id: $id) { value } }';
+
+// A harness member a case needs. A case fails on a harness that lacks it, so that
+// harness lists the case in `skip`.
+const member = <K extends keyof HostHarness>(harness: HostHarness, key: K): NonNullable<HostHarness[K]> => {
+  const value = harness[key];
+  if (value === undefined) throw new Error(`the harness has no ${String(key)}`);
+  return value as NonNullable<HostHarness[K]>;
+};
 
 /** The groups of cases in {@link describeHostConformance}. */
 export const CONFORMANCE_GROUPS = [
@@ -47,14 +68,20 @@ export type ConformanceGroup = (typeof CONFORMANCE_GROUPS)[number];
  * is listed as `it.todo`, so the list shows what the contract promises.
  *
  * @param groups - The groups whose members the host provides; the others are skipped.
+ * @param skip - Cases, by title, that the host does not pass; each is skipped. Only the
+ *   cases that need an optional harness member can be skipped this way.
  */
 export function describeHostConformance(
   name: string,
   createHarness: () => HostHarness,
   groups: readonly ConformanceGroup[] = CONFORMANCE_GROUPS,
+  skip: readonly string[] = [],
 ): void {
   const group = (title: ConformanceGroup, body: () => void): void => {
     (groups.includes(title) ? describe : describe.skip)(title, body);
+  };
+  const testCase = (title: string, body: () => void | Promise<void>): void => {
+    (skip.includes(title) ? it.skip : it)(title, body);
   };
 
   describe(`host conformance: ${name}`, () => {
@@ -93,9 +120,54 @@ export function describeHostConformance(
     });
 
     group('custom subscription', () => {
-      it.todo('subscribes again only when the query text, or the variables JSON with sorted top-level keys, changes');
-      it.todo('returns the previous result, then loading with no data, then the new data after its arguments change');
-      it.todo('goes straight to the new data when another hook already holds the new arguments');
+      const watch = (harness: HostHarness, variables: Record<string, unknown>, query = QUERY) => {
+        const seen: GraphqlResult<unknown>[] = [];
+        const view = renderHook((props: { query: string; variables: Record<string, unknown> }) => {
+          const result = harness.host.useCustomSubscription(props.query, { variables: props.variables });
+          seen.push(result);
+          return result;
+        }, { initialProps: { query, variables } });
+        return { ...view, seen };
+      };
+
+      testCase('subscribes again only when the query text, or the variables JSON with sorted top-level keys, changes', () => {
+        const harness = createHarness();
+        const count = member(harness, 'subscriptionCount');
+        const view = watch(harness, { a: 1, b: 2 });
+        expect(count(QUERY)).toBe(1);
+        view.rerender({ query: QUERY, variables: { b: 2, a: 1 } });
+        expect(count(QUERY)).toBe(1);
+        view.rerender({ query: QUERY, variables: { a: 1, b: 3 } });
+        expect(count(QUERY)).toBe(2);
+        view.rerender({ query: `${QUERY} `, variables: { a: 1, b: 3 } });
+        expect(count(`${QUERY} `)).toBe(1);
+      });
+
+      testCase('returns the previous result, then loading with no data, then the new data after its arguments change', () => {
+        const harness = createHarness();
+        const set = member(harness, 'setSubscriptionResult');
+        const view = watch(harness, { id: 1 });
+        act(() => set(QUERY, { id: 1 }, { loading: false, data: 'one' }));
+        const before = view.seen.length;
+        view.rerender({ query: QUERY, variables: { id: 2 } });
+        expect(view.seen[before]).toEqual({ loading: false, data: 'one' });
+        expect(view.result.current).toEqual({ loading: true });
+        act(() => set(QUERY, { id: 2 }, { loading: false, data: 'two' }));
+        expect(view.result.current).toEqual({ loading: false, data: 'two' });
+      });
+
+      testCase('goes straight to the new data when another hook already holds the new arguments', () => {
+        const harness = createHarness();
+        const set = member(harness, 'setSubscriptionResult');
+        watch(harness, { id: 2 });
+        act(() => set(QUERY, { id: 2 }, { loading: false, data: 'two' }));
+        const view = watch(harness, { id: 1 });
+        act(() => set(QUERY, { id: 1 }, { loading: false, data: 'one' }));
+        const before = view.seen.length;
+        view.rerender({ query: QUERY, variables: { id: 2 } });
+        expect(view.seen.slice(before).some((result) => result.loading)).toBe(false);
+        expect(view.result.current).toEqual({ loading: false, data: 'two' });
+      });
     });
 
     group('custom mutation', () => {

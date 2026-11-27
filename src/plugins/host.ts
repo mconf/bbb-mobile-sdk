@@ -4,6 +4,8 @@ import type {
   MobilePluginHost,
   PluginLogger,
 } from '@mconf/bbb-mobile-plugin-api';
+import type { CustomSubscriptions } from './custom-subscriptions';
+import type { PluginGraphqlState } from './graphql-state';
 import type { HostLog, HostLogLevel } from './log';
 import { HOST_API_VERSION } from './version';
 
@@ -26,19 +28,27 @@ const notAvailable = (member: string) => (): never => {
   throw new Error(`${member} is not available in this host version`);
 };
 
+// The App's pieces a plugin host reads; the app creates them with the instance.
+export interface PluginHostServices {
+  useCapabilities?: () => Capabilities;
+  graphql?: { state: PluginGraphqlState; subscriptions: CustomSubscriptions };
+}
+
 // The host object one plugin gets in create(). Members past its identity, its
-// logger and the app's capabilities hook throw.
+// logger and the services the app passed in throw.
 export function createPluginHost(
   definition: MobilePluginDefinition,
   log: HostLog,
-  useCapabilities?: () => Capabilities,
+  { useCapabilities, graphql }: PluginHostServices = {},
 ): MobilePluginHost {
   return {
     hostApiVersion: HOST_API_VERSION,
     pluginName: definition.name,
     useCurrentUser: notAvailable('useCurrentUser'),
     useUsersBasicInfo: notAvailable('useUsersBasicInfo'),
-    useCustomSubscription: notAvailable('useCustomSubscription'),
+    useCustomSubscription: graphql
+      ? graphql.subscriptions.hookFor(definition.name)
+      : notAvailable('useCustomSubscription'),
     useCustomMutation: notAvailable('useCustomMutation'),
     useDataChannel: notAvailable('useDataChannel'),
     usePluginSettings: notAvailable('usePluginSettings'),

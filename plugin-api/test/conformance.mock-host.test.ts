@@ -1,5 +1,6 @@
 import { createMockHost } from '../src/testing/index.js';
-import { describeHostConformance } from './conformance/suite.js';
+import { CONFORMANCE_GROUPS, describeHostConformance } from './conformance/suite.js';
+import { MOCK_SKIPS } from './conformance/mock-skips.js';
 
 describeHostConformance('mock host', () => {
   const { host, controller } = createMockHost();
@@ -10,5 +11,7 @@ describeHostConformance('mock host', () => {
     errorLogCount: () => controller.logs.filter((entry) => entry.level === 'error').length,
     dialogIds: () => controller.dialogs.map((entry) => entry.dialog.id),
     pressDialogAction: (id, actionIndex) => controller.pressDialogAction(id, actionIndex),
+    setSubscriptionResult: (query, _variables, result) => controller.setSubscriptionResult(query, result),
+    subscriptionCount: (query) => controller.subscriptions.filter((entry) => entry.query === query).length,
   };
-});
+}, CONFORMANCE_GROUPS, MOCK_SKIPS);

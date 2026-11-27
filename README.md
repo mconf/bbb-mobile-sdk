@@ -108,6 +108,14 @@ A plugin's `useCapabilities()` reports:
 - `inBreakout`: the user has gone into a breakout room, where the main room's media is off.
 - `placements`: empty. The SDK draws no plugin placement yet.
 
+A part reads the meeting with `useCustomSubscription`, over the App's GraphQL connection.
+Plugin subscriptions skip Apollo's cache, and the SDK's records of them hold no variables.
+
+- Hooks with the same query text and the same variables (their JSON with the top-level keys
+  sorted) share one subscription, across plugins. A subscription that fails keeps its last
+  data with the error, and is not started again until its arguments change or its last hook
+  unmounts. The SDK logs the failure at warn level (`plugin_host_subscription_failed`).
+
 ## Breakout rooms
 
 Breakout rooms are handled by this same package: a breakout is the root `App`

@@ -8,6 +8,7 @@ import type { PluginRegistry } from '../plugins/registry';
 import type { DeferredLog } from '../plugins/deferred-log';
 import type { PluginActivationState } from '../plugins/activation-state';
 import type { PluginCapabilitiesState } from '../plugins/capabilities';
+import type { PluginGraphqlState } from '../plugins/graphql-state';
 
 // One AppInstance exists per mounted root `App` (App.js). It owns everything
 // that used to be a module-level singleton, so that a breakout room (a second
@@ -63,6 +64,8 @@ export interface AppInstance {
   pluginActivation: PluginActivationState;
   // What their useCapabilities() returns (src/plugins/capabilities.ts)
   pluginCapabilities: PluginCapabilitiesState;
+  // The GraphQL client their custom subscriptions use (src/plugins/graphql-state.ts)
+  pluginGraphql: PluginGraphqlState;
   pluginHostLog: DeferredLog;
 
   dispose: () => Promise<void>;

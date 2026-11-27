@@ -1,6 +1,9 @@
 import { HOST_API_VERSION, definePlugin, type MobilePluginHost } from '@mconf/bbb-mobile-plugin-api';
 import { createPluginRegistry } from '../../../src/plugins/registry';
+import { createPluginGraphqlState } from '../../../src/plugins/graphql-state';
+import { createCustomSubscriptions } from '../../../src/plugins/custom-subscriptions';
 import type { HostLog, HostLogLevel } from '../../../src/plugins/log';
+import { createFakeTransport } from './fake-transport';
 import {
   describeHostConformance,
   describeLoaderConformance,
@@ -23,12 +26,22 @@ const unsupported = (what: string) => (): never => {
 
 describeHostConformance('SDK host', (): HostHarness => {
   const { log, count } = recorder();
-  let host: MobilePluginHost | undefined;
-  createPluginRegistry([definePlugin({
-    name: 'ConformancePlugin',
+  // A plugin of one App on a fake transport.
+  const fake = createFakeTransport();
+  const state = createPluginGraphqlState();
+  state.setTransport(fake.transport);
+  const hosts = new Map<string, MobilePluginHost>();
+  const plugin = (name: string) => definePlugin({
+    name,
     requiredHostApi: HOST_API_VERSION,
-    create: (h) => { host = h; return {}; },
-  })], { isBreakout: false, log });
+    create: (h) => { hosts.set(name, h); return {}; },
+  });
+  createPluginRegistry([plugin('ConformancePlugin')], {
+    isBreakout: false,
+    log,
+    graphql: { state, subscriptions: createCustomSubscriptions(state, log) },
+  });
+  const host = hosts.get('ConformancePlugin');
   if (!host) throw new Error('the SDK host did not create the plugin');
   return {
     host,
@@ -37,8 +50,10 @@ describeHostConformance('SDK host', (): HostHarness => {
     errorLogCount: () => count('error'),
     dialogIds: unsupported('dialogIds'),
     pressDialogAction: unsupported('pressDialogAction'),
+    setSubscriptionResult: (query, variables, result) => fake.push(query, variables, result),
+    subscriptionCount: (query) => fake.subscriptionCount(query),
   };
-}, ['identity', 'logger']);
+}, ['identity', 'logger', 'custom subscription']);
 
 describeLoaderConformance('SDK host', (): LoaderHarness => {
   const { log, count } = recorder();

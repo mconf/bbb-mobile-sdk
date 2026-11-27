@@ -16,6 +16,8 @@ import { createPluginRegistry } from '../plugins/registry';
 import { createPluginHostLog } from '../plugins/app-log';
 import { createPluginActivationState } from '../plugins/activation-state';
 import { createPluginCapabilitiesState } from '../plugins/capabilities';
+import { createCustomSubscriptions } from '../plugins/custom-subscriptions';
+import { createPluginGraphqlState } from '../plugins/graphql-state';
 
 let instanceCounter = 0;
 
@@ -55,10 +57,16 @@ export const createAppInstance = ({ isBreakout = false, plugins = undefined } = 
 
   instance.pluginHostLog = createPluginHostLog(instance.store);
   instance.pluginCapabilities = createPluginCapabilitiesState();
+  instance.pluginGraphql = createPluginGraphqlState();
+  const log = instance.pluginHostLog.write;
   instance.plugins = createPluginRegistry(plugins, {
     isBreakout,
-    log: instance.pluginHostLog.write,
+    log,
     useCapabilities: instance.pluginCapabilities.useCapabilities,
+    graphql: {
+      state: instance.pluginGraphql,
+      subscriptions: createCustomSubscriptions(instance.pluginGraphql, log),
+    },
   });
   instance.pluginActivation = createPluginActivationState();
 

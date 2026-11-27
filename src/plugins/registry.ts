@@ -1,7 +1,7 @@
-import type { Capabilities, MobilePluginHost, PluginParts } from '@mconf/bbb-mobile-plugin-api';
+import type { MobilePluginHost, PluginParts } from '@mconf/bbb-mobile-plugin-api';
 import { selectPlugins } from './definitions';
-import { createPluginHost } from './host';
-import type { HostLog } from './log';
+import { createPluginHost, type PluginHostServices } from './host';
+import { errorInfo, type HostLog } from './log';
 
 export interface LoadedPlugin {
   readonly name: string;
@@ -13,28 +13,22 @@ export type PluginRegistry = readonly LoadedPlugin[];
 
 export const EMPTY_REGISTRY: PluginRegistry = Object.freeze([]);
 
-export const errorInfo = (error: unknown): Record<string, unknown> => ({
-  errorName: error instanceof Error ? error.name : typeof error,
-  errorMessage: error instanceof Error ? error.message : String(error),
-});
-
 // Creates the meeting's plugins: create() runs once for each plugin the host
 // loads, and what it returns is the plugin's state for this meeting. A create()
 // that throws, or that returns a promise or no object, drops only that plugin.
 export function createPluginRegistry(
   list: unknown,
-  { isBreakout, log, useCapabilities }: {
+  { isBreakout, log, ...services }: {
     isBreakout: boolean;
     log: HostLog;
-    useCapabilities?: () => Capabilities;
-  },
+  } & PluginHostServices,
 ): PluginRegistry {
   if (isBreakout) return EMPTY_REGISTRY;
 
   const loaded: LoadedPlugin[] = [];
   selectPlugins(list, log).forEach((definition) => {
     const { name } = definition;
-    const host = createPluginHost(definition, log, useCapabilities);
+    const host = createPluginHost(definition, log, services);
     let parts: unknown;
     try {
       parts = definition.create(host);
