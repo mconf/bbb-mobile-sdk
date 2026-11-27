@@ -13,6 +13,7 @@ import useMeeting from '../../../graphql/hooks/useMeeting';
 import useUserCount from '../../../graphql/hooks/useUserCount';
 import useModalListener from '../../../hooks/listeners/use-modal-listener';
 import useAppState from '../../../hooks/use-app-state';
+import AppPluginHeadlessParts from '../../../plugins/app-headless-parts';
 import usePluginActivation from '../../../plugins/use-plugin-activation';
 import usePluginCapabilities from '../../../plugins/use-plugin-capabilities';
 import BreakoutRoomScreen from '../../../screens/breakout-room-screen';
@@ -305,6 +306,7 @@ const DrawerNavigator = ({
       </Drawer.Navigator >
       <NotifeeController />
       <ActivitySignProvider />
+      <AppPluginHeadlessParts />
       {!mainRoomBlockedByBreakout && <ChatPopupList />}
     </>
   );

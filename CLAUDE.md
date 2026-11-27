@@ -204,7 +204,9 @@ holds the meeting's plugins (`plugins`), which `src/plugins/` builds from the
 active (`pluginActivation`) is settled once after the join, from the meeting's plugin
 list and each plugin's `mobile.enabled` setting (`src/plugins/activation.ts`).
 Their `useCapabilities` reads `pluginCapabilities`, which `DrawerNavigator` keeps in step
-with the meeting (`src/plugins/use-plugin-capabilities.js`). React reads the instance through
+with the meeting (`src/plugins/use-plugin-capabilities.js`). `DrawerNavigator` also mounts
+the active plugins' `Headless` parts while the user is logged in
+(`src/plugins/headless-parts.ts`). React reads the instance through
 `useAppInstance()` / `useLiveKitRoom()` /
 `useMediaManagers()`; managers/bridges receive it by constructor; Redux
 listener effects reach it as `listenerApi.extra`. **Never create a module-level
