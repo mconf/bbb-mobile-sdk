@@ -91,10 +91,11 @@ const createLateFailureHarness = (): HostHarness => {
     pressDialogAction: (id, actionIndex) => controller.pressDialogAction(id, actionIndex),
     setSubscriptionResult: (query, _variables, result) => controller.setSubscriptionResult(query, result),
     subscriptionCount: (query) => controller.subscriptions.filter((entry) => entry.query === query).length,
+    otherPluginHost: () => createLateFailureHarness().host,
   };
 };
 
-// Its subscriptions are the mock's.
+// Its subscriptions are the mock's, and its triggers are set from the first render.
 describeHostConformance(NAME, createLateFailureHarness, CONFORMANCE_GROUPS, MOCK_SKIPS);
 
 // The mock host ends a call one microtask after it starts, too soon for a test to let time

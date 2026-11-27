@@ -13,5 +13,7 @@ describeHostConformance('mock host', () => {
     pressDialogAction: (id, actionIndex) => controller.pressDialogAction(id, actionIndex),
     setSubscriptionResult: (query, _variables, result) => controller.setSubscriptionResult(query, result),
     subscriptionCount: (query) => controller.subscriptions.filter((entry) => entry.query === query).length,
+    // A second mock: each serves one plugin, so they share nothing.
+    otherPluginHost: () => createMockHost().host,
   };
 }, CONFORMANCE_GROUPS, MOCK_SKIPS);

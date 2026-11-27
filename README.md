@@ -108,13 +108,22 @@ A plugin's `useCapabilities()` reports:
 - `inBreakout`: the user has gone into a breakout room, where the main room's media is off.
 - `placements`: empty. The SDK draws no plugin placement yet.
 
-A part reads the meeting with `useCustomSubscription`, over the App's GraphQL connection.
-Plugin subscriptions skip Apollo's cache, and the SDK's records of them hold no variables.
+A part reads and writes the meeting with `useCustomSubscription` and `useCustomMutation`, over
+the App's GraphQL connection. Plugin operations skip Apollo's cache, and the SDK's records of
+them hold no variables.
 
 - Hooks with the same query text and the same variables (their JSON with the top-level keys
   sorted) share one subscription, across plugins. A subscription that fails keeps its last
   data with the error, and is not started again until its arguments change or its last hook
   unmounts. The SDK logs the failure at warn level (`plugin_host_subscription_failed`).
+- A mutation's trigger is `null` until its hook has mounted and the App's GraphQL socket has
+  first opened. It stays set after, and its promise never rejects.
+- A call made while the socket is closed fails at once, so it is never kept for later. A call
+  whose variables are over 10 MB fails at once too.
+- A failed call is logged at error level (`plugin_host_mutation_failed`). It shows in the
+  hook's state if it is still the plugin's last call of that mutation. A call through a kept
+  trigger after the plugin's last hook with that mutation unmounted is dropped and logged at
+  debug level (`plugin_host_mutation_dropped`).
 
 ## Breakout rooms
 

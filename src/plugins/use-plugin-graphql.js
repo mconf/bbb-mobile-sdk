@@ -4,8 +4,9 @@ import { useAppInstance } from '../app-instance/context';
 import { withoutPatchedNames } from './patched-names';
 
 // The plugins' GraphQL transport (graphql-state.ts) on this App's Apollo client.
-// Plugin subscriptions skip Apollo's cache, as they do on the web client. gql() throws
-// on a document that does not parse; the host turns that into a failed subscription.
+// Plugin operations skip Apollo's cache. On the web client only subscriptions do, but
+// the host reads no mutation result. gql() throws on a document that does not parse;
+// the host turns that into a failed subscription or call.
 const createApolloTransport = (client) => ({
   subscribe: (query, variables, observer) => {
     const subscription = client
@@ -16,6 +17,11 @@ const createApolloTransport = (client) => ({
       });
     return () => subscription.unsubscribe();
   },
+  mutate: (mutation, variables) => client.mutate({
+    mutation: gql(mutation),
+    variables,
+    fetchPolicy: 'no-cache',
+  }),
 });
 
 // Gives the plugin host this App's Apollo client, which exists only once the user
