@@ -64,7 +64,8 @@ export interface AppInstance {
   pluginActivation: PluginActivationState;
   // What their useCapabilities() returns (src/plugins/capabilities.ts)
   pluginCapabilities: PluginCapabilitiesState;
-  // The GraphQL client their custom subscriptions use (src/plugins/graphql-state.ts)
+  // The GraphQL client and socket their custom subscriptions and mutations use
+  // (src/plugins/graphql-state.ts)
   pluginGraphql: PluginGraphqlState;
   pluginHostLog: DeferredLog;
 

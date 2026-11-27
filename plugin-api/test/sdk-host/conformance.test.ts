@@ -26,34 +26,39 @@ const unsupported = (what: string) => (): never => {
 
 describeHostConformance('SDK host', (): HostHarness => {
   const { log, count } = recorder();
-  // A plugin of one App on a fake transport.
+  // Two plugins of one App on a fake transport, connected.
   const fake = createFakeTransport();
   const state = createPluginGraphqlState();
   state.setTransport(fake.transport);
+  state.setConnected(true);
   const hosts = new Map<string, MobilePluginHost>();
   const plugin = (name: string) => definePlugin({
     name,
     requiredHostApi: HOST_API_VERSION,
     create: (h) => { hosts.set(name, h); return {}; },
   });
-  createPluginRegistry([plugin('ConformancePlugin')], {
+  createPluginRegistry([plugin('ConformancePlugin'), plugin('OtherPlugin')], {
     isBreakout: false,
     log,
     graphql: { state, subscriptions: createCustomSubscriptions(state, log) },
   });
   const host = hosts.get('ConformancePlugin');
-  if (!host) throw new Error('the SDK host did not create the plugin');
+  const other = hosts.get('OtherPlugin');
+  if (!host || !other) throw new Error('the SDK host did not create the plugins');
   return {
     host,
     setLocale: unsupported('setLocale'),
-    failMutation: unsupported('failMutation'),
+    failMutation: (mutation, error) => fake.failMutation(mutation, error),
     errorLogCount: () => count('error'),
     dialogIds: unsupported('dialogIds'),
     pressDialogAction: unsupported('pressDialogAction'),
     setSubscriptionResult: (query, variables, result) => fake.push(query, variables, result),
     subscriptionCount: (query) => fake.subscriptionCount(query),
+    // The socket opened before the case starts, so only the client can be missing.
+    setCanSend: (canSend) => state.setTransport(canSend ? fake.transport : null),
+    otherPluginHost: () => other,
   };
-}, ['identity', 'logger', 'custom subscription']);
+}, ['identity', 'logger', 'custom subscription', 'custom mutation']);
 
 describeLoaderConformance('SDK host', (): LoaderHarness => {
   const { log, count } = recorder();

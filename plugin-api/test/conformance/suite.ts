@@ -39,6 +39,10 @@ export interface HostHarness {
   ): void;
   /** How many times the host subscribed to this query text. */
   subscriptionCount?(query: string): number;
+  /** Lets the host send mutations, or stops it. */
+  setCanSend?(canSend: boolean): void;
+  /** The host of a second plugin in the same app. */
+  otherPluginHost?(): MobilePluginHost;
 }
 
 const SEMVER = /^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$/;
@@ -171,7 +175,15 @@ export function describeHostConformance(
     });
 
     group('custom mutation', () => {
-      it.todo('sets the trigger only once it can send the mutation');
+      testCase('sets the trigger only once it can send the mutation', () => {
+        const harness = createHarness();
+        const setCanSend = member(harness, 'setCanSend');
+        setCanSend(false);
+        const { result } = renderHook(() => harness.host.useCustomMutation<{ value: string }>(MUTATION));
+        expect(result.current[0]).toBeNull();
+        act(() => setCanSend(true));
+        expect(result.current[0]).not.toBeNull();
+      });
 
       it('resolves when the mutation was sent', async () => {
         const harness = createHarness();
@@ -239,7 +251,17 @@ export function describeHostConformance(
         expect(harness.errorLogCount()).toBe(errorsBefore);
       });
 
-      it.todo("never shows another plugin's calls in a plugin's mutation state");
+      testCase("never shows another plugin's calls in a plugin's mutation state", async () => {
+        const harness = createHarness();
+        const other = member(harness, 'otherPluginHost')();
+        harness.failMutation(MUTATION, new Error('refused'));
+        const mine = renderHook(() => harness.host.useCustomMutation<{ value: string }>(MUTATION));
+        const theirs = renderHook(() => other.useCustomMutation<{ value: string }>(MUTATION));
+        await waitFor(() => expect(theirs.result.current[0]).not.toBeNull());
+        await act(async () => { await triggerOf(theirs.result.current)({ variables: { value: 'a' } }); });
+        await waitFor(() => expect(theirs.result.current[1].loading).toBe(false));
+        expect(mine.result.current[1]).toEqual({ loading: false });
+      });
 
       it('never rejects: a failure is logged and shows in the mutation state', async () => {
         const harness = createHarness();

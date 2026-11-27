@@ -29,7 +29,7 @@ const useJoinMeeting = (url) => {
   const wsClientRef = useRef(null);
   const dispatch = useDispatch();
   // Meeting settings live on the App instance (a nested breakout App has its own)
-  const { setMeetingSettings } = useAppInstance();
+  const { setMeetingSettings, pluginGraphql } = useAppInstance();
 
   async function requestSessionToken() {
     fetch(`${url}`)
@@ -173,11 +173,14 @@ const useJoinMeeting = (url) => {
             }, 'Main websocket connection error');
             console.error(`Error: on subscription to server: ${JSON.stringify(error, null, 2)}`);
           },
+          // pluginGraphql sends plugin mutations only while the socket is open.
           closed: () => {
             console.warn('socket closed');
+            pluginGraphql.setConnected(false);
           },
           connected: () => {
             console.log('socket connected');
+            pluginGraphql.setConnected(true);
           },
           connecting: () => {
             console.log('socket connecting');

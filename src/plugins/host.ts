@@ -4,6 +4,7 @@ import type {
   MobilePluginHost,
   PluginLogger,
 } from '@mconf/bbb-mobile-plugin-api';
+import { createCustomMutations } from './custom-mutations';
 import type { CustomSubscriptions } from './custom-subscriptions';
 import type { PluginGraphqlState } from './graphql-state';
 import type { HostLog, HostLogLevel } from './log';
@@ -49,7 +50,9 @@ export function createPluginHost(
     useCustomSubscription: graphql
       ? graphql.subscriptions.hookFor(definition.name)
       : notAvailable('useCustomSubscription'),
-    useCustomMutation: notAvailable('useCustomMutation'),
+    useCustomMutation: graphql
+      ? createCustomMutations(definition.name, graphql.state, log).useCustomMutation
+      : notAvailable('useCustomMutation'),
     useDataChannel: notAvailable('useDataChannel'),
     usePluginSettings: notAvailable('usePluginSettings'),
     useLocale: notAvailable('useLocale'),
