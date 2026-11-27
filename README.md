@@ -88,6 +88,16 @@ record when the list cannot be read, then one `plugin_host_activation` record. `
 runs at mount for each plugin the SDK loads; activation decides which of their parts the SDK will
 use. An app with no plugins reads nothing.
 
+Once the list is read, the SDK mounts the `Headless` part of each active plugin. The part stays
+mounted while the user is in the meeting: across the in-meeting screens, fullscreen and a
+breakout room. It unmounts before the feedback screens open, when the user leaves, the meeting
+ends or the user is removed. A leave with Android's back button unmounts it with `App`.
+
+A part that throws in render, in an effect or in a cleanup stops, and the rest of the meeting
+goes on. A cleanup that throws as `App` unmounts reaches the host app. The SDK logs a failed part
+at error level (`plugin_host_part_failed`), and each mount and unmount at debug level
+(`plugin_host_part_mounted`, `plugin_host_part_unmounted`).
+
 A plugin's `useCapabilities()` reports:
 
 - `mediaGroupAudioRouting`: the meeting's `audioBridge` is `livekit` and selective subscription
