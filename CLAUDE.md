@@ -203,7 +203,9 @@ holds the meeting's plugins (`plugins`), which `src/plugins/` builds from the
 `plugins` prop at mount, and which are empty for a breakout room. Which of them are
 active (`pluginActivation`) is settled once after the join, from the meeting's plugin
 list and each plugin's `mobile.enabled` setting (`src/plugins/activation.ts`).
-React reads it through `useAppInstance()` / `useLiveKitRoom()` /
+Their `useCapabilities` reads `pluginCapabilities`, which `DrawerNavigator` keeps in step
+with the meeting (`src/plugins/use-plugin-capabilities.js`). React reads the instance through
+`useAppInstance()` / `useLiveKitRoom()` /
 `useMediaManagers()`; managers/bridges receive it by constructor; Redux
 listener effects reach it as `listenerApi.extra`. **Never create a module-level
 `Room`, manager or `makeVar` for session state again.** The only module-level

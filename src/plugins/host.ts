@@ -1,4 +1,5 @@
 import type {
+  Capabilities,
   MobilePluginDefinition,
   MobilePluginHost,
   PluginLogger,
@@ -25,11 +26,12 @@ const notAvailable = (member: string) => (): never => {
   throw new Error(`${member} is not available in this host version`);
 };
 
-// The host object one plugin gets in create(). Members past its identity and its
-// logger throw.
+// The host object one plugin gets in create(). Members past its identity, its
+// logger and the app's capabilities hook throw.
 export function createPluginHost(
   definition: MobilePluginDefinition,
   log: HostLog,
+  useCapabilities?: () => Capabilities,
 ): MobilePluginHost {
   return {
     hostApiVersion: HOST_API_VERSION,
@@ -41,7 +43,7 @@ export function createPluginHost(
     useDataChannel: notAvailable('useDataChannel'),
     usePluginSettings: notAvailable('usePluginSettings'),
     useLocale: notAvailable('useLocale'),
-    useCapabilities: notAvailable('useCapabilities'),
+    useCapabilities: useCapabilities ?? notAvailable('useCapabilities'),
     setActionsSheetItems: notAvailable('setActionsSheetItems'),
     openSelector: notAvailable('openSelector'),
     dialogs: {

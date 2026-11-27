@@ -88,6 +88,16 @@ record when the list cannot be read, then one `plugin_host_activation` record. `
 runs at mount for each plugin the SDK loads; activation decides which of their parts the SDK will
 use. An app with no plugins reads nothing.
 
+A plugin's `useCapabilities()` reports:
+
+- `mediaGroupAudioRouting`: the meeting's `audioBridge` is `livekit` and selective subscription
+  is on (`public.media.livekit.selectiveSubscription.enabled`, on when unset). Under that
+  condition the SDK subscribes to audio by media group. It is `false` until the meeting data
+  arrives.
+- `mediaGroupCameraRouting`: always `false`. The SDK does not route cameras by media group.
+- `inBreakout`: the user has gone into a breakout room, where the main room's media is off.
+- `placements`: empty. The SDK draws no plugin placement yet.
+
 ## Breakout rooms
 
 Breakout rooms are handled by this same package: a breakout is the root `App`

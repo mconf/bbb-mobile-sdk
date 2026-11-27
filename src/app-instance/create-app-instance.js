@@ -15,6 +15,7 @@ import { createIceServerCache } from '../services/webrtc/fetch-ice-servers';
 import { createPluginRegistry } from '../plugins/registry';
 import { createPluginHostLog } from '../plugins/app-log';
 import { createPluginActivationState } from '../plugins/activation-state';
+import { createPluginCapabilitiesState } from '../plugins/capabilities';
 
 let instanceCounter = 0;
 
@@ -53,9 +54,11 @@ export const createAppInstance = ({ isBreakout = false, plugins = undefined } = 
   instance.store = createAppStore(instance);
 
   instance.pluginHostLog = createPluginHostLog(instance.store);
+  instance.pluginCapabilities = createPluginCapabilitiesState();
   instance.plugins = createPluginRegistry(plugins, {
     isBreakout,
     log: instance.pluginHostLog.write,
+    useCapabilities: instance.pluginCapabilities.useCapabilities,
   });
   instance.pluginActivation = createPluginActivationState();
 
