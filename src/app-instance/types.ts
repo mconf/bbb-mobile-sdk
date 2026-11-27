@@ -7,6 +7,7 @@ import type { MuteIntent } from '../services/webrtc/mute-intent';
 import type { PluginRegistry } from '../plugins/registry';
 import type { DeferredLog } from '../plugins/deferred-log';
 import type { PluginActivationState } from '../plugins/activation-state';
+import type { PluginCapabilitiesState } from '../plugins/capabilities';
 
 // One AppInstance exists per mounted root `App` (App.js). It owns everything
 // that used to be a module-level singleton, so that a breakout room (a second
@@ -60,6 +61,8 @@ export interface AppInstance {
   plugins: PluginRegistry;
   // Which of them are active in the meeting (src/plugins/activation.ts)
   pluginActivation: PluginActivationState;
+  // What their useCapabilities() returns (src/plugins/capabilities.ts)
+  pluginCapabilities: PluginCapabilitiesState;
   pluginHostLog: DeferredLog;
 
   dispose: () => Promise<void>;

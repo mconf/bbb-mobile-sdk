@@ -1,4 +1,4 @@
-import type { MobilePluginHost, PluginParts } from '@mconf/bbb-mobile-plugin-api';
+import type { Capabilities, MobilePluginHost, PluginParts } from '@mconf/bbb-mobile-plugin-api';
 import { selectPlugins } from './definitions';
 import { createPluginHost } from './host';
 import type { HostLog } from './log';
@@ -23,14 +23,18 @@ export const errorInfo = (error: unknown): Record<string, unknown> => ({
 // that throws, or that returns a promise or no object, drops only that plugin.
 export function createPluginRegistry(
   list: unknown,
-  { isBreakout, log }: { isBreakout: boolean; log: HostLog },
+  { isBreakout, log, useCapabilities }: {
+    isBreakout: boolean;
+    log: HostLog;
+    useCapabilities?: () => Capabilities;
+  },
 ): PluginRegistry {
   if (isBreakout) return EMPTY_REGISTRY;
 
   const loaded: LoadedPlugin[] = [];
   selectPlugins(list, log).forEach((definition) => {
     const { name } = definition;
-    const host = createPluginHost(definition, log);
+    const host = createPluginHost(definition, log, useCapabilities);
     let parts: unknown;
     try {
       parts = definition.create(host);
