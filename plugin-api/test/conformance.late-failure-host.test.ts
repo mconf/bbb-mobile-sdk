@@ -7,7 +7,8 @@ import {
 } from 'vitest';
 import type { MobilePluginHost, MutationState, MutationTrigger } from '../src/index.js';
 import { createMockHost } from '../src/testing/index.js';
-import { describeHostConformance, type HostHarness } from './conformance/suite.js';
+import { CONFORMANCE_GROUPS, describeHostConformance, type HostHarness } from './conformance/suite.js';
+import { MOCK_SKIPS } from './conformance/mock-skips.js';
 import { triggerOf } from './ready.js';
 
 const NAME = 'host that reports a failure after the send';
@@ -88,10 +89,13 @@ const createLateFailureHarness = (): HostHarness => {
     errorLogCount: () => controller.logs.filter((entry) => entry.level === 'error').length,
     dialogIds: () => controller.dialogs.map((entry) => entry.dialog.id),
     pressDialogAction: (id, actionIndex) => controller.pressDialogAction(id, actionIndex),
+    setSubscriptionResult: (query, _variables, result) => controller.setSubscriptionResult(query, result),
+    subscriptionCount: (query) => controller.subscriptions.filter((entry) => entry.query === query).length,
   };
 };
 
-describeHostConformance(NAME, createLateFailureHarness);
+// Its subscriptions are the mock's.
+describeHostConformance(NAME, createLateFailureHarness, CONFORMANCE_GROUPS, MOCK_SKIPS);
 
 // The mock host ends a call one microtask after it starts, too soon for a test to let time
 // pass while the call is in flight. This host's delay lets a test do that.

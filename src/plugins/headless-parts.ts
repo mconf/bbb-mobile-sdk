@@ -8,8 +8,7 @@ import {
   type ReactElement,
 } from 'react';
 import type { PluginActivationState } from './activation-state';
-import type { HostLog } from './log';
-import { errorInfo } from './registry';
+import { errorInfo, type HostLog } from './log';
 
 interface PartProps {
   name: string;

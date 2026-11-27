@@ -9,3 +9,8 @@ export interface HostLogRecord {
 }
 
 export type HostLog = (level: HostLogLevel, record: HostLogRecord, message: string) => void;
+
+export const errorInfo = (error: unknown): Record<string, unknown> => ({
+  errorName: error instanceof Error ? error.name : typeof error,
+  errorMessage: error instanceof Error ? error.message : String(error),
+});

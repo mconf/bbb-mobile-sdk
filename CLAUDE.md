@@ -206,7 +206,9 @@ list and each plugin's `mobile.enabled` setting (`src/plugins/activation.ts`).
 Their `useCapabilities` reads `pluginCapabilities`, which `DrawerNavigator` keeps in step
 with the meeting (`src/plugins/use-plugin-capabilities.js`). `DrawerNavigator` also mounts
 the active plugins' `Headless` parts while the user is logged in
-(`src/plugins/headless-parts.ts`). React reads the instance through
+(`src/plugins/headless-parts.ts`). Their custom subscriptions use `pluginGraphql`, to
+which `DrawerNavigator` gives the Apollo client (`src/plugins/use-plugin-graphql.js`).
+React reads the instance through
 `useAppInstance()` / `useLiveKitRoom()` /
 `useMediaManagers()`; managers/bridges receive it by constructor; Redux
 listener effects reach it as `listenerApi.extra`. **Never create a module-level

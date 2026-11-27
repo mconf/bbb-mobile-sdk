@@ -1,5 +1,5 @@
-import type { HostLog } from './log';
-import { errorInfo, type LoadedPlugin, type PluginRegistry } from './registry';
+import { errorInfo, type HostLog } from './log';
+import type { LoadedPlugin, PluginRegistry } from './registry';
 
 // The result of reading the meeting's plugin list: the query's data, or the error
 // that ended it.
